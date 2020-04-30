@@ -104,12 +104,29 @@ class UserPageState extends State<UserPage> {
           Positioned(
             top: ScreenUtil().setHeight(33),
             left: ScreenUtil().setWidth(90),
-            child: Text(
-              prefs.getString('name'),
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 18.00),
+            child: GestureDetector(
+              onLongPressEnd: ((LongPressEndDetails longPressEndDetails) {
+                print(longPressEndDetails.velocity.pixelsPerSecond.dx);
+                if (longPressEndDetails.velocity.pixelsPerSecond.dx <
+                        0 &&
+                    Theme.of(context).platform == TargetPlatform.android) {
+                  print(6);
+                  prefs.setInt('sanityLevel', 6);
+                } else if (longPressEndDetails
+                            .velocity.pixelsPerSecond.dx >
+                        0 &&
+                    Theme.of(context).platform == TargetPlatform.android) {
+                  print(3);
+                  prefs.setInt('sanityLevel', 3);
+                }
+              }),
+              child: Text(
+                prefs.getString('name'),
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 18.00),
+              ),
             ),
           ),
           Positioned(
