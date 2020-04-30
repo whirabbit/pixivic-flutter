@@ -70,7 +70,9 @@ class _CenterPageState extends State<CenterPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               cell(texts.safety, FontAwesomeIcons.lock, Colors.blueGrey[300],
-                  () {_openSafetySetting();}),
+                  () {
+                _openSafetySetting();
+              }),
             ],
           )
         ],
@@ -130,29 +132,54 @@ class _CenterPageState extends State<CenterPage> {
   }
 
   _openSafetySetting() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(texts.safetyTitle),
-            content: Text(texts.safetyWarn),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(texts.safetyLevelHigh),
-                onPressed: () {
-                  prefs.setInt('sanityLevel', 3);
-                  Navigator.of(context).pop();
-                }, //关闭对话框
-              ),
-              FlatButton(
-                child: Text(texts.safetyLevelLowHigh),
-                onPressed: () {
-                  prefs.setInt('sanityLevel', 6);
-                  Navigator.of(context).pop(true); //关闭对话框¯˘¿
-                },
-              ),
-            ],
-          );
-        });
+    if (Theme.of(context).platform == TargetPlatform.iOS)
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(texts.safetyTitle),
+              content: Text(texts.safetyWarniOS),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text(texts.safetyLevelHigh),
+                  onPressed: () {
+                    prefs.setInt('sanityLevel', 3);
+                    Navigator.of(context).pop();
+                  }, //关闭对话框
+                ),
+                FlatButton(
+                  child: Text(texts.safetyLevelLowHigh),
+                  onPressed: () {
+                    prefs.setInt('sanityLevel', 6);
+                    Navigator.of(context).pop(true); //关闭对话框¯˘¿
+                  },
+                ),
+              ],
+            );
+          });
+    else if (Theme.of(context).platform == TargetPlatform.android)
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(texts.safetyTitle),
+              content: Text(texts.safetyWarnAndroid),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text(texts.safetyLevelHigh),
+                  onPressed: () {
+                    prefs.setInt('sanityLevel', 3);
+                    Navigator.of(context).pop();
+                  }, //关闭对话框
+                ),
+                FlatButton(
+                  child: Text(texts.safetyLevelLowHigh, style: TextStyle(color: Colors.grey),),
+                  onPressed: () {
+                    
+                  },
+                ),
+              ],
+            );
+          });
   }
 }

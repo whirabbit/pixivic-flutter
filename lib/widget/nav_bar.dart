@@ -56,7 +56,7 @@ class _NavBarState extends State<NavBar> {
           right: containerRight,
           child: Container(
             width: ScreenUtil().setWidth(216),
-            height: ScreenUtil().setHeight(38),
+            height: ScreenUtil().setWidth(42),         // 以宽度为参考以保证不同尺寸下大小相同,38/42
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(32.0),
@@ -100,10 +100,10 @@ class _NavBarState extends State<NavBar> {
     num width; //width for image
 
     if (activeList[seq] == true) {
-      width = ScreenUtil().setWidth(27);
+      width = ScreenUtil().setWidth(28);
       src = 'icon/' + src + '_active.png';
     } else {
-      width = ScreenUtil().setWidth(24);
+      width = ScreenUtil().setWidth(25);
       src = 'icon/' + src + '.png';
     }
 
