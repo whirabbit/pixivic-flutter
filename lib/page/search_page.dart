@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:lottie/lottie.dart';
+import 'package:pixivic/data/common.dart';
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 
@@ -43,8 +44,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     searchKeywords = widget.searchKeywordsIn;
-    suggestionBar =
-          SuggestionBar(searchKeywords, _onSearch, _suggestionBarKey);
+    suggestionBar = SuggestionBar(searchKeywords, _onSearch, _suggestionBarKey);
 
     if (searchKeywords != '') {
       picPage = PicPage.search(
@@ -114,16 +114,21 @@ class _SearchPageState extends State<SearchPage> {
                             physics: ClampingScrollPhysics(),
                             crossAxisCount: 3,
                             itemCount: currentTags.length,
+                            padding: EdgeInsets.only(
+                                left: ScreenUtil().setWidth(1),
+                                right: ScreenUtil().setWidth(1)),
                             itemBuilder: (BuildContext context, int index) =>
                                 _currentCell(
                                     currentTags[index]['name'],
                                     currentTags[index]['translatedName'],
                                     currentTags[index]['illustration']
-                                        ['imageUrls'][0]['medium']),
+                                        ['imageUrls'][0]['medium'],
+                                    currentTags[index]['illustration']
+                                        ['sanityLevel']),
                             staggeredTileBuilder: (index) =>
                                 StaggeredTile.fit(1),
-                            mainAxisSpacing: 4.0,
-                            crossAxisSpacing: 4.0,
+                            // mainAxisSpacing: 4.0,
+                            // crossAxisSpacing: 4.0,
                           ),
                         ),
                       ],
@@ -135,11 +140,11 @@ class _SearchPageState extends State<SearchPage> {
     FocusScope.of(context).unfocus();
     setState(() {
       searchKeywords = value;
-      if(value != '')
+      if (value != '')
         picPage = PicPage.search(
           searchKeywords: searchKeywords,
           isManga: searchManga,
-      );
+        );
     });
     pappbarKey.currentState.changeSearchKeywords(value);
     if (fromCurrent != null && fromCurrent)
@@ -148,11 +153,10 @@ class _SearchPageState extends State<SearchPage> {
     else
       try {
         _suggestionBarKey.currentState.reloadSearchWords(value);
-      } catch(e) {
+      } catch (e) {
         suggestionBar =
-          SuggestionBar(searchKeywords, _onSearch, _suggestionBarKey);
+            SuggestionBar(searchKeywords, _onSearch, _suggestionBarKey);
       }
-      
   }
 
   _currentLoad() async {
@@ -175,60 +179,64 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  _currentCell(String jpTitle, String transTitle, String url) {
-    return Material(
-      child: InkWell(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-          _onSearch(jpTitle, fromCurrent: true);
-        },
-        child: Container(
-          alignment: Alignment.topCenter,
-          width: ScreenUtil().setWidth(104),
-          height: ScreenUtil().setWidth(104),
-          padding: EdgeInsets.only(top: ScreenUtil().setWidth(60)),
-          decoration: BoxDecoration(
-              color: Colors.grey[300],
-              image: DecorationImage(
-                  fit: BoxFit.cover,
-                  colorFilter:
-                      ColorFilter.mode(Colors.black26, BlendMode.darken),
-                  image: AdvancedNetworkImage(
-                    url,
-                    header: {'Referer': 'https://app-api.pixiv.net'},
-                    useDiskCache: true,
-                    cacheRule: CacheRule(maxAge: const Duration(days: 7)),
-                  ))),
-          child: Column(
-            children: <Widget>[
-              Text(
-                '#$jpTitle',
-                textAlign: TextAlign.center,
-                strutStyle: StrutStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w400,
+  _currentCell(String jpTitle, String transTitle, String url, int sanityLevel) {
+    if (sanityLevel > prefs.getInt('sanityLevel'))
+      return SizedBox();
+    else
+      return Material(
+        child: InkWell(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+            _onSearch(jpTitle, fromCurrent: true);
+          },
+          child: Container(
+            alignment: Alignment.topCenter,
+            width: ScreenUtil().setWidth(104),
+            height: ScreenUtil().setWidth(104),
+            padding: EdgeInsets.only(top: ScreenUtil().setWidth(60)),
+            margin: EdgeInsets.all(ScreenUtil().setWidth(1)),
+            decoration: BoxDecoration(
+                color: Colors.grey[300],
+                image: DecorationImage(
+                    fit: BoxFit.cover,
+                    colorFilter:
+                        ColorFilter.mode(Colors.black26, BlendMode.darken),
+                    image: AdvancedNetworkImage(
+                      url,
+                      header: {'Referer': 'https://app-api.pixiv.net'},
+                      useDiskCache: true,
+                      cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+                    ))),
+            child: Column(
+              children: <Widget>[
+                Text(
+                  '#$jpTitle',
+                  textAlign: TextAlign.center,
+                  strutStyle: StrutStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                  ),
                 ),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                ),
-              ),
-              Text(
-                transTitle,
-                textAlign: TextAlign.center,
-                strutStyle: StrutStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w300,
-                ),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                ),
-              )
-            ],
+                Text(
+                  transTitle,
+                  textAlign: TextAlign.center,
+                  strutStyle: StrutStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w300,
+                  ),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                  ),
+                )
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
   }
 }
