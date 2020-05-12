@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'dart:ui';
+import 'dart:typed_data';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:image_downloader/image_downloader.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:requests/requests.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class DownloadImage {
   final String url;
@@ -38,14 +39,18 @@ class DownloadImage {
 
   void dispose() {
     print('download disposed');
-    IsolateNameServer.removePortNameMapping('downloader_send_port');
   }
 
   _iOSDownload() async {
     try {
-      var response = await Requests.get(url, headers: {'Referer': 'https://app-api.pixiv.net'},);
-    }
-    catch(e) {
+      var response = await Requests.get(
+        url,
+        headers: {'Referer': 'https://app-api.pixiv.net'},
+      );
+      final result = await ImageGallerySaver.saveImage(Uint8List.fromList(response.bytes()));
+      print(result);
+      BotToast.showSimpleNotification(title: '下载完成');
+    } catch (e) {
       print(e);
     }
   }
@@ -62,7 +67,6 @@ class DownloadImage {
       // ImageDownloader.cancel();
       return false;
     });
-    ImageDownloader.cancel();
     if (imageId == null) {
       print('image dwonload error');
       return false;
