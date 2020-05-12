@@ -59,7 +59,7 @@ class DownloadImage {
     ).catchError((onError) {
       print(onError);
       BotToast.showSimpleNotification(title: '下载失败,请检查网络');
-      ImageDownloader.cancel();
+      // ImageDownloader.cancel();
       return false;
     });
     ImageDownloader.cancel();
