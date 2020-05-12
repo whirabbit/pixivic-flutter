@@ -29,7 +29,7 @@ class DownloadImage {
     ImageDownloader.callback(
         onProgressUpdate: (String imageId, int progressNow) {
       progress = progressNow;
-      if (onProgressUpdate != null) onProgressUpdate(progress);
+      print(progress);
     });
 
     if (platform == 'ios')
@@ -43,11 +43,12 @@ class DownloadImage {
 
   _iOSDownload() async {
     try {
-      var response = await Requests.get(
-        url,
-        headers: {'Referer': 'https://app-api.pixiv.net'},
-      );
-      final result = await ImageGallerySaver.saveImage(Uint8List.fromList(response.bytes()));
+      var response = await Requests.get(url,
+          headers: {'Referer': 'https://app-api.pixiv.net'},
+          timeoutSeconds: 180);
+      response.raiseForStatus();
+      final result = await ImageGallerySaver.saveImage(
+          Uint8List.fromList(response.bytes()));
       print(result);
       BotToast.showSimpleNotification(title: '下载完成');
     } catch (e) {
