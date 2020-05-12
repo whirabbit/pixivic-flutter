@@ -49,6 +49,7 @@ dev_dependencies:
   lottie: ^0.3.2
   image_downloader: ^0.19.2
   flutter_launcher_icons: ^0.7.4
+  image_gallery_saver: ^1.2.2
   
 
 flutter_icons:
