@@ -51,6 +51,7 @@ class DownloadImage {
       print(result);
       BotToast.showSimpleNotification(title: '下载完成');
     } catch (e) {
+      BotToast.showSimpleNotification(title: '下载失败,请检查网络');
       print(e);
     }
   }
