@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:image_downloader/image_downloader.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:requests/requests.dart';
 
 class DownloadImage {
   final String url;
@@ -41,6 +42,15 @@ class DownloadImage {
   }
 
   _iOSDownload() async {
+    try {
+      var response = await Requests.get(url, headers: {'Referer': 'https://app-api.pixiv.net'},);
+    }
+    catch(e) {
+      print(e);
+    }
+  }
+
+  _iOSDownloadWithImageDownloader() async {
     imageId = await ImageDownloader.downloadImage(
       url,
       headers: {'Referer': 'https://app-api.pixiv.net'},
