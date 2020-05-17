@@ -11,6 +11,7 @@ import 'package:requests/requests.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_advanced_networkimage/zoomable.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'pic_page.dart';
 import 'artist_page.dart';
@@ -59,6 +60,38 @@ class _PicDetailPageState extends State<PicDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    BotToast.showAttachedWidget(
+        attachedBuilder: (CancelFunc cancel) => Card(
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: FaIcon(
+                        FontAwesomeIcons.handPointLeft,
+                        color: Colors.pinkAccent[200],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('按住屏幕边缘右滑\n返回上一个页面'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Material(
+                        child: InkWell(
+                            child: FaIcon(FontAwesomeIcons.solidTimesCircle),
+                            onTap: () {
+                              cancel();
+                            }),
+                      ),
+                    ),
+                  ],
+                ),
+            ),
+        duration: Duration(seconds: 10),
+        target: Offset(ScreenUtil().setWidth(10), ScreenUtil().setHeight(250)));
+
     return Scaffold(
       appBar: pappBar,
       body: ListView(
@@ -542,7 +575,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
                   title: Text('跳转pixiv详情'),
                   leading: Icon(Icons.image, color: Colors.purple),
                   onTap: () async {
-                    String url = 'https://pixiv.net/artworks/${widget._picData['id']}';
+                    String url =
+                        'https://pixiv.net/artworks/${widget._picData['id']}';
                     if (await canLaunch(url)) {
                       await launch(url);
                     } else {
@@ -558,7 +592,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
                     color: Colors.blueAccent,
                   ),
                   onTap: () async {
-                    String url = 'https://pixiv.net/users/${widget._picData['artistId']}';
+                    String url =
+                        'https://pixiv.net/users/${widget._picData['artistId']}';
                     if (await canLaunch(url)) {
                       await launch(url);
                     } else {

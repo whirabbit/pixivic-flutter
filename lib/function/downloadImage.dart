@@ -24,7 +24,6 @@ class DownloadImage {
 
   DownloadImage(this.url, this.platform, {this.onProgressUpdate}) {
     print('start download');
-    BotToast.showSimpleNotification(title: '开始下载');
 
     ImageDownloader.callback(
         onProgressUpdate: (String imageId, int progressNow) {
@@ -42,6 +41,7 @@ class DownloadImage {
   }
 
   _iOSDownload() async {
+    BotToast.showSimpleNotification(title: '开始下载,请勿退出应用');
     try {
       var response = await Requests.get(url,
           headers: {'Referer': 'https://app-api.pixiv.net'},
@@ -87,6 +87,8 @@ class DownloadImage {
   }
 
   _androidDownload() async {
+    BotToast.showSimpleNotification(title: '开始下载');
+    
     final Directory directory = await getExternalStorageDirectory();
 
     final Directory picDirFolder =
