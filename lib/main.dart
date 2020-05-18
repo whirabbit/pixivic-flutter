@@ -102,6 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
     FlutterDownloader.initialize(debug: false).then((value) {
       FlutterDownloader.cancelAll();
     });
+    
     initData().then((value) {
       setState(() {
         picPage = PicPage.home(

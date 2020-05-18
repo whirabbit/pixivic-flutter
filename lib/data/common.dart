@@ -30,10 +30,10 @@ List<String> keywordsString = [
   'location',
 ];
 List<String> keywordsInt = ['id', 'star', 'sanityLevel'];
-List<String> keywordsBool = ['isBindQQ', 'isCheckEmail'];
+List<String> keywordsBool = ['isBindQQ', 'isCheckEmail', 'isBackTipsKnown', 'isPicTipsKnown'];
 
 GlobalKey<NewPageState> newPageKey;
-GlobalKey<UserPageState> userPageKey;
+GlobalKey<UserPageState> userPageKey; 
 
 // 初始化数据
 Future initData() async {
@@ -42,10 +42,10 @@ Future initData() async {
 
   prefs = await SharedPreferences.getInstance();
   cacheSize = await DiskCache().cacheSize();
-  print(cacheSize);
+  print('The disk usage for cache is $cacheSize');
   // 遍历所有key，对不存在的 key 进行 value 初始化
   print(prefs.getKeys());
-  print(prefs.getString('name'));
+  print('The user name is : ${prefs.getString('name')}');
   for (var item in keywordsString) {
     if (prefs.getString(item) == null) prefs.setString(item, '');
   }
