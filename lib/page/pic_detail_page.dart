@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'package:permission_handler/permission_handler.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:requests/requests.dart';
@@ -641,68 +640,82 @@ class _PicDetailPageState extends State<PicDetailPage> {
   }
 
   _showUseTips() {
-    BotToast.showAttachedWidget(
-        attachedBuilder: (CancelFunc cancel) => Card(
-              child: Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FaIcon(
-                      FontAwesomeIcons.handPointLeft,
-                      color: Colors.pinkAccent[200],
+    if (!prefs.getBool('isBackTipsKnown'))
+      BotToast.showAttachedWidget(
+          attachedBuilder: (CancelFunc cancel) => Card(
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: FaIcon(
+                        FontAwesomeIcons.handPointLeft,
+                        color: Colors.purple[100],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('按住屏幕边缘右滑\n返回上一个页面'),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Material(
-                      child: InkWell(
-                          child: FaIcon(FontAwesomeIcons.solidTimesCircle),
-                          onTap: () {
-                            cancel();
-                          }),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('按住屏幕边缘右滑\n返回上一个页面'),
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Material(
+                        color: Colors.white,
+                        child: InkWell(
+                            child: Text(
+                              '不再提醒',
+                              style: TextStyle(color: Colors.red[200]),
+                            ),
+                            onTap: () {
+                              prefs.setBool('isBackTipsKnown', true);
+                              cancel();
+                            }),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-        duration: Duration(seconds: 10),
-        target: Offset(ScreenUtil().setWidth(10), ScreenUtil().setHeight(250)));
+          duration: Duration(seconds: 10),
+          target:
+              Offset(ScreenUtil().setWidth(10), ScreenUtil().setHeight(250)));
 
-    BotToast.showAttachedWidget(
-        attachedBuilder: (CancelFunc cancel) => Card(
-              child: Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FaIcon(
-                      FontAwesomeIcons.handPointDown,
-                      color: Colors.pinkAccent[200],
+    if (!prefs.getBool('isPicTipsKnown'))
+      BotToast.showAttachedWidget(
+          attachedBuilder: (CancelFunc cancel) => Card(
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: FaIcon(
+                        FontAwesomeIcons.handPointDown,
+                        color: Colors.blue[200],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('长按图片\n查看更多选项'),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Material(
-                      child: InkWell(
-                          child: FaIcon(FontAwesomeIcons.solidTimesCircle),
-                          onTap: () {
-                            cancel();
-                          }),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('试试长按图片\n和双指捏合图片'),
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Material(
+                        color: Colors.white,
+                        child: InkWell(
+                            child: Text(
+                              '不再提醒',
+                              style: TextStyle(color: Colors.red[200]),
+                            ),
+                            onTap: () {
+                              prefs.setBool('isPicTipsKnown', true);
+                              cancel();
+                            }),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-        duration: Duration(seconds: 10),
-        target: Offset(ScreenUtil().setWidth(180), ScreenUtil().setHeight(150)));
+          duration: Duration(seconds: 10),
+          target:
+              Offset(ScreenUtil().setWidth(180), ScreenUtil().setHeight(150)));
   }
 }

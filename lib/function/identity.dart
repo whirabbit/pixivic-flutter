@@ -84,21 +84,26 @@ checkAuth() async {
     return false;
   else {
     String url =
-        'https://api-doc.cheerfun.dev/mock/12/users/${prefs.getInt('id').toString()}/isBindQQ';
+        'https://api.pixivic.com/users/${prefs.getInt('id').toString()}/isBindQQ';
     Map<String, String> header = {
       'Content-Type': 'application/json',
       'authorization': authStored
     };
     var client = http.Client();
-    var response = await client.post(
+    var response = await client.get(
       url,
       headers: header,
     );
+    // print(response.statusCode);
+    // Map data = jsonDecode(
+    //     utf8.decode(response.bodyBytes, allowMalformed: true));
+    // print(data);
+    // print(response.headers['authorization']);
     if (response.statusCode == 200) {
       if (response.headers['authorization'] != null)
         prefs.setString('auth', response.headers['authorization']);
       return true;
-    } else if (response.statusCode == 401) {
+    } else if (response.statusCode == 401 || response.statusCode == 500 ) {
       return false;
     }
   }

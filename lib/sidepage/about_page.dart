@@ -16,82 +16,70 @@ class _AboutPageState extends State<AboutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PappBar(title: 'About Us'),
-      body: Container(
-        height: ScreenUtil().setHeight(530),
-        child: Wrap(
-          direction: Axis.horizontal,
-          children: <Widget>[
-            Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.only(top: ScreenUtil().setHeight(30)),
-              child: Image.asset(
-                'image/center_gril.gif',
-                width: ScreenUtil().setWidth(130),
-                height: ScreenUtil().setWidth(130),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(ScreenUtil().setHeight(20)),
-              child: Text(TextZhForAboutPage().description),
-            ),
-            Container(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: ScreenUtil().setWidth(200),
-                height: ScreenUtil().setHeight(2),
-                child: Divider(
-                  color: Colors.blueGrey,
+      body: SingleChildScrollView(
+        child: Container(
+          // height: ScreenUtil().setHeight(530),
+          child: Wrap(
+            direction: Axis.horizontal,
+            children: <Widget>[
+              Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(top: ScreenUtil().setHeight(30)),
+                child: Image.asset(
+                  'image/center_gril.gif',
+                  width: ScreenUtil().setWidth(130),
+                  height: ScreenUtil().setWidth(130),
                 ),
               ),
-            ),
-            Container(
-              padding: EdgeInsets.only(
-                left: ScreenUtil().setHeight(20), 
-                top: ScreenUtil().setHeight(20)
+              Container(
+                padding: EdgeInsets.all(ScreenUtil().setHeight(20)),
+                child: Text(TextZhForAboutPage().description),
               ),
-              child: Text(TextZhForAboutPage().savePicLabel,
-                style: TextStyle(
-                  color: Colors.grey
+              Container(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: ScreenUtil().setWidth(200),
+                  height: ScreenUtil().setHeight(2),
+                  child: Divider(
+                    color: Colors.blueGrey,
+                  ),
                 ),
               ),
-            ),
-            Container(
-              padding: EdgeInsets.only(
-                left: ScreenUtil().setHeight(20),
-                bottom: ScreenUtil().setHeight(20),
-                top: ScreenUtil().setHeight(10)
+              Container(
+                padding: EdgeInsets.only(
+                    left: ScreenUtil().setHeight(20),
+                    top: ScreenUtil().setHeight(20)),
+                child: Text(
+                  TextZhForAboutPage().savePicLabel,
+                  style: TextStyle(color: Colors.grey),
+                ),
               ),
-              child: Text(TextZhForAboutPage().savePic),
-            ),
-            Container(
-              padding: EdgeInsets.all(ScreenUtil().setHeight(20)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  linkButton(
-                    TextZhForAboutPage().forum,
-                    'https://discuss.pixivic.com/'
-                  ),
-                  linkButton(
-                    TextZhForAboutPage().rearEnd,
-                    'https://github.com/cheer-fun/pixivic-web-backend'
-                  ),
-                  linkButton(
-                    TextZhForAboutPage().frontEnd,
-                    'https://github.com/cheer-fun/pixivic-mobile'
-                  ),
-                  linkButton(
-                    TextZhForAboutPage().donate,
-                    'https://m.pixivic.com/links?VNK=9fa02e17'
-                  ),
-                  linkButton(
-                    TextZhForAboutPage().friend,
-                    'https://m.pixivic.com/friends?VNK=e7c43cd8'
-                  ),
-                ],
-              )
-            ),
-          ],
+              Container(
+                padding: EdgeInsets.only(
+                    left: ScreenUtil().setHeight(20),
+                    bottom: ScreenUtil().setHeight(20),
+                    top: ScreenUtil().setHeight(10)),
+                child: Text(TextZhForAboutPage().savePic),
+              ),
+              Container(
+                  padding: EdgeInsets.all(ScreenUtil().setHeight(20)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      linkButton(TextZhForAboutPage().forum,
+                          'https://discuss.pixivic.com/'),
+                      linkButton(TextZhForAboutPage().rearEnd,
+                          'https://github.com/cheer-fun/pixivic-web-backend'),
+                      linkButton(TextZhForAboutPage().frontEnd,
+                          'https://github.com/cheer-fun/pixivic-mobile'),
+                      linkButton(TextZhForAboutPage().donate,
+                          'https://m.pixivic.com/links?VNK=9fa02e17'),
+                      linkButton(TextZhForAboutPage().friend,
+                          'https://m.pixivic.com/friends?VNK=e7c43cd8'),
+                    ],
+                  )),
+            ],
+          ),
         ),
       ),
     );
@@ -117,6 +105,4 @@ class _AboutPageState extends State<AboutPage> {
       ),
     );
   }
-
-  
 }
