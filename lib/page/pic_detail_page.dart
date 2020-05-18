@@ -55,43 +55,12 @@ class _PicDetailPageState extends State<PicDetailPage> {
     picTotalNum = widget._picData['pageCount'];
     _uploadHistory();
     _initPappbar();
+    _showUseTips();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    BotToast.showAttachedWidget(
-        attachedBuilder: (CancelFunc cancel) => Card(
-              child: Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: FaIcon(
-                        FontAwesomeIcons.handPointLeft,
-                        color: Colors.pinkAccent[200],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text('按住屏幕边缘右滑\n返回上一个页面'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Material(
-                        child: InkWell(
-                            child: FaIcon(FontAwesomeIcons.solidTimesCircle),
-                            onTap: () {
-                              cancel();
-                            }),
-                      ),
-                    ),
-                  ],
-                ),
-            ),
-        duration: Duration(seconds: 10),
-        target: Offset(ScreenUtil().setWidth(10), ScreenUtil().setHeight(250)));
-
     return Scaffold(
       appBar: pappBar,
       body: ListView(
@@ -669,5 +638,71 @@ class _PicDetailPageState extends State<PicDetailPage> {
         ? tempTitle = tempTitle.substring(0, 20) + '...'
         : tempTitle = tempTitle;
     pappBar = PappBar(title: tempTitle);
+  }
+
+  _showUseTips() {
+    BotToast.showAttachedWidget(
+        attachedBuilder: (CancelFunc cancel) => Card(
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FaIcon(
+                      FontAwesomeIcons.handPointLeft,
+                      color: Colors.pinkAccent[200],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('按住屏幕边缘右滑\n返回上一个页面'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Material(
+                      child: InkWell(
+                          child: FaIcon(FontAwesomeIcons.solidTimesCircle),
+                          onTap: () {
+                            cancel();
+                          }),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        duration: Duration(seconds: 10),
+        target: Offset(ScreenUtil().setWidth(10), ScreenUtil().setHeight(250)));
+
+    BotToast.showAttachedWidget(
+        attachedBuilder: (CancelFunc cancel) => Card(
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FaIcon(
+                      FontAwesomeIcons.handPointDown,
+                      color: Colors.pinkAccent[200],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('长按图片\n查看更多选项'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Material(
+                      child: InkWell(
+                          child: FaIcon(FontAwesomeIcons.solidTimesCircle),
+                          onTap: () {
+                            cancel();
+                          }),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        duration: Duration(seconds: 10),
+        target: Offset(ScreenUtil().setWidth(180), ScreenUtil().setHeight(150)));
   }
 }
