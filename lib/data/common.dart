@@ -66,9 +66,10 @@ Future initData() async {
       print('Chek auth result is $result');
       if (result)
         isLogin = true;
-      else
-        isLogin = false;
+      else {
+        logout();
+      }
     });
   } else
-    isLogin = false;
+    logout();
 }
