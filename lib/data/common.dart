@@ -67,9 +67,9 @@ Future initData() async {
       if (result)
         isLogin = true;
       else {
-        logout();
+        logout(isInit: true);
       }
     });
   } else
-    logout();
+    logout(isInit: true);
 }

@@ -68,14 +68,16 @@ login(String userName, String pwd, String verificationCode,
   return response.statusCode;
 }
 
-logout() {
+logout({bool isInit = false}) {
   prefs.setString('auth', '');
   isLogin = false;
-  userPageKey.currentState.checkLoginState();
-  // 清除 picpage 页面缓存以便重新加载
-  homeScrollerPosition = 0;
-  homePicList = [];
-  homeCurrentPage = 1;
+  if (!isInit) {
+    userPageKey.currentState.checkLoginState();
+    // 清除 picpage 页面缓存以便重新加载
+    homeScrollerPosition = 0;
+    homePicList = [];
+    homeCurrentPage = 1;
+  }
 }
 
 checkAuth() async {
@@ -103,7 +105,7 @@ checkAuth() async {
       if (response.headers['authorization'] != null)
         prefs.setString('auth', response.headers['authorization']);
       return true;
-    } else if (response.statusCode == 401 || response.statusCode == 500 ) {
+    } else if (response.statusCode == 401 || response.statusCode == 500) {
       return false;
     }
   }
