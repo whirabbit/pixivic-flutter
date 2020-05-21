@@ -202,7 +202,7 @@ class _PicPageState extends State<PicPage> {
   @override
   void initState() {
     print('PicPage Created');
-
+    
     if ((widget.jsonMode == 'home') && (!listEquals(homePicList, []))) {
       picList = homePicList;
       currentPage = homeCurrentPage;

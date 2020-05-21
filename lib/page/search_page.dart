@@ -14,6 +14,7 @@ import '../widget/papp_bar.dart';
 import '../widget/suggestion_bar.dart';
 import 'pic_page.dart';
 import '../data/texts.dart';
+import 'artist_list_page.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -40,6 +41,15 @@ class _SearchPageState extends State<SearchPage> {
   List currentTags;
 
   GlobalKey<SuggestionBarState> _suggestionBarKey = GlobalKey();
+
+  List<Tab> tabs = <Tab>[
+    Tab(
+      text: '插画',
+    ),
+    Tab(
+      text: '画师',
+    )
+  ];
 
   @override
   void initState() {
@@ -70,18 +80,45 @@ class _SearchPageState extends State<SearchPage> {
           key: pappbarKey,
         ),
         body: searchKeywords != ''
-            ? ListView(
-                children: <Widget>[
-                  suggestionBar,
-                  Center(
-                    child: Container(
+            ? DefaultTabController(
+                length: 2,
+                child: ListView(
+                  shrinkWrap: true,
+                  children: <Widget>[
+                    Material(
+                        child: Container(
+                            height: ScreenUtil().setHeight(30),
+                            width: ScreenUtil().setWidth(324),
+                            child: TabBar(
+                              labelColor: Colors.blueAccent[200],
+                              tabs: tabs,
+                            ))),
+                    Container(
                       width: ScreenUtil().setWidth(324),
-                      height: ScreenUtil().setHeight(522), //待测试
-                      color: Colors.white,
-                      child: picPage,
+                      height: ScreenUtil().setHeight(546),
+                      child: TabBarView(
+                        children: <Widget>[
+                          Center(
+                            child: Container(
+                              color: Colors.white,
+                              child: Column(
+                                children: <Widget>[
+                                  suggestionBar,
+                                  Container(
+                                      width: ScreenUtil().setWidth(324),
+                                      height: ScreenUtil().setHeight(546),
+                                      child: picPage),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Container()
+                          // ArtistListPage(jsonList, mode)
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               )
             : currentOnLoading
                 ? Lottie.asset('image/loading-box.json')
@@ -137,7 +174,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   _onSearch(String value, {bool fromCurrent}) {
-    FocusScope.of(context).unfocus();
+    
     setState(() {
       searchKeywords = value;
       if (value != '')
@@ -157,6 +194,7 @@ class _SearchPageState extends State<SearchPage> {
         suggestionBar =
             SuggestionBar(searchKeywords, _onSearch, _suggestionBarKey);
       }
+    FocusScope.of(context).unfocus();
   }
 
   _currentLoad() async {
@@ -186,8 +224,8 @@ class _SearchPageState extends State<SearchPage> {
       return Material(
         child: InkWell(
           onTap: () {
-            FocusScope.of(context).unfocus();
             _onSearch(jpTitle, fromCurrent: true);
+            FocusScope.of(context).unfocus();
           },
           child: Container(
             alignment: Alignment.topCenter,

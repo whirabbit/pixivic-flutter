@@ -62,6 +62,7 @@ class PappBarState extends State<PappBar> {
   String mode;
   TextEditingController searchController;
   TextZhPappBar texts = TextZhPappBar();
+  FocusNode searchFocusNode;
 
   @override
   void initState() {
@@ -70,6 +71,7 @@ class PappBarState extends State<PappBar> {
     mode = widget.mode;
     searchController = TextEditingController(text: widget.searchKeywordsIn)
       ..addListener(searchTextEditingListener);
+    searchFocusNode = FocusNode();
     contentHeight = ScreenUtil().setHeight(35);
     searchBarHeight = contentHeight;
     super.initState();
@@ -78,6 +80,7 @@ class PappBarState extends State<PappBar> {
   @override
   void dispose() {
     searchController.dispose();
+    searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -240,6 +243,12 @@ class PappBarState extends State<PappBar> {
                   ),
                   child: TextField(
                     controller: searchController,
+                    focusNode: searchFocusNode,
+                    onTap: () {
+                      setState(() {
+                        searchBarHeight = ScreenUtil().setHeight(77);
+                      });
+                    },
                     onSubmitted: (value) {
                       widget.searchFucntion(searchController.text);
                     },
@@ -468,6 +477,8 @@ class PappBarState extends State<PappBar> {
   }
 
   void searchTextEditingListener() {
+    print('i am listening ...........');
+    print(FocusScope.of(context).focusedChild);
     if (FocusScope.of(context).hasFocus == false) {
       setState(() {
         searchBarHeight = contentHeight;
@@ -486,9 +497,10 @@ class PappBarState extends State<PappBar> {
       print(e);
       BotToast.showSimpleNotification(title: texts.translateError);
     });
-    response.raiseForStatus();
     if (response.statusCode == 200) {
       widget.searchFucntion(jsonDecode(response.content())['data']['keyword']);
+    } else if (response.statusCode == 400) {
+      BotToast.showSimpleNotification(title: jsonDecode(response.content())['message']);
     } else {
       BotToast.showSimpleNotification(title: texts.translateError);
     }
