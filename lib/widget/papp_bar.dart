@@ -478,7 +478,7 @@ class PappBarState extends State<PappBar> {
 
   void searchTextEditingListener() {
     print('i am listening ...........');
-    print(FocusScope.of(context).focusedChild);
+    print(searchFocusNode.hasFocus); // https://stackoverflow.com/questions/54428029/flutter-how-to-clear-text-field-on-focus
     if (FocusScope.of(context).hasFocus == false) {
       setState(() {
         searchBarHeight = contentHeight;
