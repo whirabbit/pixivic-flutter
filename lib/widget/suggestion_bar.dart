@@ -107,12 +107,16 @@ class SuggestionBarState extends State<SuggestionBar> {
     String urlPixivic =
         'https://api.pixivic.com/keywords/$searchKeywords/suggestions';
     requests = await Requests.get(urlPixiv);
-    requests.raiseForStatus();
-    jsonList = jsonDecode(requests.content())['data'];
-    requests = await Requests.get(urlPixivic);
-    requests.raiseForStatus();
-    jsonList = jsonList + jsonDecode(requests.content())['data'];
-    return jsonList;
+    try {
+      requests.raiseForStatus();
+      jsonList = jsonDecode(requests.content())['data'];
+      requests = await Requests.get(urlPixivic);
+      requests.raiseForStatus();
+      jsonList = jsonList + jsonDecode(requests.content())['data'];
+      return jsonList;
+    } catch (e) {
+      return null;
+    }
   }
 
   void reloadSearchWords(String value) async {
