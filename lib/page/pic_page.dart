@@ -202,7 +202,7 @@ class _PicPageState extends State<PicPage> {
   @override
   void initState() {
     print('PicPage Created');
-    
+
     if ((widget.jsonMode == 'home') && (!listEquals(homePicList, []))) {
       picList = homePicList;
       currentPage = homeCurrentPage;
@@ -468,7 +468,7 @@ class _PicPageState extends State<PicPage> {
   }
 
   _doWhileScrolling() {
-    // print(scrollController.position.extentBefore);
+    // // print(scrollController.position.extentBefore);
     FocusScope.of(context).unfocus();
     // 如果为主页面 picPage，则记录滑动位置、判断滑动
     if (widget.jsonMode == 'home') {
@@ -531,16 +531,14 @@ class _PicPageState extends State<PicPage> {
           });
         }
       }).catchError((error) {
-        {
-          print('=========getJsonList==========');
-          print(error);
-          print('==============================');
-          if (error.toString().contains('SocketException'))
-            BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
-          setState(() {
-            loadMoreAble = true;
-          });
-        }
+        print('=========getJsonList==========');
+        print(error);
+        print('==============================');
+        if (error.toString().contains('SocketException'))
+          BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+        setState(() {
+          loadMoreAble = true;
+        });
       });
     }
   }
@@ -548,7 +546,8 @@ class _PicPageState extends State<PicPage> {
   Widget imageCell(int index) {
     final Color color = _randomColor.randomColor();
     Map picMapData = Map.from(picList[index]);
-    if (picMapData['xrestict'] == 1 || picMapData['sanityLevel'] > prefs.getInt('sanityLevel'))
+    if (picMapData['xrestict'] == 1 ||
+        picMapData['sanityLevel'] > prefs.getInt('sanityLevel'))
       return Container();
     else
       return Container(
@@ -565,7 +564,6 @@ class _PicPageState extends State<PicPage> {
                 borderRadius: BorderRadius.circular(15),
                 child: GestureDetector(
                   onTap: () async {
-                    FocusScope.of(context).unfocus();
                     // 对广告图片做区分判断
                     if (picMapData['type'] == 'ad_image') {
                       if (await canLaunch(picMapData['link'])) {

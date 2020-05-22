@@ -69,9 +69,8 @@ class PappBarState extends State<PappBar> {
     if (widget.title != null) title = widget.title;
     lastHomeTitle = title;
     mode = widget.mode;
-    searchController = TextEditingController(text: widget.searchKeywordsIn)
-      ..addListener(searchTextEditingListener);
-    searchFocusNode = FocusNode();
+    searchController = TextEditingController(text: widget.searchKeywordsIn);
+    searchFocusNode = FocusNode()..addListener(searchFocusNodeListener);
     contentHeight = ScreenUtil().setHeight(35);
     searchBarHeight = contentHeight;
     super.initState();
@@ -255,7 +254,6 @@ class PappBarState extends State<PappBar> {
                     onChanged: (value) {
                       if (value == '') {
                         widget.searchFucntion(value);
-                        FocusScope.of(context).previousFocus();
                       }
                     },
                     decoration: InputDecoration(
@@ -476,10 +474,10 @@ class PappBarState extends State<PappBar> {
     });
   }
 
-  void searchTextEditingListener() {
-    print('i am listening ...........');
-    print(searchFocusNode.hasFocus); // https://stackoverflow.com/questions/54428029/flutter-how-to-clear-text-field-on-focus
-    if (FocusScope.of(context).hasFocus == false) {
+  void searchFocusNodeListener() {
+    print('searchFocusNodeListener is Lisetning');
+    print('Search TextEdit FocusNode: ${searchFocusNode.hasFocus}'); // https://stackoverflow.com/questions/54428029/flutter-how-to-clear-text-field-on-focus
+    if (searchFocusNode.hasFocus == false) {
       setState(() {
         searchBarHeight = contentHeight;
       });

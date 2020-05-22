@@ -30,6 +30,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   String searchKeywords;
   PicPage picPage;
+  ArtistListPage artistListPage;
   SuggestionBar suggestionBar;
   List suggestions;
   bool searchManga = false;
@@ -112,8 +113,8 @@ class _SearchPageState extends State<SearchPage> {
                               ),
                             ),
                           ),
-                          Container()
-                          // ArtistListPage(jsonList, mode)
+                          // Container(),
+                          artistListPage,
                         ],
                       ),
                     ),
@@ -144,10 +145,7 @@ class _SearchPageState extends State<SearchPage> {
                         Expanded(
                           flex: 541,
                           child: StaggeredGridView.countBuilder(
-                            controller: ScrollController()
-                              ..addListener(() {
-                                FocusScope.of(context).unfocus();
-                              }),
+                            controller: ScrollController(),
                             physics: ClampingScrollPhysics(),
                             crossAxisCount: 3,
                             itemCount: currentTags.length,
@@ -182,6 +180,7 @@ class _SearchPageState extends State<SearchPage> {
           searchKeywords: searchKeywords,
           isManga: searchManga,
         );
+        artistListPage = ArtistListPage.search(searchKeywords);
     });
     pappbarKey.currentState.changeSearchKeywords(value);
     if (fromCurrent != null && fromCurrent)
@@ -194,7 +193,6 @@ class _SearchPageState extends State<SearchPage> {
         suggestionBar =
             SuggestionBar(searchKeywords, _onSearch, _suggestionBarKey);
       }
-    FocusScope.of(context).unfocus();
   }
 
   _currentLoad() async {
@@ -225,7 +223,6 @@ class _SearchPageState extends State<SearchPage> {
         child: InkWell(
           onTap: () {
             _onSearch(jpTitle, fromCurrent: true);
-            FocusScope.of(context).unfocus();
           },
           child: Container(
             alignment: Alignment.topCenter,
