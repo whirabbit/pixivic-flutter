@@ -18,6 +18,7 @@ class ArtistListPage extends StatefulWidget {
 
   ArtistListPage(this.mode, {this.searchKeyWords});
   ArtistListPage.search(this.searchKeyWords, {this.mode = 'search'});
+  ArtistListPage.follow({this.searchKeyWords, this.mode = 'follow'});
 
   final String mode;
   final String searchKeyWords;
