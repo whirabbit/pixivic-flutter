@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'login_page.dart';
 import '../sidepage/bookmark_page.dart';
-import '../sidepage/follow_page.dart';
+// import '../sidepage/follow_page.dart';
 import '../sidepage/history_page.dart';
+import '../page/artist_list_page.dart';
 
 import '../data/common.dart';
 import '../data/texts.dart';
@@ -251,7 +252,7 @@ class UserPageState extends State<UserPage> {
 
   _routeToFollowPage() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => FollowPage()));
+        context, MaterialPageRoute(builder: (context) => ArtistListPage.follow()));
   }
 
   _routeToHistoryPage() {

@@ -11,6 +11,7 @@ import '../data/common.dart';
 import '../data/texts.dart';
 import '../page/artist_page.dart';
 import '../page/pic_detail_page.dart';
+import '../widget/papp_bar.dart';
 
 class ArtistListPage extends StatefulWidget {
   @override
@@ -29,7 +30,7 @@ class _ArtistListPageState extends State<ArtistListPage> {
   ScrollController scrollController;
   int currentPage;
   List jsonList;
-  int followTotalNum;
+  int totalNum;
   bool loadMoreAble;
   bool haveConnected;
 
@@ -43,7 +44,7 @@ class _ArtistListPageState extends State<ArtistListPage> {
       haveConnected = true;
       if (value != null) {
         setState(() {
-          followTotalNum = value.length;
+          totalNum = value.length;
           jsonList = value;
         });
       } else {
@@ -62,39 +63,42 @@ class _ArtistListPageState extends State<ArtistListPage> {
     if (!haveConnected)
       return Lottie.asset('image/loading-box.json');
     else
-      return jsonList != null
-          ? Container(
-              color: Colors.white,
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  controller: scrollController,
-                  itemCount: followTotalNum,
-                  itemBuilder: (BuildContext context, int index) {
-                    return artistCell(jsonList[index], jsonList[index]);
-                  }),
-            )
-          : Container(
-              height: ScreenUtil().setHeight(576),
-              width: ScreenUtil().setWidth(324),
-              color: Colors.white,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Lottie.asset('image/empty-box.json',
-                      repeat: false, height: ScreenUtil().setHeight(100)),
-                  Text(
-                    '这里什么都没有呢',
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: ScreenUtil().setHeight(10),
-                        decoration: TextDecoration.none),
-                  ),
-                  SizedBox(
-                    height: ScreenUtil().setHeight(250),
-                  )
-                ],
+      return Scaffold(
+        appBar: widget.mode == 'follow' ? PappBar(title: '我的关注') : null,
+        body: jsonList != null
+            ? Container(
+                color: Colors.white,
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    controller: scrollController,
+                    itemCount: totalNum,
+                    itemBuilder: (BuildContext context, int index) {
+                      return artistCell(jsonList[index], jsonList[index]);
+                    }),
+              )
+            : Container(
+                height: ScreenUtil().setHeight(576),
+                width: ScreenUtil().setWidth(324),
+                color: Colors.white,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Lottie.asset('image/empty-box.json',
+                        repeat: false, height: ScreenUtil().setHeight(100)),
+                    Text(
+                      '这里什么都没有呢',
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: ScreenUtil().setHeight(10),
+                          decoration: TextDecoration.none),
+                    ),
+                    SizedBox(
+                      height: ScreenUtil().setHeight(250),
+                    )
+                  ],
+                ),
               ),
-            );
+      );
   }
 
   Widget titleCell() {
@@ -330,16 +334,14 @@ class _ArtistListPageState extends State<ArtistListPage> {
 
   _doWhileScrolling() {
     FocusScope.of(context).unfocus();
-    if ((scrollController.position.extentAfter < 890) &&
-        (currentPage < 30) &&
-        loadMoreAble) {
+    if ((scrollController.position.extentAfter < 890) && loadMoreAble) {
       loadMoreAble = false;
       currentPage++;
       print('current page is $currentPage');
       _getJsonList().then((value) {
         if (value != null) {
           jsonList = jsonList + value;
-          followTotalNum = followTotalNum + value.length;
+          totalNum = totalNum + value.length;
           setState(() {
             loadMoreAble = true;
           });
