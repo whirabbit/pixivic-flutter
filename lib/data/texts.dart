@@ -112,3 +112,7 @@ class TextZhPappBar {
   String inputIsNotNum = '搜索ID时请仅输入数字';
   String searchTimeout = '搜索超时，请重试';
 }
+
+class TextUserListPage {
+  String theseUserBookmark = '这些用户收藏了';
+}
