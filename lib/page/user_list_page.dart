@@ -7,8 +7,8 @@ import '../data/common.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:requests/requests.dart';
-import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:lottie/lottie.dart';
+import 'package:bot_toast/bot_toast.dart';
 
 class UserListPage extends StatefulWidget {
   @override
@@ -58,7 +58,7 @@ class _UserListPageState extends State<UserListPage> {
   @override
   Widget build(BuildContext context) {
     if (!haveConnected)
-      return Lottie.asset('image/loading-box.json');
+      return Scaffold(body: Lottie.asset('image/loading-box.json'));
     else
       return Scaffold(
         body: jsonList != null
@@ -70,7 +70,7 @@ class _UserListPageState extends State<UserListPage> {
                       controller: scrollController,
                       itemCount: totalNum,
                       itemBuilder: (BuildContext context, int index) {
-                        return UserCell();
+                        return userCell(jsonList[index]);
                       }),
                 ],
               )
@@ -109,9 +109,21 @@ class _UserListPageState extends State<UserListPage> {
       return Container();
     }
   }
-  
-  Widget UserCell() {
 
+  Widget userCell(Map data) {
+    return ListTile(
+      title: data['username'],
+      subtitle: data['createDate'],
+      leading: CircleAvatar(
+          backgroundColor: Colors.white,
+          radius: ScreenUtil().setHeight(25),
+          backgroundImage: NetworkImage(
+              'https://pic.cheerfun.dev/${data['id']}.png',
+              headers: {'referer': 'https://pixivic.com'})),
+      onTap: () {
+
+      },
+    );
   }
 
   _getJsonList() async {
@@ -119,12 +131,9 @@ class _UserListPageState extends State<UserListPage> {
     List jsonList;
     var requests;
 
-    if (widget.mode == 'search') {
+    if (widget.mode == 'bookmark') {
       url =
-          'https://api.pixivic.com/artists?page=$currentPage&artistName=${widget.searchKeyWords}&pageSize=30';
-    } else if (widget.mode == 'follow') {
-      url =
-          'https://api.pixivic.com/users/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
+          'https://api.pixivic.com/illusts/81902862/bookmarkedUsers?page=$currentPage&pageSize=30';
     }
 
     try {

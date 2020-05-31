@@ -61,7 +61,7 @@ class _ArtistListPageState extends State<ArtistListPage> {
   @override
   Widget build(BuildContext context) {
     if (!haveConnected)
-      return Lottie.asset('image/loading-box.json');
+      return Scaffold(body: Lottie.asset('image/loading-box.json'));
     else
       return Scaffold(
         appBar: widget.mode == 'follow' ? PappBar(title: '我的关注') : null,
