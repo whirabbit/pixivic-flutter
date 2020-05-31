@@ -73,7 +73,7 @@ class _ArtistListPageState extends State<ArtistListPage> {
                     controller: scrollController,
                     itemCount: totalNum,
                     itemBuilder: (BuildContext context, int index) {
-                      return artistCell(jsonList[index], jsonList[index]);
+                      return artistCell(jsonList[index]);
                     }),
               )
             : Container(
@@ -116,12 +116,12 @@ class _ArtistListPageState extends State<ArtistListPage> {
     );
   }
 
-  Widget artistCell(Map cellData, Map picData) {
+  Widget artistCell(Map cellData) {
     return Container(
       padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(10)),
       child: Column(
         children: <Widget>[
-          picsCell(picData),
+          picsCell(cellData),
           Material(
             child: InkWell(
               onTap: () {

@@ -629,7 +629,7 @@ class _PicPageState extends State<PicPage> {
               right: ScreenUtil().setWidth(10),
               top: ScreenUtil().setHeight(5),
             ),
-            prefs.getString('auth') != ''
+            prefs.getString('auth') != '' && picMapData['type'] != 'ad_image'
                 ? Positioned(
                     bottom: ScreenUtil().setHeight(5),
                     right: ScreenUtil().setWidth(5),
