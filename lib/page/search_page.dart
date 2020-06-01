@@ -96,7 +96,7 @@ class _SearchPageState extends State<SearchPage> {
                             ))),
                     Container(
                       width: ScreenUtil().setWidth(324),
-                      height: ScreenUtil().setHeight(546),
+                      height: ScreenUtil().setHeight(491),
                       child: TabBarView(
                         children: <Widget>[
                           Center(
@@ -107,7 +107,7 @@ class _SearchPageState extends State<SearchPage> {
                                   suggestionBar,
                                   Container(
                                       width: ScreenUtil().setWidth(324),
-                                      height: ScreenUtil().setHeight(546),
+                                      height: ScreenUtil().setHeight(491),
                                       child: picPage),
                                 ],
                               ),
@@ -124,7 +124,7 @@ class _SearchPageState extends State<SearchPage> {
             : currentOnLoading
                 ? Lottie.asset('image/loading-box.json')
                 : SizedBox(
-                    height: ScreenUtil().setHeight(576),
+                    height: ScreenUtil().setHeight(491),
                     child: Flex(
                       direction: Axis.vertical,
                       children: <Widget>[

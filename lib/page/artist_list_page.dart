@@ -333,8 +333,9 @@ class _ArtistListPageState extends State<ArtistListPage> {
   }
 
   _doWhileScrolling() {
+    print('artistlistpage scrolling');
     FocusScope.of(context).unfocus();
-    if ((scrollController.position.extentAfter < 890) && loadMoreAble) {
+    if ((scrollController.position.extentAfter < 290) && loadMoreAble) {
       loadMoreAble = false;
       currentPage++;
       print('current page is $currentPage');
