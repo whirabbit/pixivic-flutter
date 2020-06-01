@@ -18,6 +18,7 @@ import 'search_page.dart';
 import '../data/common.dart';
 import '../data/texts.dart';
 import '../widget/papp_bar.dart';
+import '../widget/bookmark_users.dart';
 import '../function/downloadImage.dart';
 
 class PicDetailPage extends StatefulWidget {
@@ -149,46 +150,59 @@ class _PicDetailPageState extends State<PicDetailPage> {
                         ),
                       ]),
                 ),
-                // 阅读量、订阅量、时间
+                // 阅读量、订阅量、时间、关注人
                 Container(
-                  padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
+                  // padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
+                  height: ScreenUtil().setHeight(24),
                   color: Colors.white,
                   width: ScreenUtil().setWidth(324),
-                  alignment: Alignment.centerLeft,
-                  child: Row(
+                  // alignment: Alignment.centerLeft,
+                  child: Stack(
+                    alignment: Alignment.center,
                     children: <Widget>[
-                      Icon(
-                        Icons.remove_red_eye,
-                        size: ScreenUtil().setWidth(10),
+                      Positioned(
+                        left: ScreenUtil().setWidth(10),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.remove_red_eye,
+                              size: ScreenUtil().setWidth(10),
+                            ),
+                            SizedBox(
+                              width: ScreenUtil().setWidth(3),
+                            ),
+                            Text(
+                              widget._picData['totalView'].toString(),
+                              style: smallTextStyle,
+                            ),
+                            SizedBox(
+                              width: ScreenUtil().setWidth(8),
+                            ),
+                            Icon(
+                              Icons.bookmark,
+                              size: ScreenUtil().setWidth(10),
+                            ),
+                            SizedBox(
+                              width: ScreenUtil().setWidth(3),
+                            ),
+                            Text(
+                              widget._picData['totalBookmarks'].toString(),
+                              style: smallTextStyle,
+                            ),
+                            SizedBox(
+                              width: ScreenUtil().setWidth(12),
+                            ),
+                            Text(
+                              widget._picData['createDate'].toString(),
+                              style: smallTextStyle,
+                            ),
+                          ],
+                        ),
                       ),
-                      SizedBox(
-                        width: ScreenUtil().setWidth(3),
-                      ),
-                      Text(
-                        widget._picData['totalView'].toString(),
-                        style: smallTextStyle,
-                      ),
-                      SizedBox(
-                        width: ScreenUtil().setWidth(8),
-                      ),
-                      Icon(
-                        Icons.bookmark,
-                        size: ScreenUtil().setWidth(10),
-                      ),
-                      SizedBox(
-                        width: ScreenUtil().setWidth(3),
-                      ),
-                      Text(
-                        widget._picData['totalBookmarks'].toString(),
-                        style: smallTextStyle,
-                      ),
-                      SizedBox(
-                        width: ScreenUtil().setWidth(12),
-                      ),
-                      Text(
-                        widget._picData['createDate'].toString(),
-                        style: smallTextStyle,
-                      ),
+                      Positioned(
+                        right: ScreenUtil().setWidth(10),
+                        child: BookmarkUsers(widget._picData['id'])
+                      )
                     ],
                   ),
                 ),
@@ -273,7 +287,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
           Center(
             child: Container(
                 width: ScreenUtil().setWidth(324),
-                height: ScreenUtil().setHeight(439),
+                height: ScreenUtil().setHeight(485),
                 color: Colors.white,
                 child: PicPage.related(
                   relatedId: widget._picData['id'],
@@ -568,7 +582,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                       throw 'Could not launch $url';
                     }
                     Navigator.of(context).pop();
-                    Navigator.of(context).pop();
+                    // Navigator.of(context).pop();
                   },
                 ),
               ],
