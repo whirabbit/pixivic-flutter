@@ -311,6 +311,7 @@ class _ArtistListPageState extends State<ArtistListPage> {
 
   _routeToArtistPage(Map data) {
     bool isFollowed;
+    // 后端数据错误时，默认用 false 替换
     if (data['isFollowed'] == null) {
       isFollowed = false;
     } else {
