@@ -17,12 +17,15 @@ class ArtistListPage extends StatefulWidget {
   @override
   _ArtistListPageState createState() => _ArtistListPageState();
 
-  ArtistListPage(this.mode, {this.searchKeyWords});
-  ArtistListPage.search(this.searchKeyWords, {this.mode = 'search'});
-  ArtistListPage.follow({this.searchKeyWords, this.mode = 'follow'});
+  ArtistListPage(this.mode, {this.searchKeyWords, this.userId});
+  ArtistListPage.search(this.searchKeyWords, {this.mode = 'search', this.userId});
+  ArtistListPage.follow({this.searchKeyWords, this.mode = 'follow', this.userId});
+  ArtistListPage.userFollow(
+      {this.searchKeyWords, this.mode = 'userfollow', @required this.userId});
 
   final String mode;
   final String searchKeyWords;
+  final int userId;
 }
 
 class _ArtistListPageState extends State<ArtistListPage> {
@@ -276,6 +279,9 @@ class _ArtistListPageState extends State<ArtistListPage> {
     } else if (widget.mode == 'follow') {
       url =
           'https://api.pixivic.com/users/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
+    } else if (widget.mode == 'userfollow') {
+      url =
+          'https://api.pixivic.com/users/${widget.userId}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
     }
 
     try {

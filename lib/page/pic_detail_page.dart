@@ -633,14 +633,14 @@ class _PicDetailPageState extends State<PicDetailPage> {
 
   _onTopOfPicpage() {
     double position =
-        scrollController.position.extentBefore - ScreenUtil().setHeight(250);
+        scrollController.position.extentBefore - ScreenUtil().setHeight(450);
     scrollController.animateTo(position,
         duration: Duration(milliseconds: 400), curve: Curves.easeInOut);
   }
 
   _onStartOfPicpage() {
     double position =
-        scrollController.position.extentBefore + ScreenUtil().setHeight(450);
+        scrollController.position.extentBefore + ScreenUtil().setHeight(350);
     scrollController.animateTo(position,
         duration: Duration(milliseconds: 400), curve: Curves.easeInOut);
   }

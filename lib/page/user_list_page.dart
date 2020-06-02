@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 
 import '../data/texts.dart';
 import '../data/common.dart';
+import '../widget/papp_bar.dart';
+import './user_detail_page.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:requests/requests.dart';
@@ -58,7 +60,7 @@ class _UserListPageState extends State<UserListPage> {
   }
 
   @override
-  void dispose() { 
+  void dispose() {
     scrollController.removeListener(_doWhileScrolling);
     scrollController.dispose();
     super.dispose();
@@ -70,19 +72,17 @@ class _UserListPageState extends State<UserListPage> {
       return Scaffold(body: Lottie.asset('image/loading-box.json'));
     else
       return Scaffold(
+        appBar: PappBar(
+          title: '这些用户也关注了',
+        ),
         body: jsonList != null
-            ? ListView(
-                children: <Widget>[
-                  title(),
-                  ListView.builder(
-                      shrinkWrap: true,
-                      controller: scrollController,
-                      itemCount: totalNum,
-                      itemBuilder: (BuildContext context, int index) {
-                        return userCell(jsonList[index]);
-                      }),
-                ],
-              )
+            ? ListView.builder(
+                shrinkWrap: true,
+                controller: scrollController,
+                itemCount: totalNum,
+                itemBuilder: (BuildContext context, int index) {
+                  return userCell(jsonList[index]);
+                })
             : Container(
                 height: ScreenUtil().setHeight(576),
                 width: ScreenUtil().setWidth(324),
@@ -127,7 +127,8 @@ class _UserListPageState extends State<UserListPage> {
         data['username'],
         style: TextStyle(fontSize: 14),
       ),
-      subtitle: Text(DateFormat("dd-MM-yyyy").format(DateTime.parse(data['createDate'])),
+      subtitle: Text(
+          DateFormat("dd-MM-yyyy").format(DateTime.parse(data['createDate'])),
           style: TextStyle(fontSize: 12, color: Colors.grey)),
       leading: CircleAvatar(
           backgroundColor: Colors.white,
@@ -135,7 +136,11 @@ class _UserListPageState extends State<UserListPage> {
           backgroundImage: NetworkImage(
               'https://pic.cheerfun.dev/${data['userId'].toString()}.png',
               headers: {'referer': 'https://pixivic.com'})),
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                UserDetailPage(data['userId'], data['username'])));
+      },
     );
   }
 
@@ -174,7 +179,6 @@ class _UserListPageState extends State<UserListPage> {
   }
 
   _doWhileScrolling() {
-    print('userlistpage scrolling');
     if ((scrollController.position.extentAfter < 590) && loadMoreAble) {
       loadMoreAble = false;
       currentPage++;

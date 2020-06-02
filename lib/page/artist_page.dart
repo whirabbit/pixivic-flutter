@@ -245,9 +245,9 @@ class _ArtistPageState extends State<ArtistPage> {
     return ('finished');
   }
 
-  void _onTopOfPicpage() {
+  _onTopOfPicpage() {
     double position =
-        scrollController.position.extentBefore - ScreenUtil().setHeight(250);
+        scrollController.position.extentBefore - ScreenUtil().setHeight(350);
     scrollController.animateTo(position,
         duration: Duration(milliseconds: 400), curve: Curves.easeInOut);
   }
