@@ -170,6 +170,21 @@ class PicPage extends StatefulWidget {
     this.onPageStart,
   });
 
+  PicPage.userdetail({
+    this.searchKeywords,
+    this.picDate,
+    this.picMode,
+    this.jsonMode = 'userdetail',
+    this.relatedId,
+    @required this.userId,
+    this.spotlightId,
+    this.isManga = false,
+    this.artistId,
+    this.onPageScrolling,
+    this.onPageTop,
+    this.onPageStart,
+  });
+
   final String picDate;
   final String picMode;
   final num relatedId;
@@ -427,6 +442,14 @@ class _PicPageState extends State<PicPage> {
     } else if (widget.jsonMode == 'oldhistory') {
       url =
           'https://api.pixivic.com/users/${prefs.getInt('id').toString()}/oldIllustHistory?page=$currentPage&pageSize=30';
+    } else if (widget.jsonMode == 'userdetail') {
+      if (!widget.isManga) {
+        url =
+            'https://api.pixivic.com/users/${widget.userId}/bookmarked/illust?page=1&pageSize=30';
+      } else {
+        url =
+            'https://api.pixivic.com/users/${widget.userId}/manga?page=1&pageSize=30';
+      }
     }
 
     try {
@@ -492,7 +515,9 @@ class _PicPageState extends State<PicPage> {
       }
     }
 
-    if (widget.jsonMode == 'related' || widget.jsonMode == 'artist') {
+    if (widget.jsonMode == 'related' ||
+        widget.jsonMode == 'artist' ||
+        widget.jsonMode == 'userdetail') {
       if (scrollController.position.extentBefore == 0 &&
           scrollController.position.userScrollDirection ==
               ScrollDirection.forward) {
