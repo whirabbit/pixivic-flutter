@@ -86,7 +86,12 @@ class _UserDetailPageState extends State<UserDetailPage> {
                             style: TextStyle(color: Colors.blue[300]),
                           ),
                           onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => ArtistListPage.userFollow(userId: widget.userId)));
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => Scaffold(
+                                      appBar: PappBar(title: '${widget.name}的关注'),
+                                      body: ArtistListPage.userFollow(
+                                          userId: widget.userId),
+                                    )));
                           },
                         ),
                       )
