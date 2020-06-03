@@ -37,31 +37,32 @@ class _SearchPageState extends State<SearchPage> {
   GlobalKey<PappBarState> pappbarKey = GlobalKey();
   TextZhSearchPage text = TextZhSearchPage();
 
-  bool currentOnLoading = true;
+  bool currentOnLoading = true;   //搜索趋势
   int currentNum = 60;
   List currentTags;
 
   GlobalKey<SuggestionBarState> _suggestionBarKey = GlobalKey();
 
-  List<Tab> tabs = <Tab>[
-    Tab(
-      text: '插画',
-    ),
-    Tab(
-      text: '画师',
-    )
-  ];
+  List<Tab> tabs;
 
   @override
   void initState() {
     searchKeywords = widget.searchKeywordsIn;
     suggestionBar = SuggestionBar(searchKeywords, _onSearch, _suggestionBarKey);
-
+    tabs = <Tab>[
+      Tab(
+        text: '插画',
+      ),
+      Tab(
+        text: '画师',
+      )
+    ];
     if (searchKeywords != '') {
       picPage = PicPage.search(
         searchKeywords: searchKeywords,
         isManga: searchManga,
       );
+      artistListPage = ArtistListPage.search(searchKeywords);
     }
 
     _currentLoad().then((value) {
@@ -172,7 +173,6 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   _onSearch(String value, {bool fromCurrent}) {
-    
     setState(() {
       searchKeywords = value;
       if (value != '')
@@ -180,7 +180,7 @@ class _SearchPageState extends State<SearchPage> {
           searchKeywords: searchKeywords,
           isManga: searchManga,
         );
-        artistListPage = ArtistListPage.search(searchKeywords);
+      artistListPage = ArtistListPage.search(searchKeywords);
     });
     pappbarKey.currentState.changeSearchKeywords(value);
     if (fromCurrent != null && fromCurrent)
