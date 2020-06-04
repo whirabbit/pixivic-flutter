@@ -46,9 +46,26 @@ class DownloadImage {
       var response = await Requests.get(url,
           headers: {'Referer': 'https://app-api.pixiv.net'},
           timeoutSeconds: 180);
-      response.raiseForStatus();
+      // response.raiseForStatus();
       final result = await ImageGallerySaver.saveImage(
           Uint8List.fromList(response.bytes()));
+      print(result);
+      BotToast.showSimpleNotification(title: '下载完成');
+    } catch (e) {
+      BotToast.showSimpleNotification(title: '下载失败,请检查网络');
+      print(e);
+    }
+  }
+
+  _androidDownload() async {
+    BotToast.showSimpleNotification(title: '开始下载,请勿退出应用');
+    try {
+      var response = await Requests.get(url,
+          headers: {'Referer': 'https://app-api.pixiv.net'},
+          timeoutSeconds: 180);
+      // response.raiseForStatus();
+      final result = await ImageGallerySaver.saveImage(
+          Uint8List.fromList(response.bytes()), );
       print(result);
       BotToast.showSimpleNotification(title: '下载完成');
     } catch (e) {
@@ -86,7 +103,7 @@ class DownloadImage {
     return true;
   }
 
-  _androidDownload() async {
+  _androidDownloadWithFlutterDownloader() async {
     BotToast.showSimpleNotification(title: '开始下载');
     
     final Directory directory = await getExternalStorageDirectory();

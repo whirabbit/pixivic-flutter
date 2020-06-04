@@ -74,12 +74,12 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isPageScrolling = false;
   var _pageController = PageController(initialPage: 0);
 
-  DateTime _picDate = DateTime.now().subtract(Duration(days: 3));
+  DateTime _picDate = DateTime.now().subtract(Duration(hours: 39));  //当前时间，初始化时默认最新时间
   String _picDateStr = DateFormat('yyyy-MM-dd')
-      .format(DateTime.now().subtract(Duration(days: 3)));
-  String _picMode = 'day';
-  DateTime _picLastDate = DateTime.now().subtract(Duration(days: 3));
-  DateTime _picFirstDate = DateTime(2008, 1, 1);
+      .format(DateTime.now().subtract(Duration(hours: 39)));
+  String _picMode = 'day';                                 
+  DateTime _picLastDate = DateTime.now().subtract(Duration(hours: 39));  //日历显示的最新时间
+  DateTime _picFirstDate = DateTime(2008, 1, 1);    //日历显示的最早时间
 
   // GlobalKey<MenuButtonState> _menuButtonKey = GlobalKey();
   // GlobalKey<MenuListState> _menuListKey = GlobalKey();
