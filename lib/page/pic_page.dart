@@ -374,8 +374,8 @@ class _PicPageState extends State<PicPage> {
     } else {
       return Container(
           padding: EdgeInsets.only(
-              left: ScreenUtil().setWidth(5.5),
-              right: ScreenUtil().setWidth(5.5)),
+              left: ScreenUtil().setWidth(5),
+              right: ScreenUtil().setWidth(5)),
           color: Colors.grey[50],
           child: StaggeredGridView.countBuilder(
             controller: scrollController,
@@ -384,8 +384,8 @@ class _PicPageState extends State<PicPage> {
             itemCount: picTotalNum,
             itemBuilder: (BuildContext context, int index) => imageCell(index),
             staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-            mainAxisSpacing: 4.0,
-            crossAxisSpacing: 4.0,
+            mainAxisSpacing: 0.0,
+            crossAxisSpacing: 0.0,
           ));
     }
   }
@@ -577,8 +577,8 @@ class _PicPageState extends State<PicPage> {
     else
       return Container(
         padding: EdgeInsets.only(
-          left: ScreenUtil().setWidth(4),
-          right: ScreenUtil().setWidth(4),
+          left: ScreenUtil().setWidth(5),
+          right: ScreenUtil().setWidth(5),
           top: ScreenUtil().setWidth(10),
         ),
         child: Stack(
