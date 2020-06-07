@@ -33,7 +33,7 @@ class DownloadImage {
 
     if (platform == 'ios')
       _iOSDownload();
-    else if (platform == 'android') _androidDownload();
+    else if (platform == 'android') _androidDownloadWithFlutterDownloader();
   }
 
   void dispose() {
@@ -106,10 +106,12 @@ class DownloadImage {
   _androidDownloadWithFlutterDownloader() async {
     BotToast.showSimpleNotification(title: '开始下载');
     
-    final Directory directory = await getExternalStorageDirectory();
-
+    // final Directory directory = await getExternalStorageDirectory();
+    
+    // final Directory picDirFolder =
+    //     Directory('${directory.path}${Platform.pathSeparator}pixivic_images');
     final Directory picDirFolder =
-        Directory('${directory.path}${Platform.pathSeparator}pixivic_images');
+        Directory('${Platform.pathSeparator}storage${Platform.pathSeparator}emulated${Platform.pathSeparator}0${Platform.pathSeparator}pixivic');
     // print(picDirFolder.path);
     if (!await picDirFolder.exists()) {
       print('creating folder');
@@ -124,7 +126,6 @@ class DownloadImage {
     ).catchError((onError) {
       print(onError);
       BotToast.showSimpleNotification(title: '下载失败,请检查网络');
-
       return false;
     });
   }
