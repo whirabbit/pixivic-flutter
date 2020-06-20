@@ -122,6 +122,7 @@ class LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   modeIsLogin ? loginButton() : registerButton(),
+                  forgetPasswordButton(),
                   modeButton(),
                 ],
               ),
@@ -308,6 +309,54 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
+  // 忘记密码按钮
+  Widget forgetPasswordButton() {
+    TextEditingController controller = TextEditingController();
+    return Container(
+      padding: EdgeInsets.only(left: ScreenUtil().setWidth(25)),
+      child: GestureDetector(
+        onTap: () {
+          showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                    title: Text(texts.forgetPasswordTitle),
+                    content: TextField(
+                      autofocus: true,
+                      controller: controller,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.only(
+                              left: 15, bottom: 11, top: 11, right: 15),
+                          hintText: texts.mailForForget),
+                    ),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text(texts.mailForForgetCancel),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      FlatButton(
+                        child: Text(texts.mailForForgetSubmit),
+                        onPressed: () {
+                          _submitMailForForget(controller.text);
+                        },
+                      ),
+                    ],
+                  ));
+        },
+        child: Text(
+          texts.forgetPassword,
+          style: TextStyle(color: Colors.blueAccent[200]),
+        ),
+      ),
+    );
+  }
+
   _getVerificationCode() async {
     var r = await Requests.get("https://api.pixivic.com/verificationCode");
     r.raiseForStatus();
@@ -359,5 +408,26 @@ class LoginPageState extends State<LoginPage> {
       default:
         print('loginpage mode pramater error');
     }
+  }
+
+  _submitMailForForget(String mail) async {
+    String url =
+        'https://api.pixivic.com/users/emails/$mail/resetPasswordEmail';
+    var r = await Requests.get(url);
+    print(r.content());
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              content: Text(jsonDecode(r.content())['message']),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text(texts.sure),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    if (r.statusCode == 200) Navigator.of(context).pop();
+                  },
+                )
+              ],
+            ));
   }
 }
