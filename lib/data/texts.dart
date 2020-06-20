@@ -32,6 +32,12 @@ class TextZhLoginPage {
   String registerMode = '没有账户？';
   String registerFailed = '注册失败，请检查网络';
   String registerSucceed = '注册成功，返回登录页面';
+  String forgetPassword = '忘记密码？';
+  String forgetPasswordTitle = '重置密码';
+  String mailForForget = '输入注册时的邮箱';
+  String mailForForgetSubmit = '提交';
+  String mailForForgetCancel = '取消';
+  String sure = '确定';
   String errorPwdNotSame = '两次输入的密码不一致，请检查';
   String errorNameUsed = '此用户名已有人使用，请进行更换';
   String errorEmail = '邮箱格式输入错误，请检查';

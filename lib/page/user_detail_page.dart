@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pixivic/page/pic_page.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 
-import '../data/texts.dart';
+// import '../data/texts.dart';
 import '../widget/papp_bar.dart';
 import './artist_list_page.dart';
 
