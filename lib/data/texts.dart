@@ -127,4 +127,5 @@ class TextZhCommentCell {
   String comment = '评论';
   String reply = '回复';
   String addComment = '添加评论';
+  String addCommentHint = '添加公开评论';
 }

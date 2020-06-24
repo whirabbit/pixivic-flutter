@@ -8,6 +8,7 @@ import 'package:lottie/lottie.dart';
 
 import '../data/common.dart';
 import '../data/texts.dart';
+import '../page/comment_list_page.dart';
 
 class CommentCell extends StatefulWidget {
   @override
@@ -20,7 +21,8 @@ class CommentCell extends StatefulWidget {
 
 class _CommentCellState extends State<CommentCell> {
   TextZhCommentCell texts = TextZhCommentCell();
-  List jsonData;
+  List commentJsonData;
+  CommentListPage commentListPage;
 
   @override
   void initState() {
@@ -49,18 +51,49 @@ class _CommentCellState extends State<CommentCell> {
               ),
             ),
           ),
-          jsonData == null
-              ? Lottie.asset('image/comment.json',
-                  repeat: false, height: ScreenUtil().setHeight(40))
-              : showFirstComment()
+          commentJsonData == null ? showNoComment() : showFirstComment()
         ],
       ),
     );
   }
 
+  Widget showNoComment() {
+    return Column(
+      children: <Widget>[
+        Lottie.asset('image/comment.json',
+            repeat: false, height: ScreenUtil().setHeight(45)),
+        SizedBox(
+          height: ScreenUtil().setHeight(12),
+        ),
+        SizedBox(
+          width: ScreenUtil().setWidth(200),
+          child: FlatButton(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            color: Colors.blueGrey[200],
+            child: Text(
+              texts.addComment,
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => CommentListPage(
+                          comments: null,
+                          illustId: widget.id,
+                          isReply: true,
+                        )),
+              );
+            },
+          ),
+        )
+      ],
+    );
+  }
+
   Widget showFirstComment() {
     String avaterUrl =
-        'https://pic.cheerfun.dev/${jsonData[0]['replyFrom']}.png';
+        'https://pic.cheerfun.dev/${commentJsonData[0]['replyFrom']}.png';
     print(avaterUrl);
     return Container(
       padding: EdgeInsets.only(
@@ -68,69 +101,100 @@ class _CommentCellState extends State<CommentCell> {
       alignment: Alignment.centerLeft,
       child: Column(
         children: <Widget>[
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(
-                  right: ScreenUtil().setWidth(8),
-                ),
-                child: CircleAvatar(
-                    // backgroundColor: Colors.white,
-                    radius: ScreenUtil().setHeight(14),
-                    backgroundImage: NetworkImage(avaterUrl,
-                        headers: {'referer': 'https://pixivic.com'})),
-              ),
-              Column(
+          Material(
+            color: Colors.white,
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => CommentListPage(
+                            comments: null,
+                            illustId: widget.id,
+                          )),
+                );
+              },
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(height: ScreenUtil().setHeight(5)),
-                  Text(
-                    jsonData[0]['replyFromName'],
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  Text(
-                    jsonData[0]['content'],
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                  ),
                   Container(
                     padding: EdgeInsets.only(
-                      top: ScreenUtil().setHeight(4),
+                      right: ScreenUtil().setWidth(8),
                     ),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          DateFormat("yyyy-MM-dd").format(
-                              DateTime.parse(jsonData[0]['createDate'])),
-                          strutStyle: StrutStyle(
-                            fontSize: 12,
-                            height: ScreenUtil().setWidth(1.3),
-                          ),
-                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                    child: CircleAvatar(
+                        // backgroundColor: Colors.white,
+                        radius: ScreenUtil().setHeight(14),
+                        backgroundImage: NetworkImage(avaterUrl,
+                            headers: {'referer': 'https://pixivic.com'})),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(height: ScreenUtil().setHeight(5)),
+                      Text(
+                        commentJsonData[0]['replyFromName'],
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      Text(
+                        commentJsonData[0]['content'],
+                        style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(
+                          top: ScreenUtil().setHeight(4),
                         ),
-                        SizedBox(
-                          width: ScreenUtil().setWidth(5),
-                        ),
-                        GestureDetector(
-                          child: Text(
-                            texts.reply,
-                            strutStyle: StrutStyle(
-                              fontSize: 12,
-                              height: ScreenUtil().setWidth(1.3),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              DateFormat("yyyy-MM-dd").format(DateTime.parse(
+                                  commentJsonData[0]['createDate'])),
+                              strutStyle: StrutStyle(
+                                fontSize: 12,
+                                height: ScreenUtil().setWidth(1.3),
+                              ),
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 12),
                             ),
-                            style: TextStyle(
-                                color: Colors.blue[600], fontSize: 12),
-                          ),
-                        )
-                      ],
-                    ),
-                  )
+                            SizedBox(
+                              width: ScreenUtil().setWidth(5),
+                            ),
+                            GestureDetector(
+                              child: Text(
+                                texts.reply,
+                                strutStyle: StrutStyle(
+                                  fontSize: 12,
+                                  height: ScreenUtil().setWidth(1.3),
+                                ),
+                                style: TextStyle(
+                                    color: Colors.blue[600], fontSize: 12),
+                              ),
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          CommentListPage.reply(
+                                            comments: commentJsonData,
+                                            illustId: widget.id,
+                                            isReply: true,
+                                            parentId: commentJsonData[0]['id'],
+                                            replyToName: commentJsonData[0]
+                                                ['replyFromName'],
+                                            replyToId: commentJsonData[0]
+                                                ['replyFrom'],
+                                          )),
+                                );
+                              },
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ],
               ),
-            ],
+            ),
           ),
           SizedBox(
-            height: ScreenUtil().setHeight(10),
+            height: ScreenUtil().setHeight(5),
           ),
           SizedBox(
             width: ScreenUtil().setWidth(200),
@@ -142,7 +206,16 @@ class _CommentCellState extends State<CommentCell> {
                 texts.addComment,
                 style: TextStyle(color: Colors.white),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => CommentListPage(
+                            comments: commentJsonData,
+                            illustId: widget.id,
+                            isReply: true,
+                          )),
+                );
+              },
             ),
           )
         ],
@@ -155,8 +228,11 @@ class _CommentCellState extends State<CommentCell> {
     var dio = Dio();
     Response response = await dio.get(url);
     if (response.data['data'] != null) {
+      print(response.data);
       setState(() {
-        jsonData = response.data['data'];
+        commentJsonData = response.data['data'];
+        commentJsonData[0]['content'] =
+            commentJsonData[0]['content'].replaceAll('\n', '');
       });
     }
   }
