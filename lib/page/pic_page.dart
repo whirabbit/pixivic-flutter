@@ -15,6 +15,7 @@ import 'package:flutter_advanced_networkimage/provider.dart';
 import 'pic_detail_page.dart';
 import '../data/common.dart';
 
+
 // 可以作为页面中单个组件或者单独页面使用的pic瀑布流组件,因可以作为页面，故不归为widget
 class PicPage extends StatefulWidget {
   @override

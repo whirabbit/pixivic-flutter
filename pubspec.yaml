@@ -50,6 +50,7 @@ dev_dependencies:
   image_downloader: ^0.19.2
   flutter_launcher_icons: ^0.7.4
   image_gallery_saver: ^1.2.2
+  dio: ^3.0.9
   
 
 flutter_icons:

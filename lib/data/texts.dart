@@ -119,6 +119,12 @@ class TextZhPappBar {
   String searchTimeout = '搜索超时，请重试';
 }
 
-class TextUserListPage {
+class TextZhUserListPage {
   String theseUserBookmark = '这些用户收藏了';
+}
+
+class TextZhCommentCell {
+  String comment = '评论';
+  String reply = '回复';
+  String addComment = '添加评论';
 }
