@@ -19,6 +19,7 @@ import '../data/common.dart';
 import '../data/texts.dart';
 import '../widget/papp_bar.dart';
 import '../widget/bookmark_users.dart';
+import '../widget/comment_cell.dart';
 import '../function/downloadImage.dart';
 
 class PicDetailPage extends StatefulWidget {
@@ -206,7 +207,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                     ],
                   ),
                 ),
-                // 作者信息、订阅图标
+                // 作者信息、关注图标
                 Container(
                   padding: EdgeInsets.all(ScreenUtil().setWidth(7)),
                   color: Colors.white,
@@ -269,6 +270,10 @@ class _PicDetailPageState extends State<PicDetailPage> {
                       )
                     ],
                   ),
+                ),
+                // 评论模块
+                Container(
+                  child: CommentCell(widget._picData['id'],),
                 ),
                 // 相关作品
                 Container(

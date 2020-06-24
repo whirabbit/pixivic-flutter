@@ -25,7 +25,7 @@ class UserListPage extends StatefulWidget {
 }
 
 class _UserListPageState extends State<UserListPage> {
-  TextUserListPage texts;
+  TextZhUserListPage texts = TextZhUserListPage();
   ScrollController scrollController;
   int currentPage;
   List jsonList;
@@ -35,7 +35,6 @@ class _UserListPageState extends State<UserListPage> {
 
   @override
   void initState() {
-    texts = TextUserListPage();
     currentPage = 1;
     haveConnected = false;
     loadMoreAble = true;
