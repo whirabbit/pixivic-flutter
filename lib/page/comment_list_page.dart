@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_screenutil/screenutil.dart';
@@ -40,6 +41,7 @@ class _CommentListPageState extends State<CommentListPage> {
   List commentsList;
   int replyToId;
   String replyToName;
+  ScreenUtil screenUtil = ScreenUtil();
 
   @override
   void initState() {
@@ -121,10 +123,91 @@ class _CommentListPageState extends State<CommentListPage> {
   }
 
   Widget commentParentCell(Map commentAllData) {
-    return Container();
+    bool hasSub = commentAllData['subCommentList'] == null ? false : true;
+
+    return Container(
+        width: screen.setWidth(324),
+        child: Container(
+          padding: EdgeInsets.only(
+              left: screen.setHeight(7), top: screen.setHeight(5)),
+          alignment: Alignment.topLeft,
+          child: Column(),
+        ));
   }
 
   Widget commentSubCell(Map commentEachSubData) {
     return Container();
+  }
+
+  Widget commentBaseCell(Map data) {
+    String avaterUrl = 'https://pic.cheerfun.dev/${data['replyFrom']}.png';
+
+    return Container(
+        child: Column(children: <Widget>[
+      Material(
+          color: Colors.white,
+          child: InkWell(
+              child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                Container(
+                  padding: EdgeInsets.only(
+                    right: ScreenUtil().setWidth(8),
+                  ),
+                  child: CircleAvatar(
+                      // backgroundColor: Colors.white,
+                      radius: ScreenUtil().setHeight(14),
+                      backgroundImage: NetworkImage(avaterUrl,
+                          headers: {'referer': 'https://pixivic.com'})),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: ScreenUtil().setHeight(5)),
+                    Text(
+                      data['replyFromName'],
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    Text(
+                      data['content'],
+                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(
+                        top: ScreenUtil().setHeight(4),
+                      ),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            DateFormat("yyyy-MM-dd")
+                                .format(DateTime.parse(data['createDate'])),
+                            strutStyle: StrutStyle(
+                              fontSize: 12,
+                              height: ScreenUtil().setWidth(1.3),
+                            ),
+                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                          ),
+                          SizedBox(
+                            width: ScreenUtil().setWidth(5),
+                          ),
+                          GestureDetector(
+                            child: Text(
+                              texts.reply,
+                              strutStyle: StrutStyle(
+                                fontSize: 12,
+                                height: ScreenUtil().setWidth(1.3),
+                              ),
+                              style: TextStyle(
+                                  color: Colors.blue[600], fontSize: 12),
+                            ),
+                            onTap: () {},
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                )
+              ])))
+    ]));
   }
 }
