@@ -505,8 +505,13 @@ class PappBarState extends State<PappBar> {
   }
 
   onSearchArtistById() async {
-    if (int.tryParse(searchController.text) == null) {
+    if(prefs.getString('auth') == '') {
+      BotToast.showSimpleNotification(title: texts.pleaseLogin);
+      return false;
+    }
+    else if (int.tryParse(searchController.text) == null) {
       BotToast.showSimpleNotification(title: texts.inputIsNotNum);
+      return false;
     } else {
       CancelFunc cancelLoading = BotToast.showLoading();
       var response = await Requests.get(
@@ -546,8 +551,13 @@ class PappBarState extends State<PappBar> {
   }
 
   onSearchIllustById() async {
-    if (int.tryParse(searchController.text) == null) {
+    if(prefs.getString('auth') == '') {
+      BotToast.showSimpleNotification(title: texts.pleaseLogin);
+      return false;
+    }
+    else if (int.tryParse(searchController.text) == null) {
       BotToast.showSimpleNotification(title: texts.inputIsNotNum);
+      return false;
     } else {
       CancelFunc cancelLoading = BotToast.showLoading();
       var response = await Requests.get(

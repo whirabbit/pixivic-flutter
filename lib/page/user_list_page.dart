@@ -72,7 +72,7 @@ class _UserListPageState extends State<UserListPage> {
     else
       return Scaffold(
         appBar: PappBar(
-          title: '这些用户也关注了',
+          title: texts.theseUserBookmark,
         ),
         body: jsonList != null
             ? ListView.builder(

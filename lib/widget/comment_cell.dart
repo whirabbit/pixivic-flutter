@@ -94,21 +94,21 @@ class _CommentCellState extends State<CommentCell> {
   Widget showFirstComment() {
     String avaterUrl =
         'https://pic.cheerfun.dev/${commentJsonData[0]['replyFrom']}.png';
-    print(avaterUrl);
     return Container(
       padding: EdgeInsets.only(
-          left: ScreenUtil().setHeight(7), top: ScreenUtil().setHeight(5)),
+          left: ScreenUtil().setHeight(7), top: ScreenUtil().setHeight(5), right: ScreenUtil().setHeight(7)), 
       alignment: Alignment.centerLeft,
       child: Column(
         children: <Widget>[
           Material(
             color: Colors.white,
             child: InkWell(
+              // 跳转总回复
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                       builder: (context) => CommentListPage(
-                            comments: null,
+                            comments: commentJsonData,
                             illustId: widget.id,
                           )),
                 );
@@ -134,9 +134,12 @@ class _CommentCellState extends State<CommentCell> {
                         commentJsonData[0]['replyFromName'],
                         style: TextStyle(fontSize: 12),
                       ),
-                      Text(
-                        commentJsonData[0]['content'],
-                        style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                      Container(
+                        width: ScreenUtil().setWidth(235),
+                        child: Text(
+                          commentJsonData[0]['content'],
+                          style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                        ),
                       ),
                       Container(
                         padding: EdgeInsets.only(
@@ -157,6 +160,7 @@ class _CommentCellState extends State<CommentCell> {
                             SizedBox(
                               width: ScreenUtil().setWidth(5),
                             ),
+                            // 回复
                             GestureDetector(
                               child: Text(
                                 texts.reply,
@@ -175,7 +179,7 @@ class _CommentCellState extends State<CommentCell> {
                                             comments: commentJsonData,
                                             illustId: widget.id,
                                             isReply: true,
-                                            parentId: commentJsonData[0]['id'],
+                                            replyParentId: commentJsonData[0]['id'],
                                             replyToName: commentJsonData[0]
                                                 ['replyFromName'],
                                             replyToId: commentJsonData[0]
@@ -228,7 +232,7 @@ class _CommentCellState extends State<CommentCell> {
     var dio = Dio();
     Response response = await dio.get(url);
     if (response.data['data'] != null) {
-      print(response.data);
+      // print(response.data);
       setState(() {
         commentJsonData = response.data['data'];
         commentJsonData[0]['content'] =

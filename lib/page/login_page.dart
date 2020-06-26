@@ -383,7 +383,8 @@ class LoginPageState extends State<LoginPage> {
         setState(() {
           loginOnLoading = false;
           // _userNameController.text = '';
-          _userPasswordController.text = '';
+          // _userPasswordController.text = '';
+          _verificationController.text = '';
         });
         break;
       case 'register':
