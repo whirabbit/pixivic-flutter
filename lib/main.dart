@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -21,6 +23,8 @@ import 'page/center_page.dart';
 
 import 'data/common.dart';
 import 'data/bugly.dart';
+
+import 'function/update.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -74,12 +78,14 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isPageScrolling = false;
   var _pageController = PageController(initialPage: 0);
 
-  DateTime _picDate = DateTime.now().subtract(Duration(hours: 39));  //当前时间，初始化时默认最新时间
+  DateTime _picDate =
+      DateTime.now().subtract(Duration(hours: 39)); //当前时间，初始化时默认最新时间
   String _picDateStr = DateFormat('yyyy-MM-dd')
       .format(DateTime.now().subtract(Duration(hours: 39)));
-  String _picMode = 'day';                                 
-  DateTime _picLastDate = DateTime.now().subtract(Duration(hours: 39));  //日历显示的最新时间
-  DateTime _picFirstDate = DateTime(2008, 1, 1);    //日历显示的最早时间
+  String _picMode = 'day';
+  DateTime _picLastDate =
+      DateTime.now().subtract(Duration(hours: 39)); //日历显示的最新时间
+  DateTime _picFirstDate = DateTime(2008, 1, 1); //日历显示的最早时间
 
   // GlobalKey<MenuButtonState> _menuButtonKey = GlobalKey();
   // GlobalKey<MenuListState> _menuListKey = GlobalKey();
@@ -91,18 +97,34 @@ class _MyHomePageState extends State<MyHomePage> {
   NewPage newPage;
   PappBar pappBar;
 
+  String updateTaskId;
+  String apkPath;
+
   @override
   void initState() {
-    FlutterBugly.init(androidAppId: buglyAndroid, iOSAppId: buglyIos).then((onValue) {
+    FlutterBugly.init(
+            androidAppId: buglyAndroid,
+            iOSAppId: buglyIos,
+            autoCheckUpgrade: false)
+        .then((onValue) {
       print('FlutterBugly: ${onValue.isSuccess}');
       print('FlutterBugly: ${onValue.appId}');
       print('FlutterBugly: ${onValue.message}');
-      FlutterBugly.setUserId('pixivic 0.0.1');
+      FlutterBugly.setUserId('pixivic 0.0.4');
+      if (Theme.of(context).platform == TargetPlatform.android) {
+        FlutterBugly.checkUpgrade().then((UpgradeInfo info) {
+          print('==============================');
+          if (info != null && info.id != null) {
+            UpdateApp().showUpdateDialog(
+                context, info.versionName, info.newFeature, info.apkUrl);
+          }
+        });
+      }
     });
     FlutterDownloader.initialize(debug: false).then((value) {
       FlutterDownloader.cancelAll();
     });
-    
+
     initData().then((value) {
       setState(() {
         picPage = PicPage.home(
@@ -169,14 +191,14 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void _onNavbarTap(int index) {
+  _onNavbarTap(int index) {
     // print('tap $index');
     setState(() {
       _pageController.jumpToPage(index);
     });
   }
 
-  void _onPageChanged(int index) {
+  _onPageChanged(int index) {
     setState(() {
       // print('_onPageChanged: $index');
       _currentIndex = index;
@@ -200,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
   //   _menuListKey.currentState.flipActive();
   // }
 
-  void _onOptionCellTap(String parameter) async {
+  _onOptionCellTap(String parameter) async {
     if (parameter == 'new_date') {
       DateTime newDate = await showDatePicker(
         context: context,
@@ -295,4 +317,6 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
   }
+
+  
 }
