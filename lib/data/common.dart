@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:bot_toast/bot_toast.dart';
 
 import '../page/new_page.dart';
 import '../page/user_page.dart';
@@ -30,10 +34,15 @@ List<String> keywordsString = [
   'location',
 ];
 List<String> keywordsInt = ['id', 'star', 'sanityLevel'];
-List<String> keywordsBool = ['isBindQQ', 'isCheckEmail', 'isBackTipsKnown', 'isPicTipsKnown'];
+List<String> keywordsBool = [
+  'isBindQQ',
+  'isCheckEmail',
+  'isBackTipsKnown',
+  'isPicTipsKnown'
+];
 
 GlobalKey<NewPageState> newPageKey;
-GlobalKey<UserPageState> userPageKey; 
+GlobalKey<UserPageState> userPageKey;
 
 // 初始化数据
 Future initData() async {
@@ -73,3 +82,5 @@ Future initData() async {
   } else
     logout(isInit: true);
 }
+
+

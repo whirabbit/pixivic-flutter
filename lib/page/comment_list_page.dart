@@ -60,6 +60,8 @@ class _CommentListPageState extends State<CommentListPage> {
     textEditingController = TextEditingController();
     replyFocus = FocusNode()..addListener(_replyFocusListener);
 
+    _loadComments();
+
     super.initState();
   }
 
@@ -275,10 +277,13 @@ class _CommentListPageState extends State<CommentListPage> {
                                   color: Colors.blue[600], fontSize: 12),
                             ),
                             onTap: () {
-                              replyFocus.requestFocus();
                               replyToId = data['replyFrom'];
                               replyToName = data['replyFromName'];
-                              replyParentId = data['parentId'];
+                              data['parentId'] == 0 ? replyParentId = data['id'] : replyParentId = data['parentId'];
+                              if(replyFocus.hasFocus)
+                                _replyFocusListener();
+                              else 
+                                replyFocus.requestFocus();
                             },
                           )
                         ],
@@ -292,10 +297,12 @@ class _CommentListPageState extends State<CommentListPage> {
 
   _replyFocusListener() {
     if (replyFocus.hasFocus && replyToName != '') {
+      print('on focus');
       setState(() {
         hintText = '@$replyToName:';
       });
-    } else if (!replyFocus.hasFocus && textEditingController.text != '') {
+    } else if (!replyFocus.hasFocus) {
+      print('focus released');
       setState(() {
         replyToId = 0;
         replyToName = '';
@@ -304,6 +311,7 @@ class _CommentListPageState extends State<CommentListPage> {
         // print(textEditingController.text);
       });
     }
+    print('replyParentId now is $replyParentId');
   }
 
   _reply() async {
