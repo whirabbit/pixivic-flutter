@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dio/dio.dart';
 import 'package:lottie/lottie.dart';
 
-import '../data/common.dart';
 import '../data/texts.dart';
 import '../page/comment_list_page.dart';
 
