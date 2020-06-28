@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pixivic/page/pic_page.dart';
@@ -30,7 +31,7 @@ class ArtistPage extends StatefulWidget {
 
 class _ArtistPageState extends State<ArtistPage> {
   bool loginState = prefs.getString('auth') != '' ? true : false;
-  TextZhArtistPage text = TextZhArtistPage();
+  TextZhArtistPage texts = TextZhArtistPage();
   bool isFollowed;
   ScrollController scrollController = ScrollController();
   PappBar pappBar;
@@ -127,6 +128,19 @@ class _ArtistPageState extends State<ArtistPage> {
                             style: normalTextStyle,
                           ),
                           SizedBox(
+                            height: ScreenUtil().setHeight(10),
+                          ),
+                          GestureDetector(
+                            child: Text('ID:${widget.artistId}',
+                                style: smallTextStyle),
+                            onLongPress: () {
+                              Clipboard.setData(ClipboardData(
+                                  text: widget.artistId.toString()));
+                              BotToast.showSimpleNotification(
+                                  title: texts.alreadyCopied);
+                            },
+                          ),
+                          SizedBox(
                             height: ScreenUtil().setHeight(25),
                           ),
                           loginState ? _subscribeButton() : Container(),
@@ -156,7 +170,7 @@ class _ArtistPageState extends State<ArtistPage> {
                           width: ScreenUtil().setWidth(8),
                         ),
                         GestureDetector(
-                            onTap: () async{
+                            onTap: () async {
                               if (await canLaunch(urlTwitter)) {
                                 await launch(urlTwitter);
                               } else {
@@ -300,7 +314,7 @@ class _ArtistPageState extends State<ArtistPage> {
 
   Widget _subscribeButton() {
     bool currentFollowedState = isFollowed;
-    String buttonText = currentFollowedState ? text.followed : text.follow;
+    String buttonText = currentFollowedState ? texts.followed : texts.follow;
 
     return FlatButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
@@ -337,7 +351,7 @@ class _ArtistPageState extends State<ArtistPage> {
         } catch (e) {
           print(e);
           // print(homePicList[widget.index]['artistPreView']['isFollowed']);
-          BotToast.showSimpleNotification(title: text.followError);
+          BotToast.showSimpleNotification(title: texts.followError);
         }
       },
       child: Text(

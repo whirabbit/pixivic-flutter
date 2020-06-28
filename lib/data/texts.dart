@@ -1,6 +1,6 @@
 class TextZhForAboutPage {
   String description =
-      'Just4Fun\nPixivc 出生于2018-10-01，是一位兴趣使然的工具酱。\n她精致（ui统一），敏捷（前后分离&纯js）。\n将提供以下有限的服务：pixiv日排行的浏览与免费高级会员热门排序搜索。她希望能在茫茫互联网留下一些存在的痕迹，翘首以盼大家能通过各大搜索引擎访问她（将有助于提升她的搜索排名），\n搜索关键词：Pixiv\n当前版本: 公测版 V0.0.4 200626 \n有任何使用上的疑问和建议，请反馈于官方群或论坛。\n\n更新内容：\n- 增加了 id 搜索功能的提示\n- 添加了忘记密码入口\n- 添加了评论功能\n- 优化了登录流程';
+      'Just4Fun\nPixivc 出生于2018-10-01，是一位兴趣使然的工具酱。\n她精致（ui统一），敏捷（前后分离&纯js）。\n将提供以下有限的服务：pixiv日排行的浏览与免费高级会员热门排序搜索。她希望能在茫茫互联网留下一些存在的痕迹，翘首以盼大家能通过各大搜索引擎访问她（将有助于提升她的搜索排名），\n搜索关键词：Pixiv\n当前版本: 公测版 V0.0.4 200628 \n有任何使用上的疑问和建议，请反馈于官方群或论坛。\n\n更新内容：\n- 增加登录使用 id 搜索功能的提示\n- 增加了忘记密码入口\n- 增加了评论功能\n- 增加了长按画作复制 id 的选项 \n- 增加了画师页面长按复制 id 功能';
 
   String savePicLabel = '图片的保存';
   String savePic = '在图片详情页中，长按图片即可下载原图';
@@ -61,12 +61,20 @@ class TextZhPicDetailPage {
   String follow = '关注画师';
   String followed = '已关注';
   String followError = '关注失败，请检查网络是否正常';
+  String downloadImage = '下载原图';
+  String requestDownloadAuthority = '请赋予程序下载权限';
+  String jumpToPixivDetail = '跳转pixiv详情';
+  String jumpToPixivArtist = '跳转pixiv画师';
+  String copyIllustId = '拷贝画作id';
+  String copyArtistId = '拷贝画师id';
+  String alreadyCopied = '已拷贝id至剪贴板';
 }
 
 class TextZhArtistPage {
   String follow = '关注画师';
   String followed = '已关注';
   String followError = '关注失败，请检查网络是否正常';
+  String alreadyCopied = '已拷贝id至剪贴板';
 }
 
 class TextZhFollowPage {
@@ -88,8 +96,10 @@ class TextZhCenterPage {
   String policy = '隐私政策';
   String safety = '安全设定';
   String safetyTitle = '安全等级设定';
-  String safetyWarniOS = '注意！！\nPixivic 进行了严格的图片敏感信息过滤，默认安全等级为高等。\n您可以选择使用中高等的安全等级，但请知晓，此等级下展示的更多图片可能包含轻微暴露图片。\n这些图片可能会引起您的反感或不适。\n切换等级后请自行重启应用以更新相应内容';
-  String safetyWarnAndroid = '注意！！\nPixivic 进行了严格的图片敏感信息过滤，默认安全等级为高等。\n由于相关法规规定，应用将默认保持安全等级为高等';
+  String safetyWarniOS =
+      '注意！！\nPixivic 进行了严格的图片敏感信息过滤，默认安全等级为高等。\n您可以选择使用中高等的安全等级，但请知晓，此等级下展示的更多图片可能包含轻微暴露图片。\n这些图片可能会引起您的反感或不适。\n切换等级后请自行重启应用以更新相应内容';
+  String safetyWarnAndroid =
+      '注意！！\nPixivic 进行了严格的图片敏感信息过滤，默认安全等级为高等。\n由于相关法规规定，应用将默认保持安全等级为高等';
   String safetyLevelHigh = '高';
   String safetyLevelLowHigh = '中高';
 }

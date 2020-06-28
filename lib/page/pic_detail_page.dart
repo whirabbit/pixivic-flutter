@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -44,7 +45,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
       color: Colors.black,
       decoration: TextDecoration.none);
   int picTotalNum;
-  TextZhPicDetailPage text = TextZhPicDetailPage();
+  TextZhPicDetailPage texts = TextZhPicDetailPage();
   PappBar pappBar;
 
   ScrollController scrollController = ScrollController();
@@ -201,15 +202,18 @@ class _PicDetailPageState extends State<PicDetailPage> {
                         ),
                       ),
                       Positioned(
-                        right: ScreenUtil().setWidth(10),
-                        child: BookmarkUsers(widget._picData['id'])
-                      )
+                          right: ScreenUtil().setWidth(10),
+                          child: BookmarkUsers(widget._picData['id']))
                     ],
                   ),
                 ),
                 // 作者信息、关注图标
                 Container(
-                  padding: EdgeInsets.all(ScreenUtil().setWidth(7)),
+                  padding: EdgeInsets.only(
+                      top: ScreenUtil().setWidth(13),
+                      bottom: ScreenUtil().setWidth(7),
+                      right: ScreenUtil().setWidth(7),
+                      left: ScreenUtil().setWidth(7)),
                   color: Colors.white,
                   width: ScreenUtil().setWidth(324),
                   alignment: Alignment.centerLeft,
@@ -273,7 +277,9 @@ class _PicDetailPageState extends State<PicDetailPage> {
                 ),
                 // 评论模块
                 Container(
-                  child: CommentCell(widget._picData['id'],),
+                  child: CommentCell(
+                    widget._picData['id'],
+                  ),
                 ),
                 // 相关作品
                 Container(
@@ -310,7 +316,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
     if (picTotalNum == 1) {
       return GestureDetector(
         onLongPress: () {
-          _downloadPic(widget._picData['imageUrls'][0]['original']);
+          _longPressPic(widget._picData['imageUrls'][0]['original']);
         },
         child: Hero(
             tag: 'imageHero' +
@@ -343,7 +349,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onLongPress: () {
-              _downloadPic(widget._picData['imageUrls'][index]['original']);
+              _longPressPic(widget._picData['imageUrls'][index]['original']);
             },
             child: Hero(
                 tag: 'imageHero' +
@@ -425,7 +431,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
 
   Widget _subscribeButton() {
     bool currentFollowedState = widget._picData['artistPreView']['isFollowed'];
-    String buttonText = currentFollowedState ? text.followed : text.follow;
+    String buttonText = currentFollowedState ? texts.followed : texts.follow;
 
     return FlatButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
@@ -461,7 +467,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
         } catch (e) {
           print(e);
           // print(homePicList[widget.index]['artistPreView']['isFollowed']);
-          BotToast.showSimpleNotification(title: text.followError);
+          BotToast.showSimpleNotification(title: texts.followError);
         }
       },
       child: Text(
@@ -528,7 +534,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
     );
   }
 
-  _downloadPic(String url) async {
+  _longPressPic(String url) async {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext buildContext) {
@@ -536,7 +542,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
             child: Wrap(
               children: <Widget>[
                 ListTile(
-                  title: Text('下载原图'),
+                  title: Text(texts.downloadImage),
                   leading: Icon(
                     Icons.cloud_download,
                     color: Colors.orangeAccent,
@@ -551,7 +557,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                         DownloadImage(url, platform);
                       } else {
                         BotToast.showSimpleNotification(
-                            title: '请赋予程序下载权限(｡ŏ_ŏ)');
+                            title: texts.requestDownloadAuthority);
                       }
                     });
 
@@ -559,7 +565,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                   },
                 ),
                 ListTile(
-                  title: Text('跳转pixiv详情'),
+                  title: Text(texts.jumpToPixivDetail),
                   leading: Icon(Icons.image, color: Colors.purple),
                   onTap: () async {
                     String url =
@@ -573,7 +579,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                   },
                 ),
                 ListTile(
-                  title: Text('跳转pixiv画师'),
+                  title: Text(texts.jumpToPixivArtist),
                   leading: Icon(
                     Icons.people,
                     color: Colors.blueAccent,
@@ -586,6 +592,34 @@ class _PicDetailPageState extends State<PicDetailPage> {
                     } else {
                       throw 'Could not launch $url';
                     }
+                    Navigator.of(context).pop();
+                    // Navigator.of(context).pop();
+                  },
+                ),
+                ListTile(
+                  title: Text(texts.copyArtistId),
+                  leading: Icon(
+                    Icons.confirmation_number,
+                    color: Colors.red[300],
+                  ),
+                  onTap: () async {
+                    Clipboard.setData(ClipboardData(
+                        text: widget._picData['artistId'].toString()));
+                    BotToast.showSimpleNotification(title: texts.alreadyCopied);
+                    Navigator.of(context).pop();
+                    // Navigator.of(context).pop();
+                  },
+                ),
+                ListTile(
+                  title: Text(texts.copyIllustId),
+                  leading: Icon(
+                    Icons.confirmation_number,
+                    color: Colors.green[300],
+                  ),
+                  onTap: () async {
+                    Clipboard.setData(
+                        ClipboardData(text: widget._picData['id'].toString()));
+                    BotToast.showSimpleNotification(title: texts.alreadyCopied);
                     Navigator.of(context).pop();
                     // Navigator.of(context).pop();
                   },

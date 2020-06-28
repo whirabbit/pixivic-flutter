@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:bot_toast/bot_toast.dart';
 
 import '../page/new_page.dart';
 import '../page/user_page.dart';
