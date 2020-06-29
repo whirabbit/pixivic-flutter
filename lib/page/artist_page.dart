@@ -225,8 +225,16 @@ class _ArtistPageState extends State<ArtistPage> {
         'https://api.pixivic.com/artists/${widget.artistId}/summary';
 
     try {
-      var requests = await Requests.get(urlId);
-      requests.raiseForStatus();
+      var requests = await Requests.get(urlId,
+          headers: prefs.getString('auth') != ''
+              ? {'authorization': prefs.getString('auth')}
+              : {});
+      if (requests.statusCode == 401) {
+        BotToast.showSimpleNotification(title: texts.needLogin);
+        isDataLoaded = false;
+        return false;
+      }
+
       var jsonList = jsonDecode(requests.content())['data'];
       this.comment = jsonList['comment'].replaceAll("\n", "");
       this.urlTwitter = jsonList['twitterUrl'];
@@ -234,8 +242,10 @@ class _ArtistPageState extends State<ArtistPage> {
       this.numOfBookmarksPublic = jsonList['totalIllustnumOfBookmarksPublic'];
       this.numOfFollower = jsonList['totalFollowUsers'];
 
-      requests = await Requests.get(urlSummary);
-      requests.raiseForStatus();
+      requests = await Requests.get(urlSummary,
+          headers: prefs.getString('auth') != ''
+              ? {'authorization': prefs.getString('auth')}
+              : {});
       jsonList = jsonDecode(requests.content())['data'];
       this.numOfIllust = jsonList['illustSum'].toString();
       this.numOfManga = jsonList['mangaSum'].toString();

@@ -75,6 +75,7 @@ class TextZhArtistPage {
   String followed = '已关注';
   String followError = '关注失败，请检查网络是否正常';
   String alreadyCopied = '已拷贝id至剪贴板';
+  String needLogin = '请登录后再加载画师页面';
 }
 
 class TextZhFollowPage {
