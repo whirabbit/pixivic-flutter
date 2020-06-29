@@ -367,6 +367,8 @@ class _CommentListPageState extends State<CommentListPage> {
       setState(() {
         commentsList = response.data['data'];
       });
+    } else if (response.statusCode == 200 && response.data['data'] == null){
+      print('comments: null but 200');
     } else {
       BotToast.showSimpleNotification(title: response.data['message']);
     }

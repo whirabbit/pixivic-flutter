@@ -10,6 +10,10 @@ PODS:
     - Flutter
   - image_gallery_saver (0.0.1):
     - Flutter
+  - open_file (0.0.1):
+    - Flutter
+  - ota_update (0.0.1):
+    - Flutter
   - path_provider (0.0.1):
     - Flutter
   - path_provider_macos (0.0.1):
@@ -35,6 +39,8 @@ DEPENDENCIES:
   - flutter_downloader (from `.symlinks/plugins/flutter_downloader/ios`)
   - image_downloader (from `.symlinks/plugins/image_downloader/ios`)
   - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
+  - open_file (from `.symlinks/plugins/open_file/ios`)
+  - ota_update (from `.symlinks/plugins/ota_update/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - path_provider_macos (from `.symlinks/plugins/path_provider_macos/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
@@ -60,6 +66,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_downloader/ios"
   image_gallery_saver:
     :path: ".symlinks/plugins/image_gallery_saver/ios"
+  open_file:
+    :path: ".symlinks/plugins/open_file/ios"
+  ota_update:
+    :path: ".symlinks/plugins/ota_update/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
   path_provider_macos:
@@ -86,6 +96,8 @@ SPEC CHECKSUMS:
   flutter_downloader: 058b9c41564a90500f67f3e432e3524613a7fd83
   image_downloader: 73e190d6c9f286f2649554051348d9cb319cd4b3
   image_gallery_saver: 73b3cd8ad9c950c739878af9c311744d1bf5405d
+  open_file: 02eb5cb6b21264bd3a696876f5afbfb7ca4f4b7d
+  ota_update: 025311773f7e5d8a36cf0d4fc1d1694f7bc75958
   path_provider: fb74bd0465e96b594bb3b5088ee4a4e7bb1f2a9d
   path_provider_macos: f760a3c5b04357c380e2fddb6f9db6f3015897e0
   permission_handler: 8278954f2382902f63f00dd8828769c0bd6d511b
