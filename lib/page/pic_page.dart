@@ -456,15 +456,17 @@ class _PicPageState extends State<PicPage> {
     try {
       if (prefs.getString('auth') == '') {
         var requests = await Requests.get(url);
-        requests.raiseForStatus();
+        // requests.raiseForStatus();
         jsonList = jsonDecode(requests.content())['data'];
+        if(requests.statusCode == 401)
+          BotToast.showSimpleNotification(title: '请登录后再重新加载画作');
       } else {
         Map<String, String> headers = {
           'authorization': prefs.getString('auth')
         };
         var requests = await Requests.get(url, headers: headers);
         // print(requests.content());
-        requests.raiseForStatus();
+        // requests.raiseForStatus();
         jsonList = jsonDecode(requests.content())['data'];
       }
       if (jsonList == null)
