@@ -26,7 +26,7 @@ class TextZhLoginPage {
   String buttonLoginLoading = '登录中';
   String buttonRegisterLoading = '注册中';
   String verification = '验证码';
-  String loginSucceed = '登陆成功(* ॑ᐜ ॑*)';
+  String loginSucceed = '登录成功';
   String loginFailed = '登录失败，请检查输入信息和网络';
   String loginMode = '已有账户？';
   String registerMode = '没有账户？';
@@ -44,6 +44,7 @@ class TextZhLoginPage {
   String errorNameLength = '用户名长度需4-10位';
   String errorPwdLength = '密码长度需8-20位';
   String errorGetVerificationCode = '无法获取验证码';
+  String notLogin = '用户未登录，请登录后使用该功能';
 }
 
 class TextZhUserPage {
@@ -129,6 +130,7 @@ class TextZhPappBar {
   String inputIsNotNum = '搜索ID时请仅输入数字';
   String searchTimeout = '搜索超时，请重试';
   String pleaseLogin = '请登录后再进行搜索';
+  String noImageSelected = '请选择图像以使用以图搜图功能';
 }
 
 class TextZhUserListPage {
@@ -142,4 +144,13 @@ class TextZhCommentCell {
   String addCommentHint = '添加公开评论';
   String commentCannotBeBlank = '发表的评论不得为空';
   String pleaseLogin = '请登录后再进行评论';
+}
+
+class TextZhUploadImage {
+  String unkownError = '遇到了未知的错误，请稍后重试';
+  String invalidKey = '无效的API';
+  String dailyLimit = '搜图次数已达24小时上限';
+  String shortLimit = '搜图过于频繁，请等待半分钟';
+  String fileTooLarge = '图片文件过大，请压缩后重试';
+  String similarityLow = '结果无匹配或匹配度过低';
 }

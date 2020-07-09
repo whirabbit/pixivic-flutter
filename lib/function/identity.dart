@@ -168,4 +168,15 @@ checkRegisterInfo(
   }
 }
 
+hasLogin() {
+  if(prefs.getString('auth') == '') {
+    BotToast.showSimpleNotification(title: TextZhLoginPage().notLogin);
+    return false;
+  } else {
+    return true;
+  }
+    
+
+}
+
 changeAvatar() {}

@@ -114,7 +114,6 @@ class _SearchPageState extends State<SearchPage> {
                               ),
                             ),
                           ),
-                          // Container(),
                           artistListPage,
                         ],
                       ),
@@ -125,7 +124,7 @@ class _SearchPageState extends State<SearchPage> {
             : currentOnLoading
                 ? Lottie.asset('image/loading-box.json')
                 : SizedBox(
-                    height: ScreenUtil().setHeight(491),
+                    height: ScreenUtil().setHeight(521),
                     child: Flex(
                       direction: Axis.vertical,
                       children: <Widget>[
@@ -205,7 +204,7 @@ class _SearchPageState extends State<SearchPage> {
       BotToast.showSimpleNotification(title: text.connectError);
     });
 
-    response.raiseForStatus();
+    // response.raiseForStatus();
     if (response.statusCode == 200) {
       currentTags = jsonDecode(response.content())['data'];
       return false;
