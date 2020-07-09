@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:file_picker/file_picker.dart';
 
 import '../data/texts.dart';
 import '../data/common.dart';
 import '../page/artist_page.dart';
 import '../page/pic_detail_page.dart';
+import '../function/uploadImage.dart';
+import '../function/identity.dart';
 
 class PappBar extends StatefulWidget implements PreferredSizeWidget {
   //删去
@@ -230,15 +234,15 @@ class PappBarState extends State<PappBar> {
                   ),
                 ),
                 Container(
-                  width: ScreenUtil().setWidth(265),
+                  width: ScreenUtil().setWidth(240),
                   height: ScreenUtil().setHeight(25),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     color: Color(0xFFF4F3F3F3),
                   ),
                   margin: EdgeInsets.only(
-                    left: ScreenUtil().setWidth(13),
-                    right: ScreenUtil().setWidth(12),
+                    left: ScreenUtil().setWidth(10),
+                    right: ScreenUtil().setWidth(8),
                   ),
                   child: TextField(
                     controller: searchController,
@@ -257,11 +261,32 @@ class PappBarState extends State<PappBar> {
                       }
                     },
                     decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: '要搜点什么呢',
-                        contentPadding: EdgeInsets.only(
-                            left: ScreenUtil().setWidth(8),
-                            bottom: ScreenUtil().setHeight(9))),
+                      border: InputBorder.none,
+                      hintText: '要搜点什么呢',
+                      contentPadding: EdgeInsets.only(
+                          left: ScreenUtil().setWidth(8),
+                          bottom: ScreenUtil().setHeight(9)),
+                    ),
+                  ),
+                ),
+                Container(
+                  child: InkWell(
+                    onTap: () async {
+                      bool loginState = hasLogin();
+                      if (loginState) {
+                        File file =
+                            await FilePicker.getFile(type: FileType.image);
+                        if (file != null) {
+                          uploadImageToSaucenao(file, context);
+                        } else {
+                          BotToast.showSimpleNotification(
+                              title: texts.noImageSelected);
+                        }
+                      }
+                    },
+                    child: Icon(
+                      Icons.camera_enhance,
+                    ),
                   ),
                 ),
               ],
@@ -476,7 +501,8 @@ class PappBarState extends State<PappBar> {
 
   void searchFocusNodeListener() {
     print('searchFocusNodeListener is Lisetning');
-    print('Search TextEdit FocusNode: ${searchFocusNode.hasFocus}'); // https://stackoverflow.com/questions/54428029/flutter-how-to-clear-text-field-on-focus
+    print(
+        'Search TextEdit FocusNode: ${searchFocusNode.hasFocus}'); // https://stackoverflow.com/questions/54428029/flutter-how-to-clear-text-field-on-focus
     if (searchFocusNode.hasFocus == false) {
       setState(() {
         searchBarHeight = contentHeight;
@@ -498,18 +524,18 @@ class PappBarState extends State<PappBar> {
     if (response.statusCode == 200) {
       widget.searchFucntion(jsonDecode(response.content())['data']['keyword']);
     } else if (response.statusCode == 400) {
-      BotToast.showSimpleNotification(title: jsonDecode(response.content())['message']);
+      BotToast.showSimpleNotification(
+          title: jsonDecode(response.content())['message']);
     } else {
       BotToast.showSimpleNotification(title: texts.translateError);
     }
   }
 
   onSearchArtistById() async {
-    if(prefs.getString('auth') == '') {
+    if (prefs.getString('auth') == '') {
       BotToast.showSimpleNotification(title: texts.pleaseLogin);
       return false;
-    }
-    else if (int.tryParse(searchController.text) == null) {
+    } else if (int.tryParse(searchController.text) == null) {
       BotToast.showSimpleNotification(title: texts.inputIsNotNum);
       return false;
     } else {
@@ -551,11 +577,10 @@ class PappBarState extends State<PappBar> {
   }
 
   onSearchIllustById() async {
-    if(prefs.getString('auth') == '') {
+    if (prefs.getString('auth') == '') {
       BotToast.showSimpleNotification(title: texts.pleaseLogin);
       return false;
-    }
-    else if (int.tryParse(searchController.text) == null) {
+    } else if (int.tryParse(searchController.text) == null) {
       BotToast.showSimpleNotification(title: texts.inputIsNotNum);
       return false;
     } else {
