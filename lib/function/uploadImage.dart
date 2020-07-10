@@ -10,6 +10,10 @@ import '../data/common.dart';
 
 uploadImageToSaucenao(File file, BuildContext context) async {
   TextZhUploadImage texts = TextZhUploadImage();
+  Response response;
+  Response illustExsitResponse;
+  Response illustResponse;
+
   String fileName = file.path.split('/').last;
   FormData data = FormData.fromMap({
     "file": await MultipartFile.fromFile(
@@ -18,28 +22,33 @@ uploadImageToSaucenao(File file, BuildContext context) async {
     ),
   });
   Map<String, dynamic> queryParameters = {'output_type': '2'};
+
   CancelFunc loading = BotToast.showLoading();
   Dio dio = Dio();
-  dio
-      .post("https://saucenao.com/search.php",
-          data: data, queryParameters: queryParameters)
-      .then((response) async {
-    loading();
-    if (response.data['results'] == null)
-      print('no result');
-    else {
+  response = await dio.post("https://saucenao.com/search.php",
+      data: data, queryParameters: queryParameters);
+  loading();
+
+  try {
+    if (response.data['results'] == null) {
+      print('no result found');
+      BotToast.showSimpleNotification(title: texts.similarityLow);
+      return false;
+    } else {
       double similarity =
           double.parse(response.data['results'][0]['header']['similarity']);
       String id = response.data['results'][0]['data']['pixiv_id'].toString();
       if (response.statusCode == 200) {
-        if (similarity < 50)
+        if (similarity < 50) {
           BotToast.showSimpleNotification(title: texts.similarityLow);
-        else {
+          return false;
+        } else {
           Dio getIllust = Dio();
           print(response.data['results'][0]['header']['similarity']);
           print(response.data['results'][0]['data']['pixiv_id']);
-          print(prefs.getString('auth') == '');
-          Response illustResponse = await getIllust.get(
+          illustExsitResponse =
+              await getIllust.get('https://api.pixivic.com/exists/illust/$id');
+          illustResponse = await getIllust.get(
               'https://api.pixivic.com/illusts/$id',
               options: Options(
                   headers: prefs.getString('auth') == ''
@@ -49,28 +58,35 @@ uploadImageToSaucenao(File file, BuildContext context) async {
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
               return PicDetailPage(illustResponse.data['data']);
             }));
+            return true;
           } else {
             print(illustResponse.statusCode);
             print('on low error');
             BotToast.showSimpleNotification(
                 title: illustResponse.data['meesage']);
+            return false;
           }
         }
       } else if (response.statusCode == 403) {
         BotToast.showSimpleNotification(title: texts.invalidKey);
+        return false;
       } else if (response.statusCode == 413) {
         BotToast.showSimpleNotification(title: texts.fileTooLarge);
+        return false;
       } else if (response.statusCode == 429) {
         if (response.data['header']['message'].contains('Daily'))
           BotToast.showSimpleNotification(title: texts.dailyLimit);
         else
           BotToast.showSimpleNotification(title: texts.shortLimit);
+        return false;
       }
     }
-  }).catchError((Object error) {
-    loading();
-    print(error);
-    print('on top error');
-    BotToast.showSimpleNotification(title: error.toString());
-  });
+  } catch (e) {
+    print(e);
+    if(e is DioError)
+      BotToast.showSimpleNotification(title: e.response.data['message']);
+    else 
+      BotToast.showSimpleNotification(title: e.toString());
+    return false;
+  }
 }

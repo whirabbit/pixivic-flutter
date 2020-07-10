@@ -570,6 +570,10 @@ class PappBarState extends State<PappBar> {
         ));
         return true;
       } else if (response.statusCode == 400) {
+        print('search artist 400');
+        BotToast.showSimpleNotification(title: result['message']);
+        return false;
+      } else {
         BotToast.showSimpleNotification(title: result['message']);
         return false;
       }
