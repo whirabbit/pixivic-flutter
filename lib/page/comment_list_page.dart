@@ -279,10 +279,12 @@ class _CommentListPageState extends State<CommentListPage> {
                             onTap: () {
                               replyToId = data['replyFrom'];
                               replyToName = data['replyFromName'];
-                              data['parentId'] == 0 ? replyParentId = data['id'] : replyParentId = data['parentId'];
-                              if(replyFocus.hasFocus)
+                              data['parentId'] == 0
+                                  ? replyParentId = data['id']
+                                  : replyParentId = data['parentId'];
+                              if (replyFocus.hasFocus)
                                 _replyFocusListener();
-                              else 
+                              else
                                 replyFocus.requestFocus();
                             },
                           )
@@ -367,7 +369,7 @@ class _CommentListPageState extends State<CommentListPage> {
       setState(() {
         commentsList = response.data['data'];
       });
-    } else if (response.statusCode == 200 && response.data['data'] == null){
+    } else if (response.statusCode == 200 && response.data['data'] == null) {
       print('comments: null but 200');
     } else {
       BotToast.showSimpleNotification(title: response.data['message']);
