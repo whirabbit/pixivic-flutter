@@ -15,7 +15,6 @@ import 'package:flutter_advanced_networkimage/provider.dart';
 import 'pic_detail_page.dart';
 import '../data/common.dart';
 
-
 // 可以作为页面中单个组件或者单独页面使用的pic瀑布流组件,因可以作为页面，故不归为widget
 class PicPage extends StatefulWidget {
   @override
@@ -34,6 +33,7 @@ class PicPage extends StatefulWidget {
     @required this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.isScrollable = true,
   });
 
   PicPage.home({
@@ -49,6 +49,7 @@ class PicPage extends StatefulWidget {
     @required this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.isScrollable = true,
   });
 
   PicPage.related({
@@ -64,6 +65,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     @required this.onPageTop,
     @required this.onPageStart,
+    this.isScrollable = true,
   });
 
   PicPage.search({
@@ -79,6 +81,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.isScrollable = true,
   });
 
   PicPage.artist({
@@ -94,6 +97,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     @required this.onPageTop,
     @required this.onPageStart,
+    this.isScrollable = true,
   });
 
   PicPage.followed({
@@ -109,6 +113,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.isScrollable = true,
   });
 
   PicPage.bookmark({
@@ -124,6 +129,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.isScrollable = true,
   });
 
   PicPage.spotlight({
@@ -139,6 +145,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.isScrollable = true,
   });
 
   PicPage.history({
@@ -154,6 +161,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.isScrollable = true,
   });
 
   PicPage.oldHistory({
@@ -169,6 +177,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.isScrollable = true,
   });
 
   PicPage.userdetail({
@@ -184,6 +193,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.isScrollable = true,
   });
 
   final String picDate;
@@ -194,6 +204,7 @@ class PicPage extends StatefulWidget {
   final String userId;
   final String searchKeywords;
   final bool isManga;
+  final bool isScrollable;
   // jsonMode could be set to 'home, related, Spotlight, tag, artist, search...'
   final String jsonMode;
   // hide naviagtor bar when page is scrolling
@@ -375,12 +386,13 @@ class _PicPageState extends State<PicPage> {
     } else {
       return Container(
           padding: EdgeInsets.only(
-              left: ScreenUtil().setWidth(5),
-              right: ScreenUtil().setWidth(5)),
+              left: ScreenUtil().setWidth(5), right: ScreenUtil().setWidth(5)),
           color: Colors.grey[50],
           child: StaggeredGridView.countBuilder(
             controller: scrollController,
-            physics: ClampingScrollPhysics(),
+            physics: widget.isScrollable
+                ? ClampingScrollPhysics()
+                : NeverScrollableScrollPhysics(),
             crossAxisCount: 2,
             itemCount: picTotalNum,
             itemBuilder: (BuildContext context, int index) => imageCell(index),
@@ -458,7 +470,7 @@ class _PicPageState extends State<PicPage> {
         var requests = await Requests.get(url);
         // requests.raiseForStatus();
         jsonList = jsonDecode(requests.content())['data'];
-        if(requests.statusCode == 401)
+        if (requests.statusCode == 401)
           BotToast.showSimpleNotification(title: '请登录后再重新加载画作');
       } else {
         Map<String, String> headers = {

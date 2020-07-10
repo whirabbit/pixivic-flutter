@@ -304,6 +304,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                   relatedId: widget._picData['id'],
                   onPageTop: _onTopOfPicpage,
                   onPageStart: _onStartOfPicpage,
+                  isScrollable: true,
                 )),
           ),
         ],
