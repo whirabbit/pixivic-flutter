@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bugly/flutter_bugly.dart';
+import 'package:bot_toast/bot_toast.dart';
 
 import '../data/texts.dart';
 import '../widget/papp_bar.dart';
+import '../function/update.dart';
 
 class AboutPage extends StatefulWidget {
   @override
@@ -12,10 +15,16 @@ class AboutPage extends StatefulWidget {
 }
 
 class _AboutPageState extends State<AboutPage> {
+  TextZhForAboutPage texts = TextZhForAboutPage();
+  TextStyle textStyleNormal = TextStyle(fontSize: 14, fontWeight: FontWeight.w300);
+  TextStyle textStyleButton = TextStyle(fontSize: 16, fontWeight: FontWeight.w900);
+
   @override
   Widget build(BuildContext context) {
+    bool isAndroid = Theme.of(context).platform == TargetPlatform.android;
+
     return Scaffold(
-      appBar: PappBar(title: 'About Us'),
+      appBar: PappBar(title: texts.title),
       body: SingleChildScrollView(
         child: Container(
           // height: ScreenUtil().setHeight(530),
@@ -32,50 +41,28 @@ class _AboutPageState extends State<AboutPage> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.all(ScreenUtil().setHeight(20)),
-                child: Text(TextZhForAboutPage().description),
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(top: ScreenUtil().setHeight(7)),
+                child: Text(texts.versionInfo, style: textStyleNormal,),
               ),
               Container(
                 alignment: Alignment.center,
-                child: SizedBox(
-                  width: ScreenUtil().setWidth(200),
-                  height: ScreenUtil().setHeight(2),
-                  child: Divider(
-                    color: Colors.blueGrey,
-                  ),
-                ),
+                padding: EdgeInsets.only(top: ScreenUtil().setHeight(7)),
+                child: Text(texts.updateTitle, style: textStyleNormal,),
               ),
               Container(
-                padding: EdgeInsets.only(
-                    left: ScreenUtil().setHeight(20),
-                    top: ScreenUtil().setHeight(20)),
-                child: Text(
-                  TextZhForAboutPage().savePicLabel,
-                  style: TextStyle(color: Colors.grey),
-                ),
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(top: ScreenUtil().setHeight(17)),
+                child: Text(texts.updateInfo, style: textStyleNormal,),
               ),
               Container(
-                padding: EdgeInsets.only(
-                    left: ScreenUtil().setHeight(20),
-                    bottom: ScreenUtil().setHeight(20),
-                    top: ScreenUtil().setHeight(10)),
-                child: Text(TextZhForAboutPage().savePic),
-              ),
-              Container(
-                  padding: EdgeInsets.all(ScreenUtil().setHeight(20)),
+                  padding: EdgeInsets.only(top: ScreenUtil().setHeight(200)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      linkButton(TextZhForAboutPage().forum,
-                          'https://discuss.pixivic.com/'),
-                      linkButton(TextZhForAboutPage().rearEnd,
-                          'https://github.com/cheer-fun/pixivic-web-backend'),
-                      linkButton(TextZhForAboutPage().frontEnd,
-                          'https://github.com/cheer-fun/pixivic-mobile'),
                       linkButton(TextZhForAboutPage().donate,
                           'https://m.pixivic.com/links?VNK=9fa02e17'),
-                      linkButton(TextZhForAboutPage().friend,
-                          'https://m.pixivic.com/friends?VNK=e7c43cd8'),
+                      isAndroid ? checkUpdateButton() : Container()
                     ],
                   )),
             ],
@@ -99,7 +86,34 @@ class _AboutPageState extends State<AboutPage> {
           },
           child: Text(
             value,
-            style: TextStyle(color: Colors.blueAccent[200]),
+            style: textStyleButton,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget checkUpdateButton() {
+    return Container(
+      padding: EdgeInsets.all(ScreenUtil().setWidth(3)),
+      child: Material(
+        child: InkWell(
+          onTap: () async {
+            if (Theme.of(context).platform == TargetPlatform.android) {
+              FlutterBugly.checkUpgrade().then((UpgradeInfo info) {
+                print('==============================');
+                if (info != null && info.id != null) {
+                  UpdateApp().showUpdateDialog(
+                      context, info.versionName, info.newFeature, info.apkUrl);
+                } else {
+                  BotToast.showSimpleNotification(title: texts.noUpdate);
+                }
+              });
+            } else {}
+          },
+          child: Text(
+            texts.checkUpdate,
+            style: textStyleButton,
           ),
         ),
       ),

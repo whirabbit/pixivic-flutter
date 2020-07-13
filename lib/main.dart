@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
       print('FlutterBugly: ${onValue.isSuccess}');
       print('FlutterBugly: ${onValue.appId}');
       print('FlutterBugly: ${onValue.message}');
-      FlutterBugly.setUserId('pixivic 0.0.4');
+      FlutterBugly.setUserId('pixivic 0.1.0');
       if (Theme.of(context).platform == TargetPlatform.android) {
         FlutterBugly.checkUpgrade().then((UpgradeInfo info) {
           print('==============================');
