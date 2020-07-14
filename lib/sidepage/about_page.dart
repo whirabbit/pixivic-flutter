@@ -16,8 +16,10 @@ class AboutPage extends StatefulWidget {
 
 class _AboutPageState extends State<AboutPage> {
   TextZhForAboutPage texts = TextZhForAboutPage();
-  TextStyle textStyleNormal = TextStyle(fontSize: 14, fontWeight: FontWeight.w300);
-  TextStyle textStyleButton = TextStyle(fontSize: 16, fontWeight: FontWeight.w900);
+  TextStyle textStyleNormal =
+      TextStyle(fontSize: 14, fontWeight: FontWeight.w300);
+  TextStyle textStyleButton =
+      TextStyle(fontSize: 16, fontWeight: FontWeight.w900);
 
   @override
   Widget build(BuildContext context) {
@@ -43,17 +45,26 @@ class _AboutPageState extends State<AboutPage> {
               Container(
                 alignment: Alignment.center,
                 padding: EdgeInsets.only(top: ScreenUtil().setHeight(7)),
-                child: Text(texts.versionInfo, style: textStyleNormal,),
+                child: Text(
+                  texts.versionInfo,
+                  style: textStyleNormal,
+                ),
               ),
               Container(
                 alignment: Alignment.center,
                 padding: EdgeInsets.only(top: ScreenUtil().setHeight(7)),
-                child: Text(texts.updateTitle, style: textStyleNormal,),
+                child: Text(
+                  texts.updateTitle,
+                  style: textStyleNormal,
+                ),
               ),
               Container(
                 alignment: Alignment.center,
                 padding: EdgeInsets.only(top: ScreenUtil().setHeight(17)),
-                child: Text(texts.updateInfo, style: textStyleNormal,),
+                child: Text(
+                  texts.updateInfo,
+                  style: textStyleNormal,
+                ),
               ),
               Container(
                   padding: EdgeInsets.only(top: ScreenUtil().setHeight(200)),
@@ -62,7 +73,8 @@ class _AboutPageState extends State<AboutPage> {
                     children: <Widget>[
                       linkButton(TextZhForAboutPage().donate,
                           'https://m.pixivic.com/links?VNK=9fa02e17'),
-                      isAndroid ? checkUpdateButton() : Container()
+                      isAndroid ? checkUpdateButton() : Container(),
+                      linkButton(texts.webOfficial, 'https://pixivic.com/')
                     ],
                   )),
             ],

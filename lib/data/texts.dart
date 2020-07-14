@@ -13,6 +13,7 @@ class TextZhForAboutPage {
   String frontEnd = '前端源码';
   String donate = '捐赠我们';
   String friend = '友链';
+  String webOfficial = '网页版';
   String checkUpdate = '检查更新';
   String noUpdate = '当前已是最新版本';
 }

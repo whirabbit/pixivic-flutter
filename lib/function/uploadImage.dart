@@ -39,26 +39,26 @@ uploadImageToSaucenao(File file, BuildContext context) async {
         double similarity =
             double.parse(response.data['results'][0]['header']['similarity']);
         String id = response.data['results'][0]['data']['pixiv_id'].toString();
-        String ext_url =
-            response.data['results'][0]['data']['ext_urls'][0].toString();
+        String extUrl;
+        response.data['results'][0]['data']['ext_urls'] != null
+            ? extUrl =
+                response.data['results'][0]['data']['ext_urls'][0].toString()
+            : extUrl = null;
 
         print(similarity);
         print(id);
-        print(ext_url);
+        print(extUrl);
 
         if (similarity < 50) {
           BotToast.showSimpleNotification(title: texts.similarityLow);
           return false;
         } else if (id != 'null') {
-          Dio getIllust = Dio();
-
-          if (response.data['results'][0]['data']['pixiv_id'] == null)
-            illustResponse = await getIllust.get(
-                'https://api.pixivic.com/illusts/$id',
-                options: Options(
-                    headers: prefs.getString('auth') == ''
-                        ? {}
-                        : {'authorization': prefs.getString('auth')}));
+          illustResponse = await Dio().get(
+              'https://api.pixivic.com/illusts/$id',
+              options: Options(
+                  headers: prefs.getString('auth') == ''
+                      ? {}
+                      : {'authorization': prefs.getString('auth')}));
           if (illustResponse.statusCode == 200) {
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
               return PicDetailPage(illustResponse.data['data']);
@@ -71,14 +71,16 @@ uploadImageToSaucenao(File file, BuildContext context) async {
                 title: illustResponse.data['meesage']);
             return false;
           }
-        } else if (id == 'null') {
-          BotToast.showSimpleNotification(
-                title: texts.noImageButUrl);
-          if (await canLaunch(ext_url)) {
-            await launch(ext_url);
+        } else if (id == 'null' && extUrl != null) {
+          BotToast.showSimpleNotification(title: texts.noImageButUrl);
+          if (await canLaunch(extUrl)) {
+            await launch(extUrl);
           } else {
-            throw 'Could not launch $ext_url';
+            throw 'Could not launch $extUrl';
           }
+        } else {
+          BotToast.showSimpleNotification(title: texts.similarityLow);
+          return false;
         }
       } else if (response.statusCode == 403) {
         BotToast.showSimpleNotification(title: texts.invalidKey);
