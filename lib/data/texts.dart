@@ -24,7 +24,7 @@ class TextZhLoginPage {
   String welcomeRegister = '加入我们';
   String tipLogin = '登录来进行收藏和关注';
   String tipRegister = '注册来解锁更多姿势';
-  String userName = '用户名';
+  String userName = '用户名/邮箱';
   String password = '密码';
   String passwordRepeat = '重复密码';
   String email = '邮箱';
@@ -102,8 +102,10 @@ class TextZhCenterPage {
   String rearend = '后端';
   String mobile = '移动端';
   String friendUrl = '友链';
+  String guessLike = '猜你喜欢';
   String policy = '隐私政策';
   String safety = '安全设定';
+  String setting = '设置';
   String safetyTitle = '安全等级设定';
   String safetyWarniOS =
       '注意！！\nPixivic 进行了严格的图片敏感信息过滤，默认安全等级为高等。\n您可以选择使用中高等的安全等级，但请知晓，此等级下展示的更多图片可能包含轻微暴露图片。\n这些图片可能会引起您的反感或不适。\n切换等级后请自行重启应用以更新相应内容';
@@ -161,4 +163,8 @@ class TextZhUploadImage {
   String fileTooLarge = '图片文件过大，请压缩后重试';
   String similarityLow = '结果无匹配或匹配度过低';
   String noImageButUrl = '无画作匹配，即将跳转相关网址';
+}
+
+class TextZhSettingPage {
+  String title = '设置';
 }
