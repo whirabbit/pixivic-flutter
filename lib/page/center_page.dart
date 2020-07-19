@@ -47,20 +47,20 @@ class _CenterPageState extends State<CenterPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              cell(texts.rearend, FontAwesomeIcons.githubAlt, Colors.red[400],
+              cell(texts.rearend, FontAwesomeIcons.githubAlt, Colors.orange[300],
                   () {
                 _openUrl('https://github.com/cheer-fun/pixivic-web-backend');
               }),
-              cell(texts.mobile, FontAwesomeIcons.githubAlt, Colors.orange[300],
+              cell(texts.mobile, FontAwesomeIcons.githubAlt, Colors.red[400],
                   () {
                 _openUrl('https://github.com/cheer-fun/pixivic-flutter');
               }),
               cell(
-                  texts.friendUrl, FontAwesomeIcons.paperclip, Colors.pink[200],
+                  texts.friendUrl, FontAwesomeIcons.paperclip, Color(0xFFfbd46d),
                   () {
                 _openUrl('https://m.pixivic.com/friends?VNK=d6d42013');
               }),
-              cell(texts.policy, FontAwesomeIcons.userSecret, Colors.black38,
+              cell(texts.guessLike, FontAwesomeIcons.gratipay, Colors.pink[200],
                   () {
                 _openUrl('https://pixivic.com/policy/');
               }),
@@ -69,9 +69,17 @@ class _CenterPageState extends State<CenterPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              cell(texts.safety, FontAwesomeIcons.lock, Colors.blueGrey[300],
+              cell(texts.safety, FontAwesomeIcons.lock, Color(0xFF01a9b4),
                   () {
                 _openSafetySetting();
+              }),
+              cell(texts.setting, FontAwesomeIcons.cog, Color(0xFF086972),
+                  () {
+                _openUrl('https://pixivic.com/policy/');
+              }),
+              cell(texts.policy, FontAwesomeIcons.userSecret, Colors.black38,
+                  () {
+                _openUrl('https://pixivic.com/policy/');
               }),
             ],
           )
