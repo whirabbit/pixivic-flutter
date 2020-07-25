@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../data/texts.dart';
 import '../sidepage/spotlight_page.dart';
+import '../sidepage/setting_page.dart';
 
 class CenterPage extends StatefulWidget {
   @override
@@ -75,7 +76,7 @@ class _CenterPageState extends State<CenterPage> {
               }),
               cell(texts.setting, FontAwesomeIcons.cog, Color(0xFF086972),
                   () {
-                _openUrl('https://pixivic.com/policy/');
+                _routeToSettingPage();
               }),
               cell(texts.policy, FontAwesomeIcons.userSecret, Colors.black38,
                   () {
@@ -129,6 +130,11 @@ class _CenterPageState extends State<CenterPage> {
   _routeToSpotlightPage() {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => SpotlightPage()));
+  }
+
+  _routeToSettingPage() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => SettingPage()));
   }
 
   _openUrl(String url) async {

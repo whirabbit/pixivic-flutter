@@ -167,4 +167,20 @@ class TextZhUploadImage {
 
 class TextZhSettingPage {
   String title = '设置';
+  String appData = '应用数据';
+  String deleteData = '清除图片缓存';
+  String deleteDataDetail = '清除设备上的预览图缓存';
+  String deleteDataDetailUnit = 'MB';
+  String dataRemainTime = '缓存保留时长';
+  String dataRemainTimeDetail = '预览图缓存经过设定的时间后将自动清理';
+  String dataRemainTimeDetailUnit = '天';
+  String imageLoad = '图片加载';
+  String reviewQuality = '预览图片质量';
+  String reviewQualityDetail = '图片质量越高，消耗流量越大';
+  String highQuality = '高';
+  String mediumnQuality = '中';
+  String lowQuality = '低';
+  String appUpdate = '应用更新';
+  String checkUpdate = '检查更新';
+  String checkUpdateDetail = '检查应用是否发布新版本';
 }
