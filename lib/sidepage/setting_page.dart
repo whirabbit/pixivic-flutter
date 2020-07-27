@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_advanced_networkimage/provider.dart';
 
 import '../data/common.dart';
 import '../widget/papp_bar.dart';
 import '../data/texts.dart';
+import '../sidepage/about_page.dart';
 
 class SettingPage extends StatefulWidget {
   @override
@@ -14,6 +16,15 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
   TextZhSettingPage texts = TextZhSettingPage();
   ScreenUtil screen = ScreenUtil();
+
+  double cacheSize = 0;
+
+  @override
+  void initState() {
+    _readCacheSize();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,16 +36,16 @@ class _SettingPageState extends State<SettingPage> {
         child: Column(
           children: <Widget>[
             descriptionLine(texts.appData),
-            settingCell(texts.deleteData, texts.deleteDataDetail, () {
-              print('test');
-            }, leadingWidget: Text('test')),
+            settingCell(texts.deleteData, texts.deleteDataDetail, _clearCache,
+                leadingWidget: cacheDisplay()),
             settingCell(texts.dataRemainTime, texts.dataRemainTimeDetail, () {
               print('test');
             }, leadingWidget: Text('test')),
             descriptionLine(texts.imageLoad),
-            settingCell(texts.reviewQuality, texts.reviewQualityDetail, () { }),
+            settingCell(texts.reviewQuality, texts.reviewQualityDetail, () {}),
             descriptionLine(texts.appUpdate),
-            settingCell(texts.checkUpdate, texts.checkUpdateDetail, () { })
+            settingCell(
+                texts.checkUpdate, texts.checkUpdateDetail, _routeToAboutPage)
           ],
         ),
       ),
@@ -76,9 +87,15 @@ class _SettingPageState extends State<SettingPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(title, style: TextStyle(fontSize: 14),),
+                    Text(
+                      title,
+                      style: TextStyle(fontSize: 14),
+                    ),
                     SizedBox(height: screen.setHeight(5)),
-                    Text(subTitle, style: TextStyle(fontSize: 12, color: Colors.grey),),
+                    Text(
+                      subTitle,
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
                   ],
                 ),
                 leadingWidget != null ? leadingWidget : Container(),
@@ -88,5 +105,28 @@ class _SettingPageState extends State<SettingPage> {
         ),
       ),
     );
+  }
+
+  Widget cacheDisplay() {
+    return Text(
+        "${cacheSize.toStringAsFixed(2)} ${texts.deleteDataDetailUnit}");
+  }
+
+  _clearCache() async {
+    await DiskCache().clear();
+    _readCacheSize();
+  }
+
+  _readCacheSize() {
+    DiskCache().cacheSize().then((value) {
+      setState(() {
+        cacheSize = value / 1024 / 1024;
+      });
+    });
+  }
+
+  _routeToAboutPage() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => AboutPage()));
   }
 }
