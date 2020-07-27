@@ -180,7 +180,7 @@ class TextZhSettingPage {
   String highQuality = '高';
   String mediumnQuality = '中';
   String lowQuality = '低';
-  String appUpdate = '应用更新';
-  String checkUpdate = '检查更新';
-  String checkUpdateDetail = '检查应用是否发布新版本';
+  String appUpdate = '应用信息';
+  String checkUpdate = '关于我们';
+  String checkUpdateDetail = '查看版本信息以及应用更新';
 }
