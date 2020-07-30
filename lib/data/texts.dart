@@ -102,6 +102,7 @@ class TextZhCenterPage {
   String rearend = '后端';
   String mobile = '移动端';
   String friendUrl = '友链';
+  String albumn = '画集';
   String guessLike = '猜你喜欢';
   String policy = '隐私政策';
   String safety = '安全设定';
@@ -176,9 +177,9 @@ class TextZhSettingPage {
   String dataRemainTimeDetailUnit = '天';
   String imageLoad = '图片加载';
   String reviewQuality = '预览图片质量';
-  String reviewQualityDetail = '图片质量越高，消耗流量越大';
+  String reviewQualityDetail = '图片质量越高，消耗流量越多';
   String highQuality = '高';
-  String mediumnQuality = '中';
+  String mediumQuality = '中';
   String lowQuality = '低';
   String appUpdate = '应用信息';
   String checkUpdate = '关于我们';

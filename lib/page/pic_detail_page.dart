@@ -36,6 +36,8 @@ class PicDetailPage extends StatefulWidget {
 
 class _PicDetailPageState extends State<PicDetailPage> {
   bool loginState = prefs.getString('auth') != '' ? true : false;
+  int picTotalNum;
+  String previewQuality = prefs.getString('previewQuality');
   TextStyle normalTextStyle = TextStyle(
       fontSize: ScreenUtil().setWidth(14),
       color: Colors.black,
@@ -44,10 +46,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
       fontSize: ScreenUtil().setWidth(10),
       color: Colors.black,
       decoration: TextDecoration.none);
-  int picTotalNum;
   TextZhPicDetailPage texts = TextZhPicDetailPage();
   PappBar pappBar;
-
   ScrollController scrollController = ScrollController();
 
   @override
@@ -322,7 +322,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
         child: Hero(
             tag: 'imageHero' +
                 widget._picData['imageUrls'][0][
-                    'medium'], //medium large, set as medium now for hero switch
+                    previewQuality], //medium large, set tag as medium for hero switch, 
             child: ZoomableWidget(
               panLimit: 1.0,
               maxScale: 3.0,

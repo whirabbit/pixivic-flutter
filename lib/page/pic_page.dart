@@ -225,6 +225,7 @@ class _PicPageState extends State<PicPage> {
   bool loadMoreAble = true;
   bool isScrolling = false;
   ScrollController scrollController;
+  String previewQuality = prefs.getString('previewQuality');
 
   @override
   void initState() {
@@ -498,7 +499,7 @@ class _PicPageState extends State<PicPage> {
   List _picMainParameter(int index) {
     // 预览图片的地址、数目、以及长宽比
     // String url = picList[index]['imageUrls'][0]['squareMedium'];
-    String url = picList[index]['imageUrls'][0]['medium']; //medium large
+    String url = picList[index]['imageUrls'][0][previewQuality]; //medium large
     int number = picList[index]['pageCount'];
     double width = picList[index]['width'].toDouble();
     double height = picList[index]['height'].toDouble();
