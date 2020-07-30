@@ -37,46 +37,46 @@ class _CenterPageState extends State<CenterPage> {
                   Colors.deepOrange[200], () {
                 _openUrl('https://discuss.pixivic.com/');
               }),
-              cell(texts.about, FontAwesomeIcons.infoCircle,
-                  Colors.blueGrey[400], _routeToAboutPage),
+              // cell(texts.about, FontAwesomeIcons.infoCircle,
+              //     Colors.blueGrey[400], _routeToAboutPage),
               cell(texts.frontend, FontAwesomeIcons.githubAlt, Colors.blue[400],
                   () {
                 _openUrl('https://github.com/cheer-fun/pixivic-mobile');
               }),
+              cell(
+                  texts.rearend, FontAwesomeIcons.githubAlt, Colors.orange[300],
+                  () {
+                _openUrl('https://github.com/cheer-fun/pixivic-web-backend');
+              }),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              cell(texts.rearend, FontAwesomeIcons.githubAlt, Colors.orange[300],
-                  () {
-                _openUrl('https://github.com/cheer-fun/pixivic-web-backend');
-              }),
-              cell(texts.mobile, FontAwesomeIcons.githubAlt, Colors.red[400],
-                  () {
-                _openUrl('https://github.com/cheer-fun/pixivic-flutter');
-              }),
-              cell(
-                  texts.friendUrl, FontAwesomeIcons.paperclip, Color(0xFFfbd46d),
-                  () {
+              // cell(texts.mobile, FontAwesomeIcons.githubAlt, Colors.red[400],
+              //     () {
+              //   _openUrl('https://github.com/cheer-fun/pixivic-flutter');
+              // }),
+              cell(texts.friendUrl, FontAwesomeIcons.paperclip,
+                  Color(0xFFfbd46d), () {
                 _openUrl('https://m.pixivic.com/friends?VNK=d6d42013');
               }),
+              cell(texts.albumn, FontAwesomeIcons.boxes, Color(0xFF764ba2),
+                  () {}),
               cell(texts.guessLike, FontAwesomeIcons.gratipay, Colors.pink[200],
                   () {
                 _openUrl('https://pixivic.com/policy/');
               }),
+              cell(texts.setting, FontAwesomeIcons.cog, Color(0xFF086972), () {
+                _routeToSettingPage();
+              }),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              cell(texts.safety, FontAwesomeIcons.lock, Color(0xFF01a9b4),
-                  () {
+              cell(texts.safety, FontAwesomeIcons.lock, Color(0xFF01a9b4), () {
                 _openSafetySetting();
-              }),
-              cell(texts.setting, FontAwesomeIcons.cog, Color(0xFF086972),
-                  () {
-                _routeToSettingPage();
               }),
               cell(texts.policy, FontAwesomeIcons.userSecret, Colors.black38,
                   () {
@@ -122,10 +122,10 @@ class _CenterPageState extends State<CenterPage> {
     );
   }
 
-  _routeToAboutPage() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => AboutPage()));
-  }
+  // _routeToAboutPage() {
+  //   Navigator.push(
+  //       context, MaterialPageRoute(builder: (context) => AboutPage()));
+  // }
 
   _routeToSpotlightPage() {
     Navigator.push(
@@ -187,10 +187,11 @@ class _CenterPageState extends State<CenterPage> {
                   }, //关闭对话框
                 ),
                 FlatButton(
-                  child: Text(texts.safetyLevelLowHigh, style: TextStyle(color: Colors.grey),),
-                  onPressed: () {
-                    
-                  },
+                  child: Text(
+                    texts.safetyLevelLowHigh,
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  onPressed: () {},
                 ),
               ],
             );

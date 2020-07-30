@@ -28,6 +28,7 @@ List<String> keywordsString = [
   'gender',
   'signature',
   'location',
+  'previewQuality'
 ];
 List<String> keywordsInt = ['id', 'star', 'sanityLevel'];
 List<String> keywordsBool = [
@@ -47,10 +48,12 @@ Future initData() async {
 
   prefs = await SharedPreferences.getInstance();
   cacheSize = await DiskCache().cacheSize();
+
   print('The disk usage for cache is $cacheSize');
   // 遍历所有key，对不存在的 key 进行 value 初始化
   print(prefs.getKeys());
   print('The user name is : ${prefs.getString('name')}');
+
   for (var item in keywordsString) {
     if (prefs.getString(item) == null) prefs.setString(item, '');
   }
@@ -77,6 +80,9 @@ Future initData() async {
     });
   } else
     logout(isInit: true);
+  
+  if(prefs.getString('previewQuality') == '')
+    prefs.setString('previewQuality', 'medium');
 }
 
 

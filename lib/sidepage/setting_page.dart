@@ -16,8 +16,9 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
   TextZhSettingPage texts = TextZhSettingPage();
   ScreenUtil screen = ScreenUtil();
-
+  
   double cacheSize = 0;
+  String previewQuality = prefs.getString('previewQuality');
 
   @override
   void initState() {
@@ -42,7 +43,7 @@ class _SettingPageState extends State<SettingPage> {
               print('test');
             }, leadingWidget: Text('test')),
             descriptionLine(texts.imageLoad),
-            settingCell(texts.reviewQuality, texts.reviewQualityDetail, () {}),
+            settingCell(texts.reviewQuality, texts.reviewQualityDetail, () {}, leadingWidget: previewQualityDisplay()),
             descriptionLine(texts.appUpdate),
             settingCell(
                 texts.checkUpdate, texts.checkUpdateDetail, _routeToAboutPage)
@@ -110,6 +111,17 @@ class _SettingPageState extends State<SettingPage> {
   Widget cacheDisplay() {
     return Text(
         "${cacheSize.toStringAsFixed(2)} ${texts.deleteDataDetailUnit}");
+  }
+
+  Widget previewQualityDisplay() {
+    String showText;
+    if(previewQuality == 'medium') 
+      showText = texts.mediumQuality;
+    else if(previewQuality == 'large')
+      showText = texts.highQuality;
+    else 
+      showText = texts.lowQuality;
+    return Text(showText);
   }
 
   _clearCache() async {
