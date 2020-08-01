@@ -640,7 +640,9 @@ class _PicPageState extends State<PicPage> {
                           _picMainParameter(index)[0],
                           header: {'Referer': 'https://app-api.pixiv.net'},
                           useDiskCache: true,
-                          cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+                          cacheRule: CacheRule(
+                              maxAge:
+                                  Duration(days: prefs.getInt('previewRule'))),
                         ),
                         fit: BoxFit.fill,
                         frameBuilder:

@@ -85,7 +85,9 @@ class _ArtistPageState extends State<ArtistPage> {
                           widget.artistAvatar,
                           header: {'Referer': 'https://app-api.pixiv.net'},
                           useDiskCache: true,
-                          cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+                          cacheRule: CacheRule(
+                              maxAge:
+                                  Duration(days: prefs.getInt('previewRule'))),
                         ),
                       ),
                     ),
@@ -115,8 +117,9 @@ class _ArtistPageState extends State<ArtistPage> {
                                   'Referer': 'https://app-api.pixiv.net'
                                 },
                                 useDiskCache: true,
-                                cacheRule:
-                                    CacheRule(maxAge: const Duration(days: 7)),
+                                cacheRule: CacheRule(
+                                    maxAge: Duration(
+                                        days: prefs.getInt('previewRule'))),
                               ),
                             ),
                           ),

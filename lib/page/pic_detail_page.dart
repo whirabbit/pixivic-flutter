@@ -252,7 +252,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
                                     },
                                     useDiskCache: true,
                                     cacheRule: CacheRule(
-                                        maxAge: const Duration(days: 7)),
+                                        maxAge: Duration(
+                                            days: prefs.getInt('previewRule'))),
                                   ),
                                 ),
                               ),
@@ -322,7 +323,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
         child: Hero(
             tag: 'imageHero' +
                 widget._picData['imageUrls'][0][
-                    previewQuality], //medium large, set tag as medium for hero switch, 
+                    previewQuality], //medium large, set tag as medium for hero switch,
             child: ZoomableWidget(
               panLimit: 1.0,
               maxScale: 3.0,
@@ -332,7 +333,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
                   widget._picData['imageUrls'][0]['large'],
                   header: {'Referer': 'https://app-api.pixiv.net'},
                   useDiskCache: true,
-                  cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+                  cacheRule: CacheRule(
+                      maxAge: Duration(days: prefs.getInt('previewRule'))),
                 ),
                 width: ScreenUtil().setWidth(324),
                 height: ScreenUtil().setWidth(324) /
@@ -365,7 +367,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
                       widget._picData['imageUrls'][index]['large'],
                       header: {'Referer': 'https://app-api.pixiv.net'},
                       useDiskCache: true,
-                      cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+                      cacheRule: CacheRule(
+                          maxAge: Duration(days: prefs.getInt('previewRule'))),
                     ),
                     width: ScreenUtil().setWidth(324),
                     height: ScreenUtil().setWidth(324) /
@@ -622,7 +625,6 @@ class _PicDetailPageState extends State<PicDetailPage> {
                         ClipboardData(text: widget._picData['id'].toString()));
                     BotToast.showSimpleNotification(title: texts.alreadyCopied);
                     Navigator.of(context).pop();
-                    // Navigator.of(context).pop();
                   },
                 ),
               ],
