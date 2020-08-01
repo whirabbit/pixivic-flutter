@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pixivic/page/pic_page.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 
-// import '../data/texts.dart';
+import '../data/common.dart';
 import '../widget/papp_bar.dart';
 import './artist_list_page.dart';
 
@@ -66,7 +66,9 @@ class _UserDetailPageState extends State<UserDetailPage> {
                           'https://pic.cheerfun.dev/${widget.userId.toString()}.png',
                           header: {'Referer': 'https://app-api.pixiv.net'},
                           useDiskCache: true,
-                          cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+                          cacheRule: CacheRule(
+                              maxAge:
+                                  Duration(days: prefs.getInt('previewRule'))),
                         ),
                       ),
                       SizedBox(
@@ -88,7 +90,8 @@ class _UserDetailPageState extends State<UserDetailPage> {
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => Scaffold(
-                                      appBar: PappBar(title: '${widget.name}的关注'),
+                                      appBar:
+                                          PappBar(title: '${widget.name}的关注'),
                                       body: ArtistListPage.userFollow(
                                           userId: widget.userId),
                                     )));

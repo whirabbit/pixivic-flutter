@@ -37,7 +37,7 @@ class _SearchPageState extends State<SearchPage> {
   GlobalKey<PappBarState> pappbarKey = GlobalKey();
   TextZhSearchPage text = TextZhSearchPage();
 
-  bool currentOnLoading = true;   //搜索趋势
+  bool currentOnLoading = true; //搜索趋势
   int currentNum = 60;
   List currentTags;
 
@@ -239,7 +239,8 @@ class _SearchPageState extends State<SearchPage> {
                       url,
                       header: {'Referer': 'https://app-api.pixiv.net'},
                       useDiskCache: true,
-                      cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+                      cacheRule: CacheRule(
+                          maxAge: Duration(days: prefs.getInt('previewRule'))),
                     ))),
             child: Column(
               children: <Widget>[

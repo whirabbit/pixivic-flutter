@@ -137,6 +137,7 @@ class _CenterPageState extends State<CenterPage> {
         context, MaterialPageRoute(builder: (context) => SettingPage()));
   }
 
+
   _openUrl(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
@@ -165,7 +166,7 @@ class _CenterPageState extends State<CenterPage> {
                   child: Text(texts.safetyLevelLowHigh),
                   onPressed: () {
                     prefs.setInt('sanityLevel', 6);
-                    Navigator.of(context).pop(true); //关闭对话框¯˘¿
+                    Navigator.of(context).pop(true); //关闭对话框
                   },
                 ),
               ],

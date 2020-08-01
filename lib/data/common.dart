@@ -28,9 +28,9 @@ List<String> keywordsString = [
   'gender',
   'signature',
   'location',
-  'previewQuality'
+  'previewQuality',
 ];
-List<String> keywordsInt = ['id', 'star', 'sanityLevel'];
+List<String> keywordsInt = ['id', 'star', 'sanityLevel', 'previewRule'];
 List<String> keywordsBool = [
   'isBindQQ',
   'isCheckEmail',
@@ -48,6 +48,7 @@ Future initData() async {
 
   prefs = await SharedPreferences.getInstance();
   cacheSize = await DiskCache().cacheSize();
+  
 
   print('The disk usage for cache is $cacheSize');
   // 遍历所有key，对不存在的 key 进行 value 初始化
@@ -58,10 +59,14 @@ Future initData() async {
     if (prefs.getString(item) == null) prefs.setString(item, '');
   }
   for (var item in keywordsInt) {
-    if (prefs.getInt(item) == null && item != 'sanityLevel')
-      prefs.setInt(item, 0);
-    else if (prefs.getInt(item) == null && item == 'sanityLevel')
-      prefs.setInt(item, 3);
+    if (prefs.getInt(item) == null) {
+      if(item == 'sanityLevel')
+        prefs.setInt(item, 3);
+      else if(item == 'previewRule')
+        prefs.setInt(item, 7);
+      else 
+        prefs.setInt(item, 0);
+    } 
   }
   for (var item in keywordsBool) {
     if (prefs.getBool(item) == null) prefs.setBool(item, false);
