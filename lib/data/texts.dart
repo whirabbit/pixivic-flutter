@@ -185,3 +185,8 @@ class TextZhSettingPage {
   String checkUpdate = '关于我们';
   String checkUpdateDetail = '查看版本信息以及应用更新';
 }
+
+class TextZhGuessLikePage {
+  String title = '猜你喜欢';
+  
+}
