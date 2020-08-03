@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../data/texts.dart';
 import '../sidepage/spotlight_page.dart';
 import '../sidepage/setting_page.dart';
+import '../sidepage/guess_like.dart';
 
 class CenterPage extends StatefulWidget {
   @override
@@ -65,7 +66,7 @@ class _CenterPageState extends State<CenterPage> {
                   () {}),
               cell(texts.guessLike, FontAwesomeIcons.gratipay, Colors.pink[200],
                   () {
-                _openUrl('https://pixivic.com/policy/');
+                _routeToGuessLikePage();
               }),
               cell(texts.setting, FontAwesomeIcons.cog, Color(0xFF086972), () {
                 _routeToSettingPage();
@@ -135,6 +136,11 @@ class _CenterPageState extends State<CenterPage> {
   _routeToSettingPage() {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => SettingPage()));
+  }
+
+  _routeToGuessLikePage() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => GuessLikePage()));
   }
 
 

@@ -8,7 +8,7 @@ class ImageAlbumnPage extends StatefulWidget {
 class _ImageAlbumnPageState extends State<ImageAlbumnPage> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Scaffold(
       
     );
   }
