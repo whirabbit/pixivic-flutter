@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:dio/dio.dart';
+import 'package:lottie/lottie.dart';
 
 import '../page/pic_detail_page.dart';
 import '../data/common.dart';
@@ -101,7 +102,7 @@ Widget imageCell(Map picMapData, RandomColor randomColor, int sanityLevel,
               ? Positioned(
                   bottom: ScreenUtil().setHeight(5),
                   right: ScreenUtil().setWidth(5),
-                  child: bookmarkHeart(picMapData))
+                  child: BookMarkHeart(picMapData))
               : Container(),
         ],
       ),
@@ -134,59 +135,120 @@ Widget numberViewer(num numberOfPic) {
       : Container();
 }
 
-Widget bookmarkHeart(Map picMapData) {
-  bool isLikedLocalState = picMapData['isLiked'];
-  var color = isLikedLocalState ? Colors.redAccent : Colors.grey[300];
-  String picId = picMapData['id'].toString();
+class BookMarkHeart extends StatefulWidget {
+  @override
+  _BookMarkHeartState createState() => _BookMarkHeartState();
 
-  return AnimatedContainer(
-    duration: Duration(milliseconds: 500),
-    curve: Curves.fastLinearToSlowEaseIn,
-    alignment: Alignment.center,
-    // color: Colors.white,
-    height: isLikedLocalState
-        ? ScreenUtil().setWidth(33)
-        : ScreenUtil().setWidth(27),
-    width: isLikedLocalState
-        ? ScreenUtil().setWidth(33)
-        : ScreenUtil().setWidth(27),
-    child: GestureDetector(
-      onTap: () async {
-        String url = 'https://api.pixivic.com/users/bookmarked';
-        Map<String, String> body = {
-          'userId': prefs.getInt('id').toString(),
-          'illustId': picId.toString(),
-          'username': prefs.getString('name')
-        };
-        Map<String, String> headers = {
-          'authorization': prefs.getString('auth')
-        };
-        try {
-          if (isLikedLocalState) {
-            await Dio().delete(
-              url,
-              options: Options(
-                headers: headers,
-              ),
-              queryParameters: body,
-            );
-          } else {
-            await Dio().post(
-              url,
-              queryParameters: body,
-              options: Options(
-                headers: headers,
-              ),
-            );
+  final Map picMapData;
+
+  BookMarkHeart(this.picMapData);
+}
+
+class _BookMarkHeartState extends State<BookMarkHeart> {
+  Map picMapData;
+
+  @override
+  void initState() {
+    picMapData = widget.picMapData;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    bool isLikedLocalState = picMapData['isLiked'];
+    var color = isLikedLocalState ? Colors.redAccent : Colors.grey[300];
+    String picId = picMapData['id'].toString();
+
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 500),
+      curve: Curves.fastLinearToSlowEaseIn,
+      alignment: Alignment.center,
+      // color: Colors.white,
+      height: isLikedLocalState
+          ? ScreenUtil().setWidth(33)
+          : ScreenUtil().setWidth(27),
+      width: isLikedLocalState
+          ? ScreenUtil().setWidth(33)
+          : ScreenUtil().setWidth(27),
+      child: GestureDetector(
+        onTap: () async {
+          String url = 'https://api.pixivic.com/users/bookmarked';
+          Map<String, String> body = {
+            'userId': prefs.getInt('id').toString(),
+            'illustId': picId.toString(),
+            'username': prefs.getString('name')
+          };
+          Map<String, String> headers = {
+            'authorization': prefs.getString('auth')
+          };
+          try {
+            if (isLikedLocalState) {
+              await Dio().delete(
+                url,
+                options: Options(
+                  headers: headers,
+                ),
+                data: body,
+              );
+              setState(() {
+                picMapData['isLiked'] = false;
+              });
+            } else {
+              await Dio().post(
+                url,
+                data: body,
+                options: Options(
+                  headers: headers,
+                ),
+              );
+              setState(() {
+                picMapData['isLiked'] = true;
+              });
+            }
+          } on DioError catch (e) {
+            if (e.response != null) {
+              BotToast.showSimpleNotification(
+                  title: e.response.data['message']);
+              print(e.response.data);
+              print(e.response.headers);
+              print(e.response.request);
+            } else {
+              BotToast.showSimpleNotification(title: e.message);
+              print(e.request);
+              print(e.message);
+            }
           }
-        } catch (e) {
-          print(e);
-        }
-      },
-      child: LayoutBuilder(builder: (context, constraint) {
-        return Icon(Icons.favorite,
-            color: color, size: constraint.biggest.height);
-      }),
+        },
+        child: LayoutBuilder(builder: (context, constraint) {
+          return Icon(Icons.favorite,
+              color: color, size: constraint.biggest.height);
+        }),
+      ),
+    );
+  }
+}
+
+Widget nothingHereBox() {
+  return Container(
+    height: ScreenUtil().setHeight(576),
+    width: ScreenUtil().setWidth(324),
+    color: Colors.white,
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Lottie.asset('image/empty-box.json',
+            repeat: false, height: ScreenUtil().setHeight(100)),
+        Text(
+          '这里什么都没有呢',
+          style: TextStyle(
+              color: Colors.grey,
+              fontSize: ScreenUtil().setHeight(10),
+              decoration: TextDecoration.none),
+        ),
+        SizedBox(
+          height: ScreenUtil().setHeight(250),
+        )
+      ],
     ),
   );
 }
