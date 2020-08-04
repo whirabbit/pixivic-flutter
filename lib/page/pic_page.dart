@@ -221,7 +221,7 @@ class _PicPageState extends State<PicPage> {
   int picTotalNum;
   int currentPage;
   RandomColor _randomColor = RandomColor();
-  bool haveConnected = false;
+  bool hasConnected = false;
   bool loadMoreAble = true;
   bool isScrolling = false;
   ScrollController scrollController;
@@ -242,11 +242,11 @@ class _PicPageState extends State<PicPage> {
           picList = value;
           // print('picpage init getJsonList: $picList');
           if (picList == null) {
-            haveConnected = true;
+            hasConnected = true;
           } else {
             picTotalNum = value.length;
             if (widget.jsonMode == 'home') homePicList = picList;
-            haveConnected = true;
+            hasConnected = true;
           }
         });
       }).catchError((error) {
@@ -255,7 +255,7 @@ class _PicPageState extends State<PicPage> {
         print(error);
         print('======================');
         if (error.toString().contains('NoSuchMethodError')) picList = null;
-        haveConnected = true;
+        hasConnected = true;
       });
     }
 
@@ -295,18 +295,18 @@ class _PicPageState extends State<PicPage> {
       homeScrollerPosition = 0;
       setState(() {
         picList = null; // 清空 picList 以进入加载动画
-        haveConnected = false;
+        hasConnected = false;
       });
 
       _getJsonList().then((value) {
-        haveConnected = true;
+        hasConnected = true;
         setState(() {
           // print('getJsonList: $picList');
           if (value != null) {
             picList = value;
             picTotalNum = value.length;
             homePicList = picList;
-            haveConnected = true;
+            hasConnected = true;
           }
         });
       }).catchError((error) {
@@ -321,10 +321,10 @@ class _PicPageState extends State<PicPage> {
       currentPage = 1;
       setState(() {
         picList = null;
-        haveConnected = false;
+        hasConnected = false;
       });
       _getJsonList().then((value) {
-        haveConnected = true;
+        hasConnected = true;
         setState(() {
           // print('getJsonList: $picList');
           if (value != null) {
@@ -352,7 +352,7 @@ class _PicPageState extends State<PicPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (picList == null && !haveConnected) {
+    if (picList == null && !hasConnected) {
       return Container(
           height: ScreenUtil().setHeight(576),
           width: ScreenUtil().setWidth(324),
@@ -361,7 +361,7 @@ class _PicPageState extends State<PicPage> {
           child: Center(
             child: Lottie.asset('image/loading-box.json'),
           ));
-    } else if (picList == null && haveConnected) {
+    } else if (picList == null && hasConnected) {
       return Container(
         height: ScreenUtil().setHeight(576),
         width: ScreenUtil().setWidth(324),
