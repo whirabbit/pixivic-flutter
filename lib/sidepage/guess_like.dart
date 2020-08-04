@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:dio/dio.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:flutter_advanced_networkimage/provider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:random_color/random_color.dart';
 
 import '../data/common.dart';
 import '../data/texts.dart';
@@ -14,7 +18,8 @@ class GuessLikePage extends StatefulWidget {
 
 class _GuessLikePageState extends State<GuessLikePage> {
   bool hasConnected = false;
-  List jsonList;
+  List picList;
+  RandomColor _randomColor;
   TextZhGuessLikePage texts = TextZhGuessLikePage();
 
   @override
@@ -31,6 +36,8 @@ class _GuessLikePageState extends State<GuessLikePage> {
     );
   }
 
+  
+
   _getJsonList() async {
     String url =
         'https://api.pixivic.com/users/${prefs.getInt('id')}/recommendBookmarkIllusts';
@@ -38,8 +45,8 @@ class _GuessLikePageState extends State<GuessLikePage> {
     try {
       Response response =
           await Dio().get(url, options: Options(headers: headers));
-      jsonList = response.data['data'];
-      print(jsonList[0]);
+      picList = response.data['data'];
+      print(picList[0]);
     } on DioError catch (e) {
       if (e.response != null) {
         print(e.response.data);
