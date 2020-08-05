@@ -12,6 +12,7 @@ import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_advanced_networkimage/zoomable.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:dio/dio.dart';
 
 import 'pic_page.dart';
 import 'artist_page.dart';
@@ -124,6 +125,12 @@ class _PicDetailPageState extends State<PicDetailPage> {
                                       right: ScreenUtil().setWidth(4),
                                       top: 0,
                                       child: _bookmarkHeart())
+                                  : Container(),
+                              loginState
+                                  ? Positioned(
+                                      right: ScreenUtil().setWidth(40),
+                                      top: 0,
+                                      child: _addToAlbum())
                                   : Container(),
                             ],
                           ),
@@ -538,6 +545,36 @@ class _PicDetailPageState extends State<PicDetailPage> {
     );
   }
 
+  Widget _addToAlbum() {
+    return Container(
+      color: Colors.white,
+      alignment: Alignment.center,
+      width: ScreenUtil().setWidth(28),
+      height: ScreenUtil().setWidth(28),
+      child: Material(
+        color: Colors.white,
+        child: InkWell(
+          child: FaIcon(
+            FontAwesomeIcons.folderPlus,
+            color: Colors.blueGrey,
+          ),
+          onTap: () {
+            
+          },
+        ),
+      ),
+    );
+  }
+
+  _showAlbumList() {
+    String url = 'https://api.pixivic.com/users/${prefs.getString('id')}/collections';
+    try {
+
+    } on DioError catch (e) {
+      
+    }
+  }
+
   _longPressPic(String url) async {
     showModalBottomSheet(
         context: context,
@@ -633,6 +670,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
         });
   }
 
+  // 检查是否获取足够的系统权限
   Future<bool> _checkPermission() async {
     if (Theme.of(context).platform == TargetPlatform.android) {
       PermissionStatus permission = await PermissionHandler()
@@ -653,12 +691,14 @@ class _PicDetailPageState extends State<PicDetailPage> {
     return false;
   }
 
+  // 同步关注状态
   _followedRefresh(bool result) {
     setState(() {
       widget._picData['artistPreView']['isFollowed'] = result;
     });
   }
 
+  // 留下查看图片的痕迹
   _uploadHistory() async {
     if (prefs.getString('auth') != '') {
       String url =

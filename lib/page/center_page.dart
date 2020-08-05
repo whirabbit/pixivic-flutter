@@ -5,6 +5,7 @@ import 'package:pixivic/sidepage/about_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:bot_toast/bot_toast.dart';
 
 import '../data/texts.dart';
 import '../sidepage/spotlight_page.dart';
@@ -54,10 +55,10 @@ class _CenterPageState extends State<CenterPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              // cell(texts.mobile, FontAwesomeIcons.githubAlt, Colors.red[400],
-              //     () {
-              //   _openUrl('https://github.com/cheer-fun/pixivic-flutter');
-              // }),
+              cell(texts.mobile, FontAwesomeIcons.githubAlt, Colors.red[400],
+                  () {
+                _openUrl('https://github.com/cheer-fun/pixivic-flutter');
+              }),
               cell(texts.friendUrl, FontAwesomeIcons.paperclip,
                   Color(0xFFfbd46d), () {
                 _openUrl('https://m.pixivic.com/friends?VNK=d6d42013');
@@ -66,16 +67,19 @@ class _CenterPageState extends State<CenterPage> {
                   () {}),
               cell(texts.guessLike, FontAwesomeIcons.gratipay, Colors.pink[200],
                   () {
-                _routeToGuessLikePage();
-              }),
-              cell(texts.setting, FontAwesomeIcons.cog, Color(0xFF086972), () {
-                _routeToSettingPage();
+                if (prefs.getString('auth') == '')
+                  BotToast.showSimpleNotification(title: texts.pleaseLogin);
+                else 
+                  _routeToGuessLikePage();
               }),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
+              cell(texts.setting, FontAwesomeIcons.cog, Color(0xFF086972), () {
+                _routeToSettingPage();
+              }),
               cell(texts.safety, FontAwesomeIcons.lock, Color(0xFF01a9b4), () {
                 _openSafetySetting();
               }),
@@ -142,7 +146,6 @@ class _CenterPageState extends State<CenterPage> {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => GuessLikePage()));
   }
-
 
   _openUrl(String url) async {
     if (await canLaunch(url)) {

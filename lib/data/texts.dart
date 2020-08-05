@@ -114,6 +114,7 @@ class TextZhCenterPage {
       '注意！！\nPixivic 进行了严格的图片敏感信息过滤，默认安全等级为高等。\n由于相关法规规定，应用将默认保持安全等级为高等';
   String safetyLevelHigh = '高';
   String safetyLevelLowHigh = '中高';
+  String pleaseLogin = '请登录后使用该功能';
 }
 
 class TextZhSpotlightPage {
