@@ -50,6 +50,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
   TextZhPicDetailPage texts = TextZhPicDetailPage();
   PappBar pappBar;
   ScrollController scrollController = ScrollController();
+  List albumList;
 
   @override
   void initState() {
@@ -59,6 +60,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
     _uploadHistory();
     _initPappbar();
     _showUseTips();
+    _getAlbumList();
     super.initState();
   }
 
@@ -558,18 +560,28 @@ class _PicDetailPageState extends State<PicDetailPage> {
             FontAwesomeIcons.folderPlus,
             color: Colors.blueGrey,
           ),
-          onTap: () {},
+          onTap: () {
+            _showAlbumList();
+          },
         ),
       ),
     );
   }
 
-  _showAlbumList() async {
+  _showAlbumList() {
+
+  }
+
+  _getAlbumList() async {
     String url =
-        'https://api.pixivic.com/users/${prefs.getString('id')}/collections';
+        'https://api.pixivic.com/users/${prefs.getInt('id')}/collections';
     Map<String, String> headers = {'authorization': prefs.getString('auth')};
     try {
-      Response response = await Dio().get(url);
+      Response response =
+          await Dio().get(url, options: Options(headers: headers));
+      print(response.data['data']);
+      albumList = response.data['data'];
+      print('The user album list:\n$albumList');
     } on DioError catch (e) {
       if (e.response != null) {
         BotToast.showSimpleNotification(title: e.response.data['message']);
