@@ -7,7 +7,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:bot_toast/bot_toast.dart';
-import 'package:requests/requests.dart';
+import 'package:requests/requests.dart' hide Response;
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_advanced_networkimage/zoomable.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
@@ -558,20 +558,30 @@ class _PicDetailPageState extends State<PicDetailPage> {
             FontAwesomeIcons.folderPlus,
             color: Colors.blueGrey,
           ),
-          onTap: () {
-            
-          },
+          onTap: () {},
         ),
       ),
     );
   }
 
-  _showAlbumList() {
-    String url = 'https://api.pixivic.com/users/${prefs.getString('id')}/collections';
+  _showAlbumList() async {
+    String url =
+        'https://api.pixivic.com/users/${prefs.getString('id')}/collections';
+    Map<String, String> headers = {'authorization': prefs.getString('auth')};
     try {
-
+      Response response = await Dio().get(url);
     } on DioError catch (e) {
-      
+      if (e.response != null) {
+        BotToast.showSimpleNotification(title: e.response.data['message']);
+        print(e.response.data);
+        print(e.response.headers);
+        print(e.response.request);
+      } else {
+        // Something happened in setting up or sending the request that triggered an Error
+        BotToast.showSimpleNotification(title: e.message);
+        print(e.request);
+        print(e.message);
+      }
     }
   }
 
