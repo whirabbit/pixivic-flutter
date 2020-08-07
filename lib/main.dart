@@ -213,10 +213,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _onPageChanged(int index) {
-    setState(() {
+
       // print('_onPageChanged: $index');
 //      _currentIndex = index;
       indexProvider.changeIndex(index);
+      indexProvider.changeJudge(true);
       // _menuButtonKey.currentState.changeTapState(false);
       // _menuListKey.currentState.changeActive(false);
 
@@ -229,7 +230,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // }
 //      _pappBarKey.currentState.changePappbarMode(index);
 //      _onPageScrolling(false);
-    });
+
   }
 
   // void _onMenuButoonTap() {
