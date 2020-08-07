@@ -15,6 +15,7 @@ int homeCurrentPage = 1;
 int cacheSize;
 
 SharedPreferences prefs;
+//验证码验证图片
 String tempVerificationCode;
 String tempVerificationImage;
 bool isLogin; // 记录登录状态（已登录，未登录）用于控制是否展示loginPage

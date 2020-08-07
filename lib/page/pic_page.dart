@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:pixivic/provider/page_switch.dart';
 import 'package:requests/requests.dart';
 import 'package:random_color/random_color.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -11,7 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
-
+import 'package:provider/provider.dart';
 import 'pic_detail_page.dart';
 import '../data/common.dart';
 
@@ -46,7 +47,8 @@ class PicPage extends StatefulWidget {
     this.artistId,
     this.userId,
     this.spotlightId,
-    @required this.onPageScrolling,
+//    @required this.onPageScrolling,
+    this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
@@ -226,6 +228,7 @@ class _PicPageState extends State<PicPage> {
   bool isScrolling = false;
   ScrollController scrollController;
   String previewQuality = prefs.getString('previewQuality');
+  PageSwitchProvider indexProvider;
 
   @override
   void initState() {
@@ -352,6 +355,7 @@ class _PicPageState extends State<PicPage> {
 
   @override
   Widget build(BuildContext context) {
+    indexProvider=Provider.of<PageSwitchProvider>(context);
     if (picList == null && !hasConnected) {
       return Container(
           height: ScreenUtil().setHeight(576),
@@ -517,16 +521,19 @@ class _PicPageState extends State<PicPage> {
       // 判断是否在滑动，以便隐藏底部控件
       if (scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
-        if (!isScrolling) {
-          isScrolling = true;
-          widget.onPageScrolling(isScrolling);
+        if (!indexProvider.judgeScrolling) {
+          indexProvider.changeScrolling(true);
+//          isScrolling = true;
+//          widget.onPageScrolling(isScrolling);
         }
       }
       if (scrollController.position.userScrollDirection ==
           ScrollDirection.forward) {
-        if (isScrolling) {
-          isScrolling = false;
-          widget.onPageScrolling(isScrolling);
+        //显示
+        if (indexProvider.judgeScrolling) {
+          indexProvider.changeScrolling(false);
+//          isScrolling = false;
+//          widget.onPageScrolling(isScrolling);
         }
       }
     }

@@ -8,12 +8,15 @@ import 'package:intl/intl.dart';
 import 'package:pixivic/page/search_page.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:flutter_bugly/flutter_bugly.dart';
+import 'package:pixivic/provider/page_switch.dart';
+//import 'package:flutter_bugly/flutter_bugly.dart';
 
 import 'widget/nav_bar.dart';
 import 'widget/papp_bar.dart';
 // import 'widget/menu_button.dart';
 // import 'widget/menu_list.dart';
+
+import 'package:provider/provider.dart';
 
 import 'page/pic_page.dart';
 import 'page/new_page.dart';
@@ -21,18 +24,25 @@ import 'page/user_page.dart';
 import 'page/center_page.dart';
 
 import 'data/common.dart';
-import 'data/bugly.dart';
+//import 'data/bugly.dart';
 
 import 'function/update.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  FlutterBugly.postCatchedException(() {
-    runApp(MyApp());
-  });
+//  SystemChrome.setPreferredOrientations(
+//      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+//  FlutterBugly.postCatchedException(() {
+  runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_)=>PageSwitchProvider())
+        ],
+        child: MyApp(),
+      )
+  );
+//  });
 }
 
 class MyApp extends StatelessWidget {
@@ -98,30 +108,32 @@ class _MyHomePageState extends State<MyHomePage> {
   NewPage newPage;
   PappBar pappBar;
 
+  PageSwitchProvider indexProvider;
+
   String updateTaskId;
   String apkPath;
 
   @override
   void initState() {
-    FlutterBugly.init(
-            androidAppId: buglyAndroid,
-            iOSAppId: buglyIos,
-            autoCheckUpgrade: false)
-        .then((onValue) {
-      print('FlutterBugly: ${onValue.isSuccess}');
-      print('FlutterBugly: ${onValue.appId}');
-      print('FlutterBugly: ${onValue.message}');
-      FlutterBugly.setUserId('pixivic 0.1.0');
-      if (Theme.of(context).platform == TargetPlatform.android) {
-        FlutterBugly.checkUpgrade().then((UpgradeInfo info) {
-          print('==============================');
-          if (info != null && info.id != null) {
-            UpdateApp().showUpdateDialog(
-                context, info.versionName, info.newFeature, info.apkUrl);
-          }
-        });
-      }
-    });
+//    FlutterBugly.init(
+//            androidAppId: buglyAndroid,
+//            iOSAppId: buglyIos,
+//            autoCheckUpgrade: false)
+//        .then((onValue) {
+//      print('FlutterBugly: ${onValue.isSuccess}');
+//      print('FlutterBugly: ${onValue.appId}');
+//      print('FlutterBugly: ${onValue.message}');
+//      FlutterBugly.setUserId('pixivic 0.1.0');
+//      if (Theme.of(context).platform == TargetPlatform.android) {
+//        FlutterBugly.checkUpgrade().then((UpgradeInfo info) {
+//          print('==============================');
+//          if (info != null && info.id != null) {
+//            UpdateApp().showUpdateDialog(
+//                context, info.versionName, info.newFeature, info.apkUrl);
+//          }
+//        });
+//      }
+//    });
     FlutterDownloader.initialize(debug: false).then((value) {
       FlutterDownloader.cancelAll();
     });
@@ -131,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
         picPage = PicPage.home(
           picDate: _picDateStr,
           picMode: _picMode,
-          onPageScrolling: _onPageScrolling,
+//          onPageScrolling: _onPageScrolling,
         );
         userPage = UserPage(userPageKey);
         newPage = NewPage(newPageKey);
@@ -154,7 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 324, height: 576);
-
+    indexProvider=Provider.of<PageSwitchProvider>(context);
     return Scaffold(
       appBar: pappBar,
       body: Stack(
@@ -194,15 +206,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _onNavbarTap(int index) {
     // print('tap $index');
-    setState(() {
-      _pageController.jumpToPage(index);
-    });
+    //    setState(() {
+//      _currentIndex = index;
+//    });
+    _pageController.jumpToPage(index);
   }
 
   _onPageChanged(int index) {
     setState(() {
       // print('_onPageChanged: $index');
-      _currentIndex = index;
+//      _currentIndex = index;
+      indexProvider.changeIndex(index);
       // _menuButtonKey.currentState.changeTapState(false);
       // _menuListKey.currentState.changeActive(false);
 
@@ -213,8 +227,8 @@ class _MyHomePageState extends State<MyHomePage> {
       //   _navBarAlone = true;
       //   _menuButtonKey.currentState.changeVisible(false);
       // }
-      _pappBarKey.currentState.changePappbarMode(index);
-      _onPageScrolling(false);
+//      _pappBarKey.currentState.changePappbarMode(index);
+//      _onPageScrolling(false);
     });
   }
 
@@ -242,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
           picPage = PicPage.home(
             picDate: _picDateStr,
             picMode: _picMode,
-            onPageScrolling: _onPageScrolling,
+//            onPageScrolling: _onPageScrolling,
           );
         });
       }
@@ -301,23 +315,23 @@ class _MyHomePageState extends State<MyHomePage> {
         picPage = PicPage.home(
           picDate: _picDateStr,
           picMode: _picMode,
-          onPageScrolling: _onPageScrolling,
+//          onPageScrolling: _onPageScrolling,
         );
       });
     }
   }
 
-  _onPageScrolling(bool isScrolling) {
-    if (isScrolling) {
-      setState(() {
-        _isPageScrolling = true;
-      });
-    } else {
-      setState(() {
-        _isPageScrolling = false;
-      });
-    }
-  }
+//  _onPageScrolling(bool isScrolling) {
+//    if (isScrolling) {
+//      setState(() {
+//        _isPageScrolling = true;
+//      });
+//    } else {
+//      setState(() {
+//        _isPageScrolling = false;
+//      });
+//    }
+//  }
 
   
 }
