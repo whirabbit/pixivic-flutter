@@ -4,9 +4,12 @@ import 'dart:io';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pixivic/provider/page_switch.dart';
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:file_picker/file_picker.dart';
+
+import 'package:provider/provider.dart';
 
 import '../data/texts.dart';
 import '../data/common.dart';
@@ -107,7 +110,17 @@ class PappBarState extends State<PappBar> {
             ],
           ),
           // height: contentHeight,
-          child: chooseWidget(),
+          child: Consumer<PageSwitchProvider>(
+            builder: (context, PageSwitchProvider indexProvider, _) {
+              //判断是否从nab点击
+              if(indexProvider.judgePage) {
+                changePappbarMode(indexProvider.currentIndex);
+                indexProvider.changeJudge(false);
+              }
+//           }
+              return chooseWidget();
+            },
+          ),
         ),
       ),
     );
@@ -468,7 +481,7 @@ class PappBarState extends State<PappBar> {
   }
 
   void changePappbarMode(int index) {
-    setState(() {
+
       switch (index) {
         case 0:
           mode = 'home';
@@ -490,7 +503,7 @@ class PappBarState extends State<PappBar> {
           mode = 'home';
           title = '日排行';
       }
-    });
+
   }
 
   void changeSearchKeywords(String keywords) {

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:core';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pixivic/provider/page_switch.dart';
 
+import 'package:provider/provider.dart';
 class NavBar extends StatefulWidget {
   @override
   _NavBarState createState() => _NavBarState();
@@ -21,6 +23,8 @@ class _NavBarState extends State<NavBar> {
   double containerRight;
   double containerBottom;
 
+  PageSwitchProvider indexProvider;
+
   @override
   void initState() {
     super.initState();
@@ -28,8 +32,9 @@ class _NavBarState extends State<NavBar> {
 
   @override
   Widget build(BuildContext context) {
+    indexProvider=Provider.of<PageSwitchProvider>(context);
     activeList = List.filled(4, false);
-    activeList[widget.currentIndex] = true;
+    activeList[indexProvider.currentIndex] = true;
     if (widget.alone) {
       containerLeft = ScreenUtil().setWidth(54);
       containerRight = ScreenUtil().setWidth(54);
@@ -37,7 +42,7 @@ class _NavBarState extends State<NavBar> {
       containerLeft = ScreenUtil().setWidth(98);
       containerRight = ScreenUtil().setWidth(27);
     }
-    if (widget.isScrolling) {
+    if (indexProvider.judgeScrolling) {
       containerBottom = ScreenUtil().setHeight(-47);
     } else {
       containerBottom = ScreenUtil().setHeight(25);
@@ -122,13 +127,16 @@ class _NavBarState extends State<NavBar> {
         curve: Curves.easeIn,
         child: GestureDetector(
           onTap: () {
+            indexProvider.changeJudge(true);
             // 当外部方法 onTap 为空，触发的独立方法
             if (activeList[seq] == true) {
             } else {
-              setState(() {
-                activeList = List.filled(4, false);
-                activeList[seq] = true;
-              });
+//              setState(() {
+//                activeList = List.filled(4, false);
+//                activeList[seq] = true;
+//              });
+
+              indexProvider.changeIndex(seq);
             }
             // 外部方法
             if (widget.onTap != null) {
