@@ -494,9 +494,9 @@ class _PicDetailPageState extends State<PicDetailPage> {
     var color = isLikedLocalState ? Colors.redAccent : Colors.grey[400];
     String picId = widget._picData['id'].toString();
 
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 230),
-      curve: Curves.easeInOut,
+    return Container(
+//      duration: Duration(milliseconds: 230),
+//      curve: Curves.easeInOut,
       alignment: Alignment.center,
       // color: Colors.white,
       height: isLikedLocalState

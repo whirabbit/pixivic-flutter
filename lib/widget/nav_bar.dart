@@ -12,9 +12,9 @@ class NavBar extends StatefulWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
   final bool alone;
-  final bool isScrolling;
+//  final bool isScrolling;
 
-  NavBar(this.currentIndex, this.onTap, this.alone, this.isScrolling);
+  NavBar(this.currentIndex, this.onTap, this.alone);
 }
 
 class _NavBarState extends State<NavBar> {
