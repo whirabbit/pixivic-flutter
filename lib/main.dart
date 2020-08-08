@@ -150,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
         centerPage = CenterPage();
         pappBar = PappBar.home(
           homeModeOptionsFucntion: _onOptionCellTap,
-          key: _pappBarKey,
+//          key: _pappBarKey,
         );
       });
     });
@@ -181,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             },
           ),
-          NavBar(_currentIndex, _onNavbarTap, _navBarAlone, _isPageScrolling),
+          NavBar(_currentIndex, _onNavbarTap, _navBarAlone),
           // MenuButton(_onMenuButoonTap, _menuButtonKey),
           // MenuList(_onOptionCellTap, _menuListKey),
         ],
@@ -209,7 +209,8 @@ class _MyHomePageState extends State<MyHomePage> {
     //    setState(() {
 //      _currentIndex = index;
 //    });
-    _pageController.jumpToPage(index);
+    _pageController.animateToPage(index,
+        duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   _onPageChanged(int index) {
@@ -217,6 +218,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // print('_onPageChanged: $index');
 //      _currentIndex = index;
       indexProvider.changeIndex(index);
+      //滑动切换类似点击nav_bar
       indexProvider.changeJudge(true);
       // _menuButtonKey.currentState.changeTapState(false);
       // _menuListKey.currentState.changeActive(false);
