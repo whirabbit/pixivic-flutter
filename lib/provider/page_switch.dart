@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 class PageSwitchProvider with ChangeNotifier{
@@ -10,6 +12,8 @@ class PageSwitchProvider with ChangeNotifier{
   //判断是否滚动
   bool _judgeScrolling=false;
   bool get judgeScrolling=>_judgeScrolling;
+  String _title;
+  String get title=>_title;
   void changeIndex(int index){
     _currentIndex=index;
     notifyListeners();
@@ -20,6 +24,10 @@ class PageSwitchProvider with ChangeNotifier{
   }
   void changeScrolling(bool judge){
     _judgeScrolling=judge;
+    notifyListeners();
+  }
+  void changeTitle(String title){
+    _title=title;
     notifyListeners();
   }
   @override

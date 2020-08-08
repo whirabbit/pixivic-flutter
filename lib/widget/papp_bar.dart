@@ -70,6 +70,7 @@ class PappBarState extends State<PappBar> {
   TextEditingController searchController;
   TextZhPappBar texts = TextZhPappBar();
   FocusNode searchFocusNode;
+  PageSwitchProvider indexProvider;
 
   @override
   void initState() {
@@ -92,6 +93,7 @@ class PappBarState extends State<PappBar> {
 
   @override
   Widget build(BuildContext context) {
+     indexProvider=Provider.of<PageSwitchProvider>(context,listen: false);
     return Container(
       color: Colors.white70,
       child: SafeArea(
@@ -112,7 +114,7 @@ class PappBarState extends State<PappBar> {
           // height: contentHeight,
           child: Consumer<PageSwitchProvider>(
             builder: (context, PageSwitchProvider indexProvider, _) {
-              //判断是否从nab点击
+              //判断是否从nav_bar点击
               if(indexProvider.judgePage) {
                 changePappbarMode(indexProvider.currentIndex);
                 indexProvider.changeJudge(false);
@@ -467,12 +469,14 @@ class PappBarState extends State<PappBar> {
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(13.0)),
         child: OutlineButton(
           onPressed: () {
+            PageSwitchProvider indexProvider=Provider.of<PageSwitchProvider>(context,listen: false);
             Navigator.of(context).pop();
             widget.homeModeOptionsFucntion(parameter);
-            setState(() {
-              title = label;
+//            setState(() {
+            indexProvider.changeTitle(label);
+              title =  indexProvider.title;
               lastHomeTitle = title;
-            });
+//            });
           },
           child: Text(label),
         ),
