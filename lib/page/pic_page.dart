@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:pixivic/provider/favorite_animation.dart';
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:requests/requests.dart';
 import 'package:random_color/random_color.dart';
@@ -207,8 +208,10 @@ class PicPage extends StatefulWidget {
   final String searchKeywords;
   final bool isManga;
   final bool isScrollable;
+
   // jsonMode could be set to 'home, related, Spotlight, tag, artist, search...'
   final String jsonMode;
+
   // hide naviagtor bar when page is scrolling
   final ValueChanged<bool> onPageScrolling;
   final VoidCallback onPageTop;
@@ -355,7 +358,7 @@ class _PicPageState extends State<PicPage> {
 
   @override
   Widget build(BuildContext context) {
-    indexProvider=Provider.of<PageSwitchProvider>(context);
+    indexProvider = Provider.of<PageSwitchProvider>(context);
     if (picList == null && !hasConnected) {
       return Container(
           height: ScreenUtil().setHeight(576),
@@ -721,51 +724,83 @@ class _PicPageState extends State<PicPage> {
     var color = isLikedLocalState ? Colors.redAccent : Colors.grey[300];
     String picId = picList[index]['id'].toString();
 
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 500),
-      curve: Curves.fastLinearToSlowEaseIn,
-      alignment: Alignment.center,
-      // color: Colors.white,
-      height: isLikedLocalState
-          ? ScreenUtil().setWidth(33)
-          : ScreenUtil().setWidth(27),
-      width: isLikedLocalState
-          ? ScreenUtil().setWidth(33)
-          : ScreenUtil().setWidth(27),
-      child: GestureDetector(
-        onTap: () async {
-          String url = 'https://api.pixivic.com/users/bookmarked';
-          Map<String, String> body = {
-            'userId': prefs.getInt('id').toString(),
-            'illustId': picId.toString(),
-            'username': prefs.getString('name')
-          };
-          Map<String, String> headers = {
-            'authorization': prefs.getString('auth')
-          };
-          try {
-            if (isLikedLocalState) {
-              await Requests.delete(url,
-                  body: body,
-                  headers: headers,
-                  bodyEncoding: RequestBodyEncoding.JSON);
-            } else {
-              await Requests.post(url,
-                  body: body,
-                  headers: headers,
-                  bodyEncoding: RequestBodyEncoding.JSON);
-            }
-            setState(() {
-              picList[index]['isLiked'] = !picList[index]['isLiked'];
-            });
-          } catch (e) {
-            print(e);
-          }
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => FavProvider(),
+        )
+      ],
+      child: Consumer<FavProvider>(
+        builder: (context, FavProvider favProvider, _) {
+          return Container(
+//      duration: Duration(milliseconds: 500),
+//      curve: Curves.fastLinearToSlowEaseIn,
+            alignment: Alignment.center,
+            // color: Colors.white,
+            height: ScreenUtil().setWidth(33),
+            width: ScreenUtil().setWidth(33),
+//            height: isLikedLocalState
+//                ? ScreenUtil().setWidth(33)
+//                : ScreenUtil().setWidth(27),
+//            width: isLikedLocalState
+//                ? ScreenUtil().setWidth(33)
+//                : ScreenUtil().setWidth(27),
+            child: GestureDetector(
+                onTap: () async {
+                  //点击动画
+                  favProvider.clickFunc();
+                  String url = 'https://api.pixivic.com/users/bookmarked';
+                  Map<String, String> body = {
+                    'userId': prefs.getInt('id').toString(),
+                    'illustId': picId.toString(),
+                    'username': prefs.getString('name')
+                  };
+                  Map<String, String> headers = {
+                    'authorization': prefs.getString('auth')
+                  };
+                  try {
+                    if (isLikedLocalState) {
+                      await Requests.delete(url,
+                          body: body,
+                          headers: headers,
+                          bodyEncoding: RequestBodyEncoding.JSON);
+                    } else {
+                      await Requests.post(url,
+                          body: body,
+                          headers: headers,
+                          bodyEncoding: RequestBodyEncoding.JSON);
+                    }
+                    Future.delayed(Duration(milliseconds: 400), (){
+                      setState(() {
+                        picList[index]['isLiked'] = !picList[index]['isLiked'];
+                      });
+                      print('延时1s执行');
+                    });
+//                    setState(() {
+//                      picList[index]['isLiked'] = !picList[index]['isLiked'];
+//                    });
+                  } catch (e) {
+                    print(e);
+                  }
+                },
+                child: Icon(
+                  Icons.favorite,
+                  color: color,
+                  size: ScreenUtil().setHeight(favProvider.iconSize),
+                )
+
+//              LayoutBuilder(builder: (context, constraint) {
+////                print(favProvider.iconSize);
+//                return Icon(Icons.favorite,
+//                    color: color,
+//                    size: favProvider.iconSize,
+////                    size: constraint.biggest.height
+//                );
+//              }
+//              ),
+                ),
+          );
         },
-        child: LayoutBuilder(builder: (context, constraint) {
-          return Icon(Icons.favorite,
-              color: color, size: constraint.biggest.height);
-        }),
       ),
     );
   }
