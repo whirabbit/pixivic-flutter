@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pixivic/provider/page_switch.dart';
+import 'package:pixivic/provider/searchbar_height.dart';
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:file_picker/file_picker.dart';
@@ -70,7 +71,8 @@ class PappBarState extends State<PappBar> {
   TextEditingController searchController;
   TextZhPappBar texts = TextZhPappBar();
   FocusNode searchFocusNode;
-  PageSwitchProvider indexProvider;
+//  PageSwitchProvider indexProvider;
+  SearchBarHeightProvider heightProvider;
 
   @override
   void initState() {
@@ -93,7 +95,8 @@ class PappBarState extends State<PappBar> {
 
   @override
   Widget build(BuildContext context) {
-     indexProvider=Provider.of<PageSwitchProvider>(context,listen: false);
+    print("刷新");
+
     return Container(
       color: Colors.white70,
       child: SafeArea(
@@ -228,89 +231,102 @@ class PappBarState extends State<PappBar> {
   }
 
   Widget searchWidgets() {
-    return AnimatedContainer(
-        duration: Duration(milliseconds: 250),
-        curve: Curves.easeInOutExpo,
-        // padding: EdgeInsets.only(left: ScreenUtil().setWidth(18)),
-        height: searchBarHeight,
-        child: Column(
-          children: <Widget>[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  height: contentHeight,
-                  padding: EdgeInsets.only(left: ScreenUtil().setWidth(18)),
-                  alignment: Alignment.center,
-                  child: FaIcon(
-                    FontAwesomeIcons.search,
-                    color: Color(0xFF515151),
-                    size: ScreenUtil().setWidth(15),
+    return MultiProvider(
+      providers:[
+        ChangeNotifierProvider(create: (_)=>SearchBarHeightProvider(),)
+      ],
+      child:Consumer<SearchBarHeightProvider>(
+        builder: (context,SearchBarHeightProvider heightProvider,_){
+          print("searchbar刷新");
+          return AnimatedContainer(
+              duration: Duration(milliseconds: 250),
+              curve: Curves.easeInOutExpo,
+              // padding: EdgeInsets.only(left: ScreenUtil().setWidth(18)),
+              height: searchBarHeight,
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        height: contentHeight,
+                        padding: EdgeInsets.only(left: ScreenUtil().setWidth(18)),
+                        alignment: Alignment.center,
+                        child: FaIcon(
+                          FontAwesomeIcons.search,
+                          color: Color(0xFF515151),
+                          size: ScreenUtil().setWidth(15),
+                        ),
+                      ),
+                      Container(
+                        width: ScreenUtil().setWidth(240),
+                        height: ScreenUtil().setHeight(25),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Color(0xFFF4F3F3F3),
+                        ),
+                        margin: EdgeInsets.only(
+                          left: ScreenUtil().setWidth(10),
+                          right: ScreenUtil().setWidth(8),
+                        ),
+                        child: TextField(
+                          controller: searchController,
+                          focusNode: searchFocusNode,
+                          onTap: () {
+//                            setState(() {
+//                              searchBarHeight = ScreenUtil().setHeight(77);
+//                            });'
+                            heightProvider.changeHeight(77);
+                            searchBarHeight = ScreenUtil().setHeight(heightProvider.height);
+                          },
+                          onSubmitted: (value) {
+                            widget.searchFucntion(searchController.text);
+                          },
+                          onChanged: (value) {
+                            if (value == '') {
+                              widget.searchFucntion(value);
+                            }
+                          },
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: '要搜点什么呢',
+                            contentPadding: EdgeInsets.only(
+                                left: ScreenUtil().setWidth(8),
+                                bottom: ScreenUtil().setHeight(9)),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        child: InkWell(
+                          onTap: () async {
+                            bool loginState = hasLogin();
+                            if (loginState) {
+                              File file =
+                              await FilePicker.getFile(type: FileType.image);
+                              if (file != null) {
+                                uploadImageToSaucenao(file, context);
+                              } else {
+                                BotToast.showSimpleNotification(
+                                    title: texts.noImageSelected);
+                              }
+                            }
+                          },
+                          child: Icon(
+                            Icons.camera_enhance,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Container(
-                  width: ScreenUtil().setWidth(240),
-                  height: ScreenUtil().setHeight(25),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Color(0xFFF4F3F3F3),
-                  ),
-                  margin: EdgeInsets.only(
-                    left: ScreenUtil().setWidth(10),
-                    right: ScreenUtil().setWidth(8),
-                  ),
-                  child: TextField(
-                    controller: searchController,
-                    focusNode: searchFocusNode,
-                    onTap: () {
-                      setState(() {
-                        searchBarHeight = ScreenUtil().setHeight(77);
-                      });
-                    },
-                    onSubmitted: (value) {
-                      widget.searchFucntion(searchController.text);
-                    },
-                    onChanged: (value) {
-                      if (value == '') {
-                        widget.searchFucntion(value);
-                      }
-                    },
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: '要搜点什么呢',
-                      contentPadding: EdgeInsets.only(
-                          left: ScreenUtil().setWidth(8),
-                          bottom: ScreenUtil().setHeight(9)),
-                    ),
-                  ),
-                ),
-                Container(
-                  child: InkWell(
-                    onTap: () async {
-                      bool loginState = hasLogin();
-                      if (loginState) {
-                        File file =
-                            await FilePicker.getFile(type: FileType.image);
-                        if (file != null) {
-                          uploadImageToSaucenao(file, context);
-                        } else {
-                          BotToast.showSimpleNotification(
-                              title: texts.noImageSelected);
-                        }
-                      }
-                    },
-                    child: Icon(
-                      Icons.camera_enhance,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            searchBarHeight == contentHeight
-                ? Container()
-                : searchAdditionGroup()
-          ],
-        ));
+                  searchBarHeight == contentHeight
+                      ? Container()
+                      : searchAdditionGroup()
+                ],
+              )
+          );
+        },
+      )
+    );
   }
 
   Widget searchAdditionGroup() {
@@ -517,17 +533,18 @@ class PappBarState extends State<PappBar> {
   }
 
   void searchFocusNodeListener() {
+
     print('searchFocusNodeListener is Lisetning');
     print(
         'Search TextEdit FocusNode: ${searchFocusNode.hasFocus}'); // https://stackoverflow.com/questions/54428029/flutter-how-to-clear-text-field-on-focus
     if (searchFocusNode.hasFocus == false) {
-      setState(() {
+//      setState(() {
         searchBarHeight = contentHeight;
-      });
+//      });
     } else {
-      setState(() {
+//      setState(() {
         searchBarHeight = ScreenUtil().setHeight(77);
-      });
+//      });
     }
   }
 
