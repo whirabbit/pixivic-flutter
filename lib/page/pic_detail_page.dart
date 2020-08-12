@@ -336,8 +336,9 @@ class _PicDetailPageState extends State<PicDetailPage> {
               maxScale: 3.0,
               minScale: 0.7,
               child: TransitionToImage(
+
                 image: AdvancedNetworkImage(
-                  widget._picData['imageUrls'][0]['large'],
+                  widget._picData['imageUrls'][0][previewQuality],
                   header: {'Referer': 'https://app-api.pixiv.net'},
                   useDiskCache: true,
                   cacheRule: CacheRule(
@@ -371,7 +372,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                   minScale: 0.7,
                   child: TransitionToImage(
                     image: AdvancedNetworkImage(
-                      widget._picData['imageUrls'][index]['large'],
+                      widget._picData['imageUrls'][index][previewQuality],
                       header: {'Referer': 'https://app-api.pixiv.net'},
                       useDiskCache: true,
                       cacheRule: CacheRule(
