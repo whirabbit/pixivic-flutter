@@ -76,6 +76,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomPadding: false,
         appBar: PappBar.search(
           searchKeywordsIn: searchKeywords,
           searchFucntion: _onSearch,
