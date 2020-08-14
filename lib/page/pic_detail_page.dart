@@ -13,6 +13,7 @@ import 'package:flutter_advanced_networkimage/zoomable.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:dio/dio.dart';
+import 'package:lottie/lottie.dart';
 
 import 'pic_page.dart';
 import 'artist_page.dart';
@@ -23,6 +24,7 @@ import '../widget/papp_bar.dart';
 import '../widget/bookmark_users.dart';
 import '../widget/comment_cell.dart';
 import '../function/downloadImage.dart';
+import '../widget/image_display.dart';
 
 class PicDetailPage extends StatefulWidget {
   @override
@@ -38,6 +40,8 @@ class PicDetailPage extends StatefulWidget {
 class _PicDetailPageState extends State<PicDetailPage> {
   bool loginState = prefs.getString('auth') != '' ? true : false;
   int picTotalNum;
+  List albumList;
+  ScreenUtil screen = ScreenUtil();
   String previewQuality = prefs.getString('previewQuality');
   TextStyle normalTextStyle = TextStyle(
       fontSize: ScreenUtil().setWidth(14),
@@ -50,7 +54,6 @@ class _PicDetailPageState extends State<PicDetailPage> {
   TextZhPicDetailPage texts = TextZhPicDetailPage();
   PappBar pappBar;
   ScrollController scrollController = ScrollController();
-  List albumList;
 
   @override
   void initState() {
@@ -60,7 +63,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
     _uploadHistory();
     _initPappbar();
     _showUseTips();
-    _getAlbumList();
+    if (prefs.getString('auth') != '') _getAlbumList();
     super.initState();
   }
 
@@ -569,7 +572,69 @@ class _PicDetailPageState extends State<PicDetailPage> {
   }
 
   _showAlbumList() {
-
+    if (albumList != null)
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              scrollable: true,
+              content: Wrap(
+                alignment: WrapAlignment.start,
+                crossAxisAlignment: WrapCrossAlignment.start,
+                children: [
+                  Container(
+                      padding: EdgeInsets.only(bottom: screen.setHeight(5)),
+                      alignment: Alignment.center,
+                      child: Text(
+                        texts.albumnList,
+                        style: TextStyle(color: Colors.orangeAccent),
+                      )),
+                  Container(
+                    height: screen.setHeight(80 * albumList.length),
+                    width: screen.setWidth(250),
+                    child: ListView.builder(
+                        itemCount: albumList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            child: ListTile(
+                                title: Text(albumList[index]['title']),
+                                subtitle: Text(albumList[index]['caption'])),
+                          );
+                        }),
+                  ),
+                ],
+              ),
+            );
+          });
+    else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: Wrap(
+                alignment: WrapAlignment.center,
+                children: [
+                  Lottie.asset('image/empty-box.json',
+                      repeat: false, height: ScreenUtil().setHeight(80)),
+                  Container(
+                    // width: screen.setWidth(300),
+                    padding: EdgeInsets.only(top: screen.setHeight(8)),
+                    child: Text(texts.addFirstAlbumn),
+                  ),
+                  Container(
+                    width: screen.setWidth(100),
+                    padding: EdgeInsets.only(top: screen.setHeight(8)),
+                    child: FlatButton(
+                      child: Icon(Icons.add),
+                      shape: StadiumBorder(),
+                      onPressed: () {},
+                    ),
+                  )
+                ],
+              ),
+            );
+          });
+    }
   }
 
   _getAlbumList() async {
