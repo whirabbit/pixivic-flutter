@@ -76,7 +76,7 @@ class TextZhPicDetailPage {
   String copyIllustId = '拷贝画作id';
   String copyArtistId = '拷贝画师id';
   String alreadyCopied = '已拷贝id至剪贴板';
-  String albumnList = '画集列表';
+  String addToAlbumn = '添加至画集';
   String addFirstAlbumn = '添加您的第一个画集';
 }
 
@@ -190,6 +190,9 @@ class TextZhSettingPage {
 }
 
 class TextZhGuessLikePage {
-  String title = '猜你喜欢';
-  
+  String title = '猜你喜欢'; 
+}
+
+class TextZhAlbumn {
+  String newAlbumnTitle = '添加新的画集';
 }
