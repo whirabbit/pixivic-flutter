@@ -23,3 +23,4 @@ lib/data/bugly.dart
 *.js_
 *.js.deps
 *.js.map
+.idea
