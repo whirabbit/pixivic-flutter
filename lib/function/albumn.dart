@@ -77,6 +77,17 @@ class NewAlbumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PappBar(title: texts.newAlbumnTitle),
+      body: Container(),
     );
   }
 }
+
+showAddNewAlbumnDialog(BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        return Container();
+      });
+}
+
+showAddTagBottomSheet() {}
