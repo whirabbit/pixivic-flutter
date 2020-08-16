@@ -453,7 +453,7 @@
         <entry key="provider">
           <value>
             <list>
-              <option value="$USER_HOME$/flutter/.pub-cache/hosted/mirrors.tuna.tsinghua.edu.cn%47dart-pub/provider-4.3.1/lib" />
+              <option value="$USER_HOME$/flutter/.pub-cache/hosted/mirrors.tuna.tsinghua.edu.cn%47dart-pub/provider-4.3.2/lib" />
             </list>
           </value>
         </entry>
@@ -702,7 +702,7 @@
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/mirrors.tuna.tsinghua.edu.cn%47dart-pub/platform_detect-1.4.0/lib" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/mirrors.tuna.tsinghua.edu.cn%47dart-pub/plugin_platform_interface-1.0.2/lib" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/mirrors.tuna.tsinghua.edu.cn%47dart-pub/process-3.0.13/lib" />
-      <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/mirrors.tuna.tsinghua.edu.cn%47dart-pub/provider-4.3.1/lib" />
+      <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/mirrors.tuna.tsinghua.edu.cn%47dart-pub/provider-4.3.2/lib" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/mirrors.tuna.tsinghua.edu.cn%47dart-pub/pub_semver-1.4.4/lib" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/mirrors.tuna.tsinghua.edu.cn%47dart-pub/random_color-1.0.5/lib" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/mirrors.tuna.tsinghua.edu.cn%47dart-pub/requests-3.3.0/lib" />
