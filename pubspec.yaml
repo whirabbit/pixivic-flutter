@@ -65,6 +65,10 @@ dependency_overrides:
   # image: ^2.1.14
   # xml: ^4.3.0
   flutter_svg: ^0.18.0
+#<<<<<<< HEAD
+#=======
+#
+#>>>>>>> master
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

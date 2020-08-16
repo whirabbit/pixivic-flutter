@@ -280,7 +280,7 @@ class PappBarState extends State<PappBar> {
                             onTap: () {
 //                            setState(() {
 //                              searchBarHeight = ScreenUtil().setHeight(77);
-//                            });'
+//                            });
                               heightProvider.changeHeight(77);
                               searchBarHeight =
                                   ScreenUtil().setHeight(heightProvider.height);

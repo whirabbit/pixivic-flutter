@@ -34,7 +34,7 @@ class _CommentCellState extends State<CommentCell> {
     return Container(
       color: Colors.white,
       width: ScreenUtil().setWidth(324),
-      height: ScreenUtil().setHeight(130),
+      height: ScreenUtil().setHeight(140),
       child: Column(
         children: <Widget>[
           Container(
@@ -201,6 +201,7 @@ class _CommentCellState extends State<CommentCell> {
           ),
           SizedBox(
             width: ScreenUtil().setWidth(200),
+            height: ScreenUtil().setHeight(30),
             child: FlatButton(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.0)),
