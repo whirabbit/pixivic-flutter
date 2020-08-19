@@ -8,7 +8,7 @@ class FavProvider extends State<StatefulWidget>
   Animation<double> _favAnimation;
   AnimationController animationController;
   CurvedAnimation curvedAnimation;
-  double _iconSize = 30.0;
+  double _iconSize = ScreenUtil().setWidth(30);
   double get iconSize => _iconSize;
   Animation<double> get favAnimation => _favAnimation;
   clickFunc() {

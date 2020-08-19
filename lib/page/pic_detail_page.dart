@@ -639,8 +639,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                       child: Icon(Icons.add),
                       shape: StadiumBorder(),
                       onPressed: () {
-                        Navigator.of(context).pop();
-                        addNewAlbumn(context);
+                        showAddNewAlbumnDialog(context);
                       },
                     ),
                   )

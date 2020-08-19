@@ -1,12 +1,18 @@
+/* 
+fxt0706 2020-08-20
+description: 文件封装了与画集有关的相关功能
+*/
 import 'package:flutter/material.dart';
 
 import 'package:dio/dio.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../widget/papp_bar.dart';
 import '../data/common.dart';
 import '../data/texts.dart';
 
+// 获取当前登录用户的画集列表
 getAlbumList() async {
   List albumList;
   String url =
@@ -36,6 +42,7 @@ getAlbumList() async {
   }
 }
 
+// 将选中画作添加到指定的画集中
 addIllustToAlbumn(int illustId, int albumnId) async {
   String url = 'https://api.pixivic.com/collections/$albumnId/illustrations';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
@@ -64,6 +71,7 @@ addIllustToAlbumn(int illustId, int albumnId) async {
   }
 }
 
+// 添加新的画集
 addNewAlbumn(BuildContext context) {
   Navigator.of(context).push(MaterialPageRoute(builder: (context) {
     return NewAlbumn();
@@ -71,7 +79,7 @@ addNewAlbumn(BuildContext context) {
 }
 
 class NewAlbumn extends StatelessWidget {
-  TextZhAlbumn texts = TextZhAlbumn();
+  final TextZhAlbumn texts = TextZhAlbumn();
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +94,22 @@ showAddNewAlbumnDialog(BuildContext context) {
   showDialog(
       context: context,
       builder: (context) {
-        return Container();
+        return AlertDialog(
+          content: Container(
+            width: ScreenUtil().setWidth(260),
+            height: ScreenUtil().setHeight(250),
+            child: Column(
+              children: [
+                TextField(
+                  decoration: InputDecoration(hintText: '输入画集名称'),
+                ),
+                TextField(
+                  decoration: InputDecoration(hintText: '输入画集介绍'),
+                )
+              ],
+            ),
+          ),
+        );
       });
 }
 
