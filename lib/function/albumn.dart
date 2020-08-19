@@ -37,7 +37,7 @@ getAlbumList() async {
 }
 
 addIllustToAlbumn(int illustId, int albumnId) async {
-  String url = 'https://api.pixivic.com/collections/${albumnId}/illustrations';
+  String url = 'https://api.pixivic.com/collections/$albumnId/illustrations';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
   Map<String, String> data = {'illust_id': illustId.toString()};
   try {

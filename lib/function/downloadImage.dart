@@ -57,51 +57,51 @@ class DownloadImage {
     }
   }
 
-  _androidDownload() async {
-    BotToast.showSimpleNotification(title: '开始下载,请勿退出应用');
-    try {
-      var response = await Requests.get(url,
-          headers: {'Referer': 'https://app-api.pixiv.net'},
-          timeoutSeconds: 180);
-      // response.raiseForStatus();
-      final result = await ImageGallerySaver.saveImage(
-          Uint8List.fromList(response.bytes()), );
-      print(result);
-      BotToast.showSimpleNotification(title: '下载完成');
-    } catch (e) {
-      BotToast.showSimpleNotification(title: '下载失败,请检查网络');
-      print(e);
-    }
-  }
+  // _androidDownload() async {
+  //   BotToast.showSimpleNotification(title: '开始下载,请勿退出应用');
+  //   try {
+  //     var response = await Requests.get(url,
+  //         headers: {'Referer': 'https://app-api.pixiv.net'},
+  //         timeoutSeconds: 180);
+  //     // response.raiseForStatus();
+  //     final result = await ImageGallerySaver.saveImage(
+  //         Uint8List.fromList(response.bytes()), );
+  //     print(result);
+  //     BotToast.showSimpleNotification(title: '下载完成');
+  //   } catch (e) {
+  //     BotToast.showSimpleNotification(title: '下载失败,请检查网络');
+  //     print(e);
+  //   }
+  // }
 
-  _iOSDownloadWithImageDownloader() async {
-    imageId = await ImageDownloader.downloadImage(
-      url,
-      headers: {'Referer': 'https://app-api.pixiv.net'},
-      // destination: AndroidDestinationType.custom(directory: 'pixivic_images')
-      //   ..inExternalFilesDir(),
-    ).catchError((onError) {
-      print(onError);
-      BotToast.showSimpleNotification(title: '下载失败,请检查网络');
-      // ImageDownloader.cancel();
-      return false;
-    });
-    if (imageId == null) {
-      print('image dwonload error');
-      return false;
-    }
+  // _iOSDownloadWithImageDownloader() async {
+  //   imageId = await ImageDownloader.downloadImage(
+  //     url,
+  //     headers: {'Referer': 'https://app-api.pixiv.net'},
+  //     // destination: AndroidDestinationType.custom(directory: 'pixivic_images')
+  //     //   ..inExternalFilesDir(),
+  //   ).catchError((onError) {
+  //     print(onError);
+  //     BotToast.showSimpleNotification(title: '下载失败,请检查网络');
+  //     // ImageDownloader.cancel();
+  //     return false;
+  //   });
+  //   if (imageId == null) {
+  //     print('image dwonload error');
+  //     return false;
+  //   }
 
-    fileName = await ImageDownloader.findName(imageId);
-    path = await ImageDownloader.findPath(imageId);
-    size = await ImageDownloader.findByteSize(imageId);
-    mimeType = await ImageDownloader.findMimeType(imageId);
-    print(fileName);
-    print(path);
-    print(size);
-    print(mimeType);
-    BotToast.showSimpleNotification(title: '下载完成');
-    return true;
-  }
+  //   fileName = await ImageDownloader.findName(imageId);
+  //   path = await ImageDownloader.findPath(imageId);
+  //   size = await ImageDownloader.findByteSize(imageId);
+  //   mimeType = await ImageDownloader.findMimeType(imageId);
+  //   print(fileName);
+  //   print(path);
+  //   print(size);
+  //   print(mimeType);
+  //   BotToast.showSimpleNotification(title: '下载完成');
+  //   return true;
+  // }
 
   _androidDownloadWithFlutterDownloader() async {
     BotToast.showSimpleNotification(title: '开始下载');

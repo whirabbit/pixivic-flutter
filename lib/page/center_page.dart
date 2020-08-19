@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pixivic/data/common.dart';
-import 'package:pixivic/sidepage/about_page.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

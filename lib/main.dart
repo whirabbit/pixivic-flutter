@@ -9,7 +9,7 @@ import 'package:pixivic/page/search_page.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:pixivic/provider/page_switch.dart';
-//import 'package:flutter_bugly/flutter_bugly.dart';
+import 'package:flutter_bugly/flutter_bugly.dart';
 
 import 'widget/nav_bar.dart';
 import 'widget/papp_bar.dart';
@@ -24,25 +24,21 @@ import 'page/user_page.dart';
 import 'page/center_page.dart';
 
 import 'data/common.dart';
-//import 'data/bugly.dart';
+import 'data/bugly.dart';
 
 import 'function/update.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-//  SystemChrome.setPreferredOrientations(
-//      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-//  FlutterBugly.postCatchedException(() {
-  runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_)=>PageSwitchProvider())
-        ],
-        child: MyApp(),
-      )
-  );
-//  });
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  FlutterBugly.postCatchedException(() {
+    runApp(MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => PageSwitchProvider())],
+      child: MyApp(),
+    ));
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -86,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _currentIndex = 0;
   bool _navBarAlone = true;
-  bool _isPageScrolling = false;
+  // bool _isPageScrolling = false;   
   var _pageController = PageController(initialPage: 0);
 
   DateTime _picDate =
@@ -100,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // GlobalKey<MenuButtonState> _menuButtonKey = GlobalKey();
   // GlobalKey<MenuListState> _menuListKey = GlobalKey();
-  GlobalKey<PappBarState> _pappBarKey = GlobalKey();
+  // GlobalKey<PappBarState> _pappBarKey = GlobalKey();
 
   PicPage picPage;
   UserPage userPage;
@@ -115,25 +111,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-//    FlutterBugly.init(
-//            androidAppId: buglyAndroid,
-//            iOSAppId: buglyIos,
-//            autoCheckUpgrade: false)
-//        .then((onValue) {
-//      print('FlutterBugly: ${onValue.isSuccess}');
-//      print('FlutterBugly: ${onValue.appId}');
-//      print('FlutterBugly: ${onValue.message}');
-//      FlutterBugly.setUserId('pixivic 0.1.0');
-//      if (Theme.of(context).platform == TargetPlatform.android) {
-//        FlutterBugly.checkUpgrade().then((UpgradeInfo info) {
-//          print('==============================');
-//          if (info != null && info.id != null) {
-//            UpdateApp().showUpdateDialog(
-//                context, info.versionName, info.newFeature, info.apkUrl);
-//          }
-//        });
-//      }
-//    });
+    FlutterBugly.init(
+            androidAppId: buglyAndroid,
+            iOSAppId: buglyIos,
+            autoCheckUpgrade: false)
+        .then((onValue) {
+      print('FlutterBugly: ${onValue.isSuccess}');
+      print('FlutterBugly: ${onValue.appId}');
+      print('FlutterBugly: ${onValue.message}');
+      FlutterBugly.setUserId('pixivic 0.1.0');
+      if (Theme.of(context).platform == TargetPlatform.android) {
+        FlutterBugly.checkUpgrade().then((UpgradeInfo info) {
+          print('==============================');
+          if (info != null && info.id != null) {
+            UpdateApp().showUpdateDialog(
+                context, info.versionName, info.newFeature, info.apkUrl);
+          }
+        });
+      }
+    });
     FlutterDownloader.initialize(debug: false).then((value) {
       FlutterDownloader.cancelAll();
     });
@@ -166,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 324, height: 576);
-    indexProvider=Provider.of<PageSwitchProvider>(context);
+    indexProvider = Provider.of<PageSwitchProvider>(context);
     return Scaffold(
       appBar: pappBar,
       body: Stack(
@@ -214,25 +210,23 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _onPageChanged(int index) {
-
-      // print('_onPageChanged: $index');
+    // print('_onPageChanged: $index');
 //      _currentIndex = index;
-      indexProvider.changeIndex(index);
-      //滑动切换类似点击nav_bar
-      indexProvider.changeJudge(true);
-      // _menuButtonKey.currentState.changeTapState(false);
-      // _menuListKey.currentState.changeActive(false);
+    indexProvider.changeIndex(index);
+    //滑动切换类似点击nav_bar
+    indexProvider.changeJudge(true);
+    // _menuButtonKey.currentState.changeTapState(false);
+    // _menuListKey.currentState.changeActive(false);
 
-      // if (index == 0) {
-      //   _navBarAlone = false;
-      //   _menuButtonKey.currentState.changeVisible(true);
-      // } else {
-      //   _navBarAlone = true;
-      //   _menuButtonKey.currentState.changeVisible(false);
-      // }
+    // if (index == 0) {
+    //   _navBarAlone = false;
+    //   _menuButtonKey.currentState.changeVisible(true);
+    // } else {
+    //   _navBarAlone = true;
+    //   _menuButtonKey.currentState.changeVisible(false);
+    // }
 //      _pappBarKey.currentState.changePappbarMode(index);
 //      _onPageScrolling(false);
-
   }
 
   // void _onMenuButoonTap() {
@@ -336,5 +330,4 @@ class _MyHomePageState extends State<MyHomePage> {
 //    }
 //  }
 
-  
 }
