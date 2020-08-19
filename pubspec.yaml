@@ -21,7 +21,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-#  flutter_bugly: ^0.2.8
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -55,6 +55,7 @@ dev_dependencies:
   ota_update: ^2.3.0
   file_picker: ^1.12.0
   # tencent_kit: ^1.1.0
+  flutter_bugly: ^0.2.8
 
 flutter_icons:
   android: true

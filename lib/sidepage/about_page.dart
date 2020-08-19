@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-//import 'package:flutter_bugly/flutter_bugly.dart';
+import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:bot_toast/bot_toast.dart';
 
 import '../data/texts.dart';
@@ -112,15 +112,15 @@ class _AboutPageState extends State<AboutPage> {
         child: InkWell(
           onTap: () async {
             if (Theme.of(context).platform == TargetPlatform.android) {
-//              FlutterBugly.checkUpgrade().then((UpgradeInfo info) {
-//                print('==============================');
-//                if (info != null && info.id != null) {
-//                  UpdateApp().showUpdateDialog(
-//                      context, info.versionName, info.newFeature, info.apkUrl);
-//                } else {
-//                  BotToast.showSimpleNotification(title: texts.noUpdate);
-//                }
-//              });
+             FlutterBugly.checkUpgrade().then((UpgradeInfo info) {
+               print('==============================');
+               if (info != null && info.id != null) {
+                 UpdateApp().showUpdateDialog(
+                     context, info.versionName, info.newFeature, info.apkUrl);
+               } else {
+                 BotToast.showSimpleNotification(title: texts.noUpdate);
+               }
+             });
             } else {}
           },
           child: Text(

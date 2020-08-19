@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:dio/dio.dart';
 import 'package:bot_toast/bot_toast.dart';
-import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:random_color/random_color.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';

@@ -12,7 +12,6 @@ import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_advanced_networkimage/zoomable.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:dio/dio.dart';
 import 'package:lottie/lottie.dart';
 
 import 'pic_page.dart';
@@ -25,7 +24,6 @@ import '../widget/bookmark_users.dart';
 import '../widget/comment_cell.dart';
 import '../function/downloadImage.dart';
 import '../function/albumn.dart';
-import '../widget/image_display.dart';
 
 class PicDetailPage extends StatefulWidget {
   @override
