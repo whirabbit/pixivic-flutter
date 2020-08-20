@@ -12,7 +12,9 @@ pubspec.lock
 doc/api/
 android/key.properties
 
-
+.idea/
+.flutter-plugins
+.flutter-plugins-dependencies
 lib/data/bugly.dart
 
 # Avoid committing generated Javascript files:
@@ -23,5 +25,5 @@ lib/data/bugly.dart
 *.js_
 *.js.deps
 *.js.map
-.idea/
+
 
