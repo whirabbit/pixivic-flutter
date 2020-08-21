@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:pixivic/page/search_page.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:pixivic/provider/get_comment_list_data.dart';
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 
@@ -35,7 +36,10 @@ void main() {
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   FlutterBugly.postCatchedException(() {
     runApp(MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => PageSwitchProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => PageSwitchProvider()),
+      ChangeNotifierProvider(create: (_)=>GetCommentProvider(),)
+      ],
       child: MyApp(),
     ));
   });

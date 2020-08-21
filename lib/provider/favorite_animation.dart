@@ -1,6 +1,4 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/screenutil.dart';
 
 class FavProvider extends State<StatefulWidget>
     with ChangeNotifier, TickerProviderStateMixin {
@@ -8,7 +6,7 @@ class FavProvider extends State<StatefulWidget>
   Animation<double> _favAnimation;
   AnimationController animationController;
   CurvedAnimation curvedAnimation;
-  double _iconSize = ScreenUtil().setWidth(30);
+  double _iconSize = 30;
   double get iconSize => _iconSize;
   Animation<double> get favAnimation => _favAnimation;
   clickFunc() {

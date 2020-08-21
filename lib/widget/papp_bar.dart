@@ -96,7 +96,7 @@ class PappBarState extends State<PappBar> {
 
   @override
   Widget build(BuildContext context) {
-    print("刷新");
+    print("刷新"+title);
 
     return Container(
       color: Colors.white70,
