@@ -6,7 +6,8 @@ import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:pixivic/data/common.dart';
-
+import 'package:pixivic/provider/get_comment_list_data.dart';
+import 'package:provider/provider.dart';
 import '../widget/papp_bar.dart';
 import '../data/texts.dart';
 import '../page/user_detail_page.dart';
@@ -22,6 +23,7 @@ class CommentListPage extends StatefulWidget {
       this.replyToName = '',
       this.replyParentId = 0,
       this.isReply = false});
+
   CommentListPage.reply(
       {@required this.comments,
       @required this.illustId,
@@ -60,7 +62,7 @@ class _CommentListPageState extends State<CommentListPage> {
     textEditingController = TextEditingController();
     replyFocus = FocusNode()..addListener(_replyFocusListener);
 
-    _loadComments();
+//    _loadComments();
 
     super.initState();
   }
@@ -86,38 +88,49 @@ class _CommentListPageState extends State<CommentListPage> {
           appBar: PappBar(
             title: texts.comment,
           ),
-          body: Container(
-            color: Colors.white,
-            child: Stack(
-              children: <Widget>[
-                commentsList != null
-                    ? Positioned(
-                        // top: screen.setHeight(5),
-                        child: Container(
-                        width: screen.setWidth(324),
-                        height: screen.setHeight(576),
-                        margin: EdgeInsets.only(bottom: screen.setHeight(35)),
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: commentsList.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return commentParentCell(commentsList[index]);
-                            }),
-                      ))
-                    : Container(),
-                Positioned(
-                  bottom: 0.0,
-                  left: 0.0,
-                  right: 0.0,
-                  child: bottomCommentBar(),
-                ),
-              ],
+          body:  Consumer<GetCommentProvider>(
+              builder: (context, GetCommentProvider commentProvider, _) {
+                commentProvider.loadComments(widget.illustId);
+                commentsList=commentProvider.commentList;
+                return Container(
+                  color: Colors.white,
+                  child: Stack(
+                    children: <Widget>[
+                      commentsList != null
+                          ? Positioned(
+                              // top: screen.setHeight(5),
+                              child: Container(
+                              width: screen.setWidth(324),
+                              height: screen.setHeight(576),
+                              margin:
+                                  EdgeInsets.only(bottom: screen.setHeight(35)),
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: commentsList.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return commentParentCell(
+                                        commentsList[index]);
+                                  }),
+                            ))
+                          : Container(),
+                      Positioned(
+                        bottom: 0.0,
+                        left: 0.0,
+                        right: 0.0,
+                        child: bottomCommentBar(commentProvider),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
-          )),
+
+      ),
     );
   }
 
-  Widget bottomCommentBar() {
+  Widget bottomCommentBar(GetCommentProvider commentProvider) {
     return Container(
       padding: EdgeInsets.only(bottom: screen.setHeight(5)),
       width: screen.setWidth(324),
@@ -137,7 +150,7 @@ class _CommentListPageState extends State<CommentListPage> {
               right: ScreenUtil().setWidth(12),
             ),
             child: TextField(
-              focusNode: replyFocus,
+//              focusNode: replyFocus,
               controller: textEditingController,
               autofocus: widget.isReply ? true : false,
               decoration: InputDecoration(
@@ -153,7 +166,7 @@ class _CommentListPageState extends State<CommentListPage> {
             child: InkWell(
               child: FaIcon(FontAwesomeIcons.paperPlane),
               onTap: () {
-                _reply();
+                _reply(commentProvider);
               },
             ),
           ),
@@ -305,18 +318,18 @@ class _CommentListPageState extends State<CommentListPage> {
       });
     } else if (!replyFocus.hasFocus) {
       print('focus released');
-      setState(() {
-        replyToId = 0;
-        replyToName = '';
-        replyParentId = 0;
-        hintText = texts.addCommentHint;
-        // print(textEditingController.text);
-      });
+//      setState(() {
+      replyToId = 0;
+      replyToName = '';
+      replyParentId = 0;
+      hintText = texts.addCommentHint;
+      // print(textEditingController.text);
+//      });
     }
     print('replyParentId now is $replyParentId');
   }
 
-  _reply() async {
+  _reply(GetCommentProvider commentProvider) async {
     if (prefs.getString('auth') == '') {
       BotToast.showSimpleNotification(title: texts.pleaseLogin);
       return false;
@@ -353,26 +366,27 @@ class _CommentListPageState extends State<CommentListPage> {
       replyToId = 0;
       replyToName = '';
       replyParentId = 0;
-      await _loadComments();
+      commentProvider.loadComments(widget.illustId);
+//      await _loadComments();
       return true;
     } else {
       return false;
     }
   }
 
-  _loadComments() async {
-    String url = 'https://api.pixivic.com/illusts/${widget.illustId}/comments';
-    var dio = Dio();
-    Response response = await dio.get(url);
-    if (response.statusCode == 200 && response.data['data'] != null) {
-      // print(response.data);
-      setState(() {
-        commentsList = response.data['data'];
-      });
-    } else if (response.statusCode == 200 && response.data['data'] == null) {
-      print('comments: null but 200');
-    } else {
-      BotToast.showSimpleNotification(title: response.data['message']);
-    }
-  }
+//  _loadComments() async {
+//    String url = 'https://api.pixivic.com/illusts/${widget.illustId}/comments';
+//    var dio = Dio();
+//    Response response = await dio.get(url);
+//    if (response.statusCode == 200 && response.data['data'] != null) {
+//      // print(response.data);
+//      setState(() {
+//        commentsList = response.data['data'];
+//      });
+//    } else if (response.statusCode == 200 && response.data['data'] == null) {
+//      print('comments: null but 200');
+//    } else {
+//      BotToast.showSimpleNotification(title: response.data['message']);
+//    }
+//  }
 }
