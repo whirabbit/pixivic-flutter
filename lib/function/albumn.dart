@@ -71,26 +71,9 @@ addIllustToAlbumn(int illustId, int albumnId) async {
   }
 }
 
-// 添加新的画集
-addNewAlbumn(BuildContext context) {
-  Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-    return NewAlbumn();
-  }));
-}
-
-class NewAlbumn extends StatelessWidget {
-  final TextZhAlbumn texts = TextZhAlbumn();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PappBar(title: texts.newAlbumnTitle),
-      body: Container(),
-    );
-  }
-}
-
 showAddNewAlbumnDialog(BuildContext context) {
+  TextEditingController title = TextEditingController();
+  TextEditingController caption = TextEditingController();
   showDialog(
       context: context,
       builder: (context) {
@@ -100,12 +83,25 @@ showAddNewAlbumnDialog(BuildContext context) {
             height: ScreenUtil().setHeight(250),
             child: Column(
               children: [
+                Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      '新建画集',
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w300,
+                          color: Colors.orangeAccent),
+                    )),
                 TextField(
-                  decoration: InputDecoration(hintText: '输入画集名称'),
+                  controller: title,
+                  decoration:
+                      InputDecoration(isDense: true, hintText: '输入画集名称'),
                 ),
                 TextField(
-                  decoration: InputDecoration(hintText: '输入画集介绍'),
-                )
+                  controller: caption,
+                  decoration:
+                      InputDecoration(isDense: true, hintText: '输入画集介绍'),
+                ),
               ],
             ),
           ),
