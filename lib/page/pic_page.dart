@@ -774,7 +774,6 @@ class _PicPageState extends State<PicPage> {
                       setState(() {
                         picList[index]['isLiked'] = !picList[index]['isLiked'];
                       });
-                      print('延时1s执行');
                     });
 //                    setState(() {
 //                      picList[index]['isLiked'] = !picList[index]['isLiked'];
