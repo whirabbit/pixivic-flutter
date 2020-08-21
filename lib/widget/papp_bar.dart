@@ -96,7 +96,7 @@ class PappBarState extends State<PappBar> {
 
   @override
   Widget build(BuildContext context) {
-    print("刷新"+title);
+    print("Pappbar refresh : "+title);
 
     return Container(
       color: Colors.white70,
@@ -240,7 +240,7 @@ class PappBarState extends State<PappBar> {
         ],
         child: Consumer<SearchBarHeightProvider>(
           builder: (context, SearchBarHeightProvider heightProvider, _) {
-            print("searchbar刷新");
+            print("Pappbar refresh : searchbar");
             return AnimatedContainer(
                 duration: Duration(milliseconds: 250),
                 curve: Curves.easeInOutExpo,
