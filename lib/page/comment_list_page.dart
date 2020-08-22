@@ -150,7 +150,7 @@ class _CommentListPageState extends State<CommentListPage> {
               right: ScreenUtil().setWidth(12),
             ),
             child: TextField(
-//              focusNode: replyFocus,
+              focusNode: replyFocus,
               controller: textEditingController,
               autofocus: widget.isReply ? true : false,
               decoration: InputDecoration(
