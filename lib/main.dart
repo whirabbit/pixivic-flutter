@@ -28,6 +28,7 @@ import 'data/common.dart';
 import 'data/bugly.dart';
 
 import 'function/update.dart';
+import 'function/albumn.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +39,8 @@ void main() {
     runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => PageSwitchProvider()),
-      ChangeNotifierProvider(create: (_)=>GetCommentProvider(),)
+        ChangeNotifierProvider(create: (_)=> GetCommentProvider(),),
+        ChangeNotifierProvider<NewAlbumnBoolModel>(create: (_) => NewAlbumnBoolModel(),)
       ],
       child: MyApp(),
     ));

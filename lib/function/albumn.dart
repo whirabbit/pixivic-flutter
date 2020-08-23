@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 import '../widget/papp_bar.dart';
 import '../data/common.dart';
@@ -74,39 +75,102 @@ addIllustToAlbumn(int illustId, int albumnId) async {
 showAddNewAlbumnDialog(BuildContext context) {
   TextEditingController title = TextEditingController();
   TextEditingController caption = TextEditingController();
+  TextZhAlbumn texts = TextZhAlbumn();
+
   showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          content: Container(
-            width: ScreenUtil().setWidth(260),
-            height: ScreenUtil().setHeight(250),
-            child: Column(
-              children: [
-                Container(
-                    alignment: Alignment.center,
-                    child: Text(
-                      '新建画集',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.orangeAccent),
-                    )),
-                TextField(
-                  controller: title,
-                  decoration:
-                      InputDecoration(isDense: true, hintText: '输入画集名称'),
-                ),
-                TextField(
-                  controller: caption,
-                  decoration:
-                      InputDecoration(isDense: true, hintText: '输入画集介绍'),
-                ),
-              ],
+      builder: (BuildContext context) {
+        return Consumer<NewAlbumnBoolModel>(
+          builder: (context, NewAlbumnBoolModel newAlbumnBoolModel, child) => AlertDialog(
+            content: Container(
+              width: ScreenUtil().setWidth(260),
+              height: ScreenUtil().setHeight(250),
+              child: Column(
+                children: [
+                  Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        '新建画集',
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.orangeAccent),
+                      )),
+                  TextField(
+                    controller: title,
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: texts.inputAlbumnTitle,
+                      hintStyle:
+                          TextStyle(fontSize: 14, color: Colors.grey[300]),
+                    ),
+                  ),
+                  TextField(
+                    controller: caption,
+                    maxLines: 5,
+                    minLines: 1,
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: texts.inputAlbumnCaption,
+                      hintStyle:
+                          TextStyle(fontSize: 14, color: Colors.grey[300]),
+                    ),
+                  ),
+                  SwitchListTile(
+                    value: newAlbumnBoolModel.isPublic,
+                    onChanged: (value) {
+                      newAlbumnBoolModel.public(value);
+                    },
+                    activeColor: Colors.orangeAccent,
+                    title: Text('公开画集'),
+                  ),
+                  SwitchListTile(
+                    value: newAlbumnBoolModel.isSexy,
+                    onChanged: (value) {
+                      newAlbumnBoolModel.sexy(value);
+                    },
+                    activeColor: Colors.orangeAccent,
+                    title: Text('R16内容'),
+                  ),
+                  SwitchListTile(
+                    value: newAlbumnBoolModel.allowComment,
+                    onChanged: (value) {
+                      newAlbumnBoolModel.comment(value);
+                    },
+                    activeColor: Colors.orangeAccent,
+                    title: Text('允许评论'),
+                  ),
+                ],
+              ),
             ),
           ),
         );
       });
 }
 
-showAddTagBottomSheet() {}
+class NewAlbumnBoolModel with ChangeNotifier {
+  bool _isPublic = true;
+  bool _isSexy = false;
+  bool _allowComment = true;
+
+  bool get isPublic => _isPublic;
+  bool get isSexy => _isSexy;
+  bool get allowComment => _allowComment;
+
+  void public(bool result) {
+    _isPublic = result;
+    notifyListeners();
+  }
+
+  void sexy(bool result) {
+    _isSexy = result;
+    notifyListeners();
+  }
+
+  void comment(bool result) {
+    _allowComment = result;
+    notifyListeners();
+  }
+}
