@@ -109,15 +109,15 @@ class SuggestionBarState extends State<SuggestionBar> {
 
     String urlPixiv =
         'https://api.pixivic.com/keywords/$searchKeywords/pixivSuggestions';
-    String urlPixivic =
-        'https://api.pixivic.com/keywords/$searchKeywords/suggestions';
+    // String urlPixivic =
+    //     'https://api.pixivic.com/keywords/$searchKeywords/suggestions';
 
     try {
       response = await Dio().get(urlPixiv, options: Options(headers: headers));
       jsonList = response.data['data'];
-      response =
-          await Dio().get(urlPixivic, options: Options(headers: headers));
-      jsonList = jsonList + response.data['data'];
+      // response =
+      //     await Dio().get(urlPixivic, options: Options(headers: headers));
+      // jsonList = jsonList + response.data['data'];
       return jsonList;
     } on DioError catch (e) {
       if (e.response != null) {
