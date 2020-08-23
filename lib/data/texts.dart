@@ -195,4 +195,6 @@ class TextZhGuessLikePage {
 
 class TextZhAlbumn {
   String newAlbumnTitle = '添加新的画集';
+  String inputAlbumnTitle = '输入画集名称';
+  String inputAlbumnCaption = '输入画集介绍';
 }
