@@ -96,7 +96,7 @@ class PappBarState extends State<PappBar> {
 
   @override
   Widget build(BuildContext context) {
-    print("Pappbar refresh : "+title);
+    print("Pappbar refresh : " + title);
 
     return Container(
       color: Colors.white70,
@@ -178,6 +178,9 @@ class PappBarState extends State<PappBar> {
                 onTap: () {
                   showModalBottomSheet(
                       context: context,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
                       builder: (BuildContext buildContext) {
                         return homeBottomSheet();
                       });

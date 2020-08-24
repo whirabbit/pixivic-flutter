@@ -40,7 +40,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => PageSwitchProvider()),
         ChangeNotifierProvider(create: (_)=> GetCommentProvider(),),
-        ChangeNotifierProvider<NewAlbumnBoolModel>(create: (_) => NewAlbumnBoolModel(),)
+        ChangeNotifierProvider<NewAlbumnParameterModel>(create: (_) => NewAlbumnParameterModel(),)
       ],
       child: MyApp(),
     ));

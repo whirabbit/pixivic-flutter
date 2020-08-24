@@ -653,6 +653,9 @@ class _PicDetailPageState extends State<PicDetailPage> {
   _longPressPic(String url) async {
     showModalBottomSheet(
         context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         builder: (BuildContext buildContext) {
           return Container(
             child: Wrap(
