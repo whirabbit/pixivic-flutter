@@ -97,17 +97,18 @@ showAddNewAlbumnDialog(BuildContext context) {
                       children: [
                         Container(
                             width: ScreenUtil().setWidth(260),
-                            height: ScreenUtil().setHeight(25),
+                            height: ScreenUtil().setHeight(30),
                             alignment: Alignment.center,
+                            color: Colors.orange[300],
                             padding: EdgeInsets.only(
                                 bottom: ScreenUtil().setHeight(8)),
                             child: Text(
-                              '新建画集',
+                              texts.newAlbumnTitle,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w300,
-                                  color: Colors.orangeAccent),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white),
                             )),
                         Container(
                           width: ScreenUtil().setWidth(260),
@@ -153,7 +154,7 @@ showAddNewAlbumnDialog(BuildContext context) {
                             },
                             activeColor: Colors.orangeAccent,
                             title: Text(
-                              '公开画集',
+                              texts.isPulic,
                               style: TextStyle(fontSize: 14),
                             ),
                           ),
@@ -169,7 +170,7 @@ showAddNewAlbumnDialog(BuildContext context) {
                             },
                             activeColor: Colors.orangeAccent,
                             title:
-                                Text('R16内容', style: TextStyle(fontSize: 14)),
+                                Text(texts.isSexy, style: TextStyle(fontSize: 14)),
                           ),
                         ),
                         Container(
@@ -182,7 +183,7 @@ showAddNewAlbumnDialog(BuildContext context) {
                               newAlbumnParameterModel.comment(value);
                             },
                             activeColor: Colors.orangeAccent,
-                            title: Text('允许评论', style: TextStyle(fontSize: 14)),
+                            title: Text(texts.allowComment, style: TextStyle(fontSize: 14)),
                           ),
                         ),
                         FlatButton(
@@ -190,7 +191,7 @@ showAddNewAlbumnDialog(BuildContext context) {
                           onPressed: () {
                             showTagSelector(context);
                           },
-                          child: Text('添加标签'),
+                          child: Text(texts.addTag),
                         ),
                       ],
                     ),
@@ -199,10 +200,13 @@ showAddNewAlbumnDialog(BuildContext context) {
                     width: ScreenUtil().setWidth(260),
                     bottom: ScreenUtil().setHeight(8),
                     child: Container(
+                      width: ScreenUtil().setWidth(260),
+                      height: ScreenUtil().setHeight(30),
+                      color: Colors.orange[200],
                       alignment: Alignment.center,
                       child: FlatButton(
                         child: Text(
-                          '提交',
+                          texts.submit,
                           style: TextStyle(color: Colors.white),
                         ),
                         color: Colors.orange[200],
@@ -231,8 +235,8 @@ showAddNewAlbumnDialog(BuildContext context) {
       });
 }
 
-showTagSelector(context) {
-  showDialog(
+showTagSelector(context) async {
+  await showDialog(
       context: context,
       builder: (context) {
         TextEditingController tagInput = TextEditingController();
@@ -263,13 +267,15 @@ showTagSelector(context) {
                           ),
                           Wrap(
                             children: newAlbumnParameterModel.tagsAdvice
-                                .map((item) => singleTag(item['tagName']))
+                                .map((item) => singleTag(item['tagName'], true))
                                 .toList(),
                           )
                         ],
                       )),
                 ));
-      });
+      }).then((value) {
+    NewAlbumnParameterModel().clearTagAdvice();
+  });
 }
 
 postNewAlbumn(Map<String, dynamic> payload) async {
@@ -278,7 +284,7 @@ postNewAlbumn(Map<String, dynamic> payload) async {
   // Map<String, String> headers = {'authorization': prefs.getString('auth')};
 }
 
-Widget singleTag(String label) {
+Widget singleTag(String label, bool advice) {
   return Container(
     padding: EdgeInsets.all(ScreenUtil().setWidth(3)),
     child: ButtonTheme(
@@ -296,11 +302,11 @@ Widget singleTag(String label) {
               label,
               style: TextStyle(color: Colors.grey),
             ),
-            Icon(
+            !advice ? Icon(
               Icons.cancel,
               color: Colors.grey,
               size: ScreenUtil().setWidth(13),
-            ),
+            ) : Container()  
           ],
         ),
       ),
@@ -339,6 +345,14 @@ class NewAlbumnParameterModel with ChangeNotifier {
   void cleanTag() {
     _tags = [];
     notifyListeners();
+  }
+
+  void addTag(String tag) {
+    _tags.add(tag);
+  }
+
+  void clearTagAdvice() {
+    _tagsAdvice = [];
   }
 
   void getTagAdvice(String keywords) async {
