@@ -197,4 +197,9 @@ class TextZhAlbumn {
   String newAlbumnTitle = '添加新的画集';
   String inputAlbumnTitle = '输入画集名称';
   String inputAlbumnCaption = '输入画集介绍';
+  String isPulic = '公开画集';
+  String isSexy = 'R16内容';
+  String allowComment = '允许评论';
+  String addTag = '添加标签';
+  String submit = '创建这个画集';
 }
