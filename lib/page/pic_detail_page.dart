@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
@@ -13,7 +13,6 @@ import 'package:flutter_advanced_networkimage/zoomable.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
-
 import 'pic_page.dart';
 import 'artist_page.dart';
 import 'search_page.dart';
@@ -24,6 +23,7 @@ import '../widget/bookmark_users.dart';
 import '../widget/comment_cell.dart';
 import '../function/downloadImage.dart';
 import '../function/albumn.dart';
+import 'package:provider/provider.dart';
 
 class PicDetailPage extends StatefulWidget {
   @override
@@ -66,265 +66,274 @@ class _PicDetailPageState extends State<PicDetailPage> {
       getAlbumList().then((value) {
         albumList = value;
       });
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: pappBar,
-      body: ListView(
-        controller: scrollController,
-        shrinkWrap: true,
-        physics: ClampingScrollPhysics(),
-        children: <Widget>[
-          Container(
-            child: Column(
-              children: <Widget>[
-                // 图片视图
-                Stack(
-                  children: <Widget>[
-                    Positioned(
-                      child: Container(
-                        color: Colors.white,
-                        width: ScreenUtil().setWidth(324),
-                        height: ScreenUtil().setWidth(324) /
-                            widget._picData['width'] *
-                            widget._picData['height'],
-                        child: _picBanner(),
-                      ),
-                    ),
-                    // loginState
-                    //     ? Positioned(
-                    //         bottom: ScreenUtil().setHeight(10),
-                    //         right: ScreenUtil().setWidth(20),
-                    //         child: _bookmarkHeart(),
-                    //       )
-                    //     : Container(),
-                  ],
-                ),
-                // 标题、爱心、副标题、简介、标签
-                Container(
-                  padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
-                  color: Colors.white,
-                  width: ScreenUtil().setWidth(324),
-                  // height: ScreenUtil().setHeight(60),
-                  alignment: Alignment.centerLeft,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        // 标题栏、喜欢爱心
-                        Container(
+        appBar: pappBar,
+        body: ListView(
+          controller: scrollController,
+          shrinkWrap: true,
+          physics: ClampingScrollPhysics(),
+          children: <Widget>[
+            Container(
+              child: Column(
+                children: <Widget>[
+                  // 图片视图
+                  Stack(
+                    children: <Widget>[
+                      Positioned(
+                        child: Container(
+                          color: Colors.white,
                           width: ScreenUtil().setWidth(324),
-                          height: ScreenUtil().setHeight(25),
-                          child: Stack(
-                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                child: SelectableText(
-                                  widget._picData['title'],
-                                  style: normalTextStyle,
+                          height: ScreenUtil().setWidth(324) /
+                              widget._picData['width'] *
+                              widget._picData['height'],
+                          child: _picBanner(),
+                        ),
+                      ),
+                      // loginState
+                      //     ? Positioned(
+                      //         bottom: ScreenUtil().setHeight(10),
+                      //         right: ScreenUtil().setWidth(20),
+                      //         child: _bookmarkHeart(),
+                      //       )
+                      //     : Container(),
+                    ],
+                  ),
+                  // 标题、爱心、副标题、简介、标签
+                  Container(
+                    padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
+                    color: Colors.white,
+                    width: ScreenUtil().setWidth(324),
+                    // height: ScreenUtil().setHeight(60),
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          // 标题栏、喜欢爱心
+                          Container(
+                            width: ScreenUtil().setWidth(324),
+                            height: ScreenUtil().setHeight(25),
+                            child: Stack(
+                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: SelectableText(
+                                    widget._picData['title'],
+                                    style: normalTextStyle,
+                                  ),
                                 ),
+                                loginState
+                                    ? Positioned(
+                                        right: ScreenUtil().setWidth(4),
+                                        top: 0,
+                                        child: _bookmarkHeart())
+                                    : Container(),
+                                loginState
+                                    ? Positioned(
+                                        right: ScreenUtil().setWidth(40),
+                                        top: 0,
+                                        child: _addToAlbumButton())
+                                    : Container(),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: ScreenUtil().setHeight(6),
+                          ),
+                          Html(
+                            data: widget._picData['caption'],
+                            linkStyle: smallTextStyle,
+                            defaultTextStyle: smallTextStyle,
+                            onLinkTap: (url) async {
+                              if (await canLaunch(url)) {
+                                await launch(url);
+                              } else {
+                                throw 'Could not launch $url';
+                              }
+                            },
+                          ),
+                          SizedBox(
+                            height: ScreenUtil().setHeight(6),
+                          ),
+                          _tags(),
+                          SizedBox(
+                            height: ScreenUtil().setHeight(6),
+                          ),
+                        ]),
+                  ),
+                  // 阅读量、订阅量、时间、关注人
+                  Container(
+                    // padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
+                    height: ScreenUtil().setHeight(24),
+                    color: Colors.white,
+                    width: ScreenUtil().setWidth(324),
+                    // alignment: Alignment.centerLeft,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: <Widget>[
+                        Positioned(
+                          left: ScreenUtil().setWidth(10),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.remove_red_eye,
+                                size: ScreenUtil().setWidth(10),
                               ),
-                              loginState
-                                  ? Positioned(
-                                      right: ScreenUtil().setWidth(4),
-                                      top: 0,
-                                      child: _bookmarkHeart())
-                                  : Container(),
-                              loginState
-                                  ? Positioned(
-                                      right: ScreenUtil().setWidth(40),
-                                      top: 0,
-                                      child: _addToAlbumButton())
-                                  : Container(),
+                              SizedBox(
+                                width: ScreenUtil().setWidth(3),
+                              ),
+                              Text(
+                                widget._picData['totalView'].toString(),
+                                style: smallTextStyle,
+                              ),
+                              SizedBox(
+                                width: ScreenUtil().setWidth(8),
+                              ),
+                              Icon(
+                                Icons.bookmark,
+                                size: ScreenUtil().setWidth(10),
+                              ),
+                              SizedBox(
+                                width: ScreenUtil().setWidth(3),
+                              ),
+                              Text(
+                                widget._picData['totalBookmarks'].toString(),
+                                style: smallTextStyle,
+                              ),
+                              SizedBox(
+                                width: ScreenUtil().setWidth(12),
+                              ),
+                              Text(
+                                widget._picData['createDate'].toString(),
+                                style: smallTextStyle,
+                              ),
                             ],
                           ),
                         ),
-                        SizedBox(
-                          height: ScreenUtil().setHeight(6),
-                        ),
-                        Html(
-                          data: widget._picData['caption'],
-                          linkStyle: smallTextStyle,
-                          defaultTextStyle: smallTextStyle,
-                          onLinkTap: (url) async {
-                            if (await canLaunch(url)) {
-                              await launch(url);
-                            } else {
-                              throw 'Could not launch $url';
-                            }
-                          },
-                        ),
-                        SizedBox(
-                          height: ScreenUtil().setHeight(6),
-                        ),
-                        _tags(),
-                        SizedBox(
-                          height: ScreenUtil().setHeight(6),
-                        ),
-                      ]),
-                ),
-                // 阅读量、订阅量、时间、关注人
-                Container(
-                  // padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
-                  height: ScreenUtil().setHeight(24),
-                  color: Colors.white,
-                  width: ScreenUtil().setWidth(324),
-                  // alignment: Alignment.centerLeft,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      Positioned(
-                        left: ScreenUtil().setWidth(10),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.remove_red_eye,
-                              size: ScreenUtil().setWidth(10),
-                            ),
-                            SizedBox(
-                              width: ScreenUtil().setWidth(3),
-                            ),
-                            Text(
-                              widget._picData['totalView'].toString(),
-                              style: smallTextStyle,
-                            ),
-                            SizedBox(
-                              width: ScreenUtil().setWidth(8),
-                            ),
-                            Icon(
-                              Icons.bookmark,
-                              size: ScreenUtil().setWidth(10),
-                            ),
-                            SizedBox(
-                              width: ScreenUtil().setWidth(3),
-                            ),
-                            Text(
-                              widget._picData['totalBookmarks'].toString(),
-                              style: smallTextStyle,
-                            ),
-                            SizedBox(
-                              width: ScreenUtil().setWidth(12),
-                            ),
-                            Text(
-                              widget._picData['createDate'].toString(),
-                              style: smallTextStyle,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                          right: ScreenUtil().setWidth(10),
-                          child: BookmarkUsers(widget._picData['id']))
-                    ],
+                        Positioned(
+                            right: ScreenUtil().setWidth(10),
+                            child: BookmarkUsers(widget._picData['id']))
+                      ],
+                    ),
                   ),
-                ),
-                // 作者信息、关注图标
-                Container(
-                  padding: EdgeInsets.only(
-                      top: ScreenUtil().setWidth(13),
-                      bottom: ScreenUtil().setWidth(7),
-                      right: ScreenUtil().setWidth(7),
-                      left: ScreenUtil().setWidth(7)),
-                  color: Colors.white,
-                  width: ScreenUtil().setWidth(324),
-                  alignment: Alignment.centerLeft,
-                  child: Stack(
-                    children: <Widget>[
-                      // 作者头像
-                      Positioned(
-                        child: Row(
-                          children: <Widget>[
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) {
-                                    return ArtistPage(
-                                        widget._picData['artistPreView']
-                                            ['avatar'],
-                                        widget._picData['artistPreView']
-                                            ['name'],
-                                        widget._picData['artistPreView']['id']
-                                            .toString(),
-                                        isFollowed: loginState
-                                            ? widget._picData['artistPreView']
-                                                ['isFollowed']
-                                            : false,
-                                        followedRefresh: _followedRefresh);
-                                  },
-                                ));
-                              },
-                              child: Hero(
-                                tag: widget._picData['artistPreView']['avatar'],
-                                child: CircleAvatar(
-                                  backgroundImage: AdvancedNetworkImage(
-                                    widget._picData['artistPreView']['avatar'],
-                                    header: {
-                                      'Referer': 'https://app-api.pixiv.net'
+                  // 作者信息、关注图标
+                  Container(
+                    padding: EdgeInsets.only(
+                        top: ScreenUtil().setWidth(13),
+                        bottom: ScreenUtil().setWidth(7),
+                        right: ScreenUtil().setWidth(7),
+                        left: ScreenUtil().setWidth(7)),
+                    color: Colors.white,
+                    width: ScreenUtil().setWidth(324),
+                    alignment: Alignment.centerLeft,
+                    child: Stack(
+                      children: <Widget>[
+                        // 作者头像
+                        Positioned(
+                          child: Row(
+                            children: <Widget>[
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) {
+                                      return ArtistPage(
+                                          widget._picData['artistPreView']
+                                              ['avatar'],
+                                          widget._picData['artistPreView']
+                                              ['name'],
+                                          widget._picData['artistPreView']['id']
+                                              .toString(),
+                                          isFollowed: loginState
+                                              ? widget._picData['artistPreView']
+                                                  ['isFollowed']
+                                              : false,
+                                          followedRefresh: _followedRefresh);
                                     },
-                                    useDiskCache: true,
-                                    cacheRule: CacheRule(
-                                        maxAge: Duration(
-                                            days: prefs.getInt('previewRule'))),
+                                  ));
+                                },
+                                child: Hero(
+                                  tag: widget._picData['artistPreView']
+                                      ['avatar'],
+                                  child: CircleAvatar(
+                                    backgroundImage: AdvancedNetworkImage(
+                                      widget._picData['artistPreView']
+                                          ['avatar'],
+                                      header: {
+                                        'Referer': 'https://app-api.pixiv.net'
+                                      },
+                                      useDiskCache: true,
+                                      cacheRule: CacheRule(
+                                          maxAge: Duration(
+                                              days:
+                                                  prefs.getInt('previewRule'))),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: ScreenUtil().setWidth(10),
-                            ),
-                            Text(
-                              widget._picData['artistPreView']['name'],
-                              style: smallTextStyle,
-                            ),
-                          ],
+                              SizedBox(
+                                width: ScreenUtil().setWidth(10),
+                              ),
+                              Text(
+                                widget._picData['artistPreView']['name'],
+                                style: smallTextStyle,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Positioned(
-                        right: ScreenUtil().setWidth(5),
-                        bottom: ScreenUtil().setHeight(-2),
-                        child: loginState ? _subscribeButton() : Container(),
-                      )
-                    ],
+                        Positioned(
+                          right: ScreenUtil().setWidth(5),
+                          bottom: ScreenUtil().setHeight(-2),
+                          child: loginState ? _subscribeButton() : Container(),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                // 评论模块
-                Container(
-                  child: CommentCell(
-                    widget._picData['id'],
+                  // 评论模块
+                  Container(
+                    child: CommentCell(
+                      widget._picData['id'],
+                    ),
                   ),
-                ),
-                // 相关作品
-                Container(
-                  padding: EdgeInsets.all(ScreenUtil().setHeight(7)),
-                  color: Colors.white,
-                  width: ScreenUtil().setWidth(324),
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '相关作品',
-                    style: normalTextStyle,
-                  ),
-                )
-              ],
+                  // 相关作品
+                  Container(
+                    padding: EdgeInsets.all(ScreenUtil().setHeight(7)),
+                    color: Colors.white,
+                    width: ScreenUtil().setWidth(324),
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '相关作品',
+                      style: normalTextStyle,
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-          Center(
-            child: Container(
+            Center(
+              child: Container(
                 width: ScreenUtil().setWidth(324),
                 height: ScreenUtil().setHeight(485),
                 color: Colors.white,
-                child: PicPage.related(
+                child:
+//                PicPage.home(picDate:
+//                DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(hours: 39)))
+//                    , picMode: 'month')
+                PicPage.related(
                   relatedId: widget._picData['id'],
                   onPageTop: _onTopOfPicpage,
                   onPageStart: _onStartOfPicpage,
                   isScrollable: true,
-                )),
-          ),
-        ],
-      ),
-    );
+                ),
+              ),
+            ),
+          ],
+        ));
+//      ),
   }
 
   Widget _picBanner() {
@@ -335,15 +344,13 @@ class _PicDetailPageState extends State<PicDetailPage> {
           _longPressPic(widget._picData['imageUrls'][0]['original']);
         },
         child: Hero(
-            tag: 'imageHero' +
-                widget._picData['imageUrls'][0][
-                    previewQuality], //medium large, set tag as medium for hero switch,
+            tag: 'imageHero' + widget._picData['imageUrls'][0][previewQuality],
+            //medium large, set tag as medium for hero switch,
             child: ZoomableWidget(
               panLimit: 1.0,
               maxScale: 3.0,
               minScale: 0.7,
               child: TransitionToImage(
-
                 image: AdvancedNetworkImage(
                   widget._picData['imageUrls'][0][previewQuality],
                   header: {'Referer': 'https://app-api.pixiv.net'},

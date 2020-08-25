@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixivic/provider/favorite_animation.dart';
+import 'package:pixivic/provider/get_page.dart';
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:requests/requests.dart';
 import 'package:random_color/random_color.dart';
@@ -23,8 +24,8 @@ class PicPage extends StatefulWidget {
   _PicPageState createState() => _PicPageState();
 
   PicPage({
-    @required this.picDate,
-    @required this.picMode,
+    this.picDate,
+    this.picMode,
     this.relatedId = 0,
     this.jsonMode = 'home',
     this.searchKeywords,
@@ -32,7 +33,7 @@ class PicPage extends StatefulWidget {
     this.artistId,
     this.userId,
     this.spotlightId,
-    @required this.onPageScrolling,
+    this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
@@ -222,9 +223,9 @@ class _PicPageState extends State<PicPage> {
   // picList - 图片的JSON文件列表
   // picTotalNum - picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
   // 针对最常访问的 Home 页面，临时变量记录于 common.dart
-  List picList;
+  List picList = [];
   int picTotalNum;
-  int currentPage;
+  int currentPage = 1;
   RandomColor _randomColor = RandomColor();
   bool hasConnected = false;
   bool loadMoreAble = true;
@@ -233,117 +234,17 @@ class _PicPageState extends State<PicPage> {
   String previewQuality = prefs.getString('previewQuality');
   PageSwitchProvider indexProvider;
 
+  GetPageProvider pageProvider;
+
   @override
   void initState() {
-    print('PicPage Created');
-
-    if ((widget.jsonMode == 'home') && (!listEquals(homePicList, []))) {
-      picList = homePicList;
-      currentPage = homeCurrentPage;
-      picTotalNum = picList.length;
-    } else {
-      currentPage = 1;
-      _getJsonList().then((value) {
-        setState(() {
-          picList = value;
-          // print('picpage init getJsonList: $picList');
-          if (picList == null) {
-            hasConnected = true;
-          } else {
-            picTotalNum = value.length;
-            if (widget.jsonMode == 'home') homePicList = picList;
-            hasConnected = true;
-          }
-        });
-      }).catchError((error) {
-        //稳定后抛弃errorcatch
-        print('======================');
-        print(error);
-        print('======================');
-        if (error.toString().contains('NoSuchMethodError')) picList = null;
-        hasConnected = true;
-      });
-    }
-
+    // TODO: implement initState
     scrollController = ScrollController(
         initialScrollOffset:
             widget.jsonMode == 'home' ? homeScrollerPosition : 0.0)
       ..addListener(_doWhileScrolling);
-
     super.initState();
   }
-
-  // 参数更改的逻辑：清空所有的现有参数，进入加载动画。当网络情况不好时，也无法看到之前的内容（更好的用户引导，功能稍缺）
-  @override
-  void didUpdateWidget(PicPage oldWidget) {
-    print('picPage didUpdateWidget: mode is ${widget.jsonMode}');
-    // 当为 home 模式且切换了参数，则同时更新暂存的相关数据
-    if (widget.jsonMode == 'home' &&
-        (oldWidget.picDate != widget.picDate ||
-            oldWidget.picMode != widget.picMode)) {
-      try {
-        scrollController.animateTo(
-          0.0,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeOut,
-        );
-      } catch (e) {
-        scrollController = ScrollController(
-            initialScrollOffset:
-                widget.jsonMode == 'home' ? homeScrollerPosition : 0.0)
-          ..addListener(_doWhileScrolling);
-      }
-
-      // 清空 Picpage 控件参数和缓存参数
-      currentPage = 1;
-      homeCurrentPage = 1;
-      homePicList = [];
-      homeScrollerPosition = 0;
-      setState(() {
-        picList = null; // 清空 picList 以进入加载动画
-        hasConnected = false;
-      });
-
-      _getJsonList().then((value) {
-        hasConnected = true;
-        setState(() {
-          // print('getJsonList: $picList');
-          if (value != null) {
-            picList = value;
-            picTotalNum = value.length;
-            homePicList = picList;
-            hasConnected = true;
-          }
-        });
-      }).catchError((error) {
-        print('======================');
-        print(error);
-        print('======================');
-        if (error.toString().contains('NoSuchMethodError')) picList = null;
-      });
-    }
-    // 当为 search mode 时，进行刷新操作
-    else if (widget.jsonMode == 'search') {
-      currentPage = 1;
-      setState(() {
-        picList = null;
-        hasConnected = false;
-      });
-      _getJsonList().then((value) {
-        hasConnected = true;
-        setState(() {
-          // print('getJsonList: $picList');
-          if (value != null) {
-            picList = value;
-            picTotalNum = value.length;
-          }
-        });
-      });
-    }
-
-    super.didUpdateWidget(oldWidget);
-  }
-
   @override
   void dispose() {
     print('PicPage Disposed');
@@ -355,153 +256,132 @@ class _PicPageState extends State<PicPage> {
     }
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
-    indexProvider = Provider.of<PageSwitchProvider>(context);
-    if (picList == null && !hasConnected) {
-      return Container(
-          height: ScreenUtil().setHeight(576),
-          width: ScreenUtil().setWidth(324),
-          alignment: Alignment.center,
-          color: Colors.white,
-          child: Center(
-            child: Lottie.asset('image/loading-box.json'),
-          ));
-    } else if (picList == null && hasConnected) {
-      return Container(
-        height: ScreenUtil().setHeight(576),
-        width: ScreenUtil().setWidth(324),
-        color: Colors.white,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Lottie.asset('image/empty-box.json',
-                repeat: false, height: ScreenUtil().setHeight(100)),
-            Text(
-              '这里什么都没有呢',
-              style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: ScreenUtil().setHeight(10),
-                  decoration: TextDecoration.none),
+//   print("列表长度" + pageProvider.jsonList.length.toString());
+    return ChangeNotifierProvider<GetPageProvider>.value(
+      value: GetPageProvider(),
+      builder: (context, _) {
+        print("测试");
+        pageProvider = Provider.of<GetPageProvider>(context);
+        switch (widget.jsonMode) {
+          case 'home':
+            pageProvider.homePage(
+                picDate: widget.picDate, picMode: widget.picMode);
+            break;
+          case 'related':
+            pageProvider.relatedPage(
+                relatedId: widget.relatedId,
+                onTopOfPicpage: widget.onPageTop,
+                onStartOfPicpage: widget.onPageStart);
+            break;
+          case 'search':
+            pageProvider.searchPage(
+                searchKeywords: widget.searchKeywords,
+                searchManga: widget.isManga);
+            break;
+          case 'artist':
+            pageProvider.artistPage(
+                artistId: widget.artistId,
+                isManga: widget.isManga,
+                onTopOfPicpage: widget.onPageTop,
+                onStartOfPicpage: widget.onPageStart);
+            break;
+          case 'followedPage':
+            pageProvider.followedPage(
+                userId: widget.userId, isManga: widget.isManga);
+            break;
+          case 'bookmark':
+            pageProvider.bookmarkPage(
+                userId: widget.userId, isManga: widget.isManga);
+            break;
+          case 'spotlight':
+            pageProvider.spotlightPage(spotlightId: widget.spotlightId);
+            break;
+          case 'history':
+            pageProvider.historyPage();
+            break;
+          case 'oldhistory':
+            pageProvider.oldHistoryPage();
+            break;
+          case 'userdetial':
+            pageProvider.userdetailPage(
+                userId: widget.userId,
+                isManga: widget.isManga,
+                onTopOfPicpage: widget.onPageTop,
+                onStartOfPicpage: widget.onPageStart);
+            break;
+        }
+        if (pageProvider.jsonList == null && !hasConnected) {
+          return Container(
+              height: ScreenUtil().setHeight(576),
+              width: ScreenUtil().setWidth(324),
+              alignment: Alignment.center,
+              color: Colors.white,
+              child: Center(
+                child: Lottie.asset('image/loading-box.json'),
+              ));
+        } else if (pageProvider.jsonList == null && hasConnected) {
+          return Container(
+            height: ScreenUtil().setHeight(576),
+            width: ScreenUtil().setWidth(324),
+            color: Colors.white,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Lottie.asset('image/empty-box.json',
+                    repeat: false, height: ScreenUtil().setHeight(100)),
+                Text(
+                  '这里什么都没有呢',
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: ScreenUtil().setHeight(10),
+                      decoration: TextDecoration.none),
+                ),
+                SizedBox(
+                  height: ScreenUtil().setHeight(250),
+                )
+              ],
             ),
-            SizedBox(
-              height: ScreenUtil().setHeight(250),
-            )
-          ],
-        ),
-      );
-    } else {
-      return Container(
-          padding: EdgeInsets.only(
-              left: ScreenUtil().setWidth(5), right: ScreenUtil().setWidth(5)),
-          color: Colors.grey[50],
-          child: StaggeredGridView.countBuilder(
-            controller: scrollController,
-            physics: widget.isScrollable
-                ? ClampingScrollPhysics()
-                : NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            itemCount: picTotalNum,
-            itemBuilder: (BuildContext context, int index) => imageCell(index),
-            staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-            mainAxisSpacing: 0.0,
-            crossAxisSpacing: 0.0,
-          ));
-    }
+          );
+        } else {
+          if (pageProvider.deleteList) {
+            picList = [];
+            if (scrollController.hasClients) {
+              scrollController.animateTo(
+                0.0,
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeOut,
+              );
+            }
+
+            pageProvider.deleteList = false;
+          }
+          picList = picList + pageProvider.jsonList;
+//
+          return Container(
+              padding: EdgeInsets.only(
+                  left: ScreenUtil().setWidth(5),
+                  right: ScreenUtil().setWidth(5)),
+              color: Colors.grey[50],
+              child: StaggeredGridView.countBuilder(
+                controller: scrollController,
+                physics: widget.isScrollable
+                    ? ClampingScrollPhysics()
+                    : NeverScrollableScrollPhysics(),
+                crossAxisCount: 2,
+                itemCount: picList.length,
+                itemBuilder: (BuildContext context, int index) =>
+                    imageCell(index),
+                staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+                mainAxisSpacing: 0.0,
+                crossAxisSpacing: 0.0,
+              ));
+        }
+      },
+    );
   }
 
-  _getJsonList() async {
-    // 获取所有的图片数据
-    String url;
-    List jsonList;
-    if (widget.jsonMode == 'home') {
-      url =
-          'https://api.pixivic.com/ranks?page=$currentPage&date=${widget.picDate}&mode=${widget.picMode}&pageSize=30';
-    } else if (widget.jsonMode == 'search') {
-      if (!widget.isManga)
-        url =
-            'https://api.pixivic.com/illustrations?page=$currentPage&keyword=${widget.searchKeywords}&pageSize=30';
-      else
-        url =
-            'https://api.pixivic.com/illustrations?page=$currentPage&keyword=${widget.searchKeywords}&pageSize=30';
-    } else if (widget.jsonMode == 'related') {
-      url =
-          'https://api.pixivic.com/illusts/${widget.relatedId}/related?page=$currentPage&pageSize=30';
-    } else if (widget.jsonMode == 'artist') {
-      if (!widget.isManga) {
-        url =
-            'https://api.pixivic.com/artists/${widget.artistId}/illusts/illust?page=$currentPage&pageSize=30&maxSanityLevel=10';
-      } else {
-        url =
-            'https://api.pixivic.com/artists/${widget.artistId}/illusts/manga?page=$currentPage&pageSize=30&maxSanityLevel=10';
-      }
-    } else if (widget.jsonMode == 'followed') {
-      loadMoreAble = false;
-      if (!widget.isManga) {
-        url =
-            'https://api.pixivic.com/users/${widget.userId}/followed/latest/illust?page=$currentPage&pageSize=30';
-      } else {
-        url =
-            'https://api.pixivic.com/users/${widget.userId}/followed/latest/manga?page=$currentPage&pageSize=30';
-      }
-    } else if (widget.jsonMode == 'bookmark') {
-      if (!widget.isManga) {
-        url =
-            'https://api.pixivic.com/users/${widget.userId}/bookmarked/illust?page=$currentPage&pageSize=30';
-      } else {
-        url =
-            'https://api.pixivic.com/users/${widget.userId}/bookmarked/manga?page=$currentPage&pageSize=30';
-      }
-    } else if (widget.jsonMode == 'spotlight') {
-      loadMoreAble = false;
-      url =
-          'https://api.pixivic.com/spotlights/${widget.spotlightId}/illustrations';
-    } else if (widget.jsonMode == 'history') {
-      url =
-          'https://api.pixivic.com/users/${prefs.getInt('id').toString()}/illustHistory?page=$currentPage&pageSize=30';
-    } else if (widget.jsonMode == 'oldhistory') {
-      url =
-          'https://api.pixivic.com/users/${prefs.getInt('id').toString()}/oldIllustHistory?page=$currentPage&pageSize=30';
-    } else if (widget.jsonMode == 'userdetail') {
-      if (!widget.isManga) {
-        url =
-            'https://api.pixivic.com/users/${widget.userId}/bookmarked/illust?page=1&pageSize=30';
-      } else {
-        url =
-            'https://api.pixivic.com/users/${widget.userId}/manga?page=1&pageSize=30';
-      }
-    }
-
-    try {
-      if (prefs.getString('auth') == '') {
-        var requests = await Requests.get(url);
-        // requests.raiseForStatus();
-        jsonList = jsonDecode(requests.content())['data'];
-        if (requests.statusCode == 401)
-          BotToast.showSimpleNotification(title: '请登录后再重新加载画作');
-      } else {
-        Map<String, String> headers = {
-          'authorization': prefs.getString('auth')
-        };
-        var requests = await Requests.get(url, headers: headers);
-        // print(requests.content());
-        // requests.raiseForStatus();
-        jsonList = jsonDecode(requests.content())['data'];
-      }
-      if (jsonList == null)
-        loadMoreAble = false;
-      else
-        loadMoreAble = true;
-      return (jsonList);
-    } catch (error) {
-      print('=========getJsonList==========');
-      print(error);
-      print('==============================');
-      if (error.toString().contains('SocketException'))
-        BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
-    }
-  }
 
   List _picMainParameter(int index) {
     // 预览图片的地址、数目、以及长宽比
@@ -514,13 +394,15 @@ class _PicPageState extends State<PicPage> {
   }
 
   _doWhileScrolling() {
-    // // print(scrollController.position.extentBefore);
-    FocusScope.of(context).unfocus();
+//    print("滑出ViewPort顶部的长度"+scrollController.position.extentBefore.toString());
+//    print("ViewPort内部长度"+scrollController.position.extentInside.toString());
+//      print("测量"+scrollController.position.extentAfter.toString());
+//    FocusScope.of(context).unfocus();
     // 如果为主页面 picPage，则记录滑动位置、判断滑动
     if (widget.jsonMode == 'home') {
       homeScrollerPosition = scrollController
           .position.extentBefore; // 保持记录scrollposition，原因为dispose时无法记录
-
+      indexProvider = Provider.of<PageSwitchProvider>(context, listen: false);
       // 判断是否在滑动，以便隐藏底部控件
       if (scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
@@ -541,56 +423,80 @@ class _PicPageState extends State<PicPage> {
       }
     }
 
-    if (widget.jsonMode == 'related' ||
-        widget.jsonMode == 'artist' ||
-        widget.jsonMode == 'userdetail') {
-      if (scrollController.position.extentBefore == 0 &&
-          scrollController.position.userScrollDirection ==
-              ScrollDirection.forward) {
-        widget.onPageTop();
-        print('on page top');
-      }
-      if (scrollController.position.extentBefore > 150 &&
-          scrollController.position.extentBefore < 200 &&
-          scrollController.position.userScrollDirection ==
-              ScrollDirection.reverse) {
-        widget.onPageStart();
-        print('on page start');
-      }
-    }
+//    if (widget.jsonMode == 'related' ||
+//        widget.jsonMode == 'artist' ||
+//        widget.jsonMode == 'userdetail') {
+//      if (scrollController.position.extentBefore == 0 &&
+//          scrollController.position.userScrollDirection ==
+//              ScrollDirection.forward) {
+//        widget.onPageTop();
+//        print('on page top');
+//      }
+//      if (scrollController.position.extentBefore > 150 &&
+//          scrollController.position.extentBefore < 200 &&
+//          scrollController.position.userScrollDirection ==
+//              ScrollDirection.reverse) {
+//        widget.onPageStart();
+//        print('on page start');
+//      }
+//    }
 
     // 自动加载
     if ((scrollController.position.extentAfter < 1200) &&
         (currentPage < 30) &&
         loadMoreAble) {
+      print("加载");
       loadMoreAble = false;
       currentPage++;
       print('current page is $currentPage');
-      _getJsonList().then((value) {
-        // print('autoload jsonlist: $value');
-        if (value != null) {
-          picList = picList + value;
-          picTotalNum = picTotalNum + value.length;
-          setState(() {
-            // print(picTotalNum);
-            if (widget.jsonMode == 'home') {
-              homePicList = picList;
-              homeCurrentPage = currentPage;
-            }
-            loadMoreAble = true;
-            // BotToast.showSimpleNotification(title: '摩多摩多!!!(つ´ω`)つ');
-          });
-        }
-      }).catchError((error) {
+      try {
+//        GetPageProvider getPageProvider =
+//            Provider.of<GetPageProvider>(context, listen: false);
+        pageProvider
+            .getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
+            .then((value) {
+          loadMoreAble = true;
+        });
+
+//        picTotalNum = picTotalNum + pageProvider.jsonList.length;
+
+      } catch (err) {
         print('=========getJsonList==========');
-        print(error);
+        print(err);
         print('==============================');
-        if (error.toString().contains('SocketException'))
+        if (err.toString().contains('SocketException'))
           BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
         setState(() {
           loadMoreAble = true;
         });
-      });
+      }
+//      pageProvider
+//          .getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
+//          .then((value) {
+//        print('autoload jsonlist: $value');
+//        if (value != null) {
+//          picList = picList + value;
+//          picTotalNum = picTotalNum + value.length;
+//          setState(() {
+//            // print(picTotalNum);
+//            if (widget.jsonMode == 'home') {
+//              homePicList = picList;
+//              homeCurrentPage = currentPage;
+//            }
+//            loadMoreAble = true;
+//            // BotToast.showSimpleNotification(title: '摩多摩多!!!(つ´ω`)つ');
+//          });
+//        }
+//      }).catchError((error) {
+//        print('=========getJsonList==========');
+//        print(error);
+//        print('==============================');
+//        if (error.toString().contains('SocketException'))
+//          BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+//        setState(() {
+//          loadMoreAble = true;
+//        });
+//      });
     }
   }
 
@@ -682,12 +588,12 @@ class _PicPageState extends State<PicPage> {
               right: ScreenUtil().setWidth(10),
               top: ScreenUtil().setHeight(5),
             ),
-            prefs.getString('auth') != '' && picMapData['type'] != 'ad_image'
-                ? Positioned(
-                    bottom: ScreenUtil().setHeight(5),
-                    right: ScreenUtil().setWidth(5),
-                    child: bookmarkHeart(index))
-                : Container(),
+//            prefs.getString('auth') != '' && picMapData['type'] != 'ad_image'
+//                ? Positioned(
+//                    bottom: ScreenUtil().setHeight(5),
+//                    right: ScreenUtil().setWidth(5),
+//                    child: bookmarkHeart(index))
+//                : Container(),
           ],
         ),
       );
@@ -728,6 +634,9 @@ class _PicPageState extends State<PicPage> {
       providers: [
         ChangeNotifierProvider(
           create: (_) => FavProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => GetPageProvider(),
         )
       ],
       child: Consumer<FavProvider>(
@@ -770,7 +679,7 @@ class _PicPageState extends State<PicPage> {
                           headers: headers,
                           bodyEncoding: RequestBodyEncoding.JSON);
                     }
-                    Future.delayed(Duration(milliseconds: 400), (){
+                    Future.delayed(Duration(milliseconds: 400), () {
                       setState(() {
                         picList[index]['isLiked'] = !picList[index]['isLiked'];
                       });
