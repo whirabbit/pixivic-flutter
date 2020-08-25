@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class FavProvider extends State<StatefulWidget>
     with ChangeNotifier, TickerProviderStateMixin {
-  //登录按钮动画
   Animation<double> _favAnimation;
   AnimationController animationController;
   CurvedAnimation curvedAnimation;

@@ -9,6 +9,7 @@ import 'package:pixivic/page/search_page.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:pixivic/provider/get_comment_list_data.dart';
+import 'package:pixivic/provider/get_page.dart';
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 
@@ -38,7 +39,8 @@ void main() {
     runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => PageSwitchProvider()),
-      ChangeNotifierProvider(create: (_)=>GetCommentProvider(),)
+      ChangeNotifierProvider(create: (_)=>GetCommentProvider(),),
+
       ],
       child: MyApp(),
     ));
@@ -56,7 +58,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: MyHomePage(title: 'Pixivic'),
+        home:  MyHomePage(title: 'Pixivic'),
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
@@ -109,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
   PappBar pappBar;
 
   PageSwitchProvider indexProvider;
+  GetPageProvider pageProvider;
 
   String updateTaskId;
   String apkPath;
@@ -139,12 +142,26 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     initData().then((value) {
-      setState(() {
-        picPage = PicPage.home(
-          picDate: _picDateStr,
-          picMode: _picMode,
+//      ChangeNotifierProvider(create: (BuildContext context)=>GetPageProvider()
+//
+//
+//      );
+//
+      picPage = PicPage.home(
+        picDate: _picDateStr,
+        picMode: _picMode,
 //          onPageScrolling: _onPageScrolling,
-        );
+      );
+
+      setState(() {
+
+//
+//        picPage = PicPage.related(
+//                  relatedId:83880266 ,
+//
+//                  isScrollable: true,
+//                );
+
         userPage = UserPage(userPageKey);
         newPage = NewPage(newPageKey);
         centerPage = CenterPage();
@@ -166,6 +183,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 324, height: 576);
+//    picPage = PicPage.home(
+//      picDate: _picDateStr,
+//      picMode: _picMode,
+////          onPageScrolling: _onPageScrolling,
+//    );
+//    userPage = UserPage(userPageKey);
     indexProvider = Provider.of<PageSwitchProvider>(context);
     return Scaffold(
       appBar: pappBar,
@@ -248,18 +271,20 @@ class _MyHomePageState extends State<MyHomePage> {
         // locale: Locale('zh')
       );
       if (newDate != null) {
+
         // _menuButtonKey.currentState.flipTapState();
         // _menuListKey.currentState.flipActive();
-        setState(() {
+//        setState(() {
           // print(newDate);
           _picDate = newDate;
           _picDateStr = DateFormat('yyyy-MM-dd').format(_picDate);
+
           picPage = PicPage.home(
             picDate: _picDateStr,
             picMode: _picMode,
 //            onPageScrolling: _onPageScrolling,
           );
-        });
+//        });
       }
     } else if (parameter == 'search') {
       Navigator.of(context).push(
@@ -311,14 +336,15 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       // _menuButtonKey.currentState.flipTapState();
       // _menuListKey.currentState.flipActive();
-      setState(() {
+//      setState(() {
         _picMode = parameter;
+//        pageProvider.homePage(picDate: _picDate, picMode: _picMode);
         picPage = PicPage.home(
           picDate: _picDateStr,
           picMode: _picMode,
 //          onPageScrolling: _onPageScrolling,
         );
-      });
+//      });
     }
   }
 
