@@ -6,7 +6,6 @@ import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import '../data/common.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
 
 class GetPageProvider with ChangeNotifier {
   String picDate;
@@ -23,27 +22,32 @@ class GetPageProvider with ChangeNotifier {
   VoidCallback onPageTop;
   VoidCallback onPageStart;
   String url;
-  List jsonList;
+  List jsonList = [];
   int homeCurrentPage;
-  bool deleteList=false;
+  bool deleteList = false;
+  bool funOne;
+
+//  List picList;
 
   void homePage({
     @required String picDate,
     @required String picMode,
   }) {
 //    String dateString=DateFormat('yyyy-MM-dd').format(picDate);
-   if(picMode!=this.picMode||picDate!=this.picDate){
-     //加载动画
-     this.jsonList=null;
+    if (picMode != this.picMode || picDate != this.picDate) {
+      //加载动画
+      this.jsonList = [];
 //     notifyListeners();
-     this.jsonMode = 'home';
-     this.picDate =picDate;
-     this.picMode = picMode;
-     this.deleteList=true;
-     getJsonList();
+      this.jsonMode = 'home';
+      this.picDate = picDate;
+      this.picMode = picMode;
+      this.deleteList = true;
+      getJsonList();
+//     getJsonList().then((value){
+//       notifyListeners();
+//     });
 //         notifyListeners();
-   }
-
+    }
   }
 
   void searchPage(
@@ -59,15 +63,14 @@ class GetPageProvider with ChangeNotifier {
   void relatedPage(
       {@required num relatedId,
       @required VoidCallback onTopOfPicpage,
-        @required VoidCallback onStartOfPicpage}) {
+      @required VoidCallback onStartOfPicpage}) {
     this.jsonMode = 'related';
     this.relatedId = relatedId;
-//    this.onPageTop = onTopOfPicpage;
-//    this.onPageStart = onStartOfPicpage;
+    this.onPageTop = onTopOfPicpage;
+    this.onPageStart = onStartOfPicpage;
     this.isScrollable = true;
 //    this.deleteList=true;
     getJsonList();
-//    notifyListeners();
   }
 
   void artistPage(
@@ -113,14 +116,14 @@ class GetPageProvider with ChangeNotifier {
 
   void historyPage() {
     this.jsonMode = 'history';
-    this.deleteList=true;
+    this.deleteList = true;
     getJsonList();
 //    notifyListeners();
   }
 
   void oldHistoryPage() {
     this.jsonMode = 'oldhistory';
-    this.deleteList=true;
+    this.deleteList = true;
     getJsonList();
 //    notifyListeners();
   }
@@ -137,7 +140,6 @@ class GetPageProvider with ChangeNotifier {
     this.onPageStart = onStartOfPicpage;
 //    this.deleteList=true;
     getJsonList();
-//    notifyListeners();
   }
 
   getJsonList({bool loadMoreAble, int currentPage = 1}) async {
@@ -216,14 +218,12 @@ class GetPageProvider with ChangeNotifier {
         // print(requests.content());
         // requests.raiseForStatus();
         jsonList = jsonDecode(requests.content())['data'];
+        if (jsonList == null) {
+          jsonList = [];
+        }
       }
-//      if (jsonList == null)
-//        loadMoreAble = false;
-//      else
-//        loadMoreAble = true;
-//       jsonList;
       notifyListeners();
-      return jsonList;
+//      return jsonList;
     } catch (error) {
       print('=========getJsonList==========');
       print(error);
@@ -232,6 +232,7 @@ class GetPageProvider with ChangeNotifier {
         BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
     }
   }
+
   @override
   void dispose() {
     // TODO: implement dispose

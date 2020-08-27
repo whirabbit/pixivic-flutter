@@ -192,6 +192,7 @@ class _SpotlightPageState extends State<SpotlightPage> {
           builder: (context) => Scaffold(
             appBar: PappBar(title: tempTitle,),
             body: PicPage.spotlight(
+//              funOne: true,
                   spotlightId: spotlightId,
                 ),
           )),

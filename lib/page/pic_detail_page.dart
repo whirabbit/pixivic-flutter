@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:pixivic/provider/get_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -319,15 +320,12 @@ class _PicDetailPageState extends State<PicDetailPage> {
                 width: ScreenUtil().setWidth(324),
                 height: ScreenUtil().setHeight(485),
                 color: Colors.white,
-                child:
-//                PicPage.home(picDate:
-//                DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(hours: 39)))
-//                    , picMode: 'month')
-                PicPage.related(
+                child: PicPage.related(
                   relatedId: widget._picData['id'],
                   onPageTop: _onTopOfPicpage,
                   onPageStart: _onStartOfPicpage,
                   isScrollable: true,
+//                  funOne: true,
                 ),
               ),
             ),

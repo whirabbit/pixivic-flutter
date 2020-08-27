@@ -15,6 +15,7 @@ import 'package:flutter_bugly/flutter_bugly.dart';
 
 import 'widget/nav_bar.dart';
 import 'widget/papp_bar.dart';
+
 // import 'widget/menu_button.dart';
 // import 'widget/menu_list.dart';
 
@@ -39,8 +40,9 @@ void main() {
     runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => PageSwitchProvider()),
-      ChangeNotifierProvider(create: (_)=>GetCommentProvider(),),
-
+        ChangeNotifierProvider(
+          create: (_) => GetCommentProvider(),
+        ),
       ],
       child: MyApp(),
     ));
@@ -58,7 +60,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home:  MyHomePage(title: 'Pixivic'),
+        home: MyHomePage(title: 'Pixivic'),
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
@@ -88,7 +90,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _currentIndex = 0;
   bool _navBarAlone = true;
-  // bool _isPageScrolling = false;   
+
+  // bool _isPageScrolling = false;
   var _pageController = PageController(initialPage: 0);
 
   DateTime _picDate =
@@ -142,25 +145,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     initData().then((value) {
-//      ChangeNotifierProvider(create: (BuildContext context)=>GetPageProvider()
-//
-//
-//      );
-//
-      picPage = PicPage.home(
-        picDate: _picDateStr,
-        picMode: _picMode,
-//          onPageScrolling: _onPageScrolling,
-      );
 
       setState(() {
+        picPage = PicPage.home(
+          picDate: _picDateStr,
+          picMode: _picMode,
+        );
 
-//
-//        picPage = PicPage.related(
-//                  relatedId:83880266 ,
-//
-//                  isScrollable: true,
-//                );
 
         userPage = UserPage(userPageKey);
         newPage = NewPage(newPageKey);
@@ -183,12 +174,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 324, height: 576);
-//    picPage = PicPage.home(
-//      picDate: _picDateStr,
-//      picMode: _picMode,
-////          onPageScrolling: _onPageScrolling,
-//    );
-//    userPage = UserPage(userPageKey);
     indexProvider = Provider.of<PageSwitchProvider>(context);
     return Scaffold(
       appBar: pappBar,
@@ -232,8 +217,9 @@ class _MyHomePageState extends State<MyHomePage> {
     //    setState(() {
 //      _currentIndex = index;
 //    });
-    _pageController.animateToPage(index,
-        duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
+    _pageController.jumpToPage(index);
+//    _pageController.animateToPage(index,
+//        duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   _onPageChanged(int index) {
@@ -271,19 +257,18 @@ class _MyHomePageState extends State<MyHomePage> {
         // locale: Locale('zh')
       );
       if (newDate != null) {
-
         // _menuButtonKey.currentState.flipTapState();
         // _menuListKey.currentState.flipActive();
 //        setState(() {
-          // print(newDate);
-          _picDate = newDate;
-          _picDateStr = DateFormat('yyyy-MM-dd').format(_picDate);
-
-          picPage = PicPage.home(
-            picDate: _picDateStr,
-            picMode: _picMode,
+        // print(newDate);
+        _picDate = newDate;
+        _picDateStr = DateFormat('yyyy-MM-dd').format(_picDate);
+        picPage = PicPage.home(
+          picDate: _picDateStr,
+          picMode: _picMode,
+//          funOne: true,
 //            onPageScrolling: _onPageScrolling,
-          );
+        );
 //        });
       }
     } else if (parameter == 'search') {
@@ -337,13 +322,13 @@ class _MyHomePageState extends State<MyHomePage> {
       // _menuButtonKey.currentState.flipTapState();
       // _menuListKey.currentState.flipActive();
 //      setState(() {
-        _picMode = parameter;
+      _picMode = parameter;
 //        pageProvider.homePage(picDate: _picDate, picMode: _picMode);
-        picPage = PicPage.home(
-          picDate: _picDateStr,
-          picMode: _picMode,
+      picPage = PicPage.home(
+        picDate: _picDateStr,
+        picMode: _picMode,
 //          onPageScrolling: _onPageScrolling,
-        );
+      );
 //      });
     }
   }
