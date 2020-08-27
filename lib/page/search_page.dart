@@ -61,6 +61,7 @@ class _SearchPageState extends State<SearchPage> {
       picPage = PicPage.search(
         searchKeywords: searchKeywords,
         isManga: searchManga,
+//        funOne: true,
       );
       artistListPage = ArtistListPage.search(searchKeywords);
     }
@@ -179,6 +180,7 @@ class _SearchPageState extends State<SearchPage> {
         picPage = PicPage.search(
           searchKeywords: searchKeywords,
           isManga: searchManga,
+//          funOne: true,
         );
       artistListPage = ArtistListPage.search(searchKeywords);
     });

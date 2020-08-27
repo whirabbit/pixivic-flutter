@@ -37,6 +37,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+    @required this.funOne,
   });
 
   PicPage.home({
@@ -54,6 +55,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.related({
@@ -70,6 +72,7 @@ class PicPage extends StatefulWidget {
     @required this.onPageTop,
     @required this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.search({
@@ -86,6 +89,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.artist({
@@ -102,6 +106,7 @@ class PicPage extends StatefulWidget {
     @required this.onPageTop,
     @required this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.followed({
@@ -118,6 +123,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.bookmark({
@@ -134,6 +140,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.spotlight({
@@ -150,6 +157,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.history({
@@ -166,6 +174,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.oldHistory({
@@ -182,6 +191,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.userdetail({
@@ -198,6 +208,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   final String picDate;
@@ -209,6 +220,7 @@ class PicPage extends StatefulWidget {
   final String searchKeywords;
   final bool isManga;
   final bool isScrollable;
+  bool funOne = true;
 
   // jsonMode could be set to 'home, related, Spotlight, tag, artist, search...'
   final String jsonMode;
@@ -224,6 +236,7 @@ class _PicPageState extends State<PicPage> {
   // picTotalNum - picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
   // 针对最常访问的 Home 页面，临时变量记录于 common.dart
   List picList = [];
+
   int picTotalNum;
   int currentPage = 1;
   RandomColor _randomColor = RandomColor();
@@ -233,18 +246,39 @@ class _PicPageState extends State<PicPage> {
   ScrollController scrollController;
   String previewQuality = prefs.getString('previewQuality');
   PageSwitchProvider indexProvider;
-
+  bool test = true;
   GetPageProvider pageProvider;
 
   @override
   void initState() {
     // TODO: implement initState
+    widget.funOne = true;
+    print('initState');
     scrollController = ScrollController(
         initialScrollOffset:
             widget.jsonMode == 'home' ? homeScrollerPosition : 0.0)
       ..addListener(_doWhileScrolling);
     super.initState();
   }
+
+  @override
+  void didUpdateWidget(PicPage oldWidget) {
+    print('picPage didUpdateWidget: mode is ${widget.jsonMode}');
+    // 当为 home 模式且切换了参数，则同时更新暂存的相关数据
+    if (widget.jsonMode == 'home' &&
+        (oldWidget.picDate != widget.picDate ||
+            oldWidget.picMode != widget.picMode)) {
+      widget.funOne = true;
+      picList = [];
+      scrollController.animateTo(
+        0.0,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut,
+      );
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
   @override
   void dispose() {
     print('PicPage Disposed');
@@ -256,63 +290,20 @@ class _PicPageState extends State<PicPage> {
     }
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
 //   print("列表长度" + pageProvider.jsonList.length.toString());
     return ChangeNotifierProvider<GetPageProvider>.value(
       value: GetPageProvider(),
       builder: (context, _) {
-        print("测试");
         pageProvider = Provider.of<GetPageProvider>(context);
-        switch (widget.jsonMode) {
-          case 'home':
-            pageProvider.homePage(
-                picDate: widget.picDate, picMode: widget.picMode);
-            break;
-          case 'related':
-            pageProvider.relatedPage(
-                relatedId: widget.relatedId,
-                onTopOfPicpage: widget.onPageTop,
-                onStartOfPicpage: widget.onPageStart);
-            break;
-          case 'search':
-            pageProvider.searchPage(
-                searchKeywords: widget.searchKeywords,
-                searchManga: widget.isManga);
-            break;
-          case 'artist':
-            pageProvider.artistPage(
-                artistId: widget.artistId,
-                isManga: widget.isManga,
-                onTopOfPicpage: widget.onPageTop,
-                onStartOfPicpage: widget.onPageStart);
-            break;
-          case 'followedPage':
-            pageProvider.followedPage(
-                userId: widget.userId, isManga: widget.isManga);
-            break;
-          case 'bookmark':
-            pageProvider.bookmarkPage(
-                userId: widget.userId, isManga: widget.isManga);
-            break;
-          case 'spotlight':
-            pageProvider.spotlightPage(spotlightId: widget.spotlightId);
-            break;
-          case 'history':
-            pageProvider.historyPage();
-            break;
-          case 'oldhistory':
-            pageProvider.oldHistoryPage();
-            break;
-          case 'userdetial':
-            pageProvider.userdetailPage(
-                userId: widget.userId,
-                isManga: widget.isManga,
-                onTopOfPicpage: widget.onPageTop,
-                onStartOfPicpage: widget.onPageStart);
-            break;
+        if (widget.funOne) {
+          switchModel(pageProvider);
+          widget.funOne = false;
         }
-        if (pageProvider.jsonList == null && !hasConnected) {
+        picList = picList + pageProvider.jsonList;
+        if (picList.length == 0 && !hasConnected) {
           return Container(
               height: ScreenUtil().setHeight(576),
               width: ScreenUtil().setWidth(324),
@@ -321,7 +312,7 @@ class _PicPageState extends State<PicPage> {
               child: Center(
                 child: Lottie.asset('image/loading-box.json'),
               ));
-        } else if (pageProvider.jsonList == null && hasConnected) {
+        } else if (picList.length == 0 && hasConnected) {
           return Container(
             height: ScreenUtil().setHeight(576),
             width: ScreenUtil().setWidth(324),
@@ -345,19 +336,6 @@ class _PicPageState extends State<PicPage> {
             ),
           );
         } else {
-          if (pageProvider.deleteList) {
-            picList = [];
-            if (scrollController.hasClients) {
-              scrollController.animateTo(
-                0.0,
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.easeOut,
-              );
-            }
-
-            pageProvider.deleteList = false;
-          }
-          picList = picList + pageProvider.jsonList;
 //
           return Container(
               padding: EdgeInsets.only(
@@ -382,6 +360,52 @@ class _PicPageState extends State<PicPage> {
     );
   }
 
+  void switchModel(GetPageProvider provider) {
+    switch (widget.jsonMode) {
+      case 'home':
+        provider.homePage(picDate: widget.picDate, picMode: widget.picMode);
+        break;
+      case 'related':
+        provider.relatedPage(
+            relatedId: widget.relatedId,
+            onTopOfPicpage: widget.onPageTop,
+            onStartOfPicpage: widget.onPageStart);
+        break;
+      case 'search':
+        provider.searchPage(
+            searchKeywords: widget.searchKeywords, searchManga: widget.isManga);
+        break;
+      case 'artist':
+        provider.artistPage(
+            artistId: widget.artistId,
+            isManga: widget.isManga,
+            onTopOfPicpage: widget.onPageTop,
+            onStartOfPicpage: widget.onPageStart);
+        break;
+      case 'followedPage':
+        provider.followedPage(userId: widget.userId, isManga: widget.isManga);
+        break;
+      case 'bookmark':
+        provider.bookmarkPage(userId: widget.userId, isManga: widget.isManga);
+        break;
+      case 'spotlight':
+        provider.spotlightPage(spotlightId: widget.spotlightId);
+        break;
+      case 'history':
+        provider.historyPage();
+        break;
+      case 'oldhistory':
+        provider.oldHistoryPage();
+        break;
+      case 'userdetial':
+        provider.userdetailPage(
+            userId: widget.userId,
+            isManga: widget.isManga,
+            onTopOfPicpage: widget.onPageTop,
+            onStartOfPicpage: widget.onPageStart);
+        break;
+    }
+  }
 
   List _picMainParameter(int index) {
     // 预览图片的地址、数目、以及长宽比
@@ -450,16 +474,11 @@ class _PicPageState extends State<PicPage> {
       currentPage++;
       print('current page is $currentPage');
       try {
-//        GetPageProvider getPageProvider =
-//            Provider.of<GetPageProvider>(context, listen: false);
         pageProvider
             .getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
             .then((value) {
           loadMoreAble = true;
         });
-
-//        picTotalNum = picTotalNum + pageProvider.jsonList.length;
-
       } catch (err) {
         print('=========getJsonList==========');
         print(err);
@@ -470,33 +489,6 @@ class _PicPageState extends State<PicPage> {
           loadMoreAble = true;
         });
       }
-//      pageProvider
-//          .getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
-//          .then((value) {
-//        print('autoload jsonlist: $value');
-//        if (value != null) {
-//          picList = picList + value;
-//          picTotalNum = picTotalNum + value.length;
-//          setState(() {
-//            // print(picTotalNum);
-//            if (widget.jsonMode == 'home') {
-//              homePicList = picList;
-//              homeCurrentPage = currentPage;
-//            }
-//            loadMoreAble = true;
-//            // BotToast.showSimpleNotification(title: '摩多摩多!!!(つ´ω`)つ');
-//          });
-//        }
-//      }).catchError((error) {
-//        print('=========getJsonList==========');
-//        print(error);
-//        print('==============================');
-//        if (error.toString().contains('SocketException'))
-//          BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
-//        setState(() {
-//          loadMoreAble = true;
-//        });
-//      });
     }
   }
 

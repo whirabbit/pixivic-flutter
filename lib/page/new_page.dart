@@ -78,6 +78,7 @@ class NewPageState extends State<NewPage> {
             child: TabBarView(
               children: tabs.map((Tab tab) {
                 return PicPage.followed(
+//                  funOne: true,
                   userId: prefs.getInt('id').toString(),
                   isManga: tab.text.contains('漫画') ? true : false,
                 );

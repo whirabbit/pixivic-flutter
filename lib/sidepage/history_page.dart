@@ -68,10 +68,14 @@ class HistoryPageState extends State<HistoryPage> {
             child: TabBarView(
               children: tabs.map((Tab tab) {
                 if(tab.text == '近期') {
-                  return PicPage.history();
+                  return PicPage.history(
+//                    funOne: true,
+                  );
                 }
                 else if(tab.text == '更早') {
-                  return PicPage.oldHistory();
+                  return PicPage.oldHistory(
+//                    funOne: true,
+                  );
                 }
                 else {
                   return Container();
