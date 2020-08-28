@@ -37,7 +37,6 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
-    @required this.funOne,
   });
 
   PicPage.home({
@@ -220,7 +219,9 @@ class PicPage extends StatefulWidget {
   final String searchKeywords;
   final bool isManga;
   final bool isScrollable;
-  bool funOne = true;
+
+  //第一次进入页面或是切换页面获取不同的model数据
+  bool firstInit = true;
 
   // jsonMode could be set to 'home, related, Spotlight, tag, artist, search...'
   final String jsonMode;
@@ -231,12 +232,11 @@ class PicPage extends StatefulWidget {
   final VoidCallback onPageStart;
 }
 
-class _PicPageState extends State<PicPage> {
+class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
   // picList - 图片的JSON文件列表
   // picTotalNum - picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
   // 针对最常访问的 Home 页面，临时变量记录于 common.dart
   List picList = [];
-
   int picTotalNum;
   int currentPage = 1;
   RandomColor _randomColor = RandomColor();
@@ -246,13 +246,13 @@ class _PicPageState extends State<PicPage> {
   ScrollController scrollController;
   String previewQuality = prefs.getString('previewQuality');
   PageSwitchProvider indexProvider;
-  bool test = true;
   GetPageProvider pageProvider;
 
   @override
   void initState() {
     // TODO: implement initState
-    widget.funOne = true;
+    //第一次进入页面
+    widget.firstInit = true;
     print('initState');
     scrollController = ScrollController(
         initialScrollOffset:
@@ -268,7 +268,8 @@ class _PicPageState extends State<PicPage> {
     if (widget.jsonMode == 'home' &&
         (oldWidget.picDate != widget.picDate ||
             oldWidget.picMode != widget.picMode)) {
-      widget.funOne = true;
+      //切换model
+      widget.firstInit = true;
       picList = [];
       scrollController.animateTo(
         0.0,
@@ -276,6 +277,7 @@ class _PicPageState extends State<PicPage> {
         curve: Curves.easeOut,
       );
     }
+
     super.didUpdateWidget(oldWidget);
   }
 
@@ -298,11 +300,16 @@ class _PicPageState extends State<PicPage> {
       value: GetPageProvider(),
       builder: (context, _) {
         pageProvider = Provider.of<GetPageProvider>(context);
-        if (widget.funOne) {
+        if (widget.firstInit) {
           switchModel(pageProvider);
-          widget.funOne = false;
+        }
+        if (picList.length == 0 &&
+            pageProvider.jsonList.length == 0 &&
+            !widget.firstInit) {
+          hasConnected = true;
         }
         picList = picList + pageProvider.jsonList;
+        widget.firstInit = false;
         if (picList.length == 0 && !hasConnected) {
           return Container(
               height: ScreenUtil().setHeight(576),
@@ -360,6 +367,7 @@ class _PicPageState extends State<PicPage> {
     );
   }
 
+  //根据传入的jsonModel选择provider的方法来获取数据
   void switchModel(GetPageProvider provider) {
     switch (widget.jsonMode) {
       case 'home':
@@ -382,7 +390,7 @@ class _PicPageState extends State<PicPage> {
             onTopOfPicpage: widget.onPageTop,
             onStartOfPicpage: widget.onPageStart);
         break;
-      case 'followedPage':
+      case 'followed':
         provider.followedPage(userId: widget.userId, isManga: widget.isManga);
         break;
       case 'bookmark':
@@ -485,9 +493,7 @@ class _PicPageState extends State<PicPage> {
         print('==============================');
         if (err.toString().contains('SocketException'))
           BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
-        setState(() {
-          loadMoreAble = true;
-        });
+        loadMoreAble = true;
       }
     }
   }
@@ -710,4 +716,8 @@ class _PicPageState extends State<PicPage> {
       picList[index]['isLiked'] = result;
     });
   }
+
+//页面状态保持
+  @override
+  bool get wantKeepAlive => true;
 }

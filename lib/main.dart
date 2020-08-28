@@ -217,9 +217,8 @@ class _MyHomePageState extends State<MyHomePage> {
     //    setState(() {
 //      _currentIndex = index;
 //    });
-    _pageController.jumpToPage(index);
-//    _pageController.animateToPage(index,
-//        duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
+    _pageController.animateToPage(index,
+        duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   _onPageChanged(int index) {
@@ -254,7 +253,7 @@ class _MyHomePageState extends State<MyHomePage> {
         initialDate: _picDate,
         firstDate: _picFirstDate,
         lastDate: _picLastDate,
-        // locale: Locale('zh')
+         locale: Locale('zh')
       );
       if (newDate != null) {
         // _menuButtonKey.currentState.flipTapState();
@@ -266,8 +265,7 @@ class _MyHomePageState extends State<MyHomePage> {
         picPage = PicPage.home(
           picDate: _picDateStr,
           picMode: _picMode,
-//          funOne: true,
-//            onPageScrolling: _onPageScrolling,
+
         );
 //        });
       }
@@ -323,7 +321,6 @@ class _MyHomePageState extends State<MyHomePage> {
       // _menuListKey.currentState.flipActive();
 //      setState(() {
       _picMode = parameter;
-//        pageProvider.homePage(picDate: _picDate, picMode: _picMode);
       picPage = PicPage.home(
         picDate: _picDateStr,
         picMode: _picMode,
