@@ -201,5 +201,5 @@ class TextZhAlbumn {
   String isSexy = 'R16内容';
   String allowComment = '允许评论';
   String addTag = '添加标签';
-  String submit = '创建这个画集';
+  String submit = '创建画集';
 }

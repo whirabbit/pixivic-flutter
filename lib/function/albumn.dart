@@ -83,25 +83,32 @@ showAddNewAlbumnDialog(BuildContext context) {
           builder: (context, NewAlbumnParameterModel newAlbumnParameterModel,
                   child) =>
               AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
             contentPadding: EdgeInsets.all(0),
             content: Container(
               alignment: Alignment.topCenter,
-              width: ScreenUtil().setWidth(260),
+              width: ScreenUtil().setWidth(250),
               height: ScreenUtil().setHeight(280),
               child: Stack(
                 children: [
                   Positioned(
-                    width: ScreenUtil().setWidth(260),
-                    top: ScreenUtil().setHeight(10),
+                    top: ScreenUtil().setHeight(0),
                     child: Column(
                       children: [
                         Container(
-                            width: ScreenUtil().setWidth(260),
+                            width: ScreenUtil().setWidth(250),
                             height: ScreenUtil().setHeight(30),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20.0),
+                                  topRight: Radius.circular(20.0)),
+                              color: Colors.orange[300],
+                            ),
                             alignment: Alignment.center,
-                            color: Colors.orange[300],
-                            padding: EdgeInsets.only(
-                                bottom: ScreenUtil().setHeight(8)),
+                            // padding: EdgeInsets.only(
+                            //     bottom: ScreenUtil().setHeight(8)),
                             child: Text(
                               texts.newAlbumnTitle,
                               textAlign: TextAlign.center,
@@ -111,7 +118,7 @@ showAddNewAlbumnDialog(BuildContext context) {
                                   color: Colors.white),
                             )),
                         Container(
-                          width: ScreenUtil().setWidth(260),
+                          width: ScreenUtil().setWidth(250),
                           height: ScreenUtil().setHeight(30),
                           child: TextField(
                             cursorColor: Colors.orange,
@@ -122,12 +129,12 @@ showAddNewAlbumnDialog(BuildContext context) {
                               isDense: true,
                               hintText: texts.inputAlbumnTitle,
                               hintStyle: TextStyle(
-                                  fontSize: 16, color: Colors.grey[300]),
+                                  fontSize: 16, color: Colors.grey[400]),
                             ),
                           ),
                         ),
                         Container(
-                          width: ScreenUtil().setWidth(260),
+                          width: ScreenUtil().setWidth(250),
                           child: TextField(
                             cursorColor: Colors.orange,
                             controller: caption,
@@ -139,7 +146,7 @@ showAddNewAlbumnDialog(BuildContext context) {
                               isDense: true,
                               hintText: texts.inputAlbumnCaption,
                               hintStyle: TextStyle(
-                                  fontSize: 16, color: Colors.grey[300]),
+                                  fontSize: 16, color: Colors.grey[400]),
                             ),
                           ),
                         ),
@@ -169,8 +176,8 @@ showAddNewAlbumnDialog(BuildContext context) {
                               newAlbumnParameterModel.sexy(value);
                             },
                             activeColor: Colors.orangeAccent,
-                            title:
-                                Text(texts.isSexy, style: TextStyle(fontSize: 14)),
+                            title: Text(texts.isSexy,
+                                style: TextStyle(fontSize: 14)),
                           ),
                         ),
                         Container(
@@ -183,7 +190,8 @@ showAddNewAlbumnDialog(BuildContext context) {
                               newAlbumnParameterModel.comment(value);
                             },
                             activeColor: Colors.orangeAccent,
-                            title: Text(texts.allowComment, style: TextStyle(fontSize: 14)),
+                            title: Text(texts.allowComment,
+                                style: TextStyle(fontSize: 14)),
                           ),
                         ),
                         FlatButton(
@@ -197,19 +205,26 @@ showAddNewAlbumnDialog(BuildContext context) {
                     ),
                   ),
                   Positioned(
-                    width: ScreenUtil().setWidth(260),
-                    bottom: ScreenUtil().setHeight(8),
+                    bottom: ScreenUtil().setHeight(0),
                     child: Container(
-                      width: ScreenUtil().setWidth(260),
+                      width: ScreenUtil().setWidth(250),
                       height: ScreenUtil().setHeight(30),
-                      color: Colors.orange[200],
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        color: Colors.orange[300],
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(20.0),
+                          bottomRight: Radius.circular(20.0),
+                        ),
+                      ),
                       alignment: Alignment.center,
                       child: FlatButton(
                         child: Text(
                           texts.submit,
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.w700),
                         ),
-                        color: Colors.orange[200],
+                        color: Colors.orange[300],
                         shape: StadiumBorder(),
                         onPressed: () {
                           Map<String, dynamic> payload = {
@@ -302,11 +317,13 @@ Widget singleTag(String label, bool advice) {
               label,
               style: TextStyle(color: Colors.grey),
             ),
-            !advice ? Icon(
-              Icons.cancel,
-              color: Colors.grey,
-              size: ScreenUtil().setWidth(13),
-            ) : Container()  
+            !advice
+                ? Icon(
+                    Icons.cancel,
+                    color: Colors.grey,
+                    size: ScreenUtil().setWidth(13),
+                  )
+                : Container()
           ],
         ),
       ),
