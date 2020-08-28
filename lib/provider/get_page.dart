@@ -25,29 +25,18 @@ class GetPageProvider with ChangeNotifier {
   List jsonList = [];
   int homeCurrentPage;
   bool deleteList = false;
-  bool funOne;
 
-//  List picList;
-
-  void homePage({
+  homePage({
     @required String picDate,
     @required String picMode,
   }) {
-//    String dateString=DateFormat('yyyy-MM-dd').format(picDate);
-    if (picMode != this.picMode || picDate != this.picDate) {
-      //加载动画
-      this.jsonList = [];
-//     notifyListeners();
-      this.jsonMode = 'home';
-      this.picDate = picDate;
-      this.picMode = picMode;
-      this.deleteList = true;
-      getJsonList();
-//     getJsonList().then((value){
-//       notifyListeners();
-//     });
-//         notifyListeners();
-    }
+    //加载动画
+    this.jsonList = [];
+    this.jsonMode = 'home';
+    this.picDate = picDate;
+    this.picMode = picMode;
+    this.deleteList = true;
+    getJsonList();
   }
 
   void searchPage(
@@ -55,9 +44,7 @@ class GetPageProvider with ChangeNotifier {
     this.jsonMode = 'search';
     this.searchKeywords = searchKeywords;
     this.isManga = searchManga;
-//    this.deleteList=true;
     getJsonList();
-//    notifyListeners();
   }
 
   void relatedPage(
@@ -69,7 +56,6 @@ class GetPageProvider with ChangeNotifier {
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
     this.isScrollable = true;
-//    this.deleteList=true;
     getJsonList();
   }
 
@@ -83,49 +69,39 @@ class GetPageProvider with ChangeNotifier {
     this.isManga = isManga;
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
-//    this.deleteList=true;
     getJsonList();
-//    notifyListeners();
   }
 
   void followedPage({@required String userId, @required bool isManga}) {
     this.jsonMode = 'followed';
     this.userId = userId;
     this.isManga = isManga;
-//    this.deleteList=true;
     getJsonList();
-//    notifyListeners();
   }
 
   void bookmarkPage({@required String userId, @required bool isManga}) {
     this.jsonMode = 'bookmark';
     this.userId = userId;
     this.isManga = isManga;
-//    this.deleteList=true;
     getJsonList();
-//    notifyListeners();
   }
 
   void spotlightPage({@required String spotlightId}) {
     this.jsonMode = 'spotlight';
     this.spotlightId = spotlightId;
-//    this.deleteList=true;
     getJsonList();
-//    notifyListeners();
   }
 
   void historyPage() {
     this.jsonMode = 'history';
     this.deleteList = true;
     getJsonList();
-//    notifyListeners();
   }
 
   void oldHistoryPage() {
     this.jsonMode = 'oldhistory';
     this.deleteList = true;
     getJsonList();
-//    notifyListeners();
   }
 
   void userdetailPage(
@@ -138,7 +114,6 @@ class GetPageProvider with ChangeNotifier {
     this.isManga = isManga;
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
-//    this.deleteList=true;
     getJsonList();
   }
 
@@ -147,11 +122,11 @@ class GetPageProvider with ChangeNotifier {
 
     if (jsonMode == 'home') {
       url =
-          'https://api.pixivic.com/ranks?page=$currentPage&date=${picDate}&mode=${picMode}&pageSize=30';
+          'https://api.pixivic.com/ranks?page=$currentPage&date=$picDate&mode=$picMode&pageSize=30';
     } else if (jsonMode == 'search') {
       if (!isManga)
         url =
-            'https://api.pixivic.com/illustrations?page=$currentPage&keyword=${searchKeywords}&pageSize=30';
+            'https://api.pixivic.com/illustrations?page=$currentPage&keyword=$searchKeywords&pageSize=30';
       else
         url =
             'https://api.pixivic.com/illustrations?page=$currentPage&keyword=$searchKeywords&pageSize=30';
@@ -173,19 +148,19 @@ class GetPageProvider with ChangeNotifier {
             'https://api.pixivic.com/users/${userId}/followed/latest/illust?page=$currentPage&pageSize=30';
       } else {
         url =
-            'https://api.pixivic.com/users/${userId}/followed/latest/manga?page=$currentPage&pageSize=30';
+            'https://api.pixivic.com/users/$userId/followed/latest/manga?page=$currentPage&pageSize=30';
       }
     } else if (jsonMode == 'bookmark') {
       if (!isManga) {
         url =
-            'https://api.pixivic.com/users/${userId}/bookmarked/illust?page=$currentPage&pageSize=30';
+            'https://api.pixivic.com/users/$userId/bookmarked/illust?page=$currentPage&pageSize=30';
       } else {
         url =
-            'https://api.pixivic.com/users/${userId}/bookmarked/manga?page=$currentPage&pageSize=30';
+            'https://api.pixivic.com/users/$userId/bookmarked/manga?page=$currentPage&pageSize=30';
       }
     } else if (jsonMode == 'spotlight') {
       loadMoreAble = false;
-      url = 'https://api.pixivic.com/spotlights/${spotlightId}/illustrations';
+      url = 'https://api.pixivic.com/spotlights/$spotlightId/illustrations';
     } else if (jsonMode == 'history') {
       url =
           'https://api.pixivic.com/users/${prefs.getInt('id').toString()}/illustHistory?page=$currentPage&pageSize=30';
@@ -195,15 +170,14 @@ class GetPageProvider with ChangeNotifier {
     } else if (jsonMode == 'userdetail') {
       if (!isManga) {
         url =
-            'https://api.pixivic.com/users/${userId}/bookmarked/illust?page=1&pageSize=30';
+            'https://api.pixivic.com/users/$userId/bookmarked/illust?page=1&pageSize=30';
       } else {
         url =
-            'https://api.pixivic.com/users/${userId}/manga?page=1&pageSize=30';
+            'https://api.pixivic.com/users/$userId/manga?page=1&pageSize=30';
       }
     }
 
     try {
-      print(url);
       if (prefs.getString('auth') == '') {
         var requests = await Requests.get(url);
         // requests.raiseForStatus();
