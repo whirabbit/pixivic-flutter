@@ -145,13 +145,11 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     initData().then((value) {
-
       setState(() {
         picPage = PicPage.home(
           picDate: _picDateStr,
           picMode: _picMode,
         );
-
 
         userPage = UserPage(userPageKey);
         newPage = NewPage(newPageKey);
@@ -247,27 +245,28 @@ class _MyHomePageState extends State<MyHomePage> {
   // }
 
   _onOptionCellTap(String parameter) async {
+    // calendar chooser
     if (parameter == 'new_date') {
       DateTime newDate = await showDatePicker(
-        context: context,
-        initialDate: _picDate,
-        firstDate: _picFirstDate,
-        lastDate: _picLastDate,
-         locale: Locale('zh')
-      );
+          context: context,
+          initialDate: _picDate,
+          firstDate: _picFirstDate,
+          lastDate: _picLastDate,
+          locale: Locale('zh'),
+          );
+      print('The newDate is : $newDate');
       if (newDate != null) {
         // _menuButtonKey.currentState.flipTapState();
         // _menuListKey.currentState.flipActive();
-//        setState(() {
-        // print(newDate);
+       setState(() {
+        print(newDate);
         _picDate = newDate;
         _picDateStr = DateFormat('yyyy-MM-dd').format(_picDate);
         picPage = PicPage.home(
           picDate: _picDateStr,
           picMode: _picMode,
-
         );
-//        });
+       });
       }
     } else if (parameter == 'search') {
       Navigator.of(context).push(
