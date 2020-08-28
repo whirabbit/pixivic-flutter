@@ -473,11 +473,11 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
 //      }
 //    }
 
-    // 自动加载
+    // Auto Load
     if ((scrollController.position.extentAfter < 1200) &&
         (currentPage < 30) &&
         loadMoreAble) {
-      print("加载");
+      print("Picpage: Load Data");
       loadMoreAble = false;
       currentPage++;
       print('current page is $currentPage');
