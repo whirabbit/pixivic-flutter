@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pixivic/provider/get_page.dart';
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:pixivic/provider/searchbar_height.dart';
 import 'package:requests/requests.dart';

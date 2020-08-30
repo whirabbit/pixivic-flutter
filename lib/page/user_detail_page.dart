@@ -133,6 +133,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                 child: TabBarView(
                   children: tabs.map((Tab tab) {
                     return PicPage.userdetail(
+//                      funOne: true,
                       userId: widget.userId.toString(),
                       isManga: tab.text.contains('漫画') ? true : false,
                       onPageTop: _onTopOfPicpage,

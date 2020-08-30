@@ -67,7 +67,9 @@ class SuggestionBarState extends State<SuggestionBar> {
 
               return GestureDetector(
                 onTap: () {
-                  widget.onCellTap(suggestions[index]['keyword']);
+
+                    widget.onCellTap(suggestions[index]['keyword']);
+
                 },
                 child: Container(
                   margin: EdgeInsets.all(ScreenUtil().setWidth(2)),

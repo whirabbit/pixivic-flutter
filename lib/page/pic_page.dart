@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixivic/provider/favorite_animation.dart';
+import 'package:pixivic/provider/get_page.dart';
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:requests/requests.dart';
 import 'package:random_color/random_color.dart';
@@ -23,8 +24,8 @@ class PicPage extends StatefulWidget {
   _PicPageState createState() => _PicPageState();
 
   PicPage({
-    @required this.picDate,
-    @required this.picMode,
+    this.picDate,
+    this.picMode,
     this.relatedId = 0,
     this.jsonMode = 'home',
     this.searchKeywords,
@@ -32,7 +33,7 @@ class PicPage extends StatefulWidget {
     this.artistId,
     this.userId,
     this.spotlightId,
-    @required this.onPageScrolling,
+    this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
@@ -53,6 +54,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.related({
@@ -69,6 +71,7 @@ class PicPage extends StatefulWidget {
     @required this.onPageTop,
     @required this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.search({
@@ -85,6 +88,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.artist({
@@ -101,6 +105,7 @@ class PicPage extends StatefulWidget {
     @required this.onPageTop,
     @required this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.followed({
@@ -117,6 +122,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.bookmark({
@@ -133,6 +139,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.spotlight({
@@ -149,6 +156,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.history({
@@ -165,6 +173,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.oldHistory({
@@ -181,6 +190,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   PicPage.userdetail({
@@ -197,6 +207,7 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
+//    @required this.funOne,
   });
 
   final String picDate;
@@ -209,6 +220,9 @@ class PicPage extends StatefulWidget {
   final bool isManga;
   final bool isScrollable;
 
+  //第一次进入页面或是切换页面获取不同的model数据
+  bool firstInit = true;
+
   // jsonMode could be set to 'home, related, Spotlight, tag, artist, search...'
   final String jsonMode;
 
@@ -218,13 +232,13 @@ class PicPage extends StatefulWidget {
   final VoidCallback onPageStart;
 }
 
-class _PicPageState extends State<PicPage> {
+class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
   // picList - 图片的JSON文件列表
   // picTotalNum - picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
   // 针对最常访问的 Home 页面，临时变量记录于 common.dart
-  List picList;
+  List picList = [];
   int picTotalNum;
-  int currentPage;
+  int currentPage = 1;
   RandomColor _randomColor = RandomColor();
   bool hasConnected = false;
   bool loadMoreAble = true;
@@ -232,48 +246,21 @@ class _PicPageState extends State<PicPage> {
   ScrollController scrollController;
   String previewQuality = prefs.getString('previewQuality');
   PageSwitchProvider indexProvider;
+  GetPageProvider getPageProvider;
 
   @override
   void initState() {
-    print('PicPage Created');
-
-    if ((widget.jsonMode == 'home') && (!listEquals(homePicList, []))) {
-      picList = homePicList;
-      currentPage = homeCurrentPage;
-      picTotalNum = picList.length;
-    } else {
-      currentPage = 1;
-      _getJsonList().then((value) {
-        setState(() {
-          picList = value;
-          // print('picpage init getJsonList: $picList');
-          if (picList == null) {
-            hasConnected = true;
-          } else {
-            picTotalNum = value.length;
-            if (widget.jsonMode == 'home') homePicList = picList;
-            hasConnected = true;
-          }
-        });
-      }).catchError((error) {
-        //稳定后抛弃errorcatch
-        print('======================');
-        print(error);
-        print('======================');
-        if (error.toString().contains('NoSuchMethodError')) picList = null;
-        hasConnected = true;
-      });
-    }
-
+    // TODO: implement initState
+    //第一次进入页面
+    widget.firstInit = true;
+    print('initState');
     scrollController = ScrollController(
         initialScrollOffset:
             widget.jsonMode == 'home' ? homeScrollerPosition : 0.0)
       ..addListener(_doWhileScrolling);
-
     super.initState();
   }
 
-  // 参数更改的逻辑：清空所有的现有参数，进入加载动画。当网络情况不好时，也无法看到之前的内容（更好的用户引导，功能稍缺）
   @override
   void didUpdateWidget(PicPage oldWidget) {
     print('picPage didUpdateWidget: mode is ${widget.jsonMode}');
@@ -281,64 +268,14 @@ class _PicPageState extends State<PicPage> {
     if (widget.jsonMode == 'home' &&
         (oldWidget.picDate != widget.picDate ||
             oldWidget.picMode != widget.picMode)) {
-      try {
-        scrollController.animateTo(
-          0.0,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeOut,
-        );
-      } catch (e) {
-        scrollController = ScrollController(
-            initialScrollOffset:
-                widget.jsonMode == 'home' ? homeScrollerPosition : 0.0)
-          ..addListener(_doWhileScrolling);
-      }
-
-      // 清空 Picpage 控件参数和缓存参数
-      currentPage = 1;
-      homeCurrentPage = 1;
-      homePicList = [];
-      homeScrollerPosition = 0;
-      setState(() {
-        picList = null; // 清空 picList 以进入加载动画
-        hasConnected = false;
-      });
-
-      _getJsonList().then((value) {
-        hasConnected = true;
-        setState(() {
-          // print('getJsonList: $picList');
-          if (value != null) {
-            picList = value;
-            picTotalNum = value.length;
-            homePicList = picList;
-            hasConnected = true;
-          }
-        });
-      }).catchError((error) {
-        print('======================');
-        print(error);
-        print('======================');
-        if (error.toString().contains('NoSuchMethodError')) picList = null;
-      });
-    }
-    // 当为 search mode 时，进行刷新操作
-    else if (widget.jsonMode == 'search') {
-      currentPage = 1;
-      setState(() {
-        picList = null;
-        hasConnected = false;
-      });
-      _getJsonList().then((value) {
-        hasConnected = true;
-        setState(() {
-          // print('getJsonList: $picList');
-          if (value != null) {
-            picList = value;
-            picTotalNum = value.length;
-          }
-        });
-      });
+      //切换model
+      widget.firstInit = true;
+      picList = [];
+      scrollController.animateTo(
+        0.0,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut,
+      );
     }
 
     super.didUpdateWidget(oldWidget);
@@ -358,8 +295,25 @@ class _PicPageState extends State<PicPage> {
 
   @override
   Widget build(BuildContext context) {
-    indexProvider = Provider.of<PageSwitchProvider>(context);
-    if (picList == null && !hasConnected) {
+//   print("列表长度" + pageProvider.jsonList.length.toString());
+//    return
+ return ChangeNotifierProvider<GetPageProvider>.value(
+    value: GetPageProvider(),
+child: Consumer<GetPageProvider>(
+  builder: (context, GetPageProvider pageProvider,_) {
+    getPageProvider=pageProvider;
+
+    if (widget.firstInit) {
+      switchModel(pageProvider);
+    }
+    if (picList.length == 0 &&
+        pageProvider.jsonList.length == 0 &&
+        !widget.firstInit) {
+      hasConnected = true;
+    }
+    picList = picList + pageProvider.jsonList;
+    widget.firstInit = false;
+    if (picList.length == 0 && !hasConnected) {
       return Container(
           height: ScreenUtil().setHeight(576),
           width: ScreenUtil().setWidth(324),
@@ -368,7 +322,7 @@ class _PicPageState extends State<PicPage> {
           child: Center(
             child: Lottie.asset('image/loading-box.json'),
           ));
-    } else if (picList == null && hasConnected) {
+    } else if (picList.length == 0 && hasConnected) {
       return Container(
         height: ScreenUtil().setHeight(576),
         width: ScreenUtil().setWidth(324),
@@ -392,9 +346,11 @@ class _PicPageState extends State<PicPage> {
         ),
       );
     } else {
+//
       return Container(
           padding: EdgeInsets.only(
-              left: ScreenUtil().setWidth(5), right: ScreenUtil().setWidth(5)),
+              left: ScreenUtil().setWidth(5),
+              right: ScreenUtil().setWidth(5)),
           color: Colors.grey[50],
           child: StaggeredGridView.countBuilder(
             controller: scrollController,
@@ -402,104 +358,66 @@ class _PicPageState extends State<PicPage> {
                 ? ClampingScrollPhysics()
                 : NeverScrollableScrollPhysics(),
             crossAxisCount: 2,
-            itemCount: picTotalNum,
-            itemBuilder: (BuildContext context, int index) => imageCell(index),
+            itemCount: picList.length,
+            itemBuilder: (BuildContext context, int index) =>
+                imageCell(index),
             staggeredTileBuilder: (index) => StaggeredTile.fit(1),
             mainAxisSpacing: 0.0,
             crossAxisSpacing: 0.0,
           ));
     }
+  },
+),
+//    create: (_)=>,
+  );
+
   }
 
-  _getJsonList() async {
-    // 获取所有的图片数据
-    String url;
-    List jsonList;
-    if (widget.jsonMode == 'home') {
-      url =
-          'https://api.pixivic.com/ranks?page=$currentPage&date=${widget.picDate}&mode=${widget.picMode}&pageSize=30';
-    } else if (widget.jsonMode == 'search') {
-      if (!widget.isManga)
-        url =
-            'https://api.pixivic.com/illustrations?page=$currentPage&keyword=${widget.searchKeywords}&pageSize=30';
-      else
-        url =
-            'https://api.pixivic.com/illustrations?page=$currentPage&keyword=${widget.searchKeywords}&pageSize=30';
-    } else if (widget.jsonMode == 'related') {
-      url =
-          'https://api.pixivic.com/illusts/${widget.relatedId}/related?page=$currentPage&pageSize=30';
-    } else if (widget.jsonMode == 'artist') {
-      if (!widget.isManga) {
-        url =
-            'https://api.pixivic.com/artists/${widget.artistId}/illusts/illust?page=$currentPage&pageSize=30&maxSanityLevel=10';
-      } else {
-        url =
-            'https://api.pixivic.com/artists/${widget.artistId}/illusts/manga?page=$currentPage&pageSize=30&maxSanityLevel=10';
-      }
-    } else if (widget.jsonMode == 'followed') {
-      loadMoreAble = false;
-      if (!widget.isManga) {
-        url =
-            'https://api.pixivic.com/users/${widget.userId}/followed/latest/illust?page=$currentPage&pageSize=30';
-      } else {
-        url =
-            'https://api.pixivic.com/users/${widget.userId}/followed/latest/manga?page=$currentPage&pageSize=30';
-      }
-    } else if (widget.jsonMode == 'bookmark') {
-      if (!widget.isManga) {
-        url =
-            'https://api.pixivic.com/users/${widget.userId}/bookmarked/illust?page=$currentPage&pageSize=30';
-      } else {
-        url =
-            'https://api.pixivic.com/users/${widget.userId}/bookmarked/manga?page=$currentPage&pageSize=30';
-      }
-    } else if (widget.jsonMode == 'spotlight') {
-      loadMoreAble = false;
-      url =
-          'https://api.pixivic.com/spotlights/${widget.spotlightId}/illustrations';
-    } else if (widget.jsonMode == 'history') {
-      url =
-          'https://api.pixivic.com/users/${prefs.getInt('id').toString()}/illustHistory?page=$currentPage&pageSize=30';
-    } else if (widget.jsonMode == 'oldhistory') {
-      url =
-          'https://api.pixivic.com/users/${prefs.getInt('id').toString()}/oldIllustHistory?page=$currentPage&pageSize=30';
-    } else if (widget.jsonMode == 'userdetail') {
-      if (!widget.isManga) {
-        url =
-            'https://api.pixivic.com/users/${widget.userId}/bookmarked/illust?page=1&pageSize=30';
-      } else {
-        url =
-            'https://api.pixivic.com/users/${widget.userId}/manga?page=1&pageSize=30';
-      }
-    }
-
-    try {
-      if (prefs.getString('auth') == '') {
-        var requests = await Requests.get(url);
-        // requests.raiseForStatus();
-        jsonList = jsonDecode(requests.content())['data'];
-        if (requests.statusCode == 401)
-          BotToast.showSimpleNotification(title: '请登录后再重新加载画作');
-      } else {
-        Map<String, String> headers = {
-          'authorization': prefs.getString('auth')
-        };
-        var requests = await Requests.get(url, headers: headers);
-        // print(requests.content());
-        // requests.raiseForStatus();
-        jsonList = jsonDecode(requests.content())['data'];
-      }
-      if (jsonList == null)
-        loadMoreAble = false;
-      else
-        loadMoreAble = true;
-      return (jsonList);
-    } catch (error) {
-      print('=========getJsonList==========');
-      print(error);
-      print('==============================');
-      if (error.toString().contains('SocketException'))
-        BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+  //根据传入的jsonModel选择provider的方法来获取数据
+  void switchModel(GetPageProvider provider) {
+    switch (widget.jsonMode) {
+      case 'home':
+        provider.homePage(picDate: widget.picDate, picMode: widget.picMode);
+        break;
+      case 'related':
+        provider.relatedPage(
+            relatedId: widget.relatedId,
+            onTopOfPicpage: widget.onPageTop,
+            onStartOfPicpage: widget.onPageStart);
+        break;
+      case 'search':
+        provider.searchPage(
+            searchKeywords: widget.searchKeywords, searchManga: widget.isManga);
+        break;
+      case 'artist':
+        provider.artistPage(
+            artistId: widget.artistId,
+            isManga: widget.isManga,
+            onTopOfPicpage: widget.onPageTop,
+            onStartOfPicpage: widget.onPageStart);
+        break;
+      case 'followed':
+        provider.followedPage(userId: widget.userId, isManga: widget.isManga);
+        break;
+      case 'bookmark':
+        provider.bookmarkPage(userId: widget.userId, isManga: widget.isManga);
+        break;
+      case 'spotlight':
+        provider.spotlightPage(spotlightId: widget.spotlightId);
+        break;
+      case 'history':
+        provider.historyPage();
+        break;
+      case 'oldhistory':
+        provider.oldHistoryPage();
+        break;
+      case 'userdetial':
+        provider.userdetailPage(
+            userId: widget.userId,
+            isManga: widget.isManga,
+            onTopOfPicpage: widget.onPageTop,
+            onStartOfPicpage: widget.onPageStart);
+        break;
     }
   }
 
@@ -514,13 +432,15 @@ class _PicPageState extends State<PicPage> {
   }
 
   _doWhileScrolling() {
-    // // print(scrollController.position.extentBefore);
-    FocusScope.of(context).unfocus();
+//    print("滑出ViewPort顶部的长度"+scrollController.position.extentBefore.toString());
+//    print("ViewPort内部长度"+scrollController.position.extentInside.toString());
+//      print("测量"+scrollController.position.extentAfter.toString());
+//    FocusScope.of(context).unfocus();
     // 如果为主页面 picPage，则记录滑动位置、判断滑动
     if (widget.jsonMode == 'home') {
       homeScrollerPosition = scrollController
           .position.extentBefore; // 保持记录scrollposition，原因为dispose时无法记录
-
+      indexProvider = Provider.of<PageSwitchProvider>(context, listen: false);
       // 判断是否在滑动，以便隐藏底部控件
       if (scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
@@ -541,56 +461,47 @@ class _PicPageState extends State<PicPage> {
       }
     }
 
-    if (widget.jsonMode == 'related' ||
-        widget.jsonMode == 'artist' ||
-        widget.jsonMode == 'userdetail') {
-      if (scrollController.position.extentBefore == 0 &&
-          scrollController.position.userScrollDirection ==
-              ScrollDirection.forward) {
-        widget.onPageTop();
-        print('on page top');
-      }
-      if (scrollController.position.extentBefore > 150 &&
-          scrollController.position.extentBefore < 200 &&
-          scrollController.position.userScrollDirection ==
-              ScrollDirection.reverse) {
-        widget.onPageStart();
-        print('on page start');
-      }
-    }
+//    if (widget.jsonMode == 'related' ||
+//        widget.jsonMode == 'artist' ||
+//        widget.jsonMode == 'userdetail') {
+//      if (scrollController.position.extentBefore == 0 &&
+//          scrollController.position.userScrollDirection ==
+//              ScrollDirection.forward) {
+//        widget.onPageTop();
+//        print('on page top');
+//      }
+//      if (scrollController.position.extentBefore > 150 &&
+//          scrollController.position.extentBefore < 200 &&
+//          scrollController.position.userScrollDirection ==
+//              ScrollDirection.reverse) {
+//        widget.onPageStart();
+//        print('on page start');
+//      }
+//    }
 
-    // 自动加载
+    // Auto Load
     if ((scrollController.position.extentAfter < 1200) &&
         (currentPage < 30) &&
         loadMoreAble) {
+      print("Picpage: Load Data");
       loadMoreAble = false;
       currentPage++;
       print('current page is $currentPage');
-      _getJsonList().then((value) {
-        // print('autoload jsonlist: $value');
-        if (value != null) {
-          picList = picList + value;
-          picTotalNum = picTotalNum + value.length;
-          setState(() {
-            // print(picTotalNum);
-            if (widget.jsonMode == 'home') {
-              homePicList = picList;
-              homeCurrentPage = currentPage;
-            }
-            loadMoreAble = true;
-            // BotToast.showSimpleNotification(title: '摩多摩多!!!(つ´ω`)つ');
-          });
-        }
-      }).catchError((error) {
-        print('=========getJsonList==========');
-        print(error);
-        print('==============================');
-        if (error.toString().contains('SocketException'))
-          BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
-        setState(() {
+      try {
+//        GetPageProvider  getPageProvider = Provider.of<GetPageProvider>(context);
+        getPageProvider
+            .getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
+            .then((value) {
           loadMoreAble = true;
         });
-      });
+      } catch (err) {
+        print('=========getJsonList==========');
+        print(err);
+        print('==============================');
+        if (err.toString().contains('SocketException'))
+          BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+        loadMoreAble = true;
+      }
     }
   }
 
@@ -728,7 +639,10 @@ class _PicPageState extends State<PicPage> {
       providers: [
         ChangeNotifierProvider(
           create: (_) => FavProvider(),
-        )
+        ),
+//        ChangeNotifierProvider(
+//          create: (_) => GetPageProvider(),
+//        )
       ],
       child: Consumer<FavProvider>(
         builder: (context, FavProvider favProvider, _) {
@@ -770,7 +684,7 @@ class _PicPageState extends State<PicPage> {
                           headers: headers,
                           bodyEncoding: RequestBodyEncoding.JSON);
                     }
-                    Future.delayed(Duration(milliseconds: 400), (){
+                    Future.delayed(Duration(milliseconds: 400), () {
                       setState(() {
                         picList[index]['isLiked'] = !picList[index]['isLiked'];
                       });
@@ -809,4 +723,8 @@ class _PicPageState extends State<PicPage> {
       picList[index]['isLiked'] = result;
     });
   }
+
+//页面状态保持
+  @override
+  bool get wantKeepAlive => true;
 }

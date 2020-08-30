@@ -68,6 +68,7 @@ class BookmarkPageState extends State<BookmarkPage> {
             child: TabBarView(
               children: tabs.map((Tab tab) {
                 return PicPage.bookmark(
+//                  funOne: true,
                   userId: prefs.getInt('id').toString(),
                   isManga: tab.text.contains('漫画') ? true : false,
                 );
