@@ -148,12 +148,10 @@ class GetPageProvider with ChangeNotifier {
       }
     } else if (jsonMode == 'followed') {
       loadMoreAble = false;
-      print(isManga);
       if (!isManga) {
         url =
             'https://api.pixivic.com/users/$userId/followed/latest/illust?page=$currentPage&pageSize=30';
       } else {
-        print('!!!!!!!!!!!!!!!!!');
         url =
             'https://api.pixivic.com/users/$userId/followed/latest/manga?page=$currentPage&pageSize=30';
       }
@@ -215,7 +213,6 @@ class GetPageProvider with ChangeNotifier {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 }
