@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
       FlutterBugly.setUserId('pixivic 0.1.0');
       if (Theme.of(context).platform == TargetPlatform.android) {
         FlutterBugly.checkUpgrade().then((UpgradeInfo info) {
-          print('==============================');
+          print('==============checkUpgrade============');
           if (info != null && info.id != null) {
             UpdateApp().showUpdateDialog(
                 context, info.versionName, info.newFeature, info.apkUrl);

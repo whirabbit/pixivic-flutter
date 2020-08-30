@@ -36,19 +36,19 @@ class GetPageProvider with ChangeNotifier {
     @required String picMode,
   }) {
     //加载动画
-    jsonList = [];
-    jsonMode = 'home';
-    picDate = picDate;
-    picMode = picMode;
-    deleteList = true;
+    this.jsonList = [];
+    this.jsonMode = 'home';
+    this.picDate = picDate;
+    this.picMode = picMode;
+    this.deleteList = true;
     getJsonList();
   }
 
   void searchPage(
       {@required String searchKeywords, @required bool searchManga}) {
-    jsonMode = 'search';
-    searchKeywords = searchKeywords;
-    isManga = searchManga;
+    this.jsonMode = 'search';
+    this.searchKeywords = searchKeywords;
+    this.isManga = searchManga;
     getJsonList();
   }
 
@@ -56,11 +56,11 @@ class GetPageProvider with ChangeNotifier {
       {@required num relatedId,
       @required VoidCallback onTopOfPicpage,
       @required VoidCallback onStartOfPicpage}) {
-    jsonMode = 'related';
-    relatedId = relatedId;
-    onPageTop = onTopOfPicpage;
-    onPageStart = onStartOfPicpage;
-    isScrollable = true;
+    this.jsonMode = 'related';
+    this.relatedId = relatedId;
+    this.onPageTop = onTopOfPicpage;
+    this.onPageStart = onStartOfPicpage;
+    this.isScrollable = true;
     getJsonList();
   }
 
@@ -69,43 +69,43 @@ class GetPageProvider with ChangeNotifier {
       @required bool isManga,
       @required VoidCallback onTopOfPicpage,
       @required VoidCallback onStartOfPicpage}) {
-    jsonMode = 'artist';
-    artistId = artistId;
-    isManga = isManga;
-    onPageTop = onTopOfPicpage;
-    onPageStart = onStartOfPicpage;
+    this.jsonMode = 'artist';
+    this.artistId = artistId;
+    this.isManga = isManga;
+    this.onPageTop = onTopOfPicpage;
+    this.onPageStart = onStartOfPicpage;
     getJsonList();
   }
 
   void followedPage({@required String userId, @required bool isManga}) {
-    jsonMode = 'followed';
-    userId = userId;
-    isManga = isManga;
+    this.jsonMode = 'followed';
+    this.userId = userId;
+    this.isManga = isManga;
     getJsonList();
   }
 
   void bookmarkPage({@required String userId, @required bool isManga}) {
-    jsonMode = 'bookmark';
-    userId = userId;
-    isManga = isManga;
+    this.jsonMode = 'bookmark';
+    this.userId = userId;
+    this.isManga = isManga;
     getJsonList();
   }
 
   void spotlightPage({@required String spotlightId}) {
-    jsonMode = 'spotlight';
-    spotlightId = spotlightId;
+    this.jsonMode = 'spotlight';
+    this.spotlightId = spotlightId;
     getJsonList();
   }
 
   void historyPage() {
-    jsonMode = 'history';
-    deleteList = true;
+    this.jsonMode = 'history';
+    this.deleteList = true;
     getJsonList();
   }
 
   void oldHistoryPage() {
-    jsonMode = 'oldhistory';
-    deleteList = true;
+    this.jsonMode = 'oldhistory';
+    this.deleteList = true;
     getJsonList();
   }
 
@@ -114,11 +114,11 @@ class GetPageProvider with ChangeNotifier {
       @required bool isManga,
       @required VoidCallback onTopOfPicpage,
       @required VoidCallback onStartOfPicpage}) {
-    jsonMode = 'userdetail';
-    userId = userId;
-    isManga = isManga;
-    onPageTop = onTopOfPicpage;
-    onPageStart = onStartOfPicpage;
+    this.jsonMode = 'userdetail';
+    this.userId = userId;
+    this.isManga = isManga;
+    this.onPageTop = onTopOfPicpage;
+    this.onPageStart = onStartOfPicpage;
     getJsonList();
   }
 
@@ -184,8 +184,12 @@ class GetPageProvider with ChangeNotifier {
     try {
       if (prefs.getString('auth') == '') {
         var requests = await Requests.get(url);
-        // requests.raiseForStatus();
+        print(url);
         jsonList = jsonDecode(requests.content())['data'];
+        if(jsonList == null)
+          jsonList = [];
+        print(requests.statusCode);
+        print(requests.content());
         if (requests.statusCode == 401)
           BotToast.showSimpleNotification(title: '请登录后再重新加载画作');
       } else {
