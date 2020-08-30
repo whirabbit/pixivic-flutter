@@ -254,6 +254,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
         initialScrollOffset:
             widget.jsonMode == 'home' ? homeScrollerPosition : 0.0)
       ..addListener(_doWhileScrolling);
+    loadMoreAble = ifLoadMoreAble();
     super.initState();
   }
 
@@ -300,7 +301,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
       child: Consumer<GetPageProvider>(
         builder: (context, GetPageProvider pageProvider, _) {
           getPageProvider = pageProvider;
-          
+
           if (firstInit) {
             switchModel(pageProvider);
           }
@@ -499,6 +500,19 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
           BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
         loadMoreAble = true;
       }
+    }
+  }
+
+  ifLoadMoreAble() {
+    switch (widget.jsonMode) {
+      case 'followed':
+        return false;
+        break;
+      case 'spotlight':
+        return false;
+        break;
+      default:
+        return true;
     }
   }
 
