@@ -14,7 +14,6 @@ import 'package:flutter_advanced_networkimage/transition.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 
-// import 'package:pixivic/provider/get_page.dart';
 import 'pic_page.dart';
 import 'artist_page.dart';
 import 'search_page.dart';
@@ -25,7 +24,7 @@ import '../widget/bookmark_users.dart';
 import '../widget/comment_cell.dart';
 import '../function/downloadImage.dart';
 import '../function/albumn.dart';
-
+// import '../provider/get_page.dart';
 
 class PicDetailPage extends StatefulWidget {
   @override

@@ -1,16 +1,12 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-// import 'package:pixivic/provider/get_page.dart';
-import 'package:pixivic/provider/page_switch.dart';
-import 'package:pixivic/provider/searchbar_height.dart';
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:file_picker/file_picker.dart';
-
 import 'package:provider/provider.dart';
 
 import '../data/texts.dart';
@@ -19,6 +15,9 @@ import '../page/artist_page.dart';
 import '../page/pic_detail_page.dart';
 import '../function/uploadImage.dart';
 import '../function/identity.dart';
+// import '../provider/get_page.dart';
+import '../provider/page_switch.dart';
+import '../provider/searchbar_height.dart';
 
 class PappBar extends StatefulWidget implements PreferredSizeWidget {
   //删去

@@ -9,7 +9,6 @@ import 'package:bot_toast/bot_toast.dart';
 
 import '../data/common.dart';
 
-
 class GetPageProvider with ChangeNotifier {
   String picDate;
   String picMode;
@@ -175,8 +174,7 @@ class GetPageProvider with ChangeNotifier {
         url =
             'https://api.pixivic.com/users/$userId/bookmarked/illust?page=1&pageSize=30';
       } else {
-        url =
-            'https://api.pixivic.com/users/$userId/manga?page=1&pageSize=30';
+        url = 'https://api.pixivic.com/users/$userId/manga?page=1&pageSize=30';
       }
     }
 
