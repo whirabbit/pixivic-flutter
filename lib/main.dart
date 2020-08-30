@@ -8,29 +8,25 @@ import 'package:intl/intl.dart';
 import 'package:pixivic/page/search_page.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:pixivic/provider/get_comment_list_data.dart';
-import 'package:pixivic/provider/get_page.dart';
-import 'package:pixivic/provider/page_switch.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 
 import 'widget/nav_bar.dart';
 import 'widget/papp_bar.dart';
-
 // import 'widget/menu_button.dart';
 // import 'widget/menu_list.dart';
-
-import 'package:provider/provider.dart';
-
 import 'page/pic_page.dart';
 import 'page/new_page.dart';
 import 'page/user_page.dart';
 import 'page/center_page.dart';
-
 import 'data/common.dart';
 import 'data/bugly.dart';
-
 import 'function/update.dart';
 import 'function/albumn.dart';
+// import 'provider/get_comment_list_data.dart';
+// import 'provider/get_page.dart';
+import 'provider/page_switch.dart';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -170,7 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 324, height: 576);
-    print("主函数");
+    print("Reload main build func");
     indexProvider = Provider.of<PageSwitchProvider>(context);
     return Scaffold(
       appBar: pappBar,
