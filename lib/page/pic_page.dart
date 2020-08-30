@@ -267,7 +267,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
     // 当为 home 模式且切换了参数，则同时更新暂存的相关数据
     if (widget.jsonMode == 'home' &&
         (oldWidget.picDate != widget.picDate ||
-            oldWidget.picMode != widget.picMode)) {
+            oldWidget.picMode != widget.picMode)||widget.jsonMode == 'search') {
       //切换model
       widget.firstInit = true;
       picList = [];
