@@ -300,7 +300,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
       child: Consumer<GetPageProvider>(
         builder: (context, GetPageProvider pageProvider, _) {
           getPageProvider = pageProvider;
-
+          
           if (firstInit) {
             switchModel(pageProvider);
           }

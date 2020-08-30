@@ -71,11 +71,12 @@ addIllustToAlbumn(int illustId, int albumnId) async {
   }
 }
 
-showAddNewAlbumnDialog(BuildContext context) async {
+showAddNewAlbumnDialog(BuildContext context, VoidCallback reloadAlbumn) async {
   TextEditingController title = TextEditingController();
   TextEditingController caption = TextEditingController();
   TextZhAlbumn texts = TextZhAlbumn();
 
+  //TODO：点击按钮后，键盘自动释放焦点 
   await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -245,7 +246,12 @@ showAddNewAlbumnDialog(BuildContext context) async {
                                 newAlbumnParameterModel.allowComment ? 1 : 0,
                             'tagList': newAlbumnParameterModel.tags
                           };
-                          postNewAlbumn(payload);
+                          postNewAlbumn(payload).then((value) {
+                            if (value) {
+                              reloadAlbumn();
+                              Navigator.of(context).pop();
+                            }
+                          });
                         },
                       ),
                     ),
@@ -303,7 +309,7 @@ showTagSelector(context) async {
                               alignment: WrapAlignment.center,
                               children: newAlbumnParameterModel.tags
                                   .map(
-                                      (item) => singleTag(context, item['tagName'], false))
+                                      (item) => singleTag(context, item, false))
                                   .toList(),
                             ),
                           ),
@@ -326,8 +332,7 @@ showTagSelector(context) async {
                           Wrap(
                             alignment: WrapAlignment.center,
                             children: newAlbumnParameterModel.tagsAdvice
-                                .map((item) =>
-                                    singleTag(context, item['tagName'], true))
+                                .map((item) => singleTag(context, item, true))
                                 .toList(),
                           )
                         ],
@@ -340,33 +345,37 @@ showTagSelector(context) async {
 }
 
 postNewAlbumn(Map<String, dynamic> payload) async {
-  
   String url = 'https://api.pixivic.com/collections';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
 
   try {
-    if(payload['tagList'] != null) {
-      Response response =
-    await Dio().post(url,data: payload,options: Options(headers: headers));
-    BotToast.showSimpleNotification(title: response.data['message']);
+    if (payload['tagList'] != null) {
+      Response response = await Dio()
+          .post(url, data: payload, options: Options(headers: headers));
+      BotToast.showSimpleNotification(title: response.data['message']);
+      return true;
+    } else {
+      BotToast.showSimpleNotification(title: TextZhAlbumn().needForTag);
+      return false;
     }
-      
-    } on DioError catch (e) {
-      if (e.response != null) {
-        BotToast.showSimpleNotification(title: e.response.data['message']);
-        print(e.response.data);
-        print(e.response.headers);
-        print(e.response.request);
-      } else {
-        // Something happened in setting up or sending the request that triggered an Error
-        BotToast.showSimpleNotification(title: e.message);
-        print(e.request);
-        print(e.message);
-      }
+  } on DioError catch (e) {
+    if (e.response != null) {
+      BotToast.showSimpleNotification(title: e.response.data['message']);
+      print(e.response.data);
+      print(e.response.headers);
+      print(e.response.request);
+      return false;
+    } else {
+      // Something happened in setting up or sending the request that triggered an Error
+      BotToast.showSimpleNotification(title: e.message);
+      print(e.request);
+      print(e.message);
+      return false;
     }
+  }
 }
 
-Widget singleTag(context, String label, bool advice) {
+Widget singleTag(context, Map data, bool advice) {
   return Container(
     padding: EdgeInsets.only(
         left: ScreenUtil().setWidth(1.5),
@@ -387,18 +396,19 @@ Widget singleTag(context, String label, bool advice) {
             top: ScreenUtil().setWidth(3),
             bottom: ScreenUtil().setWidth(3)),
         onPressed: () {
-          if (advice)
+          if (advice) {
             Provider.of<NewAlbumnParameterModel>(context, listen: false)
-                .addTagToTagsList(label);
-          else
+                .addTagToTagsList(data);
+          } else {
             Provider.of<NewAlbumnParameterModel>(context, listen: false)
-                .removeTagFromTagsList(label);
+                .removeTagFromTagsList(data);
+          }
         },
         child: Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             Text(
-              label,
+              data['tagName'],
               style: TextStyle(color: Colors.grey),
             ),
             !advice
@@ -484,13 +494,13 @@ class NewAlbumnParameterModel with ChangeNotifier {
     }
   }
 
-  addTagToTagsList(String tag) {
-    if (!_tags.contains({'tagName': tag})) _tags.add({'tagName': tag});
+  addTagToTagsList(Map tagData) {
+    if (!_tags.contains(tagData)) _tags.add(tagData);
     notifyListeners();
   }
 
-  removeTagFromTagsList(String tag) {
-    _tags.removeWhere((element) => element['tagName'] == tag);
+  removeTagFromTagsList(Map tagData) {
+    _tags.removeWhere((element) => element['tagName'] == tagData['tagName']);
     notifyListeners();
   }
 }

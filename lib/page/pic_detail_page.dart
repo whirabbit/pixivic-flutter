@@ -587,8 +587,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
             return AlertDialog(
               scrollable: true,
               content: Wrap(
-                alignment: WrapAlignment.start,
-                crossAxisAlignment: WrapCrossAlignment.start,
+                alignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Container(
                       padding: EdgeInsets.only(bottom: screen.setHeight(5)),
@@ -618,6 +618,24 @@ class _PicDetailPageState extends State<PicDetailPage> {
                           );
                         }),
                   ),
+                  Container(
+                    width: screen.setWidth(100),
+                    padding: EdgeInsets.only(top: screen.setHeight(8)),
+                    child: FlatButton(
+                      child: Icon(Icons.add),
+                      shape: StadiumBorder(),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        showAddNewAlbumnDialog(context, () {
+                          getAlbumList().then((value) {
+                            setState(() {
+                              albumList = value;
+                            });
+                          });
+                        });
+                      },
+                    ),
+                  )
                 ],
               ),
             );
@@ -645,7 +663,13 @@ class _PicDetailPageState extends State<PicDetailPage> {
                       shape: StadiumBorder(),
                       onPressed: () {
                         Navigator.of(context).pop();
-                        showAddNewAlbumnDialog(context);
+                        showAddNewAlbumnDialog(context, () {
+                          getAlbumList().then((value) {
+                            setState(() {
+                              albumList = value;
+                            });
+                          });
+                        });
                       },
                     ),
                   )
