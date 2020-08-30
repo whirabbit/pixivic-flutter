@@ -259,13 +259,31 @@ showTagSelector(context) async {
             builder: (context, NewAlbumnParameterModel newAlbumnParameterModel,
                     child) =>
                 AlertDialog(
+                  contentPadding: EdgeInsets.all(0),
                   content: Container(
-                      width: ScreenUtil().setWidth(324),
+                      width: ScreenUtil().setWidth(250),
                       height: ScreenUtil().setWidth(400),
+                      padding: EdgeInsets.zero,
                       child: Column(
                         children: [
                           Container(
-                            width: ScreenUtil().setWidth(280),
+                            width: ScreenUtil().setWidth(250),
+                            child: Wrap(
+                              alignment: WrapAlignment.center,
+                              children: [
+                                singleTag('Tt', false),
+                                singleTag('Tes', false),
+                                singleTag('t', false),
+                                singleTag('Tt', false),
+                                singleTag('Tt', false),
+                                singleTag('Tes', false),
+                                singleTag('t', false),
+                                singleTag('Tt', false),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: ScreenUtil().setWidth(200),
                             child: TextField(
                                 controller: tagInput,
                                 decoration: InputDecoration(
@@ -301,14 +319,24 @@ postNewAlbumn(Map<String, dynamic> payload) async {
 
 Widget singleTag(String label, bool advice) {
   return Container(
-    padding: EdgeInsets.all(ScreenUtil().setWidth(3)),
+    padding: EdgeInsets.only(
+        left: ScreenUtil().setWidth(1.5),
+        right: ScreenUtil().setWidth(1.5),
+        top: ScreenUtil().setWidth(4)),
     child: ButtonTheme(
+      materialTapTargetSize:
+          MaterialTapTargetSize.shrinkWrap, //set _InputPadding to zero
       height: ScreenUtil().setHeight(20),
-      minWidth: ScreenUtil().setWidth(2),
+      minWidth: ScreenUtil().setWidth(1),
       buttonColor: Colors.grey[100],
       splashColor: Colors.grey[100],
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13.0)),
       child: OutlineButton(
+        padding: EdgeInsets.only(
+            left: ScreenUtil().setWidth(5),
+            right: ScreenUtil().setWidth(5),
+            top: ScreenUtil().setWidth(3),
+            bottom: ScreenUtil().setWidth(3)),
         onPressed: () {},
         child: Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
