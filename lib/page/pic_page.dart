@@ -246,7 +246,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
   ScrollController scrollController;
   String previewQuality = prefs.getString('previewQuality');
   PageSwitchProvider indexProvider;
-  GetPageProvider pageProvider;
+  GetPageProvider getPageProvider;
 
   @override
   void initState() {
@@ -296,75 +296,82 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
 //   print("列表长度" + pageProvider.jsonList.length.toString());
-    return ChangeNotifierProvider<GetPageProvider>.value(
-      value: GetPageProvider(),
-      builder: (context, _) {
-        pageProvider = Provider.of<GetPageProvider>(context);
-        if (widget.firstInit) {
-          switchModel(pageProvider);
-        }
-        if (picList.length == 0 &&
-            pageProvider.jsonList.length == 0 &&
-            !widget.firstInit) {
-          hasConnected = true;
-        }
-        picList = picList + pageProvider.jsonList;
-        widget.firstInit = false;
-        if (picList.length == 0 && !hasConnected) {
-          return Container(
-              height: ScreenUtil().setHeight(576),
-              width: ScreenUtil().setWidth(324),
-              alignment: Alignment.center,
-              color: Colors.white,
-              child: Center(
-                child: Lottie.asset('image/loading-box.json'),
-              ));
-        } else if (picList.length == 0 && hasConnected) {
-          return Container(
-            height: ScreenUtil().setHeight(576),
-            width: ScreenUtil().setWidth(324),
-            color: Colors.white,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Lottie.asset('image/empty-box.json',
-                    repeat: false, height: ScreenUtil().setHeight(100)),
-                Text(
-                  '这里什么都没有呢',
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: ScreenUtil().setHeight(10),
-                      decoration: TextDecoration.none),
-                ),
-                SizedBox(
-                  height: ScreenUtil().setHeight(250),
-                )
-              ],
+//    return
+ return ChangeNotifierProvider<GetPageProvider>.value(
+    value: GetPageProvider(),
+child: Consumer<GetPageProvider>(
+
+  builder: (context, GetPageProvider pageProvider,_) {
+    getPageProvider=pageProvider;
+
+    if (widget.firstInit) {
+      switchModel(pageProvider);
+    }
+    if (picList.length == 0 &&
+        pageProvider.jsonList.length == 0 &&
+        !widget.firstInit) {
+      hasConnected = true;
+    }
+    picList = picList + pageProvider.jsonList;
+    widget.firstInit = false;
+    if (picList.length == 0 && !hasConnected) {
+      return Container(
+          height: ScreenUtil().setHeight(576),
+          width: ScreenUtil().setWidth(324),
+          alignment: Alignment.center,
+          color: Colors.white,
+          child: Center(
+            child: Lottie.asset('image/loading-box.json'),
+          ));
+    } else if (picList.length == 0 && hasConnected) {
+      return Container(
+        height: ScreenUtil().setHeight(576),
+        width: ScreenUtil().setWidth(324),
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Lottie.asset('image/empty-box.json',
+                repeat: false, height: ScreenUtil().setHeight(100)),
+            Text(
+              '这里什么都没有呢',
+              style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: ScreenUtil().setHeight(10),
+                  decoration: TextDecoration.none),
             ),
-          );
-        } else {
+            SizedBox(
+              height: ScreenUtil().setHeight(250),
+            )
+          ],
+        ),
+      );
+    } else {
 //
-          return Container(
-              padding: EdgeInsets.only(
-                  left: ScreenUtil().setWidth(5),
-                  right: ScreenUtil().setWidth(5)),
-              color: Colors.grey[50],
-              child: StaggeredGridView.countBuilder(
-                controller: scrollController,
-                physics: widget.isScrollable
-                    ? ClampingScrollPhysics()
-                    : NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                itemCount: picList.length,
-                itemBuilder: (BuildContext context, int index) =>
-                    imageCell(index),
-                staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-                mainAxisSpacing: 0.0,
-                crossAxisSpacing: 0.0,
-              ));
-        }
-      },
-    );
+      return Container(
+          padding: EdgeInsets.only(
+              left: ScreenUtil().setWidth(5),
+              right: ScreenUtil().setWidth(5)),
+          color: Colors.grey[50],
+          child: StaggeredGridView.countBuilder(
+            controller: scrollController,
+            physics: widget.isScrollable
+                ? ClampingScrollPhysics()
+                : NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            itemCount: picList.length,
+            itemBuilder: (BuildContext context, int index) =>
+                imageCell(index),
+            staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+            mainAxisSpacing: 0.0,
+            crossAxisSpacing: 0.0,
+          ));
+    }
+  },
+),
+//    create: (_)=>,
+  );
+
   }
 
   //根据传入的jsonModel选择provider的方法来获取数据
@@ -482,7 +489,8 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
       currentPage++;
       print('current page is $currentPage');
       try {
-        pageProvider
+//        GetPageProvider  getPageProvider = Provider.of<GetPageProvider>(context);
+        getPageProvider
             .getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
             .then((value) {
           loadMoreAble = true;
@@ -586,12 +594,12 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
               right: ScreenUtil().setWidth(10),
               top: ScreenUtil().setHeight(5),
             ),
-//            prefs.getString('auth') != '' && picMapData['type'] != 'ad_image'
-//                ? Positioned(
-//                    bottom: ScreenUtil().setHeight(5),
-//                    right: ScreenUtil().setWidth(5),
-//                    child: bookmarkHeart(index))
-//                : Container(),
+            prefs.getString('auth') != '' && picMapData['type'] != 'ad_image'
+                ? Positioned(
+                    bottom: ScreenUtil().setHeight(5),
+                    right: ScreenUtil().setWidth(5),
+                    child: bookmarkHeart(index))
+                : Container(),
           ],
         ),
       );
@@ -633,9 +641,9 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
         ChangeNotifierProvider(
           create: (_) => FavProvider(),
         ),
-        ChangeNotifierProvider(
-          create: (_) => GetPageProvider(),
-        )
+//        ChangeNotifierProvider(
+//          create: (_) => GetPageProvider(),
+//        )
       ],
       child: Consumer<FavProvider>(
         builder: (context, FavProvider favProvider, _) {

@@ -40,9 +40,6 @@ void main() {
     runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => PageSwitchProvider()),
-        ChangeNotifierProvider(
-          create: (_) => GetCommentProvider(),
-        ),
       ],
       child: MyApp(),
     ));
@@ -114,7 +111,6 @@ class _MyHomePageState extends State<MyHomePage> {
   PappBar pappBar;
 
   PageSwitchProvider indexProvider;
-  GetPageProvider pageProvider;
 
   String updateTaskId;
   String apkPath;
@@ -172,6 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 324, height: 576);
+    print("主函数");
     indexProvider = Provider.of<PageSwitchProvider>(context);
     return Scaffold(
       appBar: pappBar,
