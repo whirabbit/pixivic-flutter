@@ -780,6 +780,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
 
   // 检查是否获取足够的系统权限
   Future<bool> _checkPermission() async {
+    // TODO: check for ios china version internet permission
     if (Theme.of(context).platform == TargetPlatform.android) {
       PermissionStatus permission = await PermissionHandler()
           .checkPermissionStatus(PermissionGroup.storage);
