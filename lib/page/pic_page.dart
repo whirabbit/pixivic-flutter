@@ -294,6 +294,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
 //   print("列表长度" + pageProvider.jsonList.length.toString());
 //    return
+    super.build(context);
     return ChangeNotifierProvider<GetPageProvider>.value(
       value: GetPageProvider(),
       child: Consumer<GetPageProvider>(

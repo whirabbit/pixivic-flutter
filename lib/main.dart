@@ -27,7 +27,6 @@ import 'function/albumn.dart';
 // import 'provider/get_page.dart';
 import 'provider/page_switch.dart';
 
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -37,7 +36,9 @@ void main() {
     runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => PageSwitchProvider()),
-        ChangeNotifierProvider<NewAlbumnParameterModel>(create: (_) => NewAlbumnParameterModel(),)
+        ChangeNotifierProvider<NewAlbumnParameterModel>(
+          create: (_) => NewAlbumnParameterModel(),
+        )
       ],
       child: MyApp(),
     ));
@@ -243,25 +244,25 @@ class _MyHomePageState extends State<MyHomePage> {
     // calendar chooser
     if (parameter == 'new_date') {
       DateTime newDate = await showDatePicker(
-          context: context,
-          initialDate: _picDate,
-          firstDate: _picFirstDate,
-          lastDate: _picLastDate,
-          locale: Locale('zh'),
-          );
+        context: context,
+        initialDate: _picDate,
+        firstDate: _picFirstDate,
+        lastDate: _picLastDate,
+        locale: Locale('zh'),
+      );
       print('The newDate is : $newDate');
       if (newDate != null) {
         // _menuButtonKey.currentState.flipTapState();
         // _menuListKey.currentState.flipActive();
-       setState(() {
-        print(newDate);
-        _picDate = newDate;
-        _picDateStr = DateFormat('yyyy-MM-dd').format(_picDate);
-        picPage = PicPage.home(
-          picDate: _picDateStr,
-          picMode: _picMode,
-        );
-       });
+        setState(() {
+          print(newDate);
+          _picDate = newDate;
+          _picDateStr = DateFormat('yyyy-MM-dd').format(_picDate);
+          picPage = PicPage.home(
+            picDate: _picDateStr,
+            picMode: _picMode,
+          );
+        });
       }
     } else if (parameter == 'search') {
       Navigator.of(context).push(
