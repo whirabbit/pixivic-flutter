@@ -308,6 +308,7 @@ class _ArtistPageState extends State<ArtistPage> {
                 child: TabBarView(
                   children: tabs.map((Tab tab) {
                     return PicPage.artist(
+//                      funOne: true,
                       artistId: widget.artistId,
                       isManga: tab.text.contains('漫画') ? true : false,
                       onPageTop: _onTopOfPicpage,

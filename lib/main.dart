@@ -9,11 +9,13 @@ import 'package:pixivic/page/search_page.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:pixivic/provider/get_comment_list_data.dart';
+import 'package:pixivic/provider/get_page.dart';
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 
 import 'widget/nav_bar.dart';
 import 'widget/papp_bar.dart';
+
 // import 'widget/menu_button.dart';
 // import 'widget/menu_list.dart';
 
@@ -39,7 +41,6 @@ void main() {
     runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => PageSwitchProvider()),
-        ChangeNotifierProvider(create: (_)=> GetCommentProvider(),),
         ChangeNotifierProvider<NewAlbumnParameterModel>(create: (_) => NewAlbumnParameterModel(),)
       ],
       child: MyApp(),
@@ -88,7 +89,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _currentIndex = 0;
   bool _navBarAlone = true;
-  // bool _isPageScrolling = false;   
+
+  // bool _isPageScrolling = false;
   var _pageController = PageController(initialPage: 0);
 
   DateTime _picDate =
@@ -145,8 +147,8 @@ class _MyHomePageState extends State<MyHomePage> {
         picPage = PicPage.home(
           picDate: _picDateStr,
           picMode: _picMode,
-//          onPageScrolling: _onPageScrolling,
         );
+
         userPage = UserPage(userPageKey);
         newPage = NewPage(newPageKey);
         centerPage = CenterPage();
@@ -168,6 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 324, height: 576);
+    print("主函数");
     indexProvider = Provider.of<PageSwitchProvider>(context);
     return Scaffold(
       appBar: pappBar,
@@ -241,27 +244,28 @@ class _MyHomePageState extends State<MyHomePage> {
   // }
 
   _onOptionCellTap(String parameter) async {
+    // calendar chooser
     if (parameter == 'new_date') {
       DateTime newDate = await showDatePicker(
-        context: context,
-        initialDate: _picDate,
-        firstDate: _picFirstDate,
-        lastDate: _picLastDate,
-        // locale: Locale('zh')
-      );
+          context: context,
+          initialDate: _picDate,
+          firstDate: _picFirstDate,
+          lastDate: _picLastDate,
+          locale: Locale('zh'),
+          );
+      print('The newDate is : $newDate');
       if (newDate != null) {
         // _menuButtonKey.currentState.flipTapState();
         // _menuListKey.currentState.flipActive();
-        setState(() {
-          // print(newDate);
-          _picDate = newDate;
-          _picDateStr = DateFormat('yyyy-MM-dd').format(_picDate);
-          picPage = PicPage.home(
-            picDate: _picDateStr,
-            picMode: _picMode,
-//            onPageScrolling: _onPageScrolling,
-          );
-        });
+       setState(() {
+        print(newDate);
+        _picDate = newDate;
+        _picDateStr = DateFormat('yyyy-MM-dd').format(_picDate);
+        picPage = PicPage.home(
+          picDate: _picDateStr,
+          picMode: _picMode,
+        );
+       });
       }
     } else if (parameter == 'search') {
       Navigator.of(context).push(
@@ -313,14 +317,14 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       // _menuButtonKey.currentState.flipTapState();
       // _menuListKey.currentState.flipActive();
-      setState(() {
-        _picMode = parameter;
-        picPage = PicPage.home(
-          picDate: _picDateStr,
-          picMode: _picMode,
+//      setState(() {
+      _picMode = parameter;
+      picPage = PicPage.home(
+        picDate: _picDateStr,
+        picMode: _picMode,
 //          onPageScrolling: _onPageScrolling,
-        );
-      });
+      );
+//      });
     }
   }
 

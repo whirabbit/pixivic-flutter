@@ -88,7 +88,10 @@ class _CommentListPageState extends State<CommentListPage> {
           appBar: PappBar(
             title: texts.comment,
           ),
-          body:  Consumer<GetCommentProvider>(
+          body: ChangeNotifierProvider<GetCommentProvider>.value(
+//            create: (_)=>GetCommentProvider(),
+          value:GetCommentProvider() ,
+            child:  Consumer<GetCommentProvider>(
               builder: (context, GetCommentProvider commentProvider, _) {
                 commentProvider.loadComments(widget.illustId);
                 commentsList=commentProvider.commentList;
@@ -98,21 +101,21 @@ class _CommentListPageState extends State<CommentListPage> {
                     children: <Widget>[
                       commentsList != null
                           ? Positioned(
-                              // top: screen.setHeight(5),
-                              child: Container(
-                              width: screen.setWidth(324),
-                              height: screen.setHeight(576),
-                              margin:
-                                  EdgeInsets.only(bottom: screen.setHeight(35)),
-                              child: ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: commentsList.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return commentParentCell(
-                                        commentsList[index]);
-                                  }),
-                            ))
+                        // top: screen.setHeight(5),
+                          child: Container(
+                            width: screen.setWidth(324),
+                            height: screen.setHeight(576),
+                            margin:
+                            EdgeInsets.only(bottom: screen.setHeight(35)),
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: commentsList.length,
+                                itemBuilder:
+                                    (BuildContext context, int index) {
+                                  return commentParentCell(
+                                      commentsList[index]);
+                                }),
+                          ))
                           : Container(),
                       Positioned(
                         bottom: 0.0,
@@ -125,6 +128,7 @@ class _CommentListPageState extends State<CommentListPage> {
                 );
               },
             ),
+          ),
 
       ),
     );
