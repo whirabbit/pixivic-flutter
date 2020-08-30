@@ -1,11 +1,14 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/cupertino.dart';
+
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
+
 import '../data/common.dart';
-import 'package:flutter/cupertino.dart';
+
 
 class GetPageProvider with ChangeNotifier {
   String picDate;
@@ -145,7 +148,7 @@ class GetPageProvider with ChangeNotifier {
       loadMoreAble = false;
       if (isManga) {
         url =
-            'https://api.pixivic.com/users/${userId}/followed/latest/illust?page=$currentPage&pageSize=30';
+            'https://api.pixivic.com/users/$userId/followed/latest/illust?page=$currentPage&pageSize=30';
       } else {
         url =
             'https://api.pixivic.com/users/$userId/followed/latest/manga?page=$currentPage&pageSize=30';

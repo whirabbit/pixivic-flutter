@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
+// import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
@@ -15,6 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:provider/provider.dart';
+
 import 'pic_detail_page.dart';
 import '../data/common.dart';
 
@@ -220,9 +221,6 @@ class PicPage extends StatefulWidget {
   final bool isManga;
   final bool isScrollable;
 
-  //第一次进入页面或是切换页面获取不同的model数据
-  bool firstInit = true;
-
   // jsonMode could be set to 'home, related, Spotlight, tag, artist, search...'
   final String jsonMode;
 
@@ -243,6 +241,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
   bool hasConnected = false;
   bool loadMoreAble = true;
   bool isScrolling = false;
+  bool firstInit;
   ScrollController scrollController;
   String previewQuality = prefs.getString('previewQuality');
   PageSwitchProvider indexProvider;
@@ -250,10 +249,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
 
   @override
   void initState() {
-    // TODO: implement initState
-    //第一次进入页面
-    widget.firstInit = true;
-    print('initState');
+    firstInit = true;
     scrollController = ScrollController(
         initialScrollOffset:
             widget.jsonMode == 'home' ? homeScrollerPosition : 0.0)
@@ -266,10 +262,11 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
     print('picPage didUpdateWidget: mode is ${widget.jsonMode}');
     // 当为 home 模式且切换了参数，则同时更新暂存的相关数据
     if (widget.jsonMode == 'home' &&
-        (oldWidget.picDate != widget.picDate ||
-            oldWidget.picMode != widget.picMode)||widget.jsonMode == 'search') {
+            (oldWidget.picDate != widget.picDate ||
+                oldWidget.picMode != widget.picMode) ||
+        widget.jsonMode == 'search') {
       //切换model
-      widget.firstInit = true;
+      firstInit = true;
       picList = [];
       scrollController.animateTo(
         0.0,
@@ -297,80 +294,79 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
 //   print("列表长度" + pageProvider.jsonList.length.toString());
 //    return
- return ChangeNotifierProvider<GetPageProvider>.value(
-    value: GetPageProvider(),
-child: Consumer<GetPageProvider>(
-  builder: (context, GetPageProvider pageProvider,_) {
-    getPageProvider=pageProvider;
+    return ChangeNotifierProvider<GetPageProvider>.value(
+      value: GetPageProvider(),
+      child: Consumer<GetPageProvider>(
+        builder: (context, GetPageProvider pageProvider, _) {
+          getPageProvider = pageProvider;
 
-    if (widget.firstInit) {
-      switchModel(pageProvider);
-    }
-    if (picList.length == 0 &&
-        pageProvider.jsonList.length == 0 &&
-        !widget.firstInit) {
-      hasConnected = true;
-    }
-    picList = picList + pageProvider.jsonList;
-    widget.firstInit = false;
-    if (picList.length == 0 && !hasConnected) {
-      return Container(
-          height: ScreenUtil().setHeight(576),
-          width: ScreenUtil().setWidth(324),
-          alignment: Alignment.center,
-          color: Colors.white,
-          child: Center(
-            child: Lottie.asset('image/loading-box.json'),
-          ));
-    } else if (picList.length == 0 && hasConnected) {
-      return Container(
-        height: ScreenUtil().setHeight(576),
-        width: ScreenUtil().setWidth(324),
-        color: Colors.white,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Lottie.asset('image/empty-box.json',
-                repeat: false, height: ScreenUtil().setHeight(100)),
-            Text(
-              '这里什么都没有呢',
-              style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: ScreenUtil().setHeight(10),
-                  decoration: TextDecoration.none),
-            ),
-            SizedBox(
-              height: ScreenUtil().setHeight(250),
-            )
-          ],
-        ),
-      );
-    } else {
+          if (firstInit) {
+            switchModel(pageProvider);
+          }
+          if (picList.length == 0 &&
+              pageProvider.jsonList.length == 0 &&
+              !firstInit) {
+            hasConnected = true;
+          }
+          picList = picList + pageProvider.jsonList;
+          firstInit = false;
+          if (picList.length == 0 && !hasConnected) {
+            return Container(
+                height: ScreenUtil().setHeight(576),
+                width: ScreenUtil().setWidth(324),
+                alignment: Alignment.center,
+                color: Colors.white,
+                child: Center(
+                  child: Lottie.asset('image/loading-box.json'),
+                ));
+          } else if (picList.length == 0 && hasConnected) {
+            return Container(
+              height: ScreenUtil().setHeight(576),
+              width: ScreenUtil().setWidth(324),
+              color: Colors.white,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Lottie.asset('image/empty-box.json',
+                      repeat: false, height: ScreenUtil().setHeight(100)),
+                  Text(
+                    '这里什么都没有呢',
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: ScreenUtil().setHeight(10),
+                        decoration: TextDecoration.none),
+                  ),
+                  SizedBox(
+                    height: ScreenUtil().setHeight(250),
+                  )
+                ],
+              ),
+            );
+          } else {
 //
-      return Container(
-          padding: EdgeInsets.only(
-              left: ScreenUtil().setWidth(5),
-              right: ScreenUtil().setWidth(5)),
-          color: Colors.grey[50],
-          child: StaggeredGridView.countBuilder(
-            controller: scrollController,
-            physics: widget.isScrollable
-                ? ClampingScrollPhysics()
-                : NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            itemCount: picList.length,
-            itemBuilder: (BuildContext context, int index) =>
-                imageCell(index),
-            staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-            mainAxisSpacing: 0.0,
-            crossAxisSpacing: 0.0,
-          ));
-    }
-  },
-),
+            return Container(
+                padding: EdgeInsets.only(
+                    left: ScreenUtil().setWidth(5),
+                    right: ScreenUtil().setWidth(5)),
+                color: Colors.grey[50],
+                child: StaggeredGridView.countBuilder(
+                  controller: scrollController,
+                  physics: widget.isScrollable
+                      ? ClampingScrollPhysics()
+                      : NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  itemCount: picList.length,
+                  itemBuilder: (BuildContext context, int index) =>
+                      imageCell(index),
+                  staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+                  mainAxisSpacing: 0.0,
+                  crossAxisSpacing: 0.0,
+                ));
+          }
+        },
+      ),
 //    create: (_)=>,
-  );
-
+    );
   }
 
   //根据传入的jsonModel选择provider的方法来获取数据

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:pixivic/provider/get_page.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -14,6 +13,8 @@ import 'package:flutter_advanced_networkimage/zoomable.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
+
+// import 'package:pixivic/provider/get_page.dart';
 import 'pic_page.dart';
 import 'artist_page.dart';
 import 'search_page.dart';
@@ -24,7 +25,7 @@ import '../widget/bookmark_users.dart';
 import '../widget/comment_cell.dart';
 import '../function/downloadImage.dart';
 import '../function/albumn.dart';
-import 'package:provider/provider.dart';
+
 
 class PicDetailPage extends StatefulWidget {
   @override

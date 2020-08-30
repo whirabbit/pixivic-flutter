@@ -71,14 +71,16 @@ addIllustToAlbumn(int illustId, int albumnId) async {
   }
 }
 
-showAddNewAlbumnDialog(BuildContext context) {
+showAddNewAlbumnDialog(BuildContext context) async {
   TextEditingController title = TextEditingController();
   TextEditingController caption = TextEditingController();
   TextZhAlbumn texts = TextZhAlbumn();
 
-  showDialog(
+  await showDialog(
       context: context,
       builder: (BuildContext context) {
+        Provider.of<NewAlbumnParameterModel>(context, listen: false)
+            .cleanTags();
         return Consumer<NewAlbumnParameterModel>(
           builder: (context, NewAlbumnParameterModel newAlbumnParameterModel,
                   child) =>
@@ -125,8 +127,11 @@ showAddNewAlbumnDialog(BuildContext context) {
                             controller: title,
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
-                              border: InputBorder.none,
+                              focusedBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.orangeAccent)),
                               isDense: true,
+                              focusColor: Colors.orange,
                               hintText: texts.inputAlbumnTitle,
                               hintStyle: TextStyle(
                                   fontSize: 16, color: Colors.grey[400]),
@@ -142,7 +147,9 @@ showAddNewAlbumnDialog(BuildContext context) {
                             minLines: 1,
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
-                              border: InputBorder.none,
+                              focusedBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.orangeAccent)),
                               isDense: true,
                               hintText: texts.inputAlbumnCaption,
                               hintStyle: TextStyle(
@@ -236,6 +243,7 @@ showAddNewAlbumnDialog(BuildContext context) {
                                 newAlbumnParameterModel.isSexy ? 1 : 0,
                             'forbidComment':
                                 newAlbumnParameterModel.allowComment ? 1 : 0,
+                            'tagList': newAlbumnParameterModel.tags
                           };
                           postNewAlbumn(payload);
                         },
@@ -247,10 +255,11 @@ showAddNewAlbumnDialog(BuildContext context) {
             ),
           ),
         );
-      });
+      }).then((value) {});
 }
 
 showTagSelector(context) async {
+  TextZhAlbumn texts = TextZhAlbumn();
   await showDialog(
       context: context,
       builder: (context) {
@@ -259,6 +268,8 @@ showTagSelector(context) async {
             builder: (context, NewAlbumnParameterModel newAlbumnParameterModel,
                     child) =>
                 AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
                   contentPadding: EdgeInsets.all(0),
                   content: Container(
                       width: ScreenUtil().setWidth(250),
@@ -268,18 +279,32 @@ showTagSelector(context) async {
                         children: [
                           Container(
                             width: ScreenUtil().setWidth(250),
+                            height: ScreenUtil().setHeight(30),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20.0),
+                                  topRight: Radius.circular(20.0)),
+                              color: Colors.orange[300],
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              texts.addTag,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white),
+                            ),
+                          ),
+                          Container(
+                            width: ScreenUtil().setWidth(250),
                             child: Wrap(
                               alignment: WrapAlignment.center,
-                              children: [
-                                singleTag('Tt', false),
-                                singleTag('Tes', false),
-                                singleTag('t', false),
-                                singleTag('Tt', false),
-                                singleTag('Tt', false),
-                                singleTag('Tes', false),
-                                singleTag('t', false),
-                                singleTag('Tt', false),
-                              ],
+                              children: newAlbumnParameterModel.tags
+                                  .map(
+                                      (item) => singleTag(context, item['tagName'], false))
+                                  .toList(),
                             ),
                           ),
                           Container(
@@ -299,25 +324,49 @@ showTagSelector(context) async {
                                 }),
                           ),
                           Wrap(
+                            alignment: WrapAlignment.center,
                             children: newAlbumnParameterModel.tagsAdvice
-                                .map((item) => singleTag(item['tagName'], true))
+                                .map((item) =>
+                                    singleTag(context, item['tagName'], true))
                                 .toList(),
                           )
                         ],
                       )),
                 ));
       }).then((value) {
-    NewAlbumnParameterModel().clearTagAdvice();
+    Provider.of<NewAlbumnParameterModel>(context, listen: false)
+        .clearTagAdvice();
   });
 }
 
 postNewAlbumn(Map<String, dynamic> payload) async {
-  // TODO: fill postNewAlbumn
-  // String url = 'https://api.pixivic.com/collections';
-  // Map<String, String> headers = {'authorization': prefs.getString('auth')};
+  
+  String url = 'https://api.pixivic.com/collections';
+  Map<String, String> headers = {'authorization': prefs.getString('auth')};
+
+  try {
+    if(payload['tagList'] != null) {
+      Response response =
+    await Dio().post(url,data: payload,options: Options(headers: headers));
+    BotToast.showSimpleNotification(title: response.data['message']);
+    }
+      
+    } on DioError catch (e) {
+      if (e.response != null) {
+        BotToast.showSimpleNotification(title: e.response.data['message']);
+        print(e.response.data);
+        print(e.response.headers);
+        print(e.response.request);
+      } else {
+        // Something happened in setting up or sending the request that triggered an Error
+        BotToast.showSimpleNotification(title: e.message);
+        print(e.request);
+        print(e.message);
+      }
+    }
 }
 
-Widget singleTag(String label, bool advice) {
+Widget singleTag(context, String label, bool advice) {
   return Container(
     padding: EdgeInsets.only(
         left: ScreenUtil().setWidth(1.5),
@@ -337,7 +386,14 @@ Widget singleTag(String label, bool advice) {
             right: ScreenUtil().setWidth(5),
             top: ScreenUtil().setWidth(3),
             bottom: ScreenUtil().setWidth(3)),
-        onPressed: () {},
+        onPressed: () {
+          if (advice)
+            Provider.of<NewAlbumnParameterModel>(context, listen: false)
+                .addTagToTagsList(label);
+          else
+            Provider.of<NewAlbumnParameterModel>(context, listen: false)
+                .removeTagFromTagsList(label);
+        },
         child: Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
@@ -351,7 +407,7 @@ Widget singleTag(String label, bool advice) {
                     color: Colors.grey,
                     size: ScreenUtil().setWidth(13),
                   )
-                : Container()
+                : SizedBox(width: 0)
           ],
         ),
       ),
@@ -372,35 +428,32 @@ class NewAlbumnParameterModel with ChangeNotifier {
   List get tags => _tags;
   List get tagsAdvice => _tagsAdvice;
 
-  void public(bool result) {
+  public(bool result) {
     _isPublic = result;
     notifyListeners();
   }
 
-  void sexy(bool result) {
+  sexy(bool result) {
     _isSexy = result;
     notifyListeners();
   }
 
-  void comment(bool result) {
+  comment(bool result) {
     _allowComment = result;
     notifyListeners();
   }
 
-  void cleanTag() {
+  cleanTags() {
     _tags = [];
     notifyListeners();
   }
 
-  void addTag(String tag) {
-    _tags.add(tag);
-  }
-
-  void clearTagAdvice() {
+  clearTagAdvice() {
     _tagsAdvice = [];
+    notifyListeners();
   }
 
-  void getTagAdvice(String keywords) async {
+  getTagAdvice(String keywords) async {
     _tagsAdvice = [
       {'tagName': keywords}
     ];
@@ -411,7 +464,8 @@ class NewAlbumnParameterModel with ChangeNotifier {
     try {
       Response response =
           await Dio().get(url, options: Options(headers: headers));
-      _tagsAdvice = response.data['data'];
+      if (response.data['data'] != null)
+        _tagsAdvice = _tagsAdvice + response.data['data'];
       print(_tagsAdvice);
       notifyListeners();
       // _tagsAdvice = [];
@@ -428,5 +482,15 @@ class NewAlbumnParameterModel with ChangeNotifier {
         print(e.message);
       }
     }
+  }
+
+  addTagToTagsList(String tag) {
+    if (!_tags.contains({'tagName': tag})) _tags.add({'tagName': tag});
+    notifyListeners();
+  }
+
+  removeTagFromTagsList(String tag) {
+    _tags.removeWhere((element) => element['tagName'] == tag);
+    notifyListeners();
   }
 }
