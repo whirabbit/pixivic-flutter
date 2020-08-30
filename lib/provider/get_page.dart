@@ -10,42 +10,45 @@ import 'package:bot_toast/bot_toast.dart';
 import '../data/common.dart';
 
 class GetPageProvider with ChangeNotifier {
+  // TODO Add loadmoreable or return value for judge loadmoreable
+  // false when jsonlist return null, which means there's no more data could be loaded
+  // so picpage would stop getjsonlist
   String picDate;
   String picMode;
-  num relatedId;
   String artistId;
   String spotlightId;
   String userId;
   String searchKeywords;
+  String url;
+  String jsonMode;
   bool isManga;
   bool isScrollable;
-  String jsonMode;
+  bool deleteList = false;
+  int homeCurrentPage;
+  num relatedId;
   ValueChanged<bool> onPageScrolling;
   VoidCallback onPageTop;
   VoidCallback onPageStart;
-  String url;
   List jsonList = [];
-  int homeCurrentPage;
-  bool deleteList = false;
 
   homePage({
     @required String picDate,
     @required String picMode,
   }) {
     //加载动画
-    this.jsonList = [];
-    this.jsonMode = 'home';
-    this.picDate = picDate;
-    this.picMode = picMode;
-    this.deleteList = true;
+    jsonList = [];
+    jsonMode = 'home';
+    picDate = picDate;
+    picMode = picMode;
+    deleteList = true;
     getJsonList();
   }
 
   void searchPage(
       {@required String searchKeywords, @required bool searchManga}) {
-    this.jsonMode = 'search';
-    this.searchKeywords = searchKeywords;
-    this.isManga = searchManga;
+    jsonMode = 'search';
+    searchKeywords = searchKeywords;
+    isManga = searchManga;
     getJsonList();
   }
 
@@ -53,11 +56,11 @@ class GetPageProvider with ChangeNotifier {
       {@required num relatedId,
       @required VoidCallback onTopOfPicpage,
       @required VoidCallback onStartOfPicpage}) {
-    this.jsonMode = 'related';
-    this.relatedId = relatedId;
-    this.onPageTop = onTopOfPicpage;
-    this.onPageStart = onStartOfPicpage;
-    this.isScrollable = true;
+    jsonMode = 'related';
+    relatedId = relatedId;
+    onPageTop = onTopOfPicpage;
+    onPageStart = onStartOfPicpage;
+    isScrollable = true;
     getJsonList();
   }
 
@@ -66,43 +69,43 @@ class GetPageProvider with ChangeNotifier {
       @required bool isManga,
       @required VoidCallback onTopOfPicpage,
       @required VoidCallback onStartOfPicpage}) {
-    this.jsonMode = 'artist';
-    this.artistId = artistId;
-    this.isManga = isManga;
-    this.onPageTop = onTopOfPicpage;
-    this.onPageStart = onStartOfPicpage;
+    jsonMode = 'artist';
+    artistId = artistId;
+    isManga = isManga;
+    onPageTop = onTopOfPicpage;
+    onPageStart = onStartOfPicpage;
     getJsonList();
   }
 
   void followedPage({@required String userId, @required bool isManga}) {
-    this.jsonMode = 'followed';
-    this.userId = userId;
-    this.isManga = isManga;
+    jsonMode = 'followed';
+    userId = userId;
+    isManga = isManga;
     getJsonList();
   }
 
   void bookmarkPage({@required String userId, @required bool isManga}) {
-    this.jsonMode = 'bookmark';
-    this.userId = userId;
-    this.isManga = isManga;
+    jsonMode = 'bookmark';
+    userId = userId;
+    isManga = isManga;
     getJsonList();
   }
 
   void spotlightPage({@required String spotlightId}) {
-    this.jsonMode = 'spotlight';
-    this.spotlightId = spotlightId;
+    jsonMode = 'spotlight';
+    spotlightId = spotlightId;
     getJsonList();
   }
 
   void historyPage() {
-    this.jsonMode = 'history';
-    this.deleteList = true;
+    jsonMode = 'history';
+    deleteList = true;
     getJsonList();
   }
 
   void oldHistoryPage() {
-    this.jsonMode = 'oldhistory';
-    this.deleteList = true;
+    jsonMode = 'oldhistory';
+    deleteList = true;
     getJsonList();
   }
 
@@ -111,11 +114,11 @@ class GetPageProvider with ChangeNotifier {
       @required bool isManga,
       @required VoidCallback onTopOfPicpage,
       @required VoidCallback onStartOfPicpage}) {
-    this.jsonMode = 'userdetail';
-    this.userId = userId;
-    this.isManga = isManga;
-    this.onPageTop = onTopOfPicpage;
-    this.onPageStart = onStartOfPicpage;
+    jsonMode = 'userdetail';
+    userId = userId;
+    isManga = isManga;
+    onPageTop = onTopOfPicpage;
+    onPageStart = onStartOfPicpage;
     getJsonList();
   }
 
@@ -145,10 +148,12 @@ class GetPageProvider with ChangeNotifier {
       }
     } else if (jsonMode == 'followed') {
       loadMoreAble = false;
-      if (isManga) {
+      print(isManga);
+      if (!isManga) {
         url =
             'https://api.pixivic.com/users/$userId/followed/latest/illust?page=$currentPage&pageSize=30';
       } else {
+        print('!!!!!!!!!!!!!!!!!');
         url =
             'https://api.pixivic.com/users/$userId/followed/latest/manga?page=$currentPage&pageSize=30';
       }
