@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 // import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
@@ -261,10 +262,10 @@ class PicPage extends StatefulWidget {
 }
 
 class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
-  // picList - 图片的JSON文件列表
-  // picTotalNum - picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
+  // pageProvider.picList - 图片的JSON文件列表
+  // picTotalNum - pageProvider.picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
   // 针对最常访问的 Home 页面，临时变量记录于 common.dart
-  List picList = [];
+//  List pageProvider.picList = [];
   int picTotalNum;
   int currentPage = 1;
   RandomColor _randomColor = RandomColor();
@@ -284,65 +285,67 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
         initialScrollOffset:
             widget.jsonMode == 'home' ? homeScrollerPosition : 0.0)
       ..addListener(_doWhileScrolling);
-    loadMoreAble = ifLoadMoreAble();
+//    loadMoreAble = ifLoadMoreAble();
     super.initState();
   }
 
-  @override
-  void didUpdateWidget(PicPage oldWidget) {
-    print('picPage didUpdateWidget: mode is ${widget.jsonMode}');
-    // 当为 home 模式且切换了参数，则同时更新暂存的相关数据
-    if (widget.jsonMode == 'home' &&
-            (oldWidget.picDate != widget.picDate ||
-                oldWidget.picMode != widget.picMode) ||
-        widget.jsonMode == 'search') {
-      //切换model
-      firstInit = true;
-      picList = [];
-      scrollController.animateTo(
-        0.0,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeOut,
-      );
-    }
-
-    super.didUpdateWidget(oldWidget);
-  }
+//  @override
+//  void didUpdateWidget(PicPage oldWidget) {
+//    print('picPage didUpdateWidget: mode is ${widget.jsonMode}');
+//    // 当为 home 模式且切换了参数，则同时更新暂存的相关数据
+//    if (widget.jsonMode == 'home' &&
+//            (oldWidget.picDate != widget.picDate ||
+//                oldWidget.picMode != widget.picMode) ||
+//        widget.jsonMode == 'search') {
+//      //切换model
+//      firstInit = true;
+//      pageProvider.picList = [];
+//      scrollController.animateTo(
+//        0.0,
+//        duration: const Duration(milliseconds: 500),
+//        curve: Curves.easeOut,
+//      );
+//    }
+//
+//    super.didUpdateWidget(oldWidget);
+//  }
 
   @override
   void dispose() {
     print('PicPage Disposed');
     // scrollController.removeListener(_doWhileScrolling);
     // scrollController.dispose();
-    if (widget.jsonMode == 'home' && picList != null) {
-      homePicList = picList;
-      homeCurrentPage = currentPage;
-    }
+//    if (widget.jsonMode == 'home' && pageProvider.picList != null) {
+//      homepageProvider.picList = pageProvider.picList;
+//      homeCurrentPage = currentPage;
+//    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-//   print("列表长度" + pageProvider.jsonList.length.toString());
-//    return
+    print("build");
     super.build(context);
     return ChangeNotifierProvider<GetPageProvider>.value(
       value: GetPageProvider(),
-      child: Consumer<GetPageProvider>(
+      child: Selector<GetPageProvider, GetPageProvider>(
+        shouldRebuild: (pre, next) => true,
+        selector: (context, provider) => provider,
         builder: (context, GetPageProvider pageProvider, _) {
           getPageProvider = pageProvider;
-
-          if (firstInit) {
-            switchModel(pageProvider);
+          switchModel(pageProvider);
+          if (pageProvider.jsonList == null) {
+            pageProvider.getJsonList().then((value) {
+              if (value.length==0) {
+                hasConnected = true;
+              }
+            });
+            pageProvider.picList = [];
+            pageProvider.jsonList = [];
           }
-          if (picList.length == 0 &&
-              pageProvider.jsonList.length == 0 &&
-              !firstInit) {
-            hasConnected = true;
-          }
-          picList = picList + pageProvider.jsonList;
-          firstInit = false;
-          if (picList.length == 0 && !hasConnected) {
+          pageProvider.picList = pageProvider.picList + pageProvider.jsonList;
+//          firstInit = false;
+          if (pageProvider.picList.length == 0 && !hasConnected) {
             return Container(
                 height: ScreenUtil().setHeight(576),
                 width: ScreenUtil().setWidth(324),
@@ -351,7 +354,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
                 child: Center(
                   child: Lottie.asset('image/loading-box.json'),
                 ));
-          } else if (picList.length == 0 && hasConnected) {
+          } else if (pageProvider.picList.length == 0 && hasConnected) {
             return Container(
               height: ScreenUtil().setHeight(576),
               width: ScreenUtil().setWidth(324),
@@ -387,9 +390,15 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
                       ? ClampingScrollPhysics()
                       : NeverScrollableScrollPhysics(),
                   crossAxisCount: 2,
-                  itemCount: picList.length,
-                  itemBuilder: (BuildContext context, int index) =>
-                      imageCell(index),
+                  itemCount: pageProvider.picList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Selector<GetPageProvider, Map>(
+                      selector: (context, provider) => provider.picList[index],
+                      builder: (context, picItem, child) {
+                        return imageCell(picItem,index);
+                      },
+                    );
+                  },
                   staggeredTileBuilder: (index) => StaggeredTile.fit(1),
                   mainAxisSpacing: 0.0,
                   crossAxisSpacing: 0.0,
@@ -449,13 +458,13 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
     }
   }
 
-  List _picMainParameter(int index) {
+  List _picMainParameter(Map picItem) {
     // 预览图片的地址、数目、以及长宽比
-    // String url = picList[index]['imageUrls'][0]['squareMedium'];
-    String url = picList[index]['imageUrls'][0][previewQuality]; //medium large
-    int number = picList[index]['pageCount'];
-    double width = picList[index]['width'].toDouble();
-    double height = picList[index]['height'].toDouble();
+    // String url = pageProvider.picList[index]['imageUrls'][0]['squareMedium'];
+    String url = picItem['imageUrls'][0][previewQuality]; //medium large
+    int number = picItem['pageCount'];
+    double width = picItem['width'].toDouble();
+    double height = picItem['height'].toDouble();
     return [url, number, width, height];
   }
 
@@ -516,11 +525,12 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
       currentPage++;
       print('current page is $currentPage');
       try {
-//        GetPageProvider  getPageProvider = Provider.of<GetPageProvider>(context);
         getPageProvider
             .getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
             .then((value) {
-          loadMoreAble = true;
+          if (value != null) {
+            loadMoreAble = true;
+          }
         });
       } catch (err) {
         print('=========getJsonList==========');
@@ -546,9 +556,9 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
     }
   }
 
-  Widget imageCell(int index) {
+  Widget imageCell(Map picItem,int index) {
     final Color color = _randomColor.randomColor();
-    Map picMapData = Map.from(picList[index]);
+    Map picMapData = Map.from(picItem);
     if (picMapData['xrestict'] == 1 ||
         picMapData['sanityLevel'] > prefs.getInt('sanityLevel'))
       return Container();
@@ -575,7 +585,8 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
                         BotToast.showSimpleNotification(title: '唤起网页失败');
                         throw 'Could not launch ${picMapData['link']}';
                       }
-                    } else
+                    }
+                    else
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -592,14 +603,14 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
                         //     _picMainParameter(index)[3],
                         // minWidth: MediaQuery.of(context).size.width * 0.41,
                         minHeight: ScreenUtil().setWidth(148) /
-                            _picMainParameter(index)[2] *
-                            _picMainParameter(index)[3],
+                            _picMainParameter(picItem)[2] *
+                            _picMainParameter(picItem)[3],
                         minWidth: ScreenUtil().setWidth(148)),
                     child: Hero(
-                      tag: 'imageHero' + _picMainParameter(index)[0],
+                      tag: 'imageHero' + _picMainParameter(picItem)[0],
                       child: Image(
                         image: AdvancedNetworkImage(
-                          _picMainParameter(index)[0],
+                          _picMainParameter(picItem)[0],
                           header: {'Referer': 'https://app-api.pixiv.net'},
                           useDiskCache: true,
                           cacheRule: CacheRule(
@@ -630,7 +641,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
               ),
             ),
             Positioned(
-              child: numberViewer(_picMainParameter(index)[1]),
+              child: numberViewer(_picMainParameter(picItem)[1]),
               right: ScreenUtil().setWidth(10),
               top: ScreenUtil().setHeight(5),
             ),
@@ -638,7 +649,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
                 ? Positioned(
                     bottom: ScreenUtil().setHeight(5),
                     right: ScreenUtil().setWidth(5),
-                    child: bookmarkHeart(index))
+                    child: bookmarkHeart(picItem,index))
                 : Container(),
           ],
         ),
@@ -671,37 +682,34 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
         : Container();
   }
 
-  Widget bookmarkHeart(int index) {
-    bool isLikedLocalState = picList[index]['isLiked'];
+  Widget bookmarkHeart(Map picItem,int index) {
+    bool isLikedLocalState = picItem['isLiked'];
     var color = isLikedLocalState ? Colors.redAccent : Colors.grey[300];
-    String picId = picList[index]['id'].toString();
+    String picId = picItem['id'].toString();
 
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (_) => FavProvider(),
-        ),
-//        ChangeNotifierProvider(
-//          create: (_) => GetPageProvider(),
-//        )
-      ],
-      child: Consumer<FavProvider>(
-        builder: (context, FavProvider favProvider, _) {
-          return Container(
+    return ChangeNotifierProvider<FavProvider>(
+      create: (_) => FavProvider(),
+      child: Container(
 //      duration: Duration(milliseconds: 500),
 //      curve: Curves.fastLinearToSlowEaseIn,
-            alignment: Alignment.center,
-            // color: Colors.white,
-            height: ScreenUtil().setWidth(33),
-            width: ScreenUtil().setWidth(33),
+          alignment: Alignment.center,
+          // color: Colors.white,
+          height: ScreenUtil().setWidth(33),
+          width: ScreenUtil().setWidth(33),
 //            height: isLikedLocalState
 //                ? ScreenUtil().setWidth(33)
 //                : ScreenUtil().setWidth(27),
 //            width: isLikedLocalState
 //                ? ScreenUtil().setWidth(33)
 //                : ScreenUtil().setWidth(27),
-            child: GestureDetector(
-                onTap: () async {
+          child: Consumer<FavProvider>(
+            builder: (context, FavProvider favProvider, _) {
+              return IconButton(
+                color: color,
+                padding: EdgeInsets.all(0),
+                iconSize: ScreenUtil().setHeight(favProvider.iconSize),
+                icon: Icon(Icons.favorite),
+                onPressed: () async {
                   //点击动画
                   favProvider.clickFunc();
                   String url = 'https://api.pixivic.com/users/bookmarked';
@@ -726,42 +734,84 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
                           bodyEncoding: RequestBodyEncoding.JSON);
                     }
                     Future.delayed(Duration(milliseconds: 400), () {
-                      setState(() {
-                        picList[index]['isLiked'] = !picList[index]['isLiked'];
-                      });
+//                      setState(() {
+                      getPageProvider.markFun(index);
+
+//                      });
                     });
 //                    setState(() {
-//                      picList[index]['isLiked'] = !picList[index]['isLiked'];
+//                      pageProvider.picList[index]['isLiked'] = !pageProvider.picList[index]['isLiked'];
 //                    });
                   } catch (e) {
                     print(e);
                   }
                 },
-                child: Icon(
-                  Icons.favorite,
-                  color: color,
-                  size: ScreenUtil().setHeight(favProvider.iconSize),
-                )
+              );
+            },
+          )
 
-//              LayoutBuilder(builder: (context, constraint) {
-////                print(favProvider.iconSize);
-//                return Icon(Icons.favorite,
-//                    color: color,
-//                    size: favProvider.iconSize,
-////                    size: constraint.biggest.height
+//        GestureDetector(
+//            onTap: () async {
+//              //点击动画
+//              favProvider.clickFunc();
+//              String url = 'https://api.pixivic.com/users/bookmarked';
+//              Map<String, String> body = {
+//                'userId': prefs.getInt('id').toString(),
+//                'illustId': picId.toString(),
+//                'username': prefs.getString('name')
+//              };
+//              Map<String, String> headers = {
+//                'authorization': prefs.getString('auth')
+//              };
+//              try {
+//                if (isLikedLocalState) {
+//                  await Requests.delete(url,
+//                      body: body,
+//                      headers: headers,
+//                      bodyEncoding: RequestBodyEncoding.JSON);
+//                } else {
+//                  await Requests.post(url,
+//                      body: body,
+//                      headers: headers,
+//                      bodyEncoding: RequestBodyEncoding.JSON);
+//                }
+//                Future.delayed(Duration(milliseconds: 400), () {
+////                      setState(() {
+//                  picItem['isLiked'] = !picItem['isLiked'];
+//
+////                      });
+//                }
 //                );
+////                    setState(() {
+////                      pageProvider.picList[index]['isLiked'] = !pageProvider.picList[index]['isLiked'];
+////                    });
+//              } catch (e) {
+//                print(e);
 //              }
-//              ),
-                ),
-          );
-        },
-      ),
+//            },
+//            child: Icon(
+//              Icons.favorite,
+//              color: color,
+//              size: ScreenUtil().setHeight(favProvider.iconSize),
+//            )
+//
+////              LayoutBuilder(builder: (context, constraint) {
+//////                print(favProvider.iconSize);
+////                return Icon(Icons.favorite,
+////                    color: color,
+////                    size: favProvider.iconSize,
+//////                    size: constraint.biggest.height
+////                );
+////              }
+////              ),
+//        ),
+          ),
     );
   }
 
   _bookmarkRefresh(int index, bool result) {
     setState(() {
-      picList[index]['isLiked'] = result;
+      getPageProvider.picList[index]['isLiked'] = result;
     });
   }
 

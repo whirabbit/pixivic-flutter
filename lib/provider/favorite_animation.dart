@@ -6,8 +6,11 @@ class FavProvider extends State<StatefulWidget>
   AnimationController animationController;
   CurvedAnimation curvedAnimation;
   double _iconSize = 30;
+
   double get iconSize => _iconSize;
+
   Animation<double> get favAnimation => _favAnimation;
+
   clickFunc() {
     animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 600));
@@ -27,6 +30,7 @@ class FavProvider extends State<StatefulWidget>
     });
     animationController.forward(from: 0);
   }
+
 
   @override
   Widget build(BuildContext context) {
