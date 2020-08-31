@@ -9,7 +9,6 @@ import 'package:bot_toast/bot_toast.dart';
 
 import 'package:pixivic/data/common.dart';
 
-
 class GetPageProvider with ChangeNotifier {
   // TODO Add loadmoreable or return value for judge loadmoreable
   // false when jsonlist return null, which means there's no more data could be loaded
@@ -30,15 +29,18 @@ class GetPageProvider with ChangeNotifier {
   ValueChanged<bool> onPageScrolling;
   VoidCallback onPageTop;
   VoidCallback onPageStart;
-  List jsonList ;
-  List picList=[];
+  List jsonList;
+
+  List picList = [];
 
   homePage({
     @required String picDate,
     @required String picMode,
   }) {
     //加载动画
-
+    if (this.picDate != picDate || this.picMode != picMode) {
+      this.jsonList = null;
+    }
     this.jsonMode = 'home';
     this.picDate = picDate;
     this.picMode = picMode;
@@ -119,9 +121,10 @@ class GetPageProvider with ChangeNotifier {
     this.onPageStart = onStartOfPicpage;
     getJsonList();
   }
+
   //标记方法
-  void markFun(index){
-    picList[index]['isLiked']=!picList[index]['isLiked'];
+  void markFun(index) {
+    picList[index]['isLiked'] = !picList[index]['isLiked'];
     notifyListeners();
   }
 
@@ -207,7 +210,6 @@ class GetPageProvider with ChangeNotifier {
         // print(requests.content());
         // requests.raiseForStatus();
         jsonList = jsonDecode(requests.content())['data'];
-
       }
       if (jsonList == null) {
         jsonList = [];
