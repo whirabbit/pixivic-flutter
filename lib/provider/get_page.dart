@@ -7,7 +7,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 
-import '../data/common.dart';
+import 'package:pixivic/data/common.dart';
+
 
 class GetPageProvider with ChangeNotifier {
   // TODO Add loadmoreable or return value for judge loadmoreable
@@ -23,25 +24,23 @@ class GetPageProvider with ChangeNotifier {
   String jsonMode;
   bool isManga;
   bool isScrollable;
-  bool deleteList = false;
   int homeCurrentPage;
   num relatedId;
   ValueChanged<bool> onPageScrolling;
   VoidCallback onPageTop;
   VoidCallback onPageStart;
-  List jsonList = [];
+  List jsonList ;
+  List picList=[];
 
   homePage({
     @required String picDate,
     @required String picMode,
   }) {
     //加载动画
-    this.jsonList = [];
+
     this.jsonMode = 'home';
     this.picDate = picDate;
     this.picMode = picMode;
-    this.deleteList = true;
-    getJsonList();
   }
 
   void searchPage(
@@ -49,7 +48,8 @@ class GetPageProvider with ChangeNotifier {
     this.jsonMode = 'search';
     this.searchKeywords = searchKeywords;
     this.isManga = searchManga;
-    getJsonList();
+
+//    getJsonList();
   }
 
   void relatedPage(
@@ -61,7 +61,6 @@ class GetPageProvider with ChangeNotifier {
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
     this.isScrollable = true;
-    getJsonList();
   }
 
   void artistPage(
@@ -74,39 +73,37 @@ class GetPageProvider with ChangeNotifier {
     this.isManga = isManga;
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
-    getJsonList();
+//    getJsonList();
   }
 
   void followedPage({@required String userId, @required bool isManga}) {
     this.jsonMode = 'followed';
     this.userId = userId;
     this.isManga = isManga;
-    getJsonList();
+//    getJsonList();
   }
 
   void bookmarkPage({@required String userId, @required bool isManga}) {
     this.jsonMode = 'bookmark';
     this.userId = userId;
     this.isManga = isManga;
-    getJsonList();
+//    getJsonList();
   }
 
   void spotlightPage({@required String spotlightId}) {
     this.jsonMode = 'spotlight';
     this.spotlightId = spotlightId;
-    getJsonList();
+//    getJsonList();
   }
 
   void historyPage() {
     this.jsonMode = 'history';
-    this.deleteList = true;
-    getJsonList();
+//    getJsonList();
   }
 
   void oldHistoryPage() {
     this.jsonMode = 'oldhistory';
-    this.deleteList = true;
-    getJsonList();
+//    getJsonList();
   }
 
   void userdetailPage(
@@ -120,6 +117,11 @@ class GetPageProvider with ChangeNotifier {
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
     getJsonList();
+  }
+  //标记方法
+  void markFun(index){
+    picList[index]['isLiked']=!picList[index]['isLiked'];
+    notifyListeners();
   }
 
   getJsonList({bool loadMoreAble, int currentPage = 1}) async {
@@ -184,12 +186,9 @@ class GetPageProvider with ChangeNotifier {
     try {
       if (prefs.getString('auth') == '') {
         var requests = await Requests.get(url);
-        print(url);
         jsonList = jsonDecode(requests.content())['data'];
-        if(jsonList == null)
-          jsonList = [];
         print(requests.statusCode);
-        print(requests.content());
+//        print(requests.content());
         if (requests.statusCode == 401)
           BotToast.showSimpleNotification(title: '请登录后再重新加载画作');
       } else {
@@ -200,12 +199,13 @@ class GetPageProvider with ChangeNotifier {
         // print(requests.content());
         // requests.raiseForStatus();
         jsonList = jsonDecode(requests.content())['data'];
-        if (jsonList == null) {
-          jsonList = [];
-        }
+
+      }
+      if (jsonList == null) {
+        jsonList = [];
       }
       notifyListeners();
-//      return jsonList;
+      return jsonList;
     } catch (error) {
       print('=========getJsonList==========');
       print(error);
