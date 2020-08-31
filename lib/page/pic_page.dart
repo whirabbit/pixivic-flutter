@@ -326,8 +326,8 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     print("build");
     super.build(context);
-    return ChangeNotifierProvider<GetPageProvider>.value(
-      value: GetPageProvider(),
+    return ChangeNotifierProvider<GetPageProvider>(
+    create: (_)=>GetPageProvider(),
       child: Selector<GetPageProvider, GetPageProvider>(
         shouldRebuild: (pre, next) => true,
         selector: (context, provider) => provider,
@@ -531,7 +531,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
         getPageProvider
             .getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
             .then((value) {
-          if (value != null) {
+          if (value.length!=0) {
             loadMoreAble = true;
           }
         });
