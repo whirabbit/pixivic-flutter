@@ -10,9 +10,6 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:pixivic/data/common.dart';
 
 class GetPageProvider with ChangeNotifier {
-  // TODO Add loadmoreable or return value for judge loadmoreable
-  // false when jsonlist return null, which means there's no more data could be loaded
-  // so picpage would stop getjsonlist
   String picDate;
   String picMode;
   String artistId;
@@ -122,7 +119,7 @@ class GetPageProvider with ChangeNotifier {
   }
 
   //标记方法
-  void markFun(index) {
+  void flipLikeState(int index) {
     picList[index]['isLiked'] = !picList[index]['isLiked'];
     notifyListeners();
   }

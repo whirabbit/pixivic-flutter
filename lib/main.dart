@@ -13,6 +13,7 @@ import 'package:flutter_bugly/flutter_bugly.dart';
 
 import 'widget/nav_bar.dart';
 import 'widget/papp_bar.dart';
+
 // import 'widget/menu_button.dart';
 // import 'widget/menu_list.dart';
 import 'page/pic_page.dart';
@@ -23,6 +24,7 @@ import 'data/common.dart';
 import 'data/bugly.dart';
 import 'function/update.dart';
 import 'function/albumn.dart';
+
 // import 'provider/get_comment_list_data.dart';
 // import 'provider/get_page.dart';
 import 'provider/page_switch.dart';
