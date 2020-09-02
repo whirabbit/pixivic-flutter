@@ -34,6 +34,7 @@ class PicPage extends StatefulWidget {
     this.artistId,
     this.userId,
     this.spotlightId,
+    this.collectionId,
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
@@ -50,6 +51,7 @@ class PicPage extends StatefulWidget {
     this.artistId,
     this.userId,
     this.spotlightId,
+    this.collectionId,
 //    @required this.onPageScrolling,
     this.onPageScrolling,
     this.onPageTop,
@@ -68,6 +70,7 @@ class PicPage extends StatefulWidget {
     this.artistId,
     this.userId,
     this.spotlightId,
+    this.collectionId,
     this.onPageScrolling,
     @required this.onPageTop,
     @required this.onPageStart,
@@ -84,6 +87,7 @@ class PicPage extends StatefulWidget {
     this.userId,
     this.isManga = false,
     this.artistId,
+    this.collectionId,
     this.spotlightId,
     this.onPageScrolling,
     this.onPageTop,
@@ -102,6 +106,7 @@ class PicPage extends StatefulWidget {
     this.isManga = false,
     @required this.artistId,
     this.spotlightId,
+    this.collectionId,
     this.onPageScrolling,
     @required this.onPageTop,
     @required this.onPageStart,
@@ -119,6 +124,7 @@ class PicPage extends StatefulWidget {
     this.isManga = false,
     this.artistId,
     this.spotlightId,
+    this.collectionId,
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
@@ -133,6 +139,7 @@ class PicPage extends StatefulWidget {
     this.jsonMode = 'bookmark',
     this.relatedId,
     @required this.userId,
+    this.collectionId,
     this.isManga = false,
     this.artistId,
     this.spotlightId,
@@ -150,6 +157,7 @@ class PicPage extends StatefulWidget {
     this.jsonMode = 'spotlight',
     this.relatedId,
     this.userId,
+    this.collectionId,
     @required this.spotlightId,
     this.isManga = false,
     this.artistId,
@@ -168,6 +176,7 @@ class PicPage extends StatefulWidget {
     this.relatedId,
     this.userId,
     this.spotlightId,
+    this.collectionId,
     this.isManga = false,
     this.artistId,
     this.onPageScrolling,
@@ -185,6 +194,7 @@ class PicPage extends StatefulWidget {
     this.relatedId,
     this.userId,
     this.spotlightId,
+    this.collectionId,
     this.isManga = false,
     this.artistId,
     this.onPageScrolling,
@@ -202,6 +212,25 @@ class PicPage extends StatefulWidget {
     this.relatedId,
     @required this.userId,
     this.spotlightId,
+    this.collectionId,
+    this.isManga = false,
+    this.artistId,
+    this.onPageScrolling,
+    this.onPageTop,
+    this.onPageStart,
+    this.isScrollable = true,
+//    @required this.funOne,
+  });
+
+  PicPage.collection({
+    this.searchKeywords,
+    this.picDate,
+    this.picMode,
+    this.jsonMode = 'userdetail',
+    this.relatedId,
+    this.userId,
+    @required this.collectionId,
+    this.spotlightId,
     this.isManga = false,
     this.artistId,
     this.onPageScrolling,
@@ -217,6 +246,7 @@ class PicPage extends StatefulWidget {
   final String artistId;
   final String spotlightId;
   final String userId;
+  final String collectionId;
   final String searchKeywords;
   final bool isManga;
   final bool isScrollable;
