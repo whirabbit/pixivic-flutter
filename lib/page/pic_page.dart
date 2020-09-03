@@ -652,7 +652,6 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
                           index: index,
                           getPageProvider: getPageProvider),
                     ))
-//                    bookmarkHeart(picItem, index))
                 : Container(),
           ],
         ),
