@@ -226,7 +226,7 @@ class PicPage extends StatefulWidget {
     this.searchKeywords,
     this.picDate,
     this.picMode,
-    this.jsonMode = 'userdetail',
+    this.jsonMode = 'collection',
     this.relatedId,
     this.userId,
     @required this.collectionId,
@@ -445,6 +445,9 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
             isManga: widget.isManga,
             onTopOfPicpage: widget.onPageTop,
             onStartOfPicpage: widget.onPageStart);
+        break;
+      case 'collection':
+        provider.collectionPage(collectionId: widget.collectionId);
         break;
     }
   }
