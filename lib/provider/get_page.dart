@@ -36,7 +36,6 @@ class GetPageProvider with ChangeNotifier {
     @required String picMode,
   }) {
     //加载动画
-
     if (this.picDate != picDate || this.picMode != picMode) {
       this.jsonList = null;
     }
