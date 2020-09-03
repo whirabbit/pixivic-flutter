@@ -43,13 +43,17 @@ class CommentListPage extends StatefulWidget {
 class _CommentListPageState extends State<CommentListPage> {
   TextZhCommentCell texts = TextZhCommentCell();
   ScreenUtil screen = ScreenUtil();
-  List commentsList;
+  List commentsList = [];
   int replyToId;
+  int currentPage = 1;
   String replyToName;
   int replyParentId;
   String hintText;
+  bool loadMoreAble = true;
   TextEditingController textEditingController;
   FocusNode replyFocus;
+  ScrollController scrollController;
+  GetCommentProvider commentProvider;
 
   @override
   void initState() {
@@ -61,7 +65,7 @@ class _CommentListPageState extends State<CommentListPage> {
 
     textEditingController = TextEditingController();
     replyFocus = FocusNode()..addListener(_replyFocusListener);
-
+    scrollController = ScrollController()..addListener(_altLoading);
 //    _loadComments();
 
     super.initState();
@@ -85,51 +89,52 @@ class _CommentListPageState extends State<CommentListPage> {
         }
       },
       child: Scaffold(
-          appBar: PappBar(
-            title: texts.comment,
-          ),
-          body: ChangeNotifierProvider<GetCommentProvider>.value(
-//            create: (_)=>GetCommentProvider(),
-          value:GetCommentProvider() ,
-            child:  Consumer<GetCommentProvider>(
-              builder: (context, GetCommentProvider commentProvider, _) {
+        appBar: PappBar(
+          title: texts.comment,
+        ),
+        body: ChangeNotifierProvider<GetCommentProvider>(
+          create: (_) => GetCommentProvider(),
+          child: Consumer<GetCommentProvider>(
+            builder: (context, GetCommentProvider commentProvider, _) {
+              this.commentProvider = commentProvider;
+              if (commentProvider.commentList == null) {
                 commentProvider.loadComments(widget.illustId);
-                commentsList=commentProvider.commentList;
-                return Container(
-                  color: Colors.white,
-                  child: Stack(
-                    children: <Widget>[
-                      commentsList != null
-                          ? Positioned(
-                        // top: screen.setHeight(5),
-                          child: Container(
+                commentProvider.commentList = [];
+              }
+              commentsList = commentsList + commentProvider.commentList;
+              return Container(
+                color: Colors.white,
+                child: Stack(
+                  children: <Widget>[
+                    commentsList != null
+                        ? Positioned(
+                            // top: screen.setHeight(5),
+                            child: Container(
                             width: screen.setWidth(324),
                             height: screen.setHeight(576),
                             margin:
-                            EdgeInsets.only(bottom: screen.setHeight(35)),
+                                EdgeInsets.only(bottom: screen.setHeight(35)),
                             child: ListView.builder(
+                                controller: scrollController,
                                 shrinkWrap: true,
                                 itemCount: commentsList.length,
-                                itemBuilder:
-                                    (BuildContext context, int index) {
-                                  return commentParentCell(
-                                      commentsList[index]);
+                                itemBuilder: (BuildContext context, int index) {
+                                  return commentParentCell(commentsList[index]);
                                 }),
                           ))
-                          : Container(),
-                      Positioned(
-                        bottom: 0.0,
-                        left: 0.0,
-                        right: 0.0,
-                        child: bottomCommentBar(commentProvider),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                        : Container(),
+                    Positioned(
+                      bottom: 0.0,
+                      left: 0.0,
+                      right: 0.0,
+                      child: bottomCommentBar(commentProvider),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
-
+        ),
       ),
     );
   }
@@ -312,6 +317,31 @@ class _CommentListPageState extends State<CommentListPage> {
                 )
               ])))
     ]));
+  }
+
+  _altLoading() {
+    if ((scrollController.position.extentAfter < 1000) && loadMoreAble) {
+      print(" Load Comment");
+      loadMoreAble = false;
+      currentPage++;
+      print('current page is $currentPage');
+      try {
+        commentProvider
+            .loadComments(widget.illustId, page: currentPage)
+            .then((value) {
+          if (value.length != 0) {
+            loadMoreAble = true;
+          }
+        });
+      } catch (err) {
+        print('=========getJsonList==========');
+        print(err);
+        print('==============================');
+        if (err.toString().contains('SocketException'))
+          BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+        loadMoreAble = true;
+      }
+    }
   }
 
   _replyFocusListener() {

@@ -26,9 +26,7 @@ class GetPageProvider with ChangeNotifier {
   ValueChanged<bool> onPageScrolling;
   VoidCallback onPageTop;
   VoidCallback onPageStart;
-
   List picList = [];
-
   List jsonList;
 
   homePage({
