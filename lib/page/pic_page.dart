@@ -261,7 +261,6 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
   bool hasConnected = false;
   bool loadMoreAble = true;
   bool isScrolling = false;
-  bool firstInit;
   ScrollController scrollController;
   String previewQuality = prefs.getString('previewQuality');
   PageSwitchProvider indexProvider;
@@ -269,7 +268,6 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
 
   @override
   void initState() {
-    firstInit = true;
     scrollController = ScrollController(
         initialScrollOffset:
             widget.jsonMode == 'home' ? homeScrollerPosition : 0.0)
