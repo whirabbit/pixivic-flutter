@@ -325,7 +325,6 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
           switchModel(pageProvider);
           if (pageProvider.jsonList == null) {
             pageProvider.getJsonList().then((value) {
-//              debugPrint(value.toString());
               value.length == 0 ? hasConnected = true : hasConnected = false;
             });
             pageProvider.picList = [];
