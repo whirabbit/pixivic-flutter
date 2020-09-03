@@ -75,37 +75,31 @@ class GetPageProvider with ChangeNotifier {
     this.isManga = isManga;
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
-//    getJsonList();
   }
 
   void followedPage({@required String userId, @required bool isManga}) {
     this.jsonMode = 'followed';
     this.userId = userId;
     this.isManga = isManga;
-//    getJsonList();
   }
 
   void bookmarkPage({@required String userId, @required bool isManga}) {
     this.jsonMode = 'bookmark';
     this.userId = userId;
     this.isManga = isManga;
-//    getJsonList();
   }
 
   void spotlightPage({@required String spotlightId}) {
     this.jsonMode = 'spotlight';
     this.spotlightId = spotlightId;
-//    getJsonList();
   }
 
   void historyPage() {
     this.jsonMode = 'history';
-//    getJsonList();
   }
 
   void oldHistoryPage() {
     this.jsonMode = 'oldhistory';
-//    getJsonList();
   }
 
   void userdetailPage(
@@ -118,7 +112,6 @@ class GetPageProvider with ChangeNotifier {
     this.isManga = isManga;
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
-    getJsonList();
   }
 
   //标记方法
