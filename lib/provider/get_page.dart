@@ -122,12 +122,6 @@ class GetPageProvider with ChangeNotifier {
   }
 
   //标记方法
-  void markFun(index) {
-    picList[index]['isLiked'] = !picList[index]['isLiked'];
-    notifyListeners();
-  }
-
-  //标记方法
   void flipLikeState(int index) {
     picList[index]['isLiked'] = !picList[index]['isLiked'];
     notifyListeners();
