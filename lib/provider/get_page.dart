@@ -186,7 +186,7 @@ class GetPageProvider with ChangeNotifier {
         url = 'https://api.pixivic.com/users/$userId/manga?page=1&pageSize=30';
       }
     } else if (jsonMode == 'collection') {
-      url = 'https://api.pixivic.com/collections/$collectionId/illustrations?page=$currentPage&pagesize=10'
+      url = 'https://api.pixivic.com/collections/$collectionId/illustrations?page=$currentPage&pagesize=10';
     }
 
     try {
