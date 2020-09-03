@@ -18,6 +18,7 @@ class GetPageProvider with ChangeNotifier {
   String artistId;
   String spotlightId;
   String userId;
+  String collectionId;
   String searchKeywords;
   String url;
   String jsonMode;
@@ -122,6 +123,11 @@ class GetPageProvider with ChangeNotifier {
     getJsonList();
   }
 
+  collectionPage({@required String collectionId}) {
+    this.collectionId = collectionId;
+    getJsonList();
+  }
+
   getJsonList({bool loadMoreAble, int currentPage = 1}) async {
     // 获取所有的图片数据
 
@@ -179,6 +185,8 @@ class GetPageProvider with ChangeNotifier {
       } else {
         url = 'https://api.pixivic.com/users/$userId/manga?page=1&pageSize=30';
       }
+    } else if (jsonMode == 'collection') {
+      url = 'https://api.pixivic.com/collections/$collectionId/illustrations?page=$currentPage&pagesize=10'
     }
 
     try {
@@ -186,8 +194,7 @@ class GetPageProvider with ChangeNotifier {
         var requests = await Requests.get(url);
         print(url);
         jsonList = jsonDecode(requests.content())['data'];
-        if(jsonList == null)
-          jsonList = [];
+        if (jsonList == null) jsonList = [];
         print(requests.statusCode);
         print(requests.content());
         if (requests.statusCode == 401)
