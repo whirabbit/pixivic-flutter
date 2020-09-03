@@ -26,18 +26,21 @@ class GetPageProvider with ChangeNotifier {
   ValueChanged<bool> onPageScrolling;
   VoidCallback onPageTop;
   VoidCallback onPageStart;
-  List jsonList;
 
   List picList = [];
+
+  List jsonList;
 
   homePage({
     @required String picDate,
     @required String picMode,
   }) {
     //加载动画
+
     if (this.picDate != picDate || this.picMode != picMode) {
       this.jsonList = null;
     }
+
     this.jsonMode = 'home';
     this.picDate = picDate;
     this.picMode = picMode;
@@ -120,6 +123,12 @@ class GetPageProvider with ChangeNotifier {
   }
 
   //标记方法
+  void markFun(index) {
+    picList[index]['isLiked'] = !picList[index]['isLiked'];
+    notifyListeners();
+  }
+
+  //标记方法
   void flipLikeState(int index) {
     picList[index]['isLiked'] = !picList[index]['isLiked'];
     notifyListeners();
@@ -188,7 +197,8 @@ class GetPageProvider with ChangeNotifier {
         url = 'https://api.pixivic.com/users/$userId/manga?page=1&pageSize=30';
       }
     } else if (jsonMode == 'collection') {
-      url = 'https://api.pixivic.com/collections/$collectionId/illustrations?page=$currentPage&pagesize=10';
+      url =
+          'https://api.pixivic.com/collections/$collectionId/illustrations?page=$currentPage&pagesize=10';
     }
 
     try {
