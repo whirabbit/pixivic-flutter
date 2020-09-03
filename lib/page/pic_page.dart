@@ -58,7 +58,6 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
-//    @required this.funOne,
   });
 
   PicPage.related({
@@ -76,7 +75,6 @@ class PicPage extends StatefulWidget {
     @required this.onPageTop,
     @required this.onPageStart,
     this.isScrollable = true,
-//    @required this.funOne,
   });
 
   PicPage.search({
@@ -94,7 +92,6 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
-//    @required this.funOne,
   });
 
   PicPage.artist({
@@ -112,7 +109,6 @@ class PicPage extends StatefulWidget {
     @required this.onPageTop,
     @required this.onPageStart,
     this.isScrollable = true,
-//    @required this.funOne,
   });
 
   PicPage.followed({
@@ -130,7 +126,6 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
-//    @required this.funOne,
   });
 
   PicPage.bookmark({
@@ -148,7 +143,6 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
-//    @required this.funOne,
   });
 
   PicPage.spotlight({
@@ -166,7 +160,6 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
-//    @required this.funOne,
   });
 
   PicPage.history({
@@ -184,7 +177,6 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
-//    @required this.funOne,
   });
 
   PicPage.oldHistory({
@@ -202,7 +194,6 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
-//    @required this.funOne,
   });
 
   PicPage.userdetail({
@@ -220,7 +211,6 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
-//    @required this.funOne,
   });
 
   PicPage.collection({
@@ -238,7 +228,6 @@ class PicPage extends StatefulWidget {
     this.onPageTop,
     this.onPageStart,
     this.isScrollable = true,
-//    @required this.funOne,
   });
 
   final String picDate;
@@ -342,7 +331,6 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
             pageProvider.jsonList = [];
           }
           pageProvider.picList = pageProvider.picList + pageProvider.jsonList;
-//          firstInit = false;
           if (pageProvider.picList.length == 0 && !hasConnected) {
             return Container(
                 height: ScreenUtil().setHeight(576),
@@ -404,7 +392,6 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
           }
         },
       ),
-//    create: (_)=>,
     );
   }
 
