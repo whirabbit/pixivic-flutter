@@ -122,9 +122,10 @@ class GetPageProvider with ChangeNotifier {
     this.collectionId = collectionId;
     getJsonList();
   }
+
   //标记方法
-  void markFun(index){
-    picList[index]['isLiked']=!picList[index]['isLiked'];
+  void markFun(index) {
+    picList[index]['isLiked'] = !picList[index]['isLiked'];
     notifyListeners();
   }
 
