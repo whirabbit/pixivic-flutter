@@ -15,9 +15,10 @@ import '../page/artist_page.dart';
 import '../page/pic_detail_page.dart';
 import '../function/uploadImage.dart';
 import '../function/identity.dart';
+
 // import '../provider/get_page.dart';
 import '../provider/page_switch.dart';
-import '../provider/searchbar_height.dart';
+import '../provider/common_provider.dart';
 
 class PappBar extends StatefulWidget implements PreferredSizeWidget {
   //删去
@@ -73,7 +74,6 @@ class PappBarState extends State<PappBar> {
   FocusNode searchFocusNode;
 
 //  PageSwitchProvider indexProvider;
-  SearchBarHeightProvider heightProvider;
 
   @override
   void initState() {
@@ -238,11 +238,11 @@ class PappBarState extends State<PappBar> {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(
-            create: (_) => SearchBarHeightProvider(),
+            create: (_) => CommonProvider(),
           )
         ],
-        child: Consumer<SearchBarHeightProvider>(
-          builder: (context, SearchBarHeightProvider heightProvider, _) {
+        child: Consumer<CommonProvider>(
+          builder: (context, CommonProvider heightProvider, _) {
             print("Pappbar refresh : searchbar");
             return AnimatedContainer(
                 duration: Duration(milliseconds: 250),
@@ -281,9 +281,6 @@ class PappBarState extends State<PappBar> {
                             controller: searchController,
                             focusNode: searchFocusNode,
                             onTap: () {
-//                            setState(() {
-//                              searchBarHeight = ScreenUtil().setHeight(77);
-//                            });
                               heightProvider.changeHeight(77);
                               searchBarHeight =
                                   ScreenUtil().setHeight(heightProvider.height);
