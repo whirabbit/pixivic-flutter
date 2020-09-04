@@ -320,7 +320,8 @@ class _CommentListPageState extends State<CommentListPage> {
   }
 
   _altLoading() {
-    if ((scrollController.position.extentAfter < 1000) && loadMoreAble) {
+    print(scrollController.position.extentAfter);
+    if ((scrollController.position.extentAfter < 500) && loadMoreAble) {
       print(" Load Comment");
       loadMoreAble = false;
       currentPage++;
