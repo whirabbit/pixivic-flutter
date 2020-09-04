@@ -5,7 +5,7 @@ import 'package:bot_toast/bot_toast.dart';
 class GetCommentProvider with ChangeNotifier {
   List commentList;
 
-  loadComments(int illustId, {int page}) async {
+  loadComments(int illustId, {int page = 1}) async {
     String url =
         'https://api.pixivic.com/illusts/$illustId/comments?page=$page&pageSize=10';
     var dio = Dio();
