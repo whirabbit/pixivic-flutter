@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pixivic/data/common.dart';
+import 'package:pixivic/provider/common_provider.dart';
 import 'package:pixivic/provider/get_page.dart';
 
 import 'package:requests/requests.dart';
@@ -29,7 +30,9 @@ class MarkHeart extends StatelessWidget {
       ],
       child: Consumer<FavProvider>(
         builder: (context, FavProvider favProvider, _) {
-          bool isLikedLocalState = picItem['isLiked'];
+          bool isLikedLocalState = getPageProvider != null
+              ? getPageProvider.picList[index]['isLiked']
+              : picItem['isLiked'];
           Color color = isLikedLocalState ? Colors.redAccent : Colors.grey[300];
           String picId = picItem['id'].toString();
           return IconButton(
@@ -62,10 +65,9 @@ class MarkHeart extends StatelessWidget {
                       bodyEncoding: RequestBodyEncoding.JSON);
                 }
                 Future.delayed(Duration(milliseconds: 400), () {
-//                      setState(() {
-                  getPageProvider.flipLikeState(index);
-
-//                      });
+                  getPageProvider != null
+                      ? getPageProvider.flipLikeState(index)
+                      : picItem['isLiked'] = !picItem['isLiked'];
                 });
               } catch (e) {
                 print(e);
