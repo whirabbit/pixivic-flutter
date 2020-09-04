@@ -43,7 +43,7 @@ class CommentListPage extends StatefulWidget {
 class _CommentListPageState extends State<CommentListPage> {
   TextZhCommentCell texts = TextZhCommentCell();
   ScreenUtil screen = ScreenUtil();
-  List commentsList = [];
+  List commentsList;
   int replyToId;
   int currentPage = 1;
   String replyToName;
@@ -100,6 +100,7 @@ class _CommentListPageState extends State<CommentListPage> {
               if (commentProvider.commentList == null) {
                 commentProvider.loadComments(widget.illustId);
                 commentProvider.commentList = [];
+                commentsList = [];
               }
               commentsList = commentsList + commentProvider.commentList;
               return Container(
@@ -320,7 +321,6 @@ class _CommentListPageState extends State<CommentListPage> {
   }
 
   _altLoading() {
-    print(scrollController.position.extentAfter);
     if ((scrollController.position.extentAfter < 500) && loadMoreAble) {
       print(" Load Comment");
       loadMoreAble = false;
