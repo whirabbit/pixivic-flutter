@@ -123,12 +123,6 @@ class GetPageProvider with ChangeNotifier {
     getJsonList();
   }
 
-  //标记方法
-  void markFun(index) {
-    picList[index]['isLiked'] = !picList[index]['isLiked'];
-    notifyListeners();
-  }
-
   getJsonList({bool loadMoreAble, int currentPage = 1}) async {
     // 获取所有的图片数据
 
