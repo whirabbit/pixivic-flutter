@@ -573,8 +573,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
                         BotToast.showSimpleNotification(title: '唤起网页失败');
                         throw 'Could not launch ${picMapData['link']}';
                       }
-                    }
-                    else
+                    } else
                       Navigator.push(
                           context,
                           MaterialPageRoute(
