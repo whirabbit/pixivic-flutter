@@ -517,7 +517,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
 //          ? ScreenUtil().setWidth(28)
 //          : ScreenUtil().setWidth(25),
         child: MarkHeart(
-            picItem: widget.getPageProvider.picList[widget.index],
+            picItem: widget._picData,
             index: widget.index,
             getPageProvider: widget.getPageProvider));
   }
