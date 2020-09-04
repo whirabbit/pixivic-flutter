@@ -43,7 +43,7 @@ class CommentListPage extends StatefulWidget {
 class _CommentListPageState extends State<CommentListPage> {
   TextZhCommentCell texts = TextZhCommentCell();
   ScreenUtil screen = ScreenUtil();
-  List commentsList = [];
+  List commentsList;
   int replyToId;
   int currentPage = 1;
   String replyToName;
