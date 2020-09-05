@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../data/texts.dart';
+import '../provider/collection_model.dart';
+import '../widget/papp_bar.dart';
 
 class CollectionPage extends StatefulWidget {
   @override
@@ -11,15 +13,34 @@ class CollectionPage extends StatefulWidget {
 }
 
 class _CollectionPageState extends State<CollectionPage> {
+  CollectionModel _model;
+  ScrollController _viewerScrollController;
+
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      
-    );
+  void initState() {
+    _model = CollectionModel()..initData();
+    _viewerScrollController = ScrollController()..addListener(_viewerListener);
+    Provider.of<CollectionModel>(context, listen: false).initData();
+    Provider.of<CollectionModel>(context, listen: false).getViewerJsonList();
+    super.initState();
   }
 
-  Widget cardCell(int index) {
-    Map data = spotlightList[index];
+  @override
+  void dispose() {
+    Provider.of<CollectionModel>(context, listen: false).resetViewer();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: PappBar(title: '画集'),
+        body: ChangeNotifierProvider.value(
+            value: _model,
+            child: ));
+  }
+
+  Widget cardCell(Map data) {
     return Container(
       padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
       child: Card(
@@ -35,7 +56,7 @@ class _CollectionPageState extends State<CollectionPage> {
                   Stack(
                     children: <Widget>[
                       Image.network(
-                        data['thumbnail'],
+                        data['cover']['imageUrls']['large'],
                         headers: {'Referer': 'https://app-api.pixiv.net'},
                         fit: BoxFit.fitWidth,
                         width: ScreenUtil().setWidth(300),
@@ -73,7 +94,7 @@ class _CollectionPageState extends State<CollectionPage> {
                               width: ScreenUtil().setWidth(50),
                               height: ScreenUtil().setHeight(25),
                               child: Text(
-                                data['subcategoryLabel'],
+                                data['caption'],
                                 style: TextStyle(color: Colors.white),
                               ),
                             )),
@@ -81,7 +102,7 @@ class _CollectionPageState extends State<CollectionPage> {
                           right: ScreenUtil().setWidth(5),
                           top: ScreenUtil().setHeight(13),
                           child: Text(
-                            data['publishDate'],
+                            data['createTime'],
                             style:
                                 TextStyle(fontSize: ScreenUtil().setHeight(12)),
                           ),
@@ -96,14 +117,20 @@ class _CollectionPageState extends State<CollectionPage> {
                 child: Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () {
-                  
-                },
+                onTap: () {},
               ),
             ))
           ],
         ),
       ),
     );
+  }
+
+  _viewerListener() {
+    if (_viewerScrollController.position.extentAfter < 1200 &&
+        !Provider.of<CollectionModel>(context).onViewerLoad &&
+        !Provider.of<CollectionModel>(context).onViewerBottom) {
+      Provider.of<CollectionModel>(context, listen: false).getViewerJsonList();
+    }
   }
 }

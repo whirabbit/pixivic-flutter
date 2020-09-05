@@ -1,3 +1,11 @@
+/** 
+ 此类包含了用于图片展示的组件，包含
+ - 单个图片单元
+ - 数字展示
+ - 收藏的心形按钮
+ - "这里什么都没有"的加载图像
+**/
+
 import 'package:flutter/material.dart';
 
 import 'package:random_color/random_color.dart';
