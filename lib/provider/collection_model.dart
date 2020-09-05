@@ -47,7 +47,7 @@ class CollectionModel with ChangeNotifier {
     notifyListeners();
 
     String url =
-        'https://api.pixivic.com/users/${prefs.getString('auth')}/collections?page=$currentViewerPage&pagesize=10';
+        'https://api.pixivic.com/users/${prefs.getString('id')}/collections?page=$currentViewerPage&pagesize=10';
     Map<String, String> headers = {'authorization': prefs.getString('auth')};
 
     try {
