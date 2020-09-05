@@ -3,7 +3,8 @@
  - 单个图片单元
  - 数字展示
  - 收藏的心形按钮
- - "这里什么都没有"的加载图像
+ - "这里什么都没有"的图像
+ - "列表加载中的"的图像
 **/
 
 import 'package:flutter/material.dart';
@@ -259,4 +260,15 @@ Widget nothingHereBox() {
       ],
     ),
   );
+}
+
+Widget loadingBox() {
+  return Container(
+      height: ScreenUtil().setHeight(576),
+      width: ScreenUtil().setWidth(324),
+      alignment: Alignment.center,
+      color: Colors.white,
+      child: Center(
+        child: Lottie.asset('image/loading-box.json'),
+      ));
 }

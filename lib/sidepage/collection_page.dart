@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../data/texts.dart';
 import '../provider/collection_model.dart';
 import '../widget/papp_bar.dart';
+import '../widget/image_display.dart';
 
 class CollectionPage extends StatefulWidget {
   @override
@@ -19,9 +20,8 @@ class _CollectionPageState extends State<CollectionPage> {
   @override
   void initState() {
     _model = CollectionModel()..initData();
+    _model.getViewerJsonList();
     _viewerScrollController = ScrollController()..addListener(_viewerListener);
-    Provider.of<CollectionModel>(context, listen: false).initData();
-    Provider.of<CollectionModel>(context, listen: false).getViewerJsonList();
     super.initState();
   }
 
@@ -35,9 +35,29 @@ class _CollectionPageState extends State<CollectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: PappBar(title: '画集'),
-        body: ChangeNotifierProvider.value(
-            value: _model,
-            child: ));
+        body: ChangeNotifierProvider(
+          create: (_) => CollectionModel(),
+          child: collectionBody(),
+        ));
+  }
+
+  Widget collectionBody() {
+    if (Provider.of<CollectionModel>(context).viewerList == []) {
+      if (!Provider.of<CollectionModel>(context).onViewerBottom) {
+        return loadingBox();
+      } else {
+        return nothingHereBox();
+      }
+    } else if (Provider.of<CollectionModel>(context).viewerList != []) {
+      return ListView.builder(
+        itemCount: _model.viewerList.length,
+        itemBuilder: (context, index) {
+          return cardCell(_model.viewerList[index]);
+        },
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget cardCell(Map data) {
