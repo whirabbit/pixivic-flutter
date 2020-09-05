@@ -10,6 +10,7 @@ import '../data/texts.dart';
 import '../sidepage/spotlight_page.dart';
 import '../sidepage/setting_page.dart';
 import '../sidepage/guess_like.dart';
+import '../sidepage/collection_page.dart';
 
 class CenterPage extends StatefulWidget {
   @override
@@ -62,13 +63,17 @@ class _CenterPageState extends State<CenterPage> {
                   Color(0xFFfbd46d), () {
                 _openUrl('https://m.pixivic.com/friends?VNK=d6d42013');
               }),
-              cell(texts.albumn, FontAwesomeIcons.boxes, Color(0xFF764ba2),
-                  () {}),
+              cell(texts.albumn, FontAwesomeIcons.boxes, Color(0xFF764ba2), () {
+                if (prefs.getString('auth') == '')
+                  BotToast.showSimpleNotification(title: texts.pleaseLogin);
+                else
+                  _routeToCollectionPage();
+              }),
               cell(texts.guessLike, FontAwesomeIcons.gratipay, Colors.pink[200],
                   () {
                 if (prefs.getString('auth') == '')
                   BotToast.showSimpleNotification(title: texts.pleaseLogin);
-                else 
+                else
                   _routeToGuessLikePage();
               }),
             ],
@@ -144,6 +149,11 @@ class _CenterPageState extends State<CenterPage> {
   _routeToGuessLikePage() {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => GuessLikePage()));
+  }
+
+  _routeToCollectionPage() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => CollectionPage()));
   }
 
   _openUrl(String url) async {
