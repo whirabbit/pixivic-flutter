@@ -19,14 +19,12 @@ import 'pic_detail_page.dart';
 import '../data/common.dart';
 import '../provider/get_page.dart';
 import '../provider/page_switch.dart';
+
 // import '../provider/user_state.dart';
 import '../widget/markheart_icon.dart';
 
 // 可以作为页面中单个组件或者单独页面使用的pic瀑布流组件,因可以作为页面，故不归为widget
-class PicPage extends StatefulWidget {
-  @override
-  _PicPageState createState() => _PicPageState();
-
+class PicPage extends StatelessWidget {
   PicPage({
     this.picDate,
     this.picMode,
@@ -250,9 +248,7 @@ class PicPage extends StatefulWidget {
   final ValueChanged<bool> onPageScrolling;
   final VoidCallback onPageTop;
   final VoidCallback onPageStart;
-}
 
-class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
   // pageProvider.picList - 图片的JSON文件列表
   // picTotalNum - pageProvider.picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
   // 针对最常访问的 Home 页面，临时变量记录于 common.dart
@@ -269,29 +265,29 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
   PageSwitchProvider indexProvider;
   GetPageProvider getPageProvider;
 
-  @override
-  void initState() {
-    // if ((widget.jsonMode == 'home') && (!listEquals(homePicList, []))) {
-    //   picList = homePicList;
-    //   currentPage = homeCurrentPage;
-    //   picTotalNum = picList.length;
-    // }
-    scrollController = ScrollController(
-        initialScrollOffset:
-            widget.jsonMode == 'home' ? homeScrollerPosition : 0.0)
-      ..addListener(_doWhileScrolling);
-//    loadMoreAble = ifLoadMoreAble();
-    super.initState();
-  }
+//  @override
+//  void initState() {
+//    // if (( jsonMode == 'home') && (!listEquals(homePicList, []))) {
+//    //   picList = homePicList;
+//    //   currentPage = homeCurrentPage;
+//    //   picTotalNum = picList.length;
+//    // }
+//    scrollController = ScrollController(
+//        initialScrollOffset:
+//             jsonMode == 'home' ? homeScrollerPosition : 0.0)
+//      ..addListener(_doWhileScrolling);
+////    loadMoreAble = ifLoadMoreAble();
+//    super.initState();
+//  }
 
 //  @override
 //  void didUpdateWidget(PicPage oldWidget) {
-//    print('picPage didUpdateWidget: mode is ${widget.jsonMode}');
+//    print('picPage didUpdateWidget: mode is ${ jsonMode}');
 //    // 当为 home 模式且切换了参数，则同时更新暂存的相关数据
-//    if (widget.jsonMode == 'home' &&
-//            (oldWidget.picDate != widget.picDate ||
-//                oldWidget.picMode != widget.picMode) ||
-//        widget.jsonMode == 'search') {
+//    if ( jsonMode == 'home' &&
+//            (old picDate !=  picDate ||
+//                old picMode !=  picMode) ||
+//         jsonMode == 'search') {
 //      //切换model
 //      firstInit = true;
 //      pageProvider.picList = [];
@@ -305,36 +301,34 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
 //    super.didUpdateWidget(oldWidget);
 //  }
 
-  @override
-  void dispose() {
-    print('PicPage Disposed');
-    // scrollController.removeListener(_doWhileScrolling);
-    // scrollController.dispose();
-//    if (widget.jsonMode == 'home' && pageProvider.picList != null) {
-//      homepageProvider.picList = pageProvider.picList;
-//      homeCurrentPage = currentPage;
-//    }
-
-    super.dispose();
-  }
+//  @override
+//  void dispose() {
+//    print('PicPage Disposed');
+//    // scrollController.removeListener(_doWhileScrolling);
+//    // scrollController.dispose();
+////    if ( jsonMode == 'home' && pageProvider.picList != null) {
+////      homepageProvider.picList = pageProvider.picList;
+////      homeCurrentPage = currentPage;
+////    }
+//
+//    super.dispose();
+//  }
 
   @override
   Widget build(BuildContext context) {
     print('build PicPage');
-
-    super.build(context);
-
-    return ChangeNotifierProvider<GetPageProvider>.value(
-      value: GetPageProvider(),
+    return ChangeNotifierProvider<GetPageProvider>(
+      create: (_) => GetPageProvider(),
       child: Selector<GetPageProvider, GetPageProvider>(
         shouldRebuild: (pre, next) => true,
         selector: (context, provider) => provider,
         builder: (context, GetPageProvider pageProvider, _) {
-          getPageProvider = pageProvider;
+          pageProvider.context = context;
           switchModel(pageProvider);
-          if (pageProvider.jsonList == null) {
+          if (pageProvider.picList == null) {
             pageProvider.picList = [];
             pageProvider.jsonList = [];
+            print("请求数据");
             pageProvider.getJsonList().then((value) {
               value.length == 0 ? hasConnected = true : hasConnected = false;
             });
@@ -379,8 +373,8 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
                     right: ScreenUtil().setWidth(5)),
                 color: Colors.grey[50],
                 child: StaggeredGridView.countBuilder(
-                  controller: scrollController,
-                  physics: widget.isScrollable
+                  controller: pageProvider.scrollController,
+                  physics: pageProvider.isScrollable
                       ? ClampingScrollPhysics()
                       : NeverScrollableScrollPhysics(),
                   crossAxisCount: 2,
@@ -389,7 +383,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
                     return Selector<GetPageProvider, Map>(
                       selector: (context, provider) => provider.picList[index],
                       builder: (context, picItem, child) {
-                        return imageCell(picItem, index);
+                        return imageCell(picItem, index, context);
                       },
                     );
                   },
@@ -405,35 +399,35 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
 
   //根据传入的jsonModel选择provider的方法来获取数据
   void switchModel(GetPageProvider provider) {
-    switch (widget.jsonMode) {
+    switch (jsonMode) {
       case 'home':
-        provider.homePage(picDate: widget.picDate, picMode: widget.picMode);
+        provider.homePage(picDate: picDate, picMode: picMode);
         break;
       case 'related':
         provider.relatedPage(
-            relatedId: widget.relatedId,
-            onTopOfPicpage: widget.onPageTop,
-            onStartOfPicpage: widget.onPageStart);
+            relatedId: relatedId,
+            onTopOfPicpage: onPageTop,
+            onStartOfPicpage: onPageStart);
         break;
       case 'search':
         provider.searchPage(
-            searchKeywords: widget.searchKeywords, searchManga: widget.isManga);
+            searchKeywords: searchKeywords, searchManga: isManga);
         break;
       case 'artist':
         provider.artistPage(
-            artistId: widget.artistId,
-            isManga: widget.isManga,
-            onTopOfPicpage: widget.onPageTop,
-            onStartOfPicpage: widget.onPageStart);
+            artistId: artistId,
+            isManga: isManga,
+            onTopOfPicpage: onPageTop,
+            onStartOfPicpage: onPageStart);
         break;
       case 'followed':
-        provider.followedPage(userId: widget.userId, isManga: widget.isManga);
+        provider.followedPage(userId: userId, isManga: isManga);
         break;
       case 'bookmark':
-        provider.bookmarkPage(userId: widget.userId, isManga: widget.isManga);
+        provider.bookmarkPage(userId: userId, isManga: isManga);
         break;
       case 'spotlight':
-        provider.spotlightPage(spotlightId: widget.spotlightId);
+        provider.spotlightPage(spotlightId: spotlightId);
         break;
       case 'history':
         provider.historyPage();
@@ -443,13 +437,13 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
         break;
       case 'userdetail':
         provider.userdetailPage(
-            userId: widget.userId,
-            isManga: widget.isManga,
-            onTopOfPicpage: widget.onPageTop,
-            onStartOfPicpage: widget.onPageStart);
+            userId: userId,
+            isManga: isManga,
+            onTopOfPicpage: onPageTop,
+            onStartOfPicpage: onPageStart);
         break;
       case 'collection':
-        provider.collectionPage(collectionId: widget.collectionId);
+        provider.collectionPage(collectionId: collectionId);
         break;
     }
   }
@@ -464,83 +458,83 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
     return [url, number, width, height];
   }
 
-  _doWhileScrolling() {
-//    print("滑出ViewPort顶部的长度"+scrollController.position.extentBefore.toString());
-//    print("ViewPort内部长度"+scrollController.position.extentInside.toString());
-//      print("测量"+scrollController.position.extentAfter.toString());
-//    FocusScope.of(context).unfocus();
-    // 如果为主页面 picPage，则记录滑动位置、判断滑动
-    if (widget.jsonMode == 'home') {
-      homeScrollerPosition = scrollController
-          .position.extentBefore; // 保持记录scrollposition，原因为dispose时无法记录
-      indexProvider = Provider.of<PageSwitchProvider>(context, listen: false);
-      // 判断是否在滑动，以便隐藏底部控件
-      if (scrollController.position.userScrollDirection ==
-          ScrollDirection.reverse) {
-        if (!indexProvider.judgeScrolling) {
-          indexProvider.changeScrolling(true);
-//          isScrolling = true;
-//          widget.onPageScrolling(isScrolling);
-        }
-      }
-      if (scrollController.position.userScrollDirection ==
-          ScrollDirection.forward) {
-        //显示
-        if (indexProvider.judgeScrolling) {
-          indexProvider.changeScrolling(false);
-//          isScrolling = false;
-//          widget.onPageScrolling(isScrolling);
-        }
-      }
-    }
-
-//    if (widget.jsonMode == 'related' ||
-//        widget.jsonMode == 'artist' ||
-//        widget.jsonMode == 'userdetail') {
-//      if (scrollController.position.extentBefore == 0 &&
-//          scrollController.position.userScrollDirection ==
-//              ScrollDirection.forward) {
-//        widget.onPageTop();
-//        print('on page top');
+//  _doWhileScrolling() {
+////    print("滑出ViewPort顶部的长度"+scrollController.position.extentBefore.toString());
+////    print("ViewPort内部长度"+scrollController.position.extentInside.toString());
+////      print("测量"+scrollController.position.extentAfter.toString());
+////    FocusScope.of(context).unfocus();
+//    // 如果为主页面 picPage，则记录滑动位置、判断滑动
+//    if ( jsonMode == 'home') {
+//      homeScrollerPosition = scrollController
+//          .position.extentBefore; // 保持记录scrollposition，原因为dispose时无法记录
+//      indexProvider = Provider.of<PageSwitchProvider>(context, listen: false);
+//      // 判断是否在滑动，以便隐藏底部控件
+//      if (scrollController.position.userScrollDirection ==
+//          ScrollDirection.reverse) {
+//        if (!indexProvider.judgeScrolling) {
+//          indexProvider.changeScrolling(true);
+////          isScrolling = true;
+////           onPageScrolling(isScrolling);
+//        }
 //      }
-//      if (scrollController.position.extentBefore > 150 &&
-//          scrollController.position.extentBefore < 200 &&
-//          scrollController.position.userScrollDirection ==
-//              ScrollDirection.reverse) {
-//        widget.onPageStart();
-//        print('on page start');
+//      if (scrollController.position.userScrollDirection ==
+//          ScrollDirection.forward) {
+//        //显示
+//        if (indexProvider.judgeScrolling) {
+//          indexProvider.changeScrolling(false);
+////          isScrolling = false;
+////           onPageScrolling(isScrolling);
+//        }
 //      }
 //    }
-
-    // Auto Load
-    if ((scrollController.position.extentAfter < 1200) &&
-        (currentPage < 30) &&
-        loadMoreAble) {
-      print("Picpage: Load Data");
-      loadMoreAble = false;
-      currentPage++;
-      print('current page is $currentPage');
-      try {
-        getPageProvider
-            .getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
-            .then((value) {
-          if (value.length != 0) {
-            loadMoreAble = true;
-          }
-        });
-      } catch (err) {
-        print('=========getJsonList==========');
-        print(err);
-        print('==============================');
-        if (err.toString().contains('SocketException'))
-          BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
-        loadMoreAble = true;
-      }
-    }
-  }
+//
+////    if ( jsonMode == 'related' ||
+////         jsonMode == 'artist' ||
+////         jsonMode == 'userdetail') {
+////      if (scrollController.position.extentBefore == 0 &&
+////          scrollController.position.userScrollDirection ==
+////              ScrollDirection.forward) {
+////         onPageTop();
+////        print('on page top');
+////      }
+////      if (scrollController.position.extentBefore > 150 &&
+////          scrollController.position.extentBefore < 200 &&
+////          scrollController.position.userScrollDirection ==
+////              ScrollDirection.reverse) {
+////         onPageStart();
+////        print('on page start');
+////      }
+////    }
+//
+//    // Auto Load
+//    if ((scrollController.position.extentAfter < 1200) &&
+//        (currentPage < 30) &&
+//        loadMoreAble) {
+//      print("Picpage: Load Data");
+//      loadMoreAble = false;
+//      currentPage++;
+//      print('current page is $currentPage');
+//      try {
+//        getPageProvider
+//            .getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
+//            .then((value) {
+//          if (value.length != 0) {
+//            loadMoreAble = true;
+//          }
+//        });
+//      } catch (err) {
+//        print('=========getJsonList==========');
+//        print(err);
+//        print('==============================');
+//        if (err.toString().contains('SocketException'))
+//          BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+//        loadMoreAble = true;
+//      }
+//    }
+//  }
 
   ifLoadMoreAble() {
-    switch (widget.jsonMode) {
+    switch (jsonMode) {
       case 'followed':
         return false;
         break;
@@ -552,7 +546,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
     }
   }
 
-  Widget imageCell(Map picItem, int index) {
+  Widget imageCell(Map picItem, int index, BuildContext context) {
     final Color color = _randomColor.randomColor();
     Map picMapData = Map.from(picItem);
     if (picMapData['xrestict'] == 1 ||
@@ -692,7 +686,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
         : Container();
   }
 
-//页面状态保持
-  @override
-  bool get wantKeepAlive => false;
+////页面状态保持
+//  @override
+//  bool get wantKeepAlive => false;
 }

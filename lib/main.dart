@@ -194,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  StatefulWidget _getPageByIndex(int index) {
+  Widget _getPageByIndex(int index) {
     switch (index) {
       case 0:
         return picPage;
