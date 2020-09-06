@@ -262,7 +262,6 @@ class PicPage extends StatelessWidget {
   bool isScrolling = false;
   ScrollController scrollController;
   String previewQuality = prefs.getString('previewQuality');
-  PageSwitchProvider indexProvider;
   GetPageProvider getPageProvider;
 
 //  @override
@@ -323,6 +322,7 @@ class PicPage extends StatelessWidget {
         shouldRebuild: (pre, next) => true,
         selector: (context, provider) => provider,
         builder: (context, GetPageProvider pageProvider, _) {
+          getPageProvider = pageProvider;
           pageProvider.context = context;
           switchModel(pageProvider);
           if (pageProvider.picList == null) {
