@@ -315,8 +315,8 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     print("build");
     super.build(context);
-    return ChangeNotifierProvider<GetPageProvider>(
-      create: (_) => GetPageProvider(),
+    return ChangeNotifierProvider<GetPageProvider>.value(
+      value: GetPageProvider(),
       child: Consumer<UserStateProvider>(
         builder: (context, UserStateProvider userProvider, _) {
           return Selector<GetPageProvider, GetPageProvider>(
