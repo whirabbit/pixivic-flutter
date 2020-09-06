@@ -770,5 +770,5 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
 
 //页面状态保持
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => false;
 }
