@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 
-import 'package:pixivic/data/common.dart';
+import '../data/common.dart';
 
 class GetPageProvider with ChangeNotifier {
   String picDate;
@@ -117,6 +117,14 @@ class GetPageProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // TODO: 当退出 home 模式的 PicPage 时，进行 homePicList 的保存
+  void saveListToHomePicList(int currentPage) {
+    if(picList != null && jsonMode == 'home') {
+      homePicList = picList;
+      homeCurrentPage = currentPage;
+    }
+  }
+
   collectionPage({@required String collectionId}) {
     this.collectionId = collectionId;
     getJsonList();
@@ -183,7 +191,10 @@ class GetPageProvider with ChangeNotifier {
       url =
           'https://api.pixivic.com/collections/$collectionId/illustrations?page=$currentPage&pagesize=10';
     }
-
+    // TODO: 当 home 模式时，查看是否有 list 和 page 缓存，有的话则重载，而非重新加载
+    // if(jsonMode == 'home' && currentPage < homeCurrentPage) {
+    //   picList = homePicList;
+    // } else {}
     try {
       if (prefs.getString('auth') == '') {
         var requests = await Requests.get(url);
