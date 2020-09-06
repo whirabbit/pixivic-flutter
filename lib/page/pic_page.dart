@@ -5,10 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:pixivic/provider/get_page.dart';
-import 'package:pixivic/provider/page_switch.dart';
-import 'package:pixivic/provider/user_state.dart';
-import 'package:pixivic/widget/markheart_icon.dart';
+
 import 'package:requests/requests.dart';
 import 'package:random_color/random_color.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -20,6 +17,10 @@ import 'package:provider/provider.dart';
 
 import 'pic_detail_page.dart';
 import '../data/common.dart';
+import '../provider/get_page.dart';
+import '../provider/page_switch.dart';
+// import '../provider/user_state.dart';
+import '../widget/markheart_icon.dart';
 
 // 可以作为页面中单个组件或者单独页面使用的pic瀑布流组件,因可以作为页面，故不归为widget
 class PicPage extends StatefulWidget {
@@ -258,6 +259,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
 //  List pageProvider.picList = [];
   int picTotalNum;
   int currentPage = 1;
+  List picList;
   RandomColor _randomColor = RandomColor();
   bool hasConnected = false;
   bool loadMoreAble = true;
@@ -269,6 +271,11 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
 
   @override
   void initState() {
+    // if ((widget.jsonMode == 'home') && (!listEquals(homePicList, []))) {
+    //   picList = homePicList;
+    //   currentPage = homeCurrentPage;
+    //   picTotalNum = picList.length;
+    // }
     scrollController = ScrollController(
         initialScrollOffset:
             widget.jsonMode == 'home' ? homeScrollerPosition : 0.0)
@@ -313,93 +320,84 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
 
   @override
   Widget build(BuildContext context) {
-    print("build");
+    print('build PicPage');
+
     super.build(context);
+
     return ChangeNotifierProvider<GetPageProvider>.value(
       value: GetPageProvider(),
-      child: Consumer<UserStateProvider>(
-        builder: (context, UserStateProvider userProvider, _) {
-          return Selector<GetPageProvider, GetPageProvider>(
-            shouldRebuild: (pre, next) => true,
-            selector: (context, provider) => provider,
-            builder: (context, GetPageProvider pageProvider, _) {
-              getPageProvider = pageProvider;
-              switchModel(pageProvider);
-              if (pageProvider.jsonList == null ||
-                  userProvider.loginState == true) {
-                pageProvider.getJsonList().then((value) {
-                  value.length == 0
-                      ? hasConnected = true
-                      : hasConnected = false;
-                });
-                pageProvider.picList = [];
-                pageProvider.jsonList = [];
-                userProvider.loginState = false;
-              }
-              pageProvider.picList =
-                  pageProvider.picList + pageProvider.jsonList;
-              if (pageProvider.picList.length == 0 && !hasConnected) {
-                return Container(
-                    height: ScreenUtil().setHeight(576),
-                    width: ScreenUtil().setWidth(324),
-                    alignment: Alignment.center,
-                    color: Colors.white,
-                    child: Center(
-                      child: Lottie.asset('image/loading-box.json'),
-                    ));
-              } else if (pageProvider.picList.length == 0 && hasConnected) {
-                return Container(
-                  height: ScreenUtil().setHeight(576),
-                  width: ScreenUtil().setWidth(324),
-                  color: Colors.white,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Lottie.asset('image/empty-box.json',
-                          repeat: false, height: ScreenUtil().setHeight(100)),
-                      Text(
-                        '这里什么都没有呢',
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: ScreenUtil().setHeight(10),
-                            decoration: TextDecoration.none),
-                      ),
-                      SizedBox(
-                        height: ScreenUtil().setHeight(250),
-                      )
-                    ],
+      child: Selector<GetPageProvider, GetPageProvider>(
+        shouldRebuild: (pre, next) => true,
+        selector: (context, provider) => provider,
+        builder: (context, GetPageProvider pageProvider, _) {
+          getPageProvider = pageProvider;
+          switchModel(pageProvider);
+          if (pageProvider.jsonList == null) {
+            pageProvider.picList = [];
+            pageProvider.jsonList = [];
+            pageProvider.getJsonList().then((value) {
+              value.length == 0 ? hasConnected = true : hasConnected = false;
+            });
+          }
+          pageProvider.picList = pageProvider.picList + pageProvider.jsonList;
+          if (pageProvider.picList.length == 0 && !hasConnected) {
+            return Container(
+                height: ScreenUtil().setHeight(576),
+                width: ScreenUtil().setWidth(324),
+                alignment: Alignment.center,
+                color: Colors.white,
+                child: Center(
+                  child: Lottie.asset('image/loading-box.json'),
+                ));
+          } else if (pageProvider.picList.length == 0 && hasConnected) {
+            return Container(
+              height: ScreenUtil().setHeight(576),
+              width: ScreenUtil().setWidth(324),
+              color: Colors.white,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Lottie.asset('image/empty-box.json',
+                      repeat: false, height: ScreenUtil().setHeight(100)),
+                  Text(
+                    '这里什么都没有呢',
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: ScreenUtil().setHeight(10),
+                        decoration: TextDecoration.none),
                   ),
-                );
-              } else {
-//
-                return Container(
-                    padding: EdgeInsets.only(
-                        left: ScreenUtil().setWidth(5),
-                        right: ScreenUtil().setWidth(5)),
-                    color: Colors.grey[50],
-                    child: StaggeredGridView.countBuilder(
-                      controller: scrollController,
-                      physics: widget.isScrollable
-                          ? ClampingScrollPhysics()
-                          : NeverScrollableScrollPhysics(),
-                      crossAxisCount: 2,
-                      itemCount: pageProvider.picList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Selector<GetPageProvider, Map>(
-                          selector: (context, provider) =>
-                              provider.picList[index],
-                          builder: (context, picItem, child) {
-                            return imageCell(picItem, index);
-                          },
-                        );
+                  SizedBox(
+                    height: ScreenUtil().setHeight(250),
+                  )
+                ],
+              ),
+            );
+          } else {
+            return Container(
+                padding: EdgeInsets.only(
+                    left: ScreenUtil().setWidth(5),
+                    right: ScreenUtil().setWidth(5)),
+                color: Colors.grey[50],
+                child: StaggeredGridView.countBuilder(
+                  controller: scrollController,
+                  physics: widget.isScrollable
+                      ? ClampingScrollPhysics()
+                      : NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  itemCount: pageProvider.picList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Selector<GetPageProvider, Map>(
+                      selector: (context, provider) => provider.picList[index],
+                      builder: (context, picItem, child) {
+                        return imageCell(picItem, index);
                       },
-                      staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-                      mainAxisSpacing: 0.0,
-                      crossAxisSpacing: 0.0,
-                    ));
-              }
-            },
-          );
+                    );
+                  },
+                  staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+                  mainAxisSpacing: 0.0,
+                  crossAxisSpacing: 0.0,
+                ));
+          }
         },
       ),
     );
@@ -696,5 +694,5 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
 
 //页面状态保持
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => false;
 }
