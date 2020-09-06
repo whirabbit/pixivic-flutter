@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+
 import 'dart:convert';
 
 import '../data/texts.dart';
 import '../data/common.dart';
 import '../function/identity.dart' as identity;
+import 'package:provider/provider.dart';
 
 import 'package:requests/requests.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:pixivic/provider/user_state.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -38,6 +41,7 @@ class LoginPageState extends State<LoginPage> {
   bool loginOnLoading = false;
   bool registerOnLoading = false;
   bool modeIsLogin = true;
+  BuildContext buildContext;
 
   @override
   void initState() {
@@ -60,6 +64,7 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    this.buildContext = context;
     return SingleChildScrollView(
       controller: mainController,
       child: Container(
@@ -215,12 +220,22 @@ class LoginPageState extends State<LoginPage> {
                 loginOnLoading = true;
                 _getVerificationCode();
               });
-              int loginResult = await identity.login(
-                  _userNameController.text,
-                  _userPasswordController.text,
-                  verificationCode,
-                  _verificationController.text,
-                  widgetFrom: widget.widgetFrom);
+              int loginResult = await identity
+                  .login(
+                _userNameController.text,
+                _userPasswordController.text,
+                verificationCode,
+                _verificationController.text,
+                widgetFrom: widget.widgetFrom,
+              )
+                  .then((statusCode) {
+                if (statusCode == 200) {
+                  print("loginProvider");
+                  Provider.of<UserStateProvider>(context, listen: false)
+                      .changeLogin(true);
+                }
+              });
+
               if (loginResult != 200) {
                 _resetMode('login');
               }
