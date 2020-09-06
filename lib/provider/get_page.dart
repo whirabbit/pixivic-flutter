@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:provider/provider.dart';
+import 'package:pixivic/provider/page_switch.dart';
 
 import '../data/common.dart';
 
@@ -20,22 +22,36 @@ class GetPageProvider with ChangeNotifier {
   String url;
   String jsonMode;
   bool isManga;
-  bool isScrollable;
+  bool isScrollable = true;
   int homeCurrentPage;
   num relatedId;
   ValueChanged<bool> onPageScrolling;
   VoidCallback onPageTop;
   VoidCallback onPageStart;
-  List picList = [];
+  bool hasConnected = false;
+  bool loadMoreAble = true;
+  bool isScrolling = false;
+  int currentPage = 1;
+  List picList;
+
   List jsonList;
+  ScrollController scrollController;
+  BuildContext context;
+
+  GetPageProvider() {
+    print("控制器初始化");
+    scrollController = ScrollController(
+        initialScrollOffset: jsonMode == 'home' ? homeScrollerPosition : 0.0)
+      ..addListener(_doWhileScrolling);
+  }
 
   homePage({
     @required String picDate,
     @required String picMode,
   }) {
-    //加载动画
+    //切换排行刷新
     if (this.picDate != picDate || this.picMode != picMode) {
-      this.jsonList = null;
+      this.picList = null;
     }
     this.jsonMode = 'home';
     this.picDate = picDate;
@@ -44,11 +60,12 @@ class GetPageProvider with ChangeNotifier {
 
   void searchPage(
       {@required String searchKeywords, @required bool searchManga}) {
+    if (this.searchKeywords != searchKeywords) {
+      this.picList = null;
+    }
     this.jsonMode = 'search';
     this.searchKeywords = searchKeywords;
     this.isManga = searchManga;
-
-//    getJsonList();
   }
 
   void relatedPage(
@@ -119,7 +136,7 @@ class GetPageProvider with ChangeNotifier {
 
   // TODO: 当退出 home 模式的 PicPage 时，进行 homePicList 的保存
   void saveListToHomePicList(int currentPage) {
-    if(picList != null && jsonMode == 'home') {
+    if (picList != null && jsonMode == 'home') {
       homePicList = picList;
       homeCurrentPage = currentPage;
     }
@@ -128,6 +145,81 @@ class GetPageProvider with ChangeNotifier {
   collectionPage({@required String collectionId}) {
     this.collectionId = collectionId;
     getJsonList();
+  }
+
+  _doWhileScrolling() {
+//    print("滑出ViewPort顶部的长度"+scrollController.position.extentBefore.toString());
+//    print("ViewPort内部长度"+scrollController.position.extentInside.toString());
+//      print("测量"+scrollController.position.extentAfter.toString());
+//    FocusScope.of(context).unfocus();
+    // 如果为主页面 picPage，则记录滑动位置、判断滑动
+    if (jsonMode == 'home') {
+      homeScrollerPosition = scrollController
+          .position.extentBefore; // 保持记录scrollposition，原因为dispose时无法记录
+      PageSwitchProvider indexProvider =
+          Provider.of<PageSwitchProvider>(context, listen: false);
+      // 判断是否在滑动，以便隐藏底部控件
+      if (scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        if (!indexProvider.judgeScrolling) {
+          indexProvider.changeScrolling(true);
+//          isScrolling = true;
+//          widget.onPageScrolling(isScrolling);
+        }
+      }
+      if (scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        //显示
+        if (indexProvider.judgeScrolling) {
+          indexProvider.changeScrolling(false);
+//          isScrolling = false;
+//          widget.onPageScrolling(isScrolling);
+        }
+      }
+    }
+
+//    if (widget.jsonMode == 'related' ||
+//        widget.jsonMode == 'artist' ||
+//        widget.jsonMode == 'userdetail') {
+//      if (scrollController.position.extentBefore == 0 &&
+//          scrollController.position.userScrollDirection ==
+//              ScrollDirection.forward) {
+//        widget.onPageTop();
+//        print('on page top');
+//      }
+//      if (scrollController.position.extentBefore > 150 &&
+//          scrollController.position.extentBefore < 200 &&
+//          scrollController.position.userScrollDirection ==
+//              ScrollDirection.reverse) {
+//        widget.onPageStart();
+//        print('on page start');
+//      }
+//    }
+
+    // Auto Load
+    if ((scrollController.position.extentAfter < 1200) &&
+        (currentPage < 30) &&
+        loadMoreAble) {
+      print("Picpage: Load Data");
+      loadMoreAble = false;
+      currentPage++;
+      print('current page is $currentPage');
+      try {
+        getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
+            .then((value) {
+          if (value.length != 0) {
+            loadMoreAble = true;
+          }
+        });
+      } catch (err) {
+        print('=========getJsonList==========');
+        print(err);
+        print('==============================');
+        if (err.toString().contains('SocketException'))
+          BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+        loadMoreAble = true;
+      }
+    }
   }
 
   getJsonList({bool loadMoreAble, int currentPage = 1}) async {
@@ -229,7 +321,10 @@ class GetPageProvider with ChangeNotifier {
   @override
   void dispose() {
     super.dispose();
+    print("providerDispose");
     picList = [];
     jsonList = null;
+    scrollController.removeListener(_doWhileScrolling);
+    scrollController.dispose();
   }
 }
