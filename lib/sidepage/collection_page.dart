@@ -27,7 +27,7 @@ class _CollectionPageState extends State<CollectionPage> {
 
   @override
   void dispose() {
-    Provider.of<CollectionModel>(context, listen: false).resetViewer();
+    // Provider.of<CollectionModel>(context, listen: false).resetViewer();
     super.dispose();
   }
 
@@ -35,9 +35,10 @@ class _CollectionPageState extends State<CollectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: PappBar(title: '画集'),
-        body: ChangeNotifierProvider(
-          create: (_) => CollectionModel(),
+        body: ChangeNotifierProvider.value(
+          value: _model,
           child: collectionBody(),
+          
         ));
   }
 
