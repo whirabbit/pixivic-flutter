@@ -22,6 +22,11 @@ class MarkHeart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isLikedLocalState = getPageProvider != null
+        ? getPageProvider.picList[index]['isLiked']
+        : picItem['isLiked'];
+    Color color = isLikedLocalState ? Colors.redAccent : Colors.grey[300];
+    String picId = picItem['id'].toString();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<FavProvider>(
@@ -29,12 +34,7 @@ class MarkHeart extends StatelessWidget {
         )
       ],
       child: Consumer<FavProvider>(
-        builder: (context, FavProvider favProvider, _) {
-          bool isLikedLocalState = getPageProvider != null
-              ? getPageProvider.picList[index]['isLiked']
-              : picItem['isLiked'];
-          Color color = isLikedLocalState ? Colors.redAccent : Colors.grey[300];
-          String picId = picItem['id'].toString();
+        builder: (context, FavProvider favProvider, child) {
           return IconButton(
             color: color,
             padding: EdgeInsets.all(0),
@@ -68,6 +68,9 @@ class MarkHeart extends StatelessWidget {
                   getPageProvider != null
                       ? getPageProvider.flipLikeState(index)
                       : picItem['isLiked'] = !picItem['isLiked'];
+                  isLikedLocalState = !isLikedLocalState;
+                  color =
+                      isLikedLocalState ? Colors.redAccent : Colors.grey[300];
                 });
               } catch (e) {
                 print(e);
