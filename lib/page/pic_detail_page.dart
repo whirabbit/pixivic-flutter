@@ -23,7 +23,7 @@ import '../widget/papp_bar.dart';
 import '../widget/bookmark_users.dart';
 import '../widget/comment_cell.dart';
 import '../function/downloadImage.dart';
-import '../function/albumn.dart';
+import '../function/collection.dart';
 // import '../provider/get_page.dart';
 
 class PicDetailPage extends StatefulWidget {
@@ -594,7 +594,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                       padding: EdgeInsets.only(bottom: screen.setHeight(5)),
                       alignment: Alignment.center,
                       child: Text(
-                        texts.addToAlbumn,
+                        texts.addToCollection,
                         style: TextStyle(color: Colors.orangeAccent),
                       )),
                   Container(
@@ -610,7 +610,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                               title: Text(albumList[index]['title']),
                               subtitle: Text(albumList[index]['caption']),
                               onTap: () {
-                                addIllustToAlbumn(widget._picData['id'],
+                                addIllustToCollection(widget._picData['id'],
                                     albumList[index]['id']);
                                 Navigator.of(context).pop();
                               },
@@ -626,7 +626,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                       shape: StadiumBorder(),
                       onPressed: () {
                         Navigator.of(context).pop();
-                        showAddNewAlbumnDialog(context, () {
+                        showAddNewCollectionDialog(context, () {
                           getAlbumList().then((value) {
                             setState(() {
                               albumList = value;
@@ -653,7 +653,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                   Container(
                     // width: screen.setWidth(300),
                     padding: EdgeInsets.only(top: screen.setHeight(8)),
-                    child: Text(texts.addFirstAlbumn),
+                    child: Text(texts.addFirstCollection),
                   ),
                   Container(
                     width: screen.setWidth(100),
@@ -663,7 +663,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                       shape: StadiumBorder(),
                       onPressed: () {
                         Navigator.of(context).pop();
-                        showAddNewAlbumnDialog(context, () {
+                        showAddNewCollectionDialog(context, () {
                           getAlbumList().then((value) {
                             setState(() {
                               albumList = value;

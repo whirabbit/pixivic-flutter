@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class ImageAlbumnPage extends StatefulWidget {
+class ImageCollectionPage extends StatefulWidget {
   @override
-  _ImageAlbumnPageState createState() => _ImageAlbumnPageState();
+  _ImageCollectionPageState createState() => _ImageCollectionPageState();
 }
 
-class _ImageAlbumnPageState extends State<ImageAlbumnPage> {
+class _ImageCollectionPageState extends State<ImageCollectionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

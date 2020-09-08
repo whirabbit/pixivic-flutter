@@ -22,7 +22,7 @@ import 'page/center_page.dart';
 import 'data/common.dart';
 import 'data/bugly.dart';
 import 'function/update.dart';
-import 'function/albumn.dart';
+import 'function/collection.dart';
 // import 'provider/get_comment_list_data.dart';
 // import 'provider/get_page.dart';
 import 'provider/page_switch.dart';
@@ -36,8 +36,8 @@ void main() {
     runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => PageSwitchProvider()),
-        ChangeNotifierProvider<NewAlbumnParameterModel>(
-          create: (_) => NewAlbumnParameterModel(),
+        ChangeNotifierProvider<NewCollectionParameterModel>(
+          create: (_) => NewCollectionParameterModel(),
         )
       ],
       child: MyApp(),

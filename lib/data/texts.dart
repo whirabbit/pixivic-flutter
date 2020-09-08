@@ -76,8 +76,8 @@ class TextZhPicDetailPage {
   String copyIllustId = '拷贝画作id';
   String copyArtistId = '拷贝画师id';
   String alreadyCopied = '已拷贝id至剪贴板';
-  String addToAlbumn = '添加至画集';
-  String addFirstAlbumn = '添加您的第一个画集';
+  String addToCollection = '添加至画集';
+  String addFirstCollection = '添加您的第一个画集';
 }
 
 class TextZhArtistPage {
@@ -104,7 +104,7 @@ class TextZhCenterPage {
   String rearend = '后端';
   String mobile = '移动端';
   String friendUrl = '友链';
-  String albumn = '画集';
+  String collection = '画集';
   String guessLike = '猜你喜欢';
   String policy = '隐私政策';
   String safety = '安全设定';
@@ -193,10 +193,10 @@ class TextZhGuessLikePage {
   String title = '猜你喜欢'; 
 }
 
-class TextZhAlbumn {
-  String newAlbumnTitle = '添加新的画集';
-  String inputAlbumnTitle = '输入画集名称';
-  String inputAlbumnCaption = '输入画集介绍';
+class TextZhCollection {
+  String newCollectionTitle = '添加新的画集';
+  String inputCollectionTitle = '输入画集名称';
+  String inputCollectionCaption = '输入画集介绍';
   String isPulic = '公开画集';
   String isSexy = 'R16内容';
   String allowComment = '允许评论';

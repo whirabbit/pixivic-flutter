@@ -43,8 +43,8 @@ getAlbumList() async {
 }
 
 // 将选中画作添加到指定的画集中
-addIllustToAlbumn(int illustId, int albumnId) async {
-  String url = 'https://api.pixivic.com/collections/$albumnId/illustrations';
+addIllustToCollection(int illustId, int collectionId) async {
+  String url = 'https://api.pixivic.com/collections/$collectionId/illustrations';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
   Map<String, String> data = {'illust_id': illustId.toString()};
   try {
@@ -71,19 +71,19 @@ addIllustToAlbumn(int illustId, int albumnId) async {
   }
 }
 
-showAddNewAlbumnDialog(BuildContext context, VoidCallback reloadAlbumn) async {
+showAddNewCollectionDialog(BuildContext context, VoidCallback reloadCollection) async {
   TextEditingController title = TextEditingController();
   TextEditingController caption = TextEditingController();
-  TextZhAlbumn texts = TextZhAlbumn();
+  TextZhCollection texts = TextZhCollection();
 
   //TODO：点击按钮后，键盘自动释放焦点 
   await showDialog(
       context: context,
       builder: (BuildContext context) {
-        Provider.of<NewAlbumnParameterModel>(context, listen: false)
+        Provider.of<NewCollectionParameterModel>(context, listen: false)
             .cleanTags();
-        return Consumer<NewAlbumnParameterModel>(
-          builder: (context, NewAlbumnParameterModel newAlbumnParameterModel,
+        return Consumer<NewCollectionParameterModel>(
+          builder: (context, NewCollectionParameterModel newCollectionParameterModel,
                   child) =>
               AlertDialog(
             shape: RoundedRectangleBorder(
@@ -113,7 +113,7 @@ showAddNewAlbumnDialog(BuildContext context, VoidCallback reloadAlbumn) async {
                             // padding: EdgeInsets.only(
                             //     bottom: ScreenUtil().setHeight(8)),
                             child: Text(
-                              texts.newAlbumnTitle,
+                              texts.newCollectionTitle,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 14,
@@ -133,7 +133,7 @@ showAddNewAlbumnDialog(BuildContext context, VoidCallback reloadAlbumn) async {
                                       BorderSide(color: Colors.orangeAccent)),
                               isDense: true,
                               focusColor: Colors.orange,
-                              hintText: texts.inputAlbumnTitle,
+                              hintText: texts.inputCollectionTitle,
                               hintStyle: TextStyle(
                                   fontSize: 16, color: Colors.grey[400]),
                             ),
@@ -152,7 +152,7 @@ showAddNewAlbumnDialog(BuildContext context, VoidCallback reloadAlbumn) async {
                                   borderSide:
                                       BorderSide(color: Colors.orangeAccent)),
                               isDense: true,
-                              hintText: texts.inputAlbumnCaption,
+                              hintText: texts.inputCollectionCaption,
                               hintStyle: TextStyle(
                                   fontSize: 16, color: Colors.grey[400]),
                             ),
@@ -162,10 +162,10 @@ showAddNewAlbumnDialog(BuildContext context, VoidCallback reloadAlbumn) async {
                           width: ScreenUtil().setWidth(200),
                           height: ScreenUtil().setHeight(30),
                           child: SwitchListTile(
-                            value: newAlbumnParameterModel.isPublic,
+                            value: newCollectionParameterModel.isPublic,
                             dense: true,
                             onChanged: (value) {
-                              newAlbumnParameterModel.public(value);
+                              newCollectionParameterModel.public(value);
                             },
                             activeColor: Colors.orangeAccent,
                             title: Text(
@@ -178,10 +178,10 @@ showAddNewAlbumnDialog(BuildContext context, VoidCallback reloadAlbumn) async {
                           width: ScreenUtil().setWidth(200),
                           height: ScreenUtil().setHeight(30),
                           child: SwitchListTile(
-                            value: newAlbumnParameterModel.isSexy,
+                            value: newCollectionParameterModel.isSexy,
                             dense: true,
                             onChanged: (value) {
-                              newAlbumnParameterModel.sexy(value);
+                              newCollectionParameterModel.sexy(value);
                             },
                             activeColor: Colors.orangeAccent,
                             title: Text(texts.isSexy,
@@ -192,10 +192,10 @@ showAddNewAlbumnDialog(BuildContext context, VoidCallback reloadAlbumn) async {
                           width: ScreenUtil().setWidth(200),
                           height: ScreenUtil().setHeight(30),
                           child: SwitchListTile(
-                            value: newAlbumnParameterModel.allowComment,
+                            value: newCollectionParameterModel.allowComment,
                             dense: true,
                             onChanged: (value) {
-                              newAlbumnParameterModel.comment(value);
+                              newCollectionParameterModel.comment(value);
                             },
                             activeColor: Colors.orangeAccent,
                             title: Text(texts.allowComment,
@@ -239,16 +239,16 @@ showAddNewAlbumnDialog(BuildContext context, VoidCallback reloadAlbumn) async {
                             'title': title.text,
                             'caption': caption.text,
                             'isPublic':
-                                newAlbumnParameterModel.isPublic ? 1 : 0,
+                                newCollectionParameterModel.isPublic ? 1 : 0,
                             'pornWarning':
-                                newAlbumnParameterModel.isSexy ? 1 : 0,
+                                newCollectionParameterModel.isSexy ? 1 : 0,
                             'forbidComment':
-                                newAlbumnParameterModel.allowComment ? 1 : 0,
-                            'tagList': newAlbumnParameterModel.tags
+                                newCollectionParameterModel.allowComment ? 1 : 0,
+                            'tagList': newCollectionParameterModel.tags
                           };
-                          postNewAlbumn(payload).then((value) {
+                          postNewCollection(payload).then((value) {
                             if (value) {
-                              reloadAlbumn();
+                              reloadCollection();
                               Navigator.of(context).pop();
                             }
                           });
@@ -265,13 +265,13 @@ showAddNewAlbumnDialog(BuildContext context, VoidCallback reloadAlbumn) async {
 }
 
 showTagSelector(context) async {
-  TextZhAlbumn texts = TextZhAlbumn();
+  TextZhCollection texts = TextZhCollection();
   await showDialog(
       context: context,
       builder: (context) {
         TextEditingController tagInput = TextEditingController();
-        return Consumer<NewAlbumnParameterModel>(
-            builder: (context, NewAlbumnParameterModel newAlbumnParameterModel,
+        return Consumer<NewCollectionParameterModel>(
+            builder: (context, NewCollectionParameterModel newCollectionParameterModel,
                     child) =>
                 AlertDialog(
                   shape: RoundedRectangleBorder(
@@ -307,7 +307,7 @@ showTagSelector(context) async {
                             width: ScreenUtil().setWidth(250),
                             child: Wrap(
                               alignment: WrapAlignment.center,
-                              children: newAlbumnParameterModel.tags
+                              children: newCollectionParameterModel.tags
                                   .map(
                                       (item) => singleTag(context, item, false))
                                   .toList(),
@@ -325,13 +325,13 @@ showTagSelector(context) async {
                                           BorderSide(color: Colors.grey)),
                                 ),
                                 onEditingComplete: () {
-                                  newAlbumnParameterModel
+                                  newCollectionParameterModel
                                       .getTagAdvice(tagInput.text);
                                 }),
                           ),
                           Wrap(
                             alignment: WrapAlignment.center,
-                            children: newAlbumnParameterModel.tagsAdvice
+                            children: newCollectionParameterModel.tagsAdvice
                                 .map((item) => singleTag(context, item, true))
                                 .toList(),
                           )
@@ -339,12 +339,12 @@ showTagSelector(context) async {
                       )),
                 ));
       }).then((value) {
-    Provider.of<NewAlbumnParameterModel>(context, listen: false)
+    Provider.of<NewCollectionParameterModel>(context, listen: false)
         .clearTagAdvice();
   });
 }
 
-postNewAlbumn(Map<String, dynamic> payload) async {
+postNewCollection(Map<String, dynamic> payload) async {
   String url = 'https://api.pixivic.com/collections';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
 
@@ -355,7 +355,7 @@ postNewAlbumn(Map<String, dynamic> payload) async {
       BotToast.showSimpleNotification(title: response.data['message']);
       return true;
     } else {
-      BotToast.showSimpleNotification(title: TextZhAlbumn().needForTag);
+      BotToast.showSimpleNotification(title: TextZhCollection().needForTag);
       return false;
     }
   } on DioError catch (e) {
@@ -397,10 +397,10 @@ Widget singleTag(context, Map data, bool advice) {
             bottom: ScreenUtil().setWidth(3)),
         onPressed: () {
           if (advice) {
-            Provider.of<NewAlbumnParameterModel>(context, listen: false)
+            Provider.of<NewCollectionParameterModel>(context, listen: false)
                 .addTagToTagsList(data);
           } else {
-            Provider.of<NewAlbumnParameterModel>(context, listen: false)
+            Provider.of<NewCollectionParameterModel>(context, listen: false)
                 .removeTagFromTagsList(data);
           }
         },
@@ -425,7 +425,7 @@ Widget singleTag(context, Map data, bool advice) {
   );
 }
 
-class NewAlbumnParameterModel with ChangeNotifier {
+class NewCollectionParameterModel with ChangeNotifier {
   bool _isPublic = true;
   bool _isSexy = false;
   bool _allowComment = true;
