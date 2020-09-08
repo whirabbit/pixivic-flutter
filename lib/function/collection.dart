@@ -44,7 +44,8 @@ getAlbumList() async {
 
 // 将选中画作添加到指定的画集中
 addIllustToCollection(int illustId, int collectionId) async {
-  String url = 'https://api.pixivic.com/collections/$collectionId/illustrations';
+  String url =
+      'https://api.pixivic.com/collections/$collectionId/illustrations';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
   Map<String, String> data = {'illust_id': illustId.toString()};
   try {
@@ -71,28 +72,26 @@ addIllustToCollection(int illustId, int collectionId) async {
   }
 }
 
-showAddNewCollectionDialog(BuildContext context, VoidCallback reloadCollection) async {
+showAddNewCollectionDialog(
+    BuildContext context, VoidCallback reloadCollection) async {
   TextEditingController title = TextEditingController();
   TextEditingController caption = TextEditingController();
   TextZhCollection texts = TextZhCollection();
-
-  //TODO：点击按钮后，键盘自动释放焦点 
+  Provider.of<NewCollectionParameterModel>(context, listen: false).cleanTags();
+  //TODO：点击按钮后，键盘自动释放焦点
   await showDialog(
       context: context,
       builder: (BuildContext context) {
-        Provider.of<NewCollectionParameterModel>(context, listen: false)
-            .cleanTags();
-        return Consumer<NewCollectionParameterModel>(
-          builder: (context, NewCollectionParameterModel newCollectionParameterModel,
-                  child) =>
-              AlertDialog(
+        return Consumer<NewCollectionParameterModel>(builder: (context,
+            NewCollectionParameterModel newCollectionParameterModel, child) {
+          return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             contentPadding: EdgeInsets.all(0),
             content: Container(
               alignment: Alignment.topCenter,
               width: ScreenUtil().setWidth(250),
-              height: ScreenUtil().setHeight(280),
+              height: ScreenUtil().setHeight(320),
               child: Stack(
                 children: [
                   Positioned(
@@ -235,23 +234,29 @@ showAddNewCollectionDialog(BuildContext context, VoidCallback reloadCollection) 
                         color: Colors.orange[300],
                         shape: StadiumBorder(),
                         onPressed: () {
-                          Map<String, dynamic> payload = {
-                            'title': title.text,
-                            'caption': caption.text,
-                            'isPublic':
-                                newCollectionParameterModel.isPublic ? 1 : 0,
-                            'pornWarning':
-                                newCollectionParameterModel.isSexy ? 1 : 0,
-                            'forbidComment':
-                                newCollectionParameterModel.allowComment ? 1 : 0,
-                            'tagList': newCollectionParameterModel.tags
-                          };
-                          postNewCollection(payload).then((value) {
-                            if (value) {
-                              reloadCollection();
-                              Navigator.of(context).pop();
-                            }
-                          });
+                          print(newCollectionParameterModel.tags);
+                          if (checkBeforePost(title.text, caption.text,
+                              newCollectionParameterModel.tags, texts)) {
+                            Map<String, dynamic> payload = {
+                              'title': title.text,
+                              'caption': caption.text,
+                              'isPublic':
+                                  newCollectionParameterModel.isPublic ? 1 : 0,
+                              'pornWarning':
+                                  newCollectionParameterModel.isSexy ? 1 : 0,
+                              'forbidComment':
+                                  newCollectionParameterModel.allowComment
+                                      ? 1
+                                      : 0,
+                              'tagList': newCollectionParameterModel.tags
+                            };
+                            postNewCollection(payload).then((value) {
+                              if (value) {
+                                reloadCollection();
+                                Navigator.of(context).pop();
+                              }
+                            });
+                          }
                         },
                       ),
                     ),
@@ -259,9 +264,9 @@ showAddNewCollectionDialog(BuildContext context, VoidCallback reloadCollection) 
                 ],
               ),
             ),
-          ),
-        );
-      }).then((value) {});
+          );
+        });
+      });
 }
 
 showTagSelector(context) async {
@@ -271,7 +276,8 @@ showTagSelector(context) async {
       builder: (context) {
         TextEditingController tagInput = TextEditingController();
         return Consumer<NewCollectionParameterModel>(
-            builder: (context, NewCollectionParameterModel newCollectionParameterModel,
+            builder: (context,
+                    NewCollectionParameterModel newCollectionParameterModel,
                     child) =>
                 AlertDialog(
                   shape: RoundedRectangleBorder(
@@ -375,6 +381,23 @@ postNewCollection(Map<String, dynamic> payload) async {
   }
 }
 
+checkBeforePost(
+    String title, String caption, List tagList, TextZhCollection texts) {
+  print(title.length);
+  if (title.length < 1) {
+    BotToast.showSimpleNotification(title: texts.needForTitle);
+    return false;
+  } else if (caption.length < 1) {
+    BotToast.showSimpleNotification(title: texts.needForCaption);
+    return false;
+  } else if (tagList.length < 1) {
+    BotToast.showSimpleNotification(title: texts.needForTag);
+    return false;
+  } else {
+    return true;
+  }
+}
+
 Widget singleTag(context, Map data, bool advice) {
   return Container(
     padding: EdgeInsets.only(
@@ -455,7 +478,7 @@ class NewCollectionParameterModel with ChangeNotifier {
 
   cleanTags() {
     _tags = [];
-    notifyListeners();
+    // notifyListeners();
   }
 
   clearTagAdvice() {

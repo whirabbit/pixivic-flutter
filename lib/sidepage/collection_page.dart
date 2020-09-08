@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -39,23 +40,25 @@ class _CollectionPageState extends State<CollectionPage> {
         appBar: PappBar(title: '画集'),
         body: ChangeNotifierProvider.value(
           value: _model,
-          child: collectionBody(),
-          
+          child: Builder(builder: (BuildContext insdeConetxt) {
+            return collectionBody(insdeConetxt);
+          }),
         ));
   }
 
-  Widget collectionBody() {
-    if (Provider.of<CollectionModel>(context).viewerList == []) {
-      if (!Provider.of<CollectionModel>(context).onViewerBottom) {
+  Widget collectionBody(context) {
+    var _collectionData = Provider.of<CollectionModel>(context);
+    if (_collectionData.viewerList == []) {
+      if (!_collectionData.onViewerBottom) {
         return loadingBox();
       } else {
         return nothingHereBox();
       }
-    } else if (Provider.of<CollectionModel>(context).viewerList != []) {
+    } else if (_collectionData.viewerList != []) {
       return ListView.builder(
-        itemCount: _model.viewerList.length,
+        itemCount: _collectionData.viewerList.length,
         itemBuilder: (context, index) {
-          return cardCell(_model.viewerList[index]);
+          return cardCell(_collectionData.viewerList[index]);
         },
       );
     } else {
@@ -78,13 +81,15 @@ class _CollectionPageState extends State<CollectionPage> {
                 children: <Widget>[
                   Stack(
                     children: <Widget>[
-                      Image.network(
-                        data['cover']['imageUrls']['large'],
-                        headers: {'Referer': 'https://app-api.pixiv.net'},
-                        fit: BoxFit.fitWidth,
-                        width: ScreenUtil().setWidth(300),
-                        height: ScreenUtil().setHeight(140),
-                      ),
+                      data.keys.contains('cover')
+                          ? Image.network(
+                              data['cover']['imageUrls'][0]['large'],
+                              headers: {'Referer': 'https://app-api.pixiv.net'},
+                              fit: BoxFit.fitWidth,
+                              width: ScreenUtil().setWidth(300),
+                              height: ScreenUtil().setHeight(140),
+                            )
+                          : Container(height: ScreenUtil().setHeight(70),),
                       Positioned(
                         bottom: 0,
                         child: Container(
@@ -111,21 +116,24 @@ class _CollectionPageState extends State<CollectionPage> {
                             top: ScreenUtil().setHeight(7),
                             child: Container(
                               alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  color: Colors.blue[300],
-                                  borderRadius: BorderRadius.circular(25)),
-                              width: ScreenUtil().setWidth(50),
+                              // decoration: BoxDecoration(
+                              //     color: Colors.blue[300],
+                              //     borderRadius: BorderRadius.circular(25)),
+                              // width: ScreenUtil().setWidth(50),
                               height: ScreenUtil().setHeight(25),
                               child: Text(
-                                data['caption'],
-                                style: TextStyle(color: Colors.white),
+                                data['caption'].length > 8
+                                    ? '${data['caption'].substring(0, 8)}...'
+                                    : data['caption'],
+                                style: TextStyle(color: Colors.black54),
                               ),
                             )),
                         Positioned(
                           right: ScreenUtil().setWidth(5),
                           top: ScreenUtil().setHeight(13),
                           child: Text(
-                            data['createTime'],
+                            DateFormat('yyyy-MM-dd')
+                                .format(DateTime.parse(data['createTime'])),
                             style:
                                 TextStyle(fontSize: ScreenUtil().setHeight(12)),
                           ),
