@@ -63,7 +63,7 @@ class _CenterPageState extends State<CenterPage> {
                   Color(0xFFfbd46d), () {
                 _openUrl('https://m.pixivic.com/friends?VNK=d6d42013');
               }),
-              cell(texts.albumn, FontAwesomeIcons.boxes, Color(0xFF764ba2), () {
+              cell(texts.collection, FontAwesomeIcons.boxes, Color(0xFF764ba2), () {
                 if (prefs.getString('auth') == '')
                   BotToast.showSimpleNotification(title: texts.pleaseLogin);
                 else

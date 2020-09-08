@@ -16,9 +16,11 @@ class CollectionPage extends StatefulWidget {
 class _CollectionPageState extends State<CollectionPage> {
   CollectionModel _model;
   ScrollController _viewerScrollController;
+  TextZhCommentCell texts;
 
   @override
   void initState() {
+    texts = TextZhCommentCell();
     _model = CollectionModel()..initData();
     _model.getViewerJsonList();
     _viewerScrollController = ScrollController()..addListener(_viewerListener);
