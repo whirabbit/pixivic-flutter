@@ -203,4 +203,6 @@ class TextZhCollection {
   String addTag = '添加标签';
   String submit = '创建画集';
   String needForTag = '请添加至少一个标签';
+  String needForTitle = '请输入标题';
+  String needForCaption = '请输入介绍';
 }
