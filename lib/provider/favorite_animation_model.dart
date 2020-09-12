@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class FavProvider extends State<StatefulWidget>
+class FavoriteAnimationModel extends State<StatefulWidget>
     with ChangeNotifier, TickerProviderStateMixin {
   Animation<double> _favAnimation;
   AnimationController animationController;

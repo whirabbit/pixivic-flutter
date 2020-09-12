@@ -11,7 +11,7 @@ import 'package:pixivic/provider/page_switch.dart';
 
 import '../data/common.dart';
 
-class GetPageProvider with ChangeNotifier {
+class PicPageModel with ChangeNotifier {
   String picDate;
   String picMode;
   String artistId;
@@ -36,7 +36,7 @@ class GetPageProvider with ChangeNotifier {
   ScrollController scrollController;
   BuildContext context;
 
-  GetPageProvider({this.jsonMode}) {
+  PicPageModel({this.jsonMode}) {
     print("控制器初始化");
     scrollController = ScrollController(
         initialScrollOffset: jsonMode == 'home' ? homeScrollerPosition : 0.0)
