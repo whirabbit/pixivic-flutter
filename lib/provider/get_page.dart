@@ -23,7 +23,6 @@ class GetPageProvider with ChangeNotifier {
   String jsonMode;
   bool isManga;
   bool isScrollable = true;
-  int homeCurrentPage;
   num relatedId;
   ValueChanged<bool> onPageScrolling;
   VoidCallback onPageTop;
@@ -33,26 +32,41 @@ class GetPageProvider with ChangeNotifier {
   bool isScrolling = false;
   int currentPage = 1;
   List picList;
-
   List jsonList;
   ScrollController scrollController;
   BuildContext context;
 
-  GetPageProvider() {
+  GetPageProvider({this.jsonMode}) {
     print("控制器初始化");
     scrollController = ScrollController(
         initialScrollOffset: jsonMode == 'home' ? homeScrollerPosition : 0.0)
       ..addListener(_doWhileScrolling);
+    //加载缓存数据
+    if (this.jsonMode == 'home' && (!listEquals(homePicList, []))) {
+      print("加载缓存数据");
+      picList = homePicList;
+      currentPage = homeCurrentPage;
+      jsonList = [];
+    }
   }
 
   homePage({
     @required String picDate,
     @required String picMode,
   }) {
-    //切换排行刷新
-    if (this.picDate != picDate || this.picMode != picMode) {
+    if (this.picDate != null &&
+        (this.picDate != picDate || this.picMode != picMode)) {
+      //重新刷新页面所有缓存重置
+      currentPage = 1;
+      homeCurrentPage = 1;
+      homePicList = [];
+      homeScrollerPosition = 0;
+      scrollController = ScrollController(
+          initialScrollOffset: jsonMode == 'home' ? homeScrollerPosition : 0.0)
+        ..addListener(_doWhileScrolling);
       this.picList = null;
     }
+
     this.jsonMode = 'home';
     this.picDate = picDate;
     this.picMode = picMode;
@@ -322,6 +336,10 @@ class GetPageProvider with ChangeNotifier {
   void dispose() {
     super.dispose();
     print("providerDispose");
+    if (jsonMode == 'home' && picList != null) {
+      homePicList = picList;
+      homeCurrentPage = currentPage;
+    }
     picList = [];
     jsonList = null;
     scrollController.removeListener(_doWhileScrolling);

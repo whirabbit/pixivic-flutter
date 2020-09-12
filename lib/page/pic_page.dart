@@ -317,7 +317,7 @@ class PicPage extends StatelessWidget {
   Widget build(BuildContext context) {
     print('build PicPage');
     return ChangeNotifierProvider<GetPageProvider>(
-      create: (_) => GetPageProvider(),
+      create: (_) => GetPageProvider(jsonMode: this.jsonMode),
       child: Selector<GetPageProvider, GetPageProvider>(
         shouldRebuild: (pre, next) => true,
         selector: (context, provider) => provider,
