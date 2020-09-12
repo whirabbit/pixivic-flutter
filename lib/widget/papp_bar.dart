@@ -16,9 +16,9 @@ import '../page/pic_detail_page.dart';
 import '../function/uploadImage.dart';
 import '../function/identity.dart';
 
-// import '../provider/get_page.dart';
+// import '../provider/pic_page_model.dart';
 import '../provider/page_switch.dart';
-import '../provider/common_provider.dart';
+import '../provider/common_model.dart';
 
 class PappBar extends StatefulWidget implements PreferredSizeWidget {
   //删去
@@ -238,11 +238,11 @@ class PappBarState extends State<PappBar> {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(
-            create: (_) => CommonProvider(),
+            create: (_) => CommonModel(),
           )
         ],
-        child: Consumer<CommonProvider>(
-          builder: (context, CommonProvider heightProvider, _) {
+        child: Consumer<CommonModel>(
+          builder: (context, CommonModel heightProvider, _) {
             print("Pappbar refresh : searchbar");
             return AnimatedContainer(
                 duration: Duration(milliseconds: 250),

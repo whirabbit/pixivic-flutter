@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:pixivic/data/common.dart';
-import 'package:pixivic/provider/common_provider.dart';
-import 'package:pixivic/provider/get_page.dart';
+import 'package:pixivic/provider/common_model.dart';
+import 'package:pixivic/provider/pic_page_model.dart';
 
 import 'package:requests/requests.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 
-import 'package:pixivic/provider/favorite_animation.dart';
+import 'package:pixivic/provider/favorite_animation_model.dart';
 
 class MarkHeart extends StatelessWidget {
   MarkHeart(
@@ -18,7 +18,7 @@ class MarkHeart extends StatelessWidget {
   final Map picItem;
   final int index;
 
-  final GetPageProvider getPageProvider;
+  final PicPageModel getPageProvider;
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +29,12 @@ class MarkHeart extends StatelessWidget {
     String picId = picItem['id'].toString();
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<FavProvider>(
-          create: (_) => FavProvider(),
+        ChangeNotifierProvider<FavoriteAnimationModel>(
+          create: (_) => FavoriteAnimationModel(),
         )
       ],
-      child: Consumer<FavProvider>(
-        builder: (context, FavProvider favProvider, child) {
+      child: Consumer<FavoriteAnimationModel>(
+        builder: (context, FavoriteAnimationModel favProvider, child) {
           return IconButton(
             color: color,
             padding: EdgeInsets.all(0),

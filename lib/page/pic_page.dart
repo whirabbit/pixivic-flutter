@@ -17,7 +17,7 @@ import 'package:provider/provider.dart';
 
 import 'pic_detail_page.dart';
 import '../data/common.dart';
-import '../provider/get_page.dart';
+import '../provider/pic_page_model.dart';
 import '../provider/page_switch.dart';
 
 // import '../provider/user_state.dart';
@@ -262,7 +262,7 @@ class PicPage extends StatelessWidget {
   bool isScrolling = false;
   ScrollController scrollController;
   String previewQuality = prefs.getString('previewQuality');
-  GetPageProvider getPageProvider;
+  PicPageModel getPageProvider;
 
 //  @override
 //  void initState() {
@@ -316,12 +316,12 @@ class PicPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('build PicPage');
-    return ChangeNotifierProvider<GetPageProvider>(
-      create: (_) => GetPageProvider(jsonMode: this.jsonMode),
-      child: Selector<GetPageProvider, GetPageProvider>(
+    return ChangeNotifierProvider<PicPageModel>(
+      create: (_) => PicPageModel(jsonMode: this.jsonMode),
+      child: Selector<PicPageModel, PicPageModel>(
         shouldRebuild: (pre, next) => true,
         selector: (context, provider) => provider,
-        builder: (context, GetPageProvider pageProvider, _) {
+        builder: (context, PicPageModel pageProvider, _) {
           getPageProvider = pageProvider;
           pageProvider.context = context;
           switchModel(pageProvider);
@@ -380,7 +380,7 @@ class PicPage extends StatelessWidget {
                   crossAxisCount: 2,
                   itemCount: pageProvider.picList.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return Selector<GetPageProvider, Map>(
+                    return Selector<PicPageModel, Map>(
                       selector: (context, provider) => provider.picList[index],
                       builder: (context, picItem, child) {
                         return imageCell(picItem, index, context);
@@ -398,7 +398,7 @@ class PicPage extends StatelessWidget {
   }
 
   //根据传入的jsonModel选择provider的方法来获取数据
-  void switchModel(GetPageProvider provider) {
+  void switchModel(PicPageModel provider) {
     switch (jsonMode) {
       case 'home':
         provider.homePage(picDate: picDate, picMode: picMode);

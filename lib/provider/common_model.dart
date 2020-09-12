@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CommonProvider with ChangeNotifier {
+class CommonModel with ChangeNotifier {
   double _height = 77;
 
   double get height => _height;
