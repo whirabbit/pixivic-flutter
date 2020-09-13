@@ -15,13 +15,12 @@ import 'package:lottie/lottie.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:provider/provider.dart';
 
-import 'pic_detail_page.dart';
-import '../data/common.dart';
-import '../provider/pic_page_model.dart';
-import '../provider/page_switch.dart';
-
-// import '../provider/user_state.dart';
-import '../widget/markheart_icon.dart';
+import 'package:pixivic/page/pic_detail_page.dart';
+import 'package:pixivic/data/common.dart';
+import 'package:pixivic/provider/pic_page_model.dart';
+import 'package:pixivic/provider/page_switch.dart';
+import 'package:pixivic/provider/user_state.dart';
+import 'package:pixivic/widget/markheart_icon.dart';
 
 // 可以作为页面中单个组件或者单独页面使用的pic瀑布流组件,因可以作为页面，故不归为widget
 class PicPage extends StatelessWidget {

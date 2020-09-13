@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:requests/requests.dart';
 
-import '../page/user_list_page.dart';
+import 'package:pixivic/page/user_list_page.dart';
 
 class BookmarkUsers extends StatefulWidget {
   @override

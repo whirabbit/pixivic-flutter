@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 
-import '../data/common.dart';
+import 'package:pixivic/data/common.dart';
 
 class SuggestionBar extends StatefulWidget {
   @override

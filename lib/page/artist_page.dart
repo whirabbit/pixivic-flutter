@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:pixivic/page/pic_page.dart';
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
@@ -11,9 +10,10 @@ import 'package:lottie/lottie.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../data/common.dart';
-import '../data/texts.dart';
-import '../widget/papp_bar.dart';
+import 'package:pixivic/page/pic_page.dart';
+import 'package:pixivic/data/common.dart';
+import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/widget/papp_bar.dart';
 
 class ArtistPage extends StatefulWidget {
   @override

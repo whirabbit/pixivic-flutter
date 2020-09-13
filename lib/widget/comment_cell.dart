@@ -6,8 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dio/dio.dart';
 import 'package:lottie/lottie.dart';
 
-import '../data/texts.dart';
-import '../page/comment_list_page.dart';
+import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/page/comment_list_page.dart';
 
 class CommentCell extends StatefulWidget {
   @override

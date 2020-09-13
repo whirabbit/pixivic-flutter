@@ -1,23 +1,23 @@
 import 'dart:convert';
-import 'package:intl/intl.dart';
-
 import 'package:flutter/material.dart';
-
-import '../data/texts.dart';
-import '../data/common.dart';
-import '../widget/papp_bar.dart';
-import './user_detail_page.dart';
+import 'package:intl/intl.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:requests/requests.dart';
 import 'package:lottie/lottie.dart';
 import 'package:bot_toast/bot_toast.dart';
 
+import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/data/common.dart';
+import 'package:pixivic/widget/papp_bar.dart';
+import 'package:pixivic/page/user_detail_page.dart';
+
 class UserListPage extends StatefulWidget {
   @override
   _UserListPageState createState() => _UserListPageState();
 
   UserListPage({this.mode = 'bookmark', this.illustId});
+
   UserListPage.bookmark(this.illustId, {this.mode = 'bookmark'});
 
   final String mode;

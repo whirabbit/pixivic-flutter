@@ -9,16 +9,15 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../data/texts.dart';
-import '../data/common.dart';
-import '../page/artist_page.dart';
-import '../page/pic_detail_page.dart';
-import '../function/uploadImage.dart';
-import '../function/identity.dart';
-
-// import '../provider/pic_page_model.dart';
-import '../provider/page_switch.dart';
-import '../provider/common_model.dart';
+import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/data/common.dart';
+import 'package:pixivic/page/artist_page.dart';
+import 'package:pixivic/page/pic_detail_page.dart';
+import 'package:pixivic/function/uploadImage.dart';
+import 'package:pixivic/function/identity.dart';
+import 'package:pixivic/provider/page_switch.dart';
+import 'package:pixivic/provider/common_model.dart';
+// import 'package:pixivic/provider/pic_page_model.dart';
 
 class PappBar extends StatefulWidget implements PreferredSizeWidget {
   //删去

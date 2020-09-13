@@ -6,15 +6,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:lottie/lottie.dart';
-import 'package:pixivic/data/common.dart';
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 
-import '../widget/papp_bar.dart';
-import '../widget/suggestion_bar.dart';
-import 'pic_page.dart';
-import '../data/texts.dart';
-import 'artist_list_page.dart';
+import 'package:pixivic/widget/papp_bar.dart';
+import 'package:pixivic/widget/suggestion_bar.dart';
+import 'package:pixivic/page/pic_page.dart';
+import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/page/artist_list_page.dart';
+import 'package:pixivic/data/common.dart';
 
 class SearchPage extends StatefulWidget {
   @override

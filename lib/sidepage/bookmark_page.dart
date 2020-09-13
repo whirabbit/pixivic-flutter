@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../page/pic_page.dart';
-import '../data/common.dart';
-import '../widget/papp_bar.dart';
+import 'package:pixivic/page/pic_page.dart';
+import 'package:pixivic/data/common.dart';
+import 'package:pixivic/widget/papp_bar.dart';
 
 class BookmarkPage extends StatefulWidget {
   @override

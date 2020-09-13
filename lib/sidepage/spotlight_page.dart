@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:pixivic/data/texts.dart';
 import 'dart:convert';
-
-import '../widget/papp_bar.dart';
-import '../page/pic_page.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:lottie/lottie.dart';
+
+import 'package:pixivic/widget/papp_bar.dart';
+import 'package:pixivic/page/pic_page.dart';
+import 'package:pixivic/data/texts.dart';
 
 class SpotlightPage extends StatefulWidget {
   @override
@@ -190,12 +190,14 @@ class _SpotlightPageState extends State<SpotlightPage> {
     Navigator.of(context).push(
       MaterialPageRoute(
           builder: (context) => Scaffold(
-            appBar: PappBar(title: tempTitle,),
-            body: PicPage.spotlight(
+                appBar: PappBar(
+                  title: tempTitle,
+                ),
+                body: PicPage.spotlight(
 //              funOne: true,
                   spotlightId: spotlightId,
                 ),
-          )),
+              )),
     );
   }
 }

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'login_page.dart';
-import 'pic_page.dart';
-import '../data/common.dart';
+import 'package:pixivic/page/login_page.dart';
+import 'package:pixivic/page/pic_page.dart';
+import 'package:pixivic/data/common.dart';
 
 class NewPage extends StatefulWidget {
   @override

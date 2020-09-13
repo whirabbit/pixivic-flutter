@@ -7,19 +7,24 @@ import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:lottie/lottie.dart';
 
-import '../data/common.dart';
-import '../data/texts.dart';
-import '../page/artist_page.dart';
-import '../page/pic_detail_page.dart';
-import '../widget/papp_bar.dart';
+import 'package:pixivic/data/common.dart';
+import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/page/artist_page.dart';
+import 'package:pixivic/page/pic_detail_page.dart';
+import 'package:pixivic/widget/papp_bar.dart';
 
 class ArtistListPage extends StatefulWidget {
   @override
   _ArtistListPageState createState() => _ArtistListPageState();
 
   ArtistListPage(this.mode, {this.searchKeyWords, this.userId});
-  ArtistListPage.search(this.searchKeyWords, {this.mode = 'search', this.userId});
-  ArtistListPage.follow({this.searchKeyWords, this.mode = 'follow', this.userId});
+
+  ArtistListPage.search(this.searchKeyWords,
+      {this.mode = 'search', this.userId});
+
+  ArtistListPage.follow(
+      {this.searchKeyWords, this.mode = 'follow', this.userId});
+
   ArtistListPage.userFollow(
       {this.searchKeyWords, this.mode = 'userfollow', @required this.userId});
 

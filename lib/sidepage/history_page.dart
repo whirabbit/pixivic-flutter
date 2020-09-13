@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../page/pic_page.dart';
-import '../widget/papp_bar.dart';
+import 'package:pixivic/page/pic_page.dart';
+import 'package:pixivic/widget/papp_bar.dart';
 
 class HistoryPage extends StatefulWidget {
   @override

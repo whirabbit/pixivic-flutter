@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 // import 'package:provider/provider.dart';
 import 'package:bot_toast/bot_toast.dart';
 
-import '../data/common.dart';
+import 'package:pixivic/data/common.dart';
 
 
 class CollectionModel with ChangeNotifier {
