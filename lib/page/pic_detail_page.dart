@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:pixivic/provider/get_page.dart';
+import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/widget/markheart_icon.dart';
 
 import 'package:url_launcher/url_launcher.dart';
@@ -37,7 +37,7 @@ class PicDetailPage extends StatefulWidget {
   final Map _picData;
   final int index;
 
-  final GetPageProvider getPageProvider;
+  final PicPageModel getPageProvider;
 }
 
 class _PicDetailPageState extends State<PicDetailPage> {

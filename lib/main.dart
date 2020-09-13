@@ -26,8 +26,8 @@ import 'data/bugly.dart';
 import 'function/update.dart';
 import 'function/collection.dart';
 
-// import 'provider/get_comment_list_data.dart';
-// import 'provider/get_page.dart';
+// import 'provider/comment_list_model.dart';
+// import 'provider/pic_page_model.dart';
 import 'provider/page_switch.dart';
 
 void main() {
