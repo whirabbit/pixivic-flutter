@@ -5,7 +5,6 @@
 ///  - "这里什么都没有"的图像
 ///  - "列表加载中的"的图像
 
-
 import 'package:flutter/material.dart';
 
 import 'package:random_color/random_color.dart';
@@ -16,8 +15,8 @@ import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:dio/dio.dart';
 import 'package:lottie/lottie.dart';
 
-import '../page/pic_detail_page.dart';
-import '../data/common.dart';
+import 'package:pixivic/page/pic_detail_page.dart';
+import 'package:pixivic/data/common.dart';
 
 Widget imageCell(Map picMapData, RandomColor randomColor, int sanityLevel,
     int previewRule, String previewQuality, BuildContext context) {

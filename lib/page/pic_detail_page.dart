@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:pixivic/provider/pic_page_model.dart';
-import 'package:pixivic/widget/markheart_icon.dart';
-
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -16,17 +14,19 @@ import 'package:flutter_advanced_networkimage/transition.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 
-import 'pic_page.dart';
-import 'artist_page.dart';
-import 'search_page.dart';
-import '../data/common.dart';
-import '../data/texts.dart';
-import '../widget/papp_bar.dart';
-import '../widget/bookmark_users.dart';
-import '../widget/comment_cell.dart';
-import '../function/downloadImage.dart';
-import '../function/collection.dart';
-// import '../provider/get_page.dart';
+import 'package:pixivic/page/pic_page.dart';
+import 'package:pixivic/page/artist_page.dart';
+import 'package:pixivic/page/search_page.dart';
+import 'package:pixivic/data/common.dart';
+import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/widget/papp_bar.dart';
+import 'package:pixivic/widget/bookmark_users.dart';
+import 'package:pixivic/widget/comment_cell.dart';
+import 'package:pixivic/function/downloadImage.dart';
+import 'package:pixivic/function/collection.dart';
+import 'package:pixivic/provider/pic_page_model.dart';
+import 'package:pixivic/widget/markheart_icon.dart';
+// import 'package:pixivic/provider/get_page.dart';
 
 class PicDetailPage extends StatefulWidget {
   @override

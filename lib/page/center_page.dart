@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:pixivic/data/common.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:bot_toast/bot_toast.dart';
 
-import '../data/texts.dart';
-import '../sidepage/spotlight_page.dart';
-import '../sidepage/setting_page.dart';
-import '../sidepage/guess_like.dart';
-import '../sidepage/collection_page.dart';
+import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/sidepage/spotlight_page.dart';
+import 'package:pixivic/sidepage/setting_page.dart';
+import 'package:pixivic/sidepage/guess_like.dart';
+import 'package:pixivic/sidepage/collection_page.dart';
+import 'package:pixivic/data/common.dart';
 
 class CenterPage extends StatefulWidget {
   @override
@@ -63,7 +63,8 @@ class _CenterPageState extends State<CenterPage> {
                   Color(0xFFfbd46d), () {
                 _openUrl('https://m.pixivic.com/friends?VNK=d6d42013');
               }),
-              cell(texts.collection, FontAwesomeIcons.boxes, Color(0xFF764ba2), () {
+              cell(texts.collection, FontAwesomeIcons.boxes, Color(0xFF764ba2),
+                  () {
                 if (prefs.getString('auth') == '')
                   BotToast.showSimpleNotification(title: texts.pleaseLogin);
                 else

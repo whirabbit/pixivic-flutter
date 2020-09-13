@@ -5,9 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:bot_toast/bot_toast.dart';
 
-import '../data/texts.dart';
-import '../widget/papp_bar.dart';
-import '../function/update.dart';
+import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/widget/papp_bar.dart';
+import 'package:pixivic/function/update.dart';
 
 class AboutPage extends StatefulWidget {
   @override

@@ -7,10 +7,10 @@ import 'package:random_color/random_color.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-import '../data/common.dart';
-import '../data/texts.dart';
-import '../widget/papp_bar.dart';
-import '../widget/image_display.dart';
+import 'package:pixivic/data/common.dart';
+import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/widget/papp_bar.dart';
+import 'package:pixivic/widget/image_display.dart';
 
 class GuessLikePage extends StatefulWidget {
   @override

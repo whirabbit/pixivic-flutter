@@ -4,10 +4,10 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../data/texts.dart';
-import '../provider/collection_model.dart';
-import '../widget/papp_bar.dart';
-import '../widget/image_display.dart';
+import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/provider/collection_model.dart';
+import 'package:pixivic/widget/papp_bar.dart';
+import 'package:pixivic/widget/image_display.dart';
 
 class CollectionPage extends StatefulWidget {
   @override

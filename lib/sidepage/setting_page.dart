@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 
-import '../data/common.dart';
-import '../widget/papp_bar.dart';
-import '../data/texts.dart';
-import '../sidepage/about_page.dart';
+import 'package:pixivic/data/common.dart';
+import 'package:pixivic/widget/papp_bar.dart';
+import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/sidepage/about_page.dart';
 
 class SettingPage extends StatefulWidget {
   @override

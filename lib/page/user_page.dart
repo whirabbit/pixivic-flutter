@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
-import 'login_page.dart';
-import '../sidepage/bookmark_page.dart';
-import '../sidepage/history_page.dart';
-import '../page/artist_list_page.dart';
-
-import '../data/common.dart';
-import '../data/texts.dart';
-import '../function/identity.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'package:pixivic/page/login_page.dart';
+import 'package:pixivic/sidepage/bookmark_page.dart';
+import 'package:pixivic/sidepage/history_page.dart';
+import 'package:pixivic/page/artist_list_page.dart';
+import 'package:pixivic/data/common.dart';
+import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/function/identity.dart';
 
 class UserPage extends StatefulWidget {
   @override

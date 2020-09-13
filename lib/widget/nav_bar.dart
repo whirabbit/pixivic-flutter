@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:core';
 
+import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:pixivic/provider/page_switch.dart';
 
-import 'package:provider/provider.dart';
 class NavBar extends StatefulWidget {
   @override
   _NavBarState createState() => _NavBarState();
@@ -12,6 +13,7 @@ class NavBar extends StatefulWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
   final bool alone;
+
 //  final bool isScrolling;
 
   NavBar(this.currentIndex, this.onTap, this.alone);
@@ -32,7 +34,7 @@ class _NavBarState extends State<NavBar> {
 
   @override
   Widget build(BuildContext context) {
-    indexProvider=Provider.of<PageSwitchProvider>(context);
+    indexProvider = Provider.of<PageSwitchProvider>(context);
     activeList = List.filled(4, false);
     activeList[indexProvider.currentIndex] = true;
     if (widget.alone) {
@@ -61,7 +63,7 @@ class _NavBarState extends State<NavBar> {
           right: containerRight,
           child: Container(
             width: ScreenUtil().setWidth(216),
-            height: ScreenUtil().setWidth(42),         // 以宽度为参考以保证不同尺寸下大小相同,38/42
+            height: ScreenUtil().setWidth(42), // 以宽度为参考以保证不同尺寸下大小相同,38/42
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(32.0),
