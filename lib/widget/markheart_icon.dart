@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pixivic/data/common.dart';
 
-import 'package:pixivic/provider/common_provider.dart';
-import 'package:pixivic/provider/get_page.dart';
-
 import 'package:requests/requests.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 
 import 'package:pixivic/provider/favorite_animation.dart';
+import 'package:pixivic/provider/get_page.dart';
 
 class MarkHeart extends StatelessWidget {
   MarkHeart(
