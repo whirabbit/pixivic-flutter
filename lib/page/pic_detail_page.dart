@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:pixivic/provider/get_page.dart';
+import 'package:pixivic/widget/markheart_icon.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -30,11 +32,12 @@ class PicDetailPage extends StatefulWidget {
   @override
   _PicDetailPageState createState() => _PicDetailPageState();
 
-  PicDetailPage(this._picData, {this.index, this.bookmarkRefresh});
+  PicDetailPage(this._picData, {this.index, this.getPageProvider});
 
   final Map _picData;
   final int index;
-  final Function(int, bool) bookmarkRefresh;
+
+  final GetPageProvider getPageProvider;
 }
 
 class _PicDetailPageState extends State<PicDetailPage> {
@@ -503,59 +506,20 @@ class _PicDetailPageState extends State<PicDetailPage> {
   }
 
   Widget _bookmarkHeart() {
-    bool isLikedLocalState = widget._picData['isLiked'];
-    var color = isLikedLocalState ? Colors.redAccent : Colors.grey[400];
-    String picId = widget._picData['id'].toString();
-
     return Container(
-//      duration: Duration(milliseconds: 230),
-//      curve: Curves.easeInOut,
-      alignment: Alignment.center,
-      // color: Colors.white,
-      height: isLikedLocalState
-          ? ScreenUtil().setWidth(28)
-          : ScreenUtil().setWidth(25),
-      width: isLikedLocalState
-          ? ScreenUtil().setWidth(28)
-          : ScreenUtil().setWidth(25),
-      child: GestureDetector(
-        onTap: () async {
-          String url = 'https://api.pixivic.com/users/bookmarked';
-          Map<String, String> body = {
-            'userId': prefs.getInt('id').toString(),
-            'illustId': picId.toString(),
-            'username': prefs.getString('name')
-          };
-          Map<String, String> headers = {
-            'authorization': prefs.getString('auth')
-          };
-          try {
-            if (isLikedLocalState) {
-              await Requests.delete(url,
-                  body: body,
-                  headers: headers,
-                  bodyEncoding: RequestBodyEncoding.JSON);
-            } else {
-              await Requests.post(url,
-                  body: body,
-                  headers: headers,
-                  bodyEncoding: RequestBodyEncoding.JSON);
-            }
-            setState(() {
-              widget._picData['isLiked'] = !widget._picData['isLiked'];
-            });
-            if (widget.bookmarkRefresh != null)
-              widget.bookmarkRefresh(widget.index, widget._picData['isLiked']);
-          } catch (e) {
-            print(e);
-          }
-        },
-        child: LayoutBuilder(builder: (context, constraint) {
-          return Icon(Icons.favorite,
-              color: color, size: constraint.biggest.height);
-        }),
-      ),
-    );
+        alignment: Alignment.center,
+        height: ScreenUtil().setWidth(28),
+        width: ScreenUtil().setWidth(28),
+//      height: isLikedLocalState
+//          ? ScreenUtil().setWidth(28)
+//          : ScreenUtil().setWidth(25),
+//      width: isLikedLocalState
+//          ? ScreenUtil().setWidth(28)
+//          : ScreenUtil().setWidth(25),
+        child: MarkHeart(
+            picItem: widget.getPageProvider.picList[widget.index],
+            index: widget.index,
+            getPageProvider: widget.getPageProvider));
   }
 
   Widget _addToAlbumButton() {
