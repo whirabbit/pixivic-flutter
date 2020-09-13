@@ -5,7 +5,7 @@ class FavProvider extends State<StatefulWidget>
   Animation<double> _favAnimation;
   AnimationController animationController;
   CurvedAnimation curvedAnimation;
-  double _iconSize = 30;
+  double _iconSize = 28;
 
   double get iconSize => _iconSize;
 
@@ -16,7 +16,7 @@ class FavProvider extends State<StatefulWidget>
         AnimationController(vsync: this, duration: Duration(milliseconds: 600));
     curvedAnimation =
         CurvedAnimation(parent: animationController, curve: Curves.easeInBack);
-    _favAnimation = Tween(begin: 30.0, end: 10.0).animate(curvedAnimation)
+    _favAnimation = Tween(begin: 28.0, end: 10.0).animate(curvedAnimation)
       ..addListener(() {
         _iconSize = _favAnimation.value;
 //        print(_favAnimation.value);

@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:pixivic/provider/favorite_animation.dart';
 import 'package:pixivic/provider/get_page.dart';
 import 'package:pixivic/provider/page_switch.dart';
+import 'package:pixivic/widget/markheart_icon.dart';
 import 'package:requests/requests.dart';
 import 'package:random_color/random_color.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -327,7 +327,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
     print("build");
     super.build(context);
     return ChangeNotifierProvider<GetPageProvider>(
-    create: (_)=>GetPageProvider(),
+      create: (_) => GetPageProvider(),
       child: Selector<GetPageProvider, GetPageProvider>(
         shouldRebuild: (pre, next) => true,
         selector: (context, provider) => provider,
@@ -395,7 +395,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
                     return Selector<GetPageProvider, Map>(
                       selector: (context, provider) => provider.picList[index],
                       builder: (context, picItem, child) {
-                        return imageCell(picItem,index);
+                        return imageCell(picItem, index);
                       },
                     );
                   },
@@ -531,7 +531,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
         getPageProvider
             .getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
             .then((value) {
-          if (value.length!=0) {
+          if (value.length != 0) {
             loadMoreAble = true;
           }
         });
@@ -559,7 +559,7 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
     }
   }
 
-  Widget imageCell(Map picItem,int index) {
+  Widget imageCell(Map picItem, int index) {
     final Color color = _randomColor.randomColor();
     Map picMapData = Map.from(picItem);
     if (picMapData['xrestict'] == 1 ||
@@ -588,14 +588,13 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
                         BotToast.showSimpleNotification(title: '唤起网页失败');
                         throw 'Could not launch ${picMapData['link']}';
                       }
-                    }
-                    else
+                    } else
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => PicDetailPage(picMapData,
                                   index: index,
-                                  bookmarkRefresh: _bookmarkRefresh)));
+                                  getPageProvider: getPageProvider)));
                   },
                   child: Container(
                     // 限定constraints用于占用位置,经调试后以0.5为基准可以保证加载图片后不产生位移
@@ -652,7 +651,23 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
                 ? Positioned(
                     bottom: ScreenUtil().setHeight(5),
                     right: ScreenUtil().setWidth(5),
-                    child: bookmarkHeart(picItem,index))
+                    child: Container(
+                      alignment: Alignment.center,
+                      // color: Colors.white,
+                      height: ScreenUtil().setWidth(33),
+                      width: ScreenUtil().setWidth(33),
+//            height: isLikedLocalState
+//                ? ScreenUtil().setWidth(33)
+//                : ScreenUtil().setWidth(27),
+//            width: isLikedLocalState
+//                ? ScreenUtil().setWidth(33)
+//                : ScreenUtil().setWidth(27),
+                      child: MarkHeart(
+                          picItem: picItem,
+                          index: index,
+                          getPageProvider: getPageProvider),
+                    ))
+//                    bookmarkHeart(picItem, index))
                 : Container(),
           ],
         ),
@@ -683,139 +698,6 @@ class _PicPageState extends State<PicPage> with AutomaticKeepAliveClientMixin {
             ),
           )
         : Container();
-  }
-
-  Widget bookmarkHeart(Map picItem,int index) {
-    bool isLikedLocalState = picItem['isLiked'];
-    var color = isLikedLocalState ? Colors.redAccent : Colors.grey[300];
-    String picId = picItem['id'].toString();
-
-    return ChangeNotifierProvider<FavProvider>(
-      create: (_) => FavProvider(),
-      child: Container(
-//      duration: Duration(milliseconds: 500),
-//      curve: Curves.fastLinearToSlowEaseIn,
-          alignment: Alignment.center,
-          // color: Colors.white,
-          height: ScreenUtil().setWidth(33),
-          width: ScreenUtil().setWidth(33),
-//            height: isLikedLocalState
-//                ? ScreenUtil().setWidth(33)
-//                : ScreenUtil().setWidth(27),
-//            width: isLikedLocalState
-//                ? ScreenUtil().setWidth(33)
-//                : ScreenUtil().setWidth(27),
-          child: Consumer<FavProvider>(
-            builder: (context, FavProvider favProvider, _) {
-              return IconButton(
-                color: color,
-                padding: EdgeInsets.all(0),
-                iconSize: ScreenUtil().setHeight(favProvider.iconSize),
-                icon: Icon(Icons.favorite),
-                onPressed: () async {
-                  //点击动画
-                  favProvider.clickFunc();
-                  String url = 'https://api.pixivic.com/users/bookmarked';
-                  Map<String, String> body = {
-                    'userId': prefs.getInt('id').toString(),
-                    'illustId': picId.toString(),
-                    'username': prefs.getString('name')
-                  };
-                  Map<String, String> headers = {
-                    'authorization': prefs.getString('auth')
-                  };
-                  try {
-                    if (isLikedLocalState) {
-                      await Requests.delete(url,
-                          body: body,
-                          headers: headers,
-                          bodyEncoding: RequestBodyEncoding.JSON);
-                    } else {
-                      await Requests.post(url,
-                          body: body,
-                          headers: headers,
-                          bodyEncoding: RequestBodyEncoding.JSON);
-                    }
-                    Future.delayed(Duration(milliseconds: 400), () {
-//                      setState(() {
-                      getPageProvider.markFun(index);
-
-//                      });
-                    });
-//                    setState(() {
-//                      pageProvider.picList[index]['isLiked'] = !pageProvider.picList[index]['isLiked'];
-//                    });
-                  } catch (e) {
-                    print(e);
-                  }
-                },
-              );
-            },
-          )
-
-//        GestureDetector(
-//            onTap: () async {
-//              //点击动画
-//              favProvider.clickFunc();
-//              String url = 'https://api.pixivic.com/users/bookmarked';
-//              Map<String, String> body = {
-//                'userId': prefs.getInt('id').toString(),
-//                'illustId': picId.toString(),
-//                'username': prefs.getString('name')
-//              };
-//              Map<String, String> headers = {
-//                'authorization': prefs.getString('auth')
-//              };
-//              try {
-//                if (isLikedLocalState) {
-//                  await Requests.delete(url,
-//                      body: body,
-//                      headers: headers,
-//                      bodyEncoding: RequestBodyEncoding.JSON);
-//                } else {
-//                  await Requests.post(url,
-//                      body: body,
-//                      headers: headers,
-//                      bodyEncoding: RequestBodyEncoding.JSON);
-//                }
-//                Future.delayed(Duration(milliseconds: 400), () {
-////                      setState(() {
-//                  picItem['isLiked'] = !picItem['isLiked'];
-//
-////                      });
-//                }
-//                );
-////                    setState(() {
-////                      pageProvider.picList[index]['isLiked'] = !pageProvider.picList[index]['isLiked'];
-////                    });
-//              } catch (e) {
-//                print(e);
-//              }
-//            },
-//            child: Icon(
-//              Icons.favorite,
-//              color: color,
-//              size: ScreenUtil().setHeight(favProvider.iconSize),
-//            )
-//
-////              LayoutBuilder(builder: (context, constraint) {
-//////                print(favProvider.iconSize);
-////                return Icon(Icons.favorite,
-////                    color: color,
-////                    size: favProvider.iconSize,
-//////                    size: constraint.biggest.height
-////                );
-////              }
-////              ),
-//        ),
-          ),
-    );
-  }
-
-  _bookmarkRefresh(int index, bool result) {
-    setState(() {
-      getPageProvider.picList[index]['isLiked'] = result;
-    });
   }
 
 //页面状态保持
