@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pixivic/data/common.dart';
+
 import 'package:pixivic/provider/common_provider.dart';
 import 'package:pixivic/provider/get_page.dart';
 
