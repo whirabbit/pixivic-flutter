@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'login_page.dart';
 import '../sidepage/bookmark_page.dart';
-// import '../sidepage/follow_page.dart';
 import '../sidepage/history_page.dart';
 import '../page/artist_list_page.dart';
 
@@ -108,13 +107,11 @@ class UserPageState extends State<UserPage> {
             child: GestureDetector(
               onLongPressEnd: ((LongPressEndDetails longPressEndDetails) {
                 print(longPressEndDetails.velocity.pixelsPerSecond.dx);
-                if (longPressEndDetails.velocity.pixelsPerSecond.dx <
-                        0 &&
+                if (longPressEndDetails.velocity.pixelsPerSecond.dx < 0 &&
                     Theme.of(context).platform == TargetPlatform.android) {
                   print(6);
                   prefs.setInt('sanityLevel', 6);
-                } else if (longPressEndDetails
-                            .velocity.pixelsPerSecond.dx >
+                } else if (longPressEndDetails.velocity.pixelsPerSecond.dx >
                         0 &&
                     Theme.of(context).platform == TargetPlatform.android) {
                   print(3);
@@ -251,8 +248,8 @@ class UserPageState extends State<UserPage> {
   }
 
   _routeToFollowPage() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ArtistListPage.follow()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => ArtistListPage.follow()));
   }
 
   _routeToHistoryPage() {

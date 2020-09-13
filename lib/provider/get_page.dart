@@ -218,5 +218,7 @@ class GetPageProvider with ChangeNotifier {
   @override
   void dispose() {
     super.dispose();
+    picList = [];
+    jsonList = null;
   }
 }

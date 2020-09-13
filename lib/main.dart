@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:pixivic/page/search_page.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:pixivic/provider/user_state.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 
