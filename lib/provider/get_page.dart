@@ -37,7 +37,6 @@ class GetPageProvider with ChangeNotifier {
     if (this.picDate != picDate || this.picMode != picMode) {
       this.jsonList = null;
     }
-
     this.jsonMode = 'home';
     this.picDate = picDate;
     this.picMode = picMode;
