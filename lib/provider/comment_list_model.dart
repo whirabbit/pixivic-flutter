@@ -19,7 +19,6 @@ class CommentListModel with ChangeNotifier {
     } else if (response.statusCode == 200 && response.data['data'] == null) {
       commentList = [];
       print('comments: null but 200');
-
       return commentList;
     } else {
       BotToast.showSimpleNotification(title: response.data['message']);

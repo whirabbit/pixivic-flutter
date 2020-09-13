@@ -5,30 +5,28 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:pixivic/page/search_page.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:pixivic/provider/user_state.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 
-import 'widget/nav_bar.dart';
-import 'widget/papp_bar.dart';
-
-// import 'widget/menu_button.dart';
-// import 'widget/menu_list.dart';
-import 'page/pic_page.dart';
-import 'page/new_page.dart';
-import 'page/user_page.dart';
-import 'page/center_page.dart';
-import 'data/common.dart';
-import 'data/bugly.dart';
-import 'function/update.dart';
-import 'function/collection.dart';
+import 'package:pixivic/page/search_page.dart';
+import 'package:pixivic/widget/nav_bar.dart';
+import 'package:pixivic/widget/papp_bar.dart';
+import 'package:pixivic/page/pic_page.dart';
+import 'package:pixivic/page/new_page.dart';
+import 'package:pixivic/page/user_page.dart';
+import 'package:pixivic/page/center_page.dart';
+import 'package:pixivic/data/common.dart';
+import 'package:pixivic/data/bugly.dart';
+import 'package:pixivic/function/update.dart';
+import 'package:pixivic/function/collection.dart';
+import 'package:pixivic/provider/page_switch.dart';
 
 // import 'provider/comment_list_model.dart';
 // import 'provider/pic_page_model.dart';
-import 'provider/page_switch.dart';
+// import 'widget/menu_button.dart';
+// import 'widget/menu_list.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
