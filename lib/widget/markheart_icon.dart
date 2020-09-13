@@ -17,7 +17,7 @@ class MarkHeart extends StatelessWidget {
   final Map picItem;
   final int index;
 
-  final GetPageProvider getPageProvider;
+  final PicPageModel getPageProvider;
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +28,12 @@ class MarkHeart extends StatelessWidget {
     String picId = picItem['id'].toString();
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<FavProvider>(
-          create: (_) => FavProvider(),
+        ChangeNotifierProvider<FavoriteAnimationModel>(
+          create: (_) => FavoriteAnimationModel(),
         )
       ],
-      child: Consumer<FavProvider>(
-        builder: (context, FavProvider favProvider, child) {
+      child: Consumer<FavoriteAnimationModel>(
+        builder: (context, FavoriteAnimationModel favProvider, child) {
           return IconButton(
             color: color,
             padding: EdgeInsets.all(0),

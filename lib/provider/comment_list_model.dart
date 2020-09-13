@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:bot_toast/bot_toast.dart';
 
-class GetCommentProvider with ChangeNotifier {
+class CommentListModel with ChangeNotifier {
   List commentList;
 
   loadComments(int illustId, {int page = 1}) async {

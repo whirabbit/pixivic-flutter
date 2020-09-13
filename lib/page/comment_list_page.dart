@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:pixivic/data/common.dart';
-import 'package:pixivic/provider/get_comment_list_data.dart';
+import 'package:pixivic/provider/comment_list_model.dart';
 import 'package:provider/provider.dart';
 import '../widget/papp_bar.dart';
 import '../data/texts.dart';
@@ -53,7 +53,7 @@ class _CommentListPageState extends State<CommentListPage> {
   TextEditingController textEditingController;
   FocusNode replyFocus;
   ScrollController scrollController;
-  GetCommentProvider commentProvider;
+  CommentListModel commentProvider;
 
   @override
   void initState() {
@@ -92,10 +92,10 @@ class _CommentListPageState extends State<CommentListPage> {
         appBar: PappBar(
           title: texts.comment,
         ),
-        body: ChangeNotifierProvider<GetCommentProvider>(
-          create: (_) => GetCommentProvider(),
-          child: Consumer<GetCommentProvider>(
-            builder: (context, GetCommentProvider commentProvider, _) {
+        body: ChangeNotifierProvider<CommentListModel>(
+          create: (_) => CommentListModel(),
+          child: Consumer<CommentListModel>(
+            builder: (context, CommentListModel commentProvider, _) {
               this.commentProvider = commentProvider;
               if (commentProvider.commentList == null) {
                 commentProvider.loadComments(widget.illustId);
@@ -140,7 +140,7 @@ class _CommentListPageState extends State<CommentListPage> {
     );
   }
 
-  Widget bottomCommentBar(GetCommentProvider commentProvider) {
+  Widget bottomCommentBar(CommentListModel commentProvider) {
     return Container(
       padding: EdgeInsets.only(bottom: screen.setHeight(5)),
       width: screen.setWidth(324),
@@ -364,7 +364,7 @@ class _CommentListPageState extends State<CommentListPage> {
     print('replyParentId now is $replyParentId');
   }
 
-  _reply(GetCommentProvider commentProvider) async {
+  _reply(CommentListModel commentProvider) async {
     if (prefs.getString('auth') == '') {
       BotToast.showSimpleNotification(title: texts.pleaseLogin);
       return false;
