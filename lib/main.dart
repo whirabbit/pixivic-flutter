@@ -10,13 +10,13 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 
-import 'package:pixivic/page/search_page.dart';
 import 'package:pixivic/widget/nav_bar.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/page/new_page.dart';
 import 'package:pixivic/page/user_page.dart';
 import 'package:pixivic/page/center_page.dart';
+import 'package:pixivic/page/search_page.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/bugly.dart';
 import 'package:pixivic/function/update.dart';
