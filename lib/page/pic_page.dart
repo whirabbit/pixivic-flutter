@@ -319,16 +319,18 @@ class PicPage extends StatelessWidget {
         builder: (context, PicPageModel pageProvider, _) {
           getPageProvider = pageProvider;
           pageProvider.context = context;
-          switchModel(pageProvider);
+          switchModel(pageProvider); 
+
           if (pageProvider.picList == null) {
             pageProvider.picList = [];
             pageProvider.jsonList = [];
-            print("请求数据");
+            print("get list form pageProvider");
             pageProvider.getJsonList().then((value) {
               value.length == 0 ? hasConnected = true : hasConnected = false;
             });
           }
           pageProvider.picList = pageProvider.picList + pageProvider.jsonList;
+          
           if (pageProvider.picList.length == 0 && !hasConnected) {
             return Container(
                 height: ScreenUtil().setHeight(576),
