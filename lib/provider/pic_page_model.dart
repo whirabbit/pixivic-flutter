@@ -41,7 +41,8 @@ class PicPageModel with ChangeNotifier {
     scrollController = ScrollController(
         initialScrollOffset: jsonMode == 'home' ? homeScrollerPosition : 0.0)
       ..addListener(_doWhileScrolling);
-    //加载缓存数据
+    
+    // load home list cache list data if existed
     if (this.jsonMode == 'home' && (!listEquals(homePicList, []))) {
       print("load home cache list data");
       picList = homePicList;
@@ -148,7 +149,6 @@ class PicPageModel with ChangeNotifier {
     notifyListeners();
   }
 
-  // TODO: 当退出 home 模式的 PicPage 时，进行 homePicList 的保存
   void saveListToHomePicList(int currentPage) {
     if (picList != null && jsonMode == 'home') {
       homePicList = picList;
@@ -297,16 +297,12 @@ class PicPageModel with ChangeNotifier {
       url =
           'https://api.pixivic.com/collections/$collectionId/illustrations?page=$currentPage&pagesize=10';
     }
-    // TODO: 当 home 模式时，查看是否有 list 和 page 缓存，有的话则重载，而非重新加载
-    // if(jsonMode == 'home' && currentPage < homeCurrentPage) {
-    //   picList = homePicList;
-    // } else {}
+
     try {
       if (prefs.getString('auth') == '') {
         var requests = await Requests.get(url);
         jsonList = jsonDecode(requests.content())['data'];
         print(requests.statusCode);
-//        print(requests.content());
         if (requests.statusCode == 401)
           BotToast.showSimpleNotification(title: '请登录后再重新加载画作');
       } else {
