@@ -73,7 +73,7 @@ class PicPageModel with ChangeNotifier {
     this.picMode = picMode;
   }
 
-  void searchPage(
+  searchPage(
       {@required String searchKeywords, @required bool searchManga}) {
     if (this.searchKeywords != searchKeywords) {
       this.picList = null;
@@ -83,7 +83,7 @@ class PicPageModel with ChangeNotifier {
     this.isManga = searchManga;
   }
 
-  void relatedPage(
+  relatedPage(
       {@required num relatedId,
       @required VoidCallback onTopOfPicpage,
       @required VoidCallback onStartOfPicpage}) {
@@ -94,7 +94,7 @@ class PicPageModel with ChangeNotifier {
     this.isScrollable = true;
   }
 
-  void artistPage(
+  artistPage(
       {@required String artistId,
       @required bool isManga,
       @required VoidCallback onTopOfPicpage,
@@ -106,32 +106,32 @@ class PicPageModel with ChangeNotifier {
     this.onPageStart = onStartOfPicpage;
   }
 
-  void followedPage({@required String userId, @required bool isManga}) {
+  followedPage({@required String userId, @required bool isManga}) {
     this.jsonMode = 'followed';
     this.userId = userId;
     this.isManga = isManga;
   }
 
-  void bookmarkPage({@required String userId, @required bool isManga}) {
+  bookmarkPage({@required String userId, @required bool isManga}) {
     this.jsonMode = 'bookmark';
     this.userId = userId;
     this.isManga = isManga;
   }
 
-  void spotlightPage({@required String spotlightId}) {
+  spotlightPage({@required String spotlightId}) {
     this.jsonMode = 'spotlight';
     this.spotlightId = spotlightId;
   }
 
-  void historyPage() {
+  historyPage() {
     this.jsonMode = 'history';
   }
 
-  void oldHistoryPage() {
+  oldHistoryPage() {
     this.jsonMode = 'oldhistory';
   }
 
-  void userdetailPage(
+  userdetailPage(
       {@required String userId,
       @required bool isManga,
       @required VoidCallback onTopOfPicpage,
@@ -144,12 +144,12 @@ class PicPageModel with ChangeNotifier {
   }
 
   //标记方法
-  void flipLikeState(int index) {
+  flipLikeState(int index) {
     picList[index]['isLiked'] = !picList[index]['isLiked'];
     notifyListeners();
   }
 
-  void saveListToHomePicList(int currentPage) {
+  saveListToHomePicList(int currentPage) {
     if (picList != null && jsonMode == 'home') {
       homePicList = picList;
       homeCurrentPage = currentPage;
@@ -158,7 +158,7 @@ class PicPageModel with ChangeNotifier {
 
   collectionPage({@required String collectionId}) {
     this.collectionId = collectionId;
-    getJsonList();
+    // getJsonList();
   }
 
   _doWhileScrolling() {
@@ -238,7 +238,6 @@ class PicPageModel with ChangeNotifier {
 
   getJsonList({bool loadMoreAble, int currentPage = 1}) async {
     // 获取所有的图片数据
-
     if (jsonMode == 'home') {
       url =
           'https://api.pixivic.com/ranks?page=$currentPage&date=$picDate&mode=$picMode&pageSize=30';
@@ -261,7 +260,7 @@ class PicPageModel with ChangeNotifier {
             'https://api.pixivic.com/artists/$artistId/illusts/manga?page=$currentPage&pageSize=30&maxSanityLevel=10';
       }
     } else if (jsonMode == 'followed') {
-      loadMoreAble = false;
+      this.loadMoreAble = false;
       if (!isManga) {
         url =
             'https://api.pixivic.com/users/$userId/followed/latest/illust?page=$currentPage&pageSize=30';
@@ -278,7 +277,7 @@ class PicPageModel with ChangeNotifier {
             'https://api.pixivic.com/users/$userId/bookmarked/manga?page=$currentPage&pageSize=30';
       }
     } else if (jsonMode == 'spotlight') {
-      loadMoreAble = false;
+      this.loadMoreAble = false;
       url = 'https://api.pixivic.com/spotlights/$spotlightId/illustrations';
     } else if (jsonMode == 'history') {
       url =
@@ -329,7 +328,7 @@ class PicPageModel with ChangeNotifier {
   }
 
   @override
-  void dispose() {
+  dispose() {
     super.dispose();
     print("providerDispose");
     if (jsonMode == 'home' && picList != null) {
