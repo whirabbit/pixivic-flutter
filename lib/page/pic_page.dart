@@ -247,17 +247,17 @@ class PicPage extends StatelessWidget {
   // pageProvider.picList - 图片的JSON文件列表
   // picTotalNum - pageProvider.picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
   // 针对最常访问的 Home 页面，临时变量记录于 common.dart
-//  List pageProvider.picList = [];
+  //  List pageProvider.picList = [];
   int picTotalNum;
   int currentPage = 1;
   List picList;
   RandomColor _randomColor = RandomColor();
   bool hasConnected = false;
-  bool loadMoreAble = true;
+  bool loadMoreAble = true;  //TODO: may be deleted
   bool isScrolling = false;
   ScrollController scrollController;
   String previewQuality = prefs.getString('previewQuality');
-  PicPageModel getPageProvider;
+  PicPageModel getPageProvider;    // TODO: may be not needed
 
 //  @override
 //  void initState() {
@@ -319,7 +319,7 @@ class PicPage extends StatelessWidget {
         builder: (context, PicPageModel pageProvider, _) {
           getPageProvider = pageProvider;
           pageProvider.context = context;
-          switchModel(pageProvider); 
+          switchModel(pageProvider);
 
           if (pageProvider.picList == null) {
             pageProvider.picList = [];
@@ -330,7 +330,7 @@ class PicPage extends StatelessWidget {
             });
           }
           pageProvider.picList = pageProvider.picList + pageProvider.jsonList;
-          
+
           if (pageProvider.picList.length == 0 && !hasConnected) {
             return Container(
                 height: ScreenUtil().setHeight(576),
