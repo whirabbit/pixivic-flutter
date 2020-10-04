@@ -37,13 +37,13 @@ class PicPageModel with ChangeNotifier {
   BuildContext context;
 
   PicPageModel({this.jsonMode}) {
-    print("控制器初始化");
+    print("PicPageModel cteated and init");
     scrollController = ScrollController(
         initialScrollOffset: jsonMode == 'home' ? homeScrollerPosition : 0.0)
       ..addListener(_doWhileScrolling);
     //加载缓存数据
     if (this.jsonMode == 'home' && (!listEquals(homePicList, []))) {
-      print("加载缓存数据");
+      print("load home cache list data");
       picList = homePicList;
       currentPage = homeCurrentPage;
       jsonList = [];
