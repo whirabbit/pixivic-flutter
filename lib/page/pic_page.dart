@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:requests/requests.dart';
 import 'package:random_color/random_color.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,8 +16,6 @@ import 'package:provider/provider.dart';
 import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
-import 'package:pixivic/provider/page_switch.dart';
-import 'package:pixivic/provider/user_state.dart';
 import 'package:pixivic/widget/markheart_icon.dart';
 
 // 可以作为页面中单个组件或者单独页面使用的pic瀑布流组件,因可以作为页面，故不归为widget

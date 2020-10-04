@@ -29,12 +29,12 @@ class _NavBarState extends State<NavBar> {
 
   @override
   void initState() {
+    indexProvider = Provider.of<PageSwitchProvider>(context);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    indexProvider = Provider.of<PageSwitchProvider>(context);
     activeList = List.filled(4, false);
     activeList[indexProvider.currentIndex] = true;
     if (widget.alone) {
@@ -44,6 +44,7 @@ class _NavBarState extends State<NavBar> {
       containerLeft = ScreenUtil().setWidth(98);
       containerRight = ScreenUtil().setWidth(27);
     }
+
     if (indexProvider.judgeScrolling) {
       containerBottom = ScreenUtil().setHeight(-47);
     } else {
@@ -129,7 +130,7 @@ class _NavBarState extends State<NavBar> {
         curve: Curves.easeIn,
         child: GestureDetector(
           onTap: () {
-            indexProvider.changeJudge(true);
+            indexProvider.pageChanged(true);
             // 当外部方法 onTap 为空，触发的独立方法
             if (activeList[seq] == true) {
             } else {

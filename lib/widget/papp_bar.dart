@@ -120,7 +120,7 @@ class PappBarState extends State<PappBar> {
               //判断是否从nav_bar点击
               if (indexProvider.judgePage) {
                 changePappbarMode(indexProvider.currentIndex);
-                indexProvider.changeJudge(false);
+                indexProvider.pageChanged(false);
               }
 //           }
               return chooseWidget();
