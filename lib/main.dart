@@ -217,11 +217,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _onPageChanged(int index) {
-    // print('_onPageChanged: $index');
-//      _currentIndex = index;
     indexProvider.changeIndex(index);
-    //滑动切换类似点击nav_bar
-    indexProvider.changeJudge(true);
+    indexProvider.pageChanged(true);
+    indexProvider.changeScrolling(false);
     // _menuButtonKey.currentState.changeTapState(false);
     // _menuListKey.currentState.changeActive(false);
 
