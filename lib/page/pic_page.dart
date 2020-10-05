@@ -248,16 +248,16 @@ class PicPage extends StatelessWidget {
   // picTotalNum - pageProvider.picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
   // 针对最常访问的 Home 页面，临时变量记录于 common.dart
   //  List pageProvider.picList = [];
-  int picTotalNum;
-  int currentPage = 1;
-  List picList;
+//  int picTotalNum;
+//  int currentPage = 1;
+//  List picList;
   RandomColor _randomColor = RandomColor();
   bool hasConnected = false;
-  bool loadMoreAble = true;  //TODO: may be deleted
+//  bool loadMoreAble = true;  //TODO: may be deleted
   bool isScrolling = false;
   ScrollController scrollController;
   String previewQuality = prefs.getString('previewQuality');
-  PicPageModel getPageProvider;    // TODO: may be not needed
+//  PicPageModel getPageProvider;    // TODO: may be not needed
 
 //  @override
 //  void initState() {
@@ -317,7 +317,7 @@ class PicPage extends StatelessWidget {
         shouldRebuild: (pre, next) => true,
         selector: (context, provider) => provider,
         builder: (context, PicPageModel pageProvider, _) {
-          getPageProvider = pageProvider;
+//          getPageProvider = pageProvider;
           pageProvider.context = context;
           switchModel(pageProvider);
 
@@ -380,7 +380,7 @@ class PicPage extends StatelessWidget {
                     return Selector<PicPageModel, Map>(
                       selector: (context, provider) => provider.picList[index],
                       builder: (context, picItem, child) {
-                        return imageCell(picItem, index, context);
+                        return imageCell(picItem, index, context,pageProvider);
                       },
                     );
                   },
@@ -543,7 +543,7 @@ class PicPage extends StatelessWidget {
     }
   }
 
-  Widget imageCell(Map picItem, int index, BuildContext context) {
+  Widget imageCell(Map picItem, int index, BuildContext context,PicPageModel pageProvider) {
     final Color color = _randomColor.randomColor();
     Map picMapData = Map.from(picItem);
     if (picMapData['xrestict'] == 1 ||
@@ -578,7 +578,7 @@ class PicPage extends StatelessWidget {
                           MaterialPageRoute(
                               builder: (context) => PicDetailPage(picMapData,
                                   index: index,
-                                  getPageProvider: getPageProvider)));
+                                  getPageProvider: pageProvider)));
                   },
                   child: Container(
                     // 限定constraints用于占用位置,经调试后以0.5为基准可以保证加载图片后不产生位移
@@ -649,7 +649,7 @@ class PicPage extends StatelessWidget {
                       child: MarkHeart(
                           picItem: picItem,
                           index: index,
-                          getPageProvider: getPageProvider),
+                          getPageProvider: pageProvider),
                     ))
                 : Container(),
           ],
