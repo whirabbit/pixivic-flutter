@@ -29,7 +29,7 @@ class _NavBarState extends State<NavBar> {
 
   @override
   void initState() {
-    indexProvider = Provider.of<PageSwitchProvider>(context);
+    indexProvider = Provider.of<PageSwitchProvider>(context,listen: false);
     super.initState();
   }
 
