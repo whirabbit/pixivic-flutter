@@ -41,7 +41,7 @@ class PicPageModel with ChangeNotifier {
     scrollController = ScrollController(
         initialScrollOffset: jsonMode == 'home' ? homeScrollerPosition : 0.0)
       ..addListener(_doWhileScrolling);
-    
+
     // load home list cache list data if existed
     if (this.jsonMode == 'home' && (!listEquals(homePicList, []))) {
       print("load home cache list data");
@@ -73,8 +73,7 @@ class PicPageModel with ChangeNotifier {
     this.picMode = picMode;
   }
 
-  searchPage(
-      {@required String searchKeywords, @required bool searchManga}) {
+  searchPage({@required String searchKeywords, @required bool searchManga}) {
     if (this.searchKeywords != searchKeywords) {
       this.picList = null;
     }
@@ -192,23 +191,23 @@ class PicPageModel with ChangeNotifier {
       }
     }
 
-//    if (widget.jsonMode == 'related' ||
-//        widget.jsonMode == 'artist' ||
-//        widget.jsonMode == 'userdetail') {
-//      if (scrollController.position.extentBefore == 0 &&
-//          scrollController.position.userScrollDirection ==
-//              ScrollDirection.forward) {
-//        widget.onPageTop();
-//        print('on page top');
-//      }
-//      if (scrollController.position.extentBefore > 150 &&
-//          scrollController.position.extentBefore < 200 &&
-//          scrollController.position.userScrollDirection ==
-//              ScrollDirection.reverse) {
-//        widget.onPageStart();
-//        print('on page start');
-//      }
-//    }
+    if (jsonMode == 'related' ||
+        jsonMode == 'artist' ||
+        jsonMode == 'userdetail') {
+      if (scrollController.position.extentBefore == 0 &&
+          scrollController.position.userScrollDirection ==
+              ScrollDirection.forward) {
+        onPageTop();
+        print('on page top');
+      }
+      if (scrollController.position.extentBefore > 150 &&
+          scrollController.position.extentBefore < 200 &&
+          scrollController.position.userScrollDirection ==
+              ScrollDirection.reverse) {
+        onPageStart();
+        print('on page start');
+      }
+    }
 
     // Auto Load
     if ((scrollController.position.extentAfter < 1200) &&
