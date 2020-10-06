@@ -62,9 +62,7 @@ class PicPageModel with ChangeNotifier {
       homeCurrentPage = 1;
       homePicList = [];
       homeScrollerPosition = 0;
-      scrollController = ScrollController(
-          initialScrollOffset: jsonMode == 'home' ? homeScrollerPosition : 0.0)
-        ..addListener(_doWhileScrolling);
+      scrollController.jumpTo(0.0);
       this.picList = null;
     }
 
