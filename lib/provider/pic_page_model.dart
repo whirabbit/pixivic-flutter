@@ -159,10 +159,7 @@ class PicPageModel with ChangeNotifier {
   }
 
   _doWhileScrolling() {
-//    print("滑出ViewPort顶部的长度"+scrollController.position.extentBefore.toString());
-//    print("ViewPort内部长度"+scrollController.position.extentInside.toString());
-//      print("测量"+scrollController.position.extentAfter.toString());
-//    FocusScope.of(context).unfocus();
+    // FocusScope.of(context).unfocus();
     // 如果为主页面 picPage，则记录滑动位置、判断滑动
     if (jsonMode == 'home') {
       homeScrollerPosition = scrollController

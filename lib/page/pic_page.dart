@@ -250,14 +250,15 @@ class PicPage extends StatelessWidget {
   // picTotalNum - pageProvider.picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
   // 针对最常访问的 Home 页面，临时变量记录于 common.dart
   //  List pageProvider.picList = [];
-  RandomColor _randomColor = RandomColor();
-  bool hasConnected = false;
+  
+  bool hasConnected = false;  //TODO: 放置于 model
   String previewQuality = prefs.getString('previewQuality');
-
-
+  RandomColor _randomColor = RandomColor();
+  
   @override
   Widget build(BuildContext context) {
     print('build PicPage');
+    
     return ChangeNotifierProvider<PicPageModel>(
       create: (_) => PicPageModel(jsonMode: this.jsonMode),
       child: Selector<PicPageModel, PicPageModel>(
