@@ -241,7 +241,9 @@ class PicPage extends StatelessWidget {
 
   // hide naviagtor bar when page is scrolling
   final ValueChanged<bool> onPageScrolling;
+  // related page 中，用户返回到了顶部
   final VoidCallback onPageTop;
+  // related page 中，用户开始下滑
   final VoidCallback onPageStart;
 
   // pageProvider.picList - 图片的JSON文件列表
