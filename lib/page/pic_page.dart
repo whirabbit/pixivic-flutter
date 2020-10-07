@@ -380,7 +380,7 @@ class PicPage extends StatelessWidget {
                     return Selector<PicPageModel, Map>(
                       selector: (context, provider) => provider.picList[index],
                       builder: (context, picItem, child) {
-                        return imageCell(picItem, index, context,pageProvider);
+                        return imageCell(picItem, index, context, pageProvider);
                       },
                     );
                   },
@@ -543,7 +543,8 @@ class PicPage extends StatelessWidget {
     }
   }
 
-  Widget imageCell(Map picItem, int index, BuildContext context,PicPageModel pageProvider) {
+  Widget imageCell(
+      Map picItem, int index, BuildContext context, PicPageModel pageProvider) {
     final Color color = _randomColor.randomColor();
     Map picMapData = Map.from(picItem);
     if (picMapData['xrestict'] == 1 ||
@@ -580,46 +581,61 @@ class PicPage extends StatelessWidget {
                                   index: index,
                                   getPageProvider: pageProvider)));
                   },
-                  child: Container(
-                    // 限定constraints用于占用位置,经调试后以0.5为基准可以保证加载图片后不产生位移
-                    constraints: BoxConstraints(
-                        // minHeight: MediaQuery.of(context).size.width *
-                        //     0.5 /
-                        //     _picMainParameter(index)[2] *
-                        //     _picMainParameter(index)[3],
-                        // minWidth: MediaQuery.of(context).size.width * 0.41,
+                  child: ShaderMask(
+                    shaderCallback: false
+                        ? (bounds) => LinearGradient(
+                                colors: [Colors.blue[200], Colors.blue[100]])
+                            .createShader(bounds)
+                        : (bounds) => LinearGradient(
+                                colors: [Colors.white, Colors.white])
+                            .createShader(bounds),
+                    child: Container(
+                      // 限定constraints用于占用位置,经调试后以0.5为基准可以保证加载图片后不产生位移
+                      constraints: BoxConstraints(
                         minHeight: ScreenUtil().setWidth(148) /
                             _picMainParameter(picItem)[2] *
                             _picMainParameter(picItem)[3],
-                        minWidth: ScreenUtil().setWidth(148)),
-                    child: Hero(
-                      tag: 'imageHero' + _picMainParameter(picItem)[0],
-                      child: Image(
-                        image: AdvancedNetworkImage(
-                          _picMainParameter(picItem)[0],
-                          header: {'Referer': 'https://app-api.pixiv.net'},
-                          useDiskCache: true,
-                          cacheRule: CacheRule(
-                              maxAge:
-                                  Duration(days: prefs.getInt('previewRule'))),
+                        minWidth: ScreenUtil().setWidth(148),
+                      ),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: Hero(
+                        tag: 'imageHero' + _picMainParameter(picItem)[0],
+                        child: Image(
+                          image: AdvancedNetworkImage(
+                            _picMainParameter(picItem)[0],
+                            header: {'Referer': 'https://app-api.pixiv.net'},
+                            useDiskCache: true,
+                            cacheRule: CacheRule(
+                                maxAge: Duration(
+                                    days: prefs.getInt('previewRule'))),
+                          ),
+                          fit: BoxFit.fill,
+                          frameBuilder:
+                              (context, child, frame, wasSynchronouslyLoaded) {
+                            if (wasSynchronouslyLoaded) {
+                              return child;
+                            }
+                            return Container(
+                              child: AnimatedOpacity(
+                                child: frame == null
+                                    ? Container(color: color)
+                                    : child,
+                                opacity: frame == null ? 0.3 : 1,
+                                duration: const Duration(seconds: 1),
+                                curve: Curves.easeOut,
+                              ),
+                            );
+                          },
                         ),
-                        fit: BoxFit.fill,
-                        frameBuilder:
-                            (context, child, frame, wasSynchronouslyLoaded) {
-                          if (wasSynchronouslyLoaded) {
-                            return child;
-                          }
-                          return Container(
-                            child: AnimatedOpacity(
-                              child: frame == null
-                                  ? Container(color: color)
-                                  : child,
-                              opacity: frame == null ? 0.3 : 1,
-                              duration: const Duration(seconds: 1),
-                              curve: Curves.easeOut,
-                            ),
-                          );
-                        },
                       ),
                     ),
                   ),
@@ -637,15 +653,8 @@ class PicPage extends StatelessWidget {
                     right: ScreenUtil().setWidth(5),
                     child: Container(
                       alignment: Alignment.center,
-                      // color: Colors.white,
                       height: ScreenUtil().setWidth(33),
                       width: ScreenUtil().setWidth(33),
-//            height: isLikedLocalState
-//                ? ScreenUtil().setWidth(33)
-//                : ScreenUtil().setWidth(27),
-//            width: isLikedLocalState
-//                ? ScreenUtil().setWidth(33)
-//                : ScreenUtil().setWidth(27),
                       child: MarkHeart(
                           picItem: picItem,
                           index: index,
