@@ -248,65 +248,10 @@ class PicPage extends StatelessWidget {
   // picTotalNum - pageProvider.picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
   // 针对最常访问的 Home 页面，临时变量记录于 common.dart
   //  List pageProvider.picList = [];
-//  int picTotalNum;
-//  int currentPage = 1;
-//  List picList;
   RandomColor _randomColor = RandomColor();
   bool hasConnected = false;
-//  bool loadMoreAble = true;  //TODO: may be deleted
-  bool isScrolling = false;
-  ScrollController scrollController;
   String previewQuality = prefs.getString('previewQuality');
-//  PicPageModel getPageProvider;    // TODO: may be not needed
 
-//  @override
-//  void initState() {
-//    // if (( jsonMode == 'home') && (!listEquals(homePicList, []))) {
-//    //   picList = homePicList;
-//    //   currentPage = homeCurrentPage;
-//    //   picTotalNum = picList.length;
-//    // }
-//    scrollController = ScrollController(
-//        initialScrollOffset:
-//             jsonMode == 'home' ? homeScrollerPosition : 0.0)
-//      ..addListener(_doWhileScrolling);
-////    loadMoreAble = ifLoadMoreAble();
-//    super.initState();
-//  }
-
-//  @override
-//  void didUpdateWidget(PicPage oldWidget) {
-//    print('picPage didUpdateWidget: mode is ${ jsonMode}');
-//    // 当为 home 模式且切换了参数，则同时更新暂存的相关数据
-//    if ( jsonMode == 'home' &&
-//            (old picDate !=  picDate ||
-//                old picMode !=  picMode) ||
-//         jsonMode == 'search') {
-//      //切换model
-//      firstInit = true;
-//      pageProvider.picList = [];
-//      scrollController.animateTo(
-//        0.0,
-//        duration: const Duration(milliseconds: 500),
-//        curve: Curves.easeOut,
-//      );
-//    }
-//
-//    super.didUpdateWidget(oldWidget);
-//  }
-
-//  @override
-//  void dispose() {
-//    print('PicPage Disposed');
-//    // scrollController.removeListener(_doWhileScrolling);
-//    // scrollController.dispose();
-////    if ( jsonMode == 'home' && pageProvider.picList != null) {
-////      homepageProvider.picList = pageProvider.picList;
-////      homeCurrentPage = currentPage;
-////    }
-//
-//    super.dispose();
-//  }
 
   @override
   Widget build(BuildContext context) {
@@ -317,14 +262,13 @@ class PicPage extends StatelessWidget {
         shouldRebuild: (pre, next) => true,
         selector: (context, provider) => provider,
         builder: (context, PicPageModel pageProvider, _) {
-//          getPageProvider = pageProvider;
           pageProvider.context = context;
           switchModel(pageProvider);
 
           if (pageProvider.picList == null) {
             pageProvider.picList = [];
             pageProvider.jsonList = [];
-            print("get list form pageProvider");
+            print("get list from pageProvider");
             pageProvider.getJsonList().then((value) {
               value.length == 0 ? hasConnected = true : hasConnected = false;
             });
@@ -455,80 +399,6 @@ class PicPage extends StatelessWidget {
     return [url, number, width, height];
   }
 
-//  _doWhileScrolling() {
-////    print("滑出ViewPort顶部的长度"+scrollController.position.extentBefore.toString());
-////    print("ViewPort内部长度"+scrollController.position.extentInside.toString());
-////      print("测量"+scrollController.position.extentAfter.toString());
-////    FocusScope.of(context).unfocus();
-//    // 如果为主页面 picPage，则记录滑动位置、判断滑动
-//    if ( jsonMode == 'home') {
-//      homeScrollerPosition = scrollController
-//          .position.extentBefore; // 保持记录scrollposition，原因为dispose时无法记录
-//      indexProvider = Provider.of<PageSwitchProvider>(context, listen: false);
-//      // 判断是否在滑动，以便隐藏底部控件
-//      if (scrollController.position.userScrollDirection ==
-//          ScrollDirection.reverse) {
-//        if (!indexProvider.judgeScrolling) {
-//          indexProvider.changeScrolling(true);
-////          isScrolling = true;
-////           onPageScrolling(isScrolling);
-//        }
-//      }
-//      if (scrollController.position.userScrollDirection ==
-//          ScrollDirection.forward) {
-//        //显示
-//        if (indexProvider.judgeScrolling) {
-//          indexProvider.changeScrolling(false);
-////          isScrolling = false;
-////           onPageScrolling(isScrolling);
-//        }
-//      }
-//    }
-//
-////    if ( jsonMode == 'related' ||
-////         jsonMode == 'artist' ||
-////         jsonMode == 'userdetail') {
-////      if (scrollController.position.extentBefore == 0 &&
-////          scrollController.position.userScrollDirection ==
-////              ScrollDirection.forward) {
-////         onPageTop();
-////        print('on page top');
-////      }
-////      if (scrollController.position.extentBefore > 150 &&
-////          scrollController.position.extentBefore < 200 &&
-////          scrollController.position.userScrollDirection ==
-////              ScrollDirection.reverse) {
-////         onPageStart();
-////        print('on page start');
-////      }
-////    }
-//
-//    // Auto Load
-//    if ((scrollController.position.extentAfter < 1200) &&
-//        (currentPage < 30) &&
-//        loadMoreAble) {
-//      print("Picpage: Load Data");
-//      loadMoreAble = false;
-//      currentPage++;
-//      print('current page is $currentPage');
-//      try {
-//        getPageProvider
-//            .getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
-//            .then((value) {
-//          if (value.length != 0) {
-//            loadMoreAble = true;
-//          }
-//        });
-//      } catch (err) {
-//        print('=========getJsonList==========');
-//        print(err);
-//        print('==============================');
-//        if (err.toString().contains('SocketException'))
-//          BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
-//        loadMoreAble = true;
-//      }
-//    }
-//  }
 
   ifLoadMoreAble() {
     switch (jsonMode) {
@@ -692,7 +562,4 @@ class PicPage extends StatelessWidget {
         : Container();
   }
 
-////页面状态保持
-//  @override
-//  bool get wantKeepAlive => false;
 }
