@@ -241,90 +241,37 @@ class PicPage extends StatelessWidget {
 
   // hide naviagtor bar when page is scrolling
   final ValueChanged<bool> onPageScrolling;
+  // related page 中，用户返回到了顶部
   final VoidCallback onPageTop;
+  // related page 中，用户开始下滑
   final VoidCallback onPageStart;
 
   // pageProvider.picList - 图片的JSON文件列表
   // picTotalNum - pageProvider.picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
   // 针对最常访问的 Home 页面，临时变量记录于 common.dart
   //  List pageProvider.picList = [];
-//  int picTotalNum;
-//  int currentPage = 1;
-//  List picList;
-  RandomColor _randomColor = RandomColor();
-  bool hasConnected = false;
-//  bool loadMoreAble = true;  //TODO: may be deleted
-  bool isScrolling = false;
-  ScrollController scrollController;
+  
+  bool hasConnected = false;  //TODO: 放置于 model
   String previewQuality = prefs.getString('previewQuality');
-//  PicPageModel getPageProvider;    // TODO: may be not needed
-
-//  @override
-//  void initState() {
-//    // if (( jsonMode == 'home') && (!listEquals(homePicList, []))) {
-//    //   picList = homePicList;
-//    //   currentPage = homeCurrentPage;
-//    //   picTotalNum = picList.length;
-//    // }
-//    scrollController = ScrollController(
-//        initialScrollOffset:
-//             jsonMode == 'home' ? homeScrollerPosition : 0.0)
-//      ..addListener(_doWhileScrolling);
-////    loadMoreAble = ifLoadMoreAble();
-//    super.initState();
-//  }
-
-//  @override
-//  void didUpdateWidget(PicPage oldWidget) {
-//    print('picPage didUpdateWidget: mode is ${ jsonMode}');
-//    // 当为 home 模式且切换了参数，则同时更新暂存的相关数据
-//    if ( jsonMode == 'home' &&
-//            (old picDate !=  picDate ||
-//                old picMode !=  picMode) ||
-//         jsonMode == 'search') {
-//      //切换model
-//      firstInit = true;
-//      pageProvider.picList = [];
-//      scrollController.animateTo(
-//        0.0,
-//        duration: const Duration(milliseconds: 500),
-//        curve: Curves.easeOut,
-//      );
-//    }
-//
-//    super.didUpdateWidget(oldWidget);
-//  }
-
-//  @override
-//  void dispose() {
-//    print('PicPage Disposed');
-//    // scrollController.removeListener(_doWhileScrolling);
-//    // scrollController.dispose();
-////    if ( jsonMode == 'home' && pageProvider.picList != null) {
-////      homepageProvider.picList = pageProvider.picList;
-////      homeCurrentPage = currentPage;
-////    }
-//
-//    super.dispose();
-//  }
-
+  RandomColor _randomColor = RandomColor();
+  
   @override
   Widget build(BuildContext context) {
     print('build PicPage');
+    
     return ChangeNotifierProvider<PicPageModel>(
       create: (_) => PicPageModel(jsonMode: this.jsonMode),
       child: Selector<PicPageModel, PicPageModel>(
         shouldRebuild: (pre, next) => true,
         selector: (context, provider) => provider,
         builder: (context, PicPageModel pageProvider, _) {
-//          getPageProvider = pageProvider;
           pageProvider.context = context;
           switchModel(pageProvider);
 
           if (pageProvider.picList == null) {
             pageProvider.picList = [];
             pageProvider.jsonList = [];
-            print("get list form pageProvider");
+            print("get list from pageProvider");
             pageProvider.getJsonList().then((value) {
               value.length == 0 ? hasConnected = true : hasConnected = false;
             });
@@ -380,7 +327,7 @@ class PicPage extends StatelessWidget {
                     return Selector<PicPageModel, Map>(
                       selector: (context, provider) => provider.picList[index],
                       builder: (context, picItem, child) {
-                        return imageCell(picItem, index, context,pageProvider);
+                        return imageCell(picItem, index, context, pageProvider);
                       },
                     );
                   },
@@ -455,80 +402,6 @@ class PicPage extends StatelessWidget {
     return [url, number, width, height];
   }
 
-//  _doWhileScrolling() {
-////    print("滑出ViewPort顶部的长度"+scrollController.position.extentBefore.toString());
-////    print("ViewPort内部长度"+scrollController.position.extentInside.toString());
-////      print("测量"+scrollController.position.extentAfter.toString());
-////    FocusScope.of(context).unfocus();
-//    // 如果为主页面 picPage，则记录滑动位置、判断滑动
-//    if ( jsonMode == 'home') {
-//      homeScrollerPosition = scrollController
-//          .position.extentBefore; // 保持记录scrollposition，原因为dispose时无法记录
-//      indexProvider = Provider.of<PageSwitchProvider>(context, listen: false);
-//      // 判断是否在滑动，以便隐藏底部控件
-//      if (scrollController.position.userScrollDirection ==
-//          ScrollDirection.reverse) {
-//        if (!indexProvider.judgeScrolling) {
-//          indexProvider.changeScrolling(true);
-////          isScrolling = true;
-////           onPageScrolling(isScrolling);
-//        }
-//      }
-//      if (scrollController.position.userScrollDirection ==
-//          ScrollDirection.forward) {
-//        //显示
-//        if (indexProvider.judgeScrolling) {
-//          indexProvider.changeScrolling(false);
-////          isScrolling = false;
-////           onPageScrolling(isScrolling);
-//        }
-//      }
-//    }
-//
-////    if ( jsonMode == 'related' ||
-////         jsonMode == 'artist' ||
-////         jsonMode == 'userdetail') {
-////      if (scrollController.position.extentBefore == 0 &&
-////          scrollController.position.userScrollDirection ==
-////              ScrollDirection.forward) {
-////         onPageTop();
-////        print('on page top');
-////      }
-////      if (scrollController.position.extentBefore > 150 &&
-////          scrollController.position.extentBefore < 200 &&
-////          scrollController.position.userScrollDirection ==
-////              ScrollDirection.reverse) {
-////         onPageStart();
-////        print('on page start');
-////      }
-////    }
-//
-//    // Auto Load
-//    if ((scrollController.position.extentAfter < 1200) &&
-//        (currentPage < 30) &&
-//        loadMoreAble) {
-//      print("Picpage: Load Data");
-//      loadMoreAble = false;
-//      currentPage++;
-//      print('current page is $currentPage');
-//      try {
-//        getPageProvider
-//            .getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
-//            .then((value) {
-//          if (value.length != 0) {
-//            loadMoreAble = true;
-//          }
-//        });
-//      } catch (err) {
-//        print('=========getJsonList==========');
-//        print(err);
-//        print('==============================');
-//        if (err.toString().contains('SocketException'))
-//          BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
-//        loadMoreAble = true;
-//      }
-//    }
-//  }
 
   ifLoadMoreAble() {
     switch (jsonMode) {
@@ -543,7 +416,8 @@ class PicPage extends StatelessWidget {
     }
   }
 
-  Widget imageCell(Map picItem, int index, BuildContext context,PicPageModel pageProvider) {
+  Widget imageCell(
+      Map picItem, int index, BuildContext context, PicPageModel pageProvider) {
     final Color color = _randomColor.randomColor();
     Map picMapData = Map.from(picItem);
     if (picMapData['xrestict'] == 1 ||
@@ -580,46 +454,61 @@ class PicPage extends StatelessWidget {
                                   index: index,
                                   getPageProvider: pageProvider)));
                   },
-                  child: Container(
-                    // 限定constraints用于占用位置,经调试后以0.5为基准可以保证加载图片后不产生位移
-                    constraints: BoxConstraints(
-                        // minHeight: MediaQuery.of(context).size.width *
-                        //     0.5 /
-                        //     _picMainParameter(index)[2] *
-                        //     _picMainParameter(index)[3],
-                        // minWidth: MediaQuery.of(context).size.width * 0.41,
+                  child: ShaderMask(
+                    shaderCallback: false
+                        ? (bounds) => LinearGradient(
+                                colors: [Colors.blue[200], Colors.blue[100]])
+                            .createShader(bounds)
+                        : (bounds) => LinearGradient(
+                                colors: [Colors.white, Colors.white])
+                            .createShader(bounds),
+                    child: Container(
+                      // 限定constraints用于占用位置,经调试后以0.5为基准可以保证加载图片后不产生位移
+                      constraints: BoxConstraints(
                         minHeight: ScreenUtil().setWidth(148) /
                             _picMainParameter(picItem)[2] *
                             _picMainParameter(picItem)[3],
-                        minWidth: ScreenUtil().setWidth(148)),
-                    child: Hero(
-                      tag: 'imageHero' + _picMainParameter(picItem)[0],
-                      child: Image(
-                        image: AdvancedNetworkImage(
-                          _picMainParameter(picItem)[0],
-                          header: {'Referer': 'https://app-api.pixiv.net'},
-                          useDiskCache: true,
-                          cacheRule: CacheRule(
-                              maxAge:
-                                  Duration(days: prefs.getInt('previewRule'))),
+                        minWidth: ScreenUtil().setWidth(148),
+                      ),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: Hero(
+                        tag: 'imageHero' + _picMainParameter(picItem)[0],
+                        child: Image(
+                          image: AdvancedNetworkImage(
+                            _picMainParameter(picItem)[0],
+                            header: {'Referer': 'https://app-api.pixiv.net'},
+                            useDiskCache: true,
+                            cacheRule: CacheRule(
+                                maxAge: Duration(
+                                    days: prefs.getInt('previewRule'))),
+                          ),
+                          fit: BoxFit.fill,
+                          frameBuilder:
+                              (context, child, frame, wasSynchronouslyLoaded) {
+                            if (wasSynchronouslyLoaded) {
+                              return child;
+                            }
+                            return Container(
+                              child: AnimatedOpacity(
+                                child: frame == null
+                                    ? Container(color: color)
+                                    : child,
+                                opacity: frame == null ? 0.3 : 1,
+                                duration: const Duration(seconds: 1),
+                                curve: Curves.easeOut,
+                              ),
+                            );
+                          },
                         ),
-                        fit: BoxFit.fill,
-                        frameBuilder:
-                            (context, child, frame, wasSynchronouslyLoaded) {
-                          if (wasSynchronouslyLoaded) {
-                            return child;
-                          }
-                          return Container(
-                            child: AnimatedOpacity(
-                              child: frame == null
-                                  ? Container(color: color)
-                                  : child,
-                              opacity: frame == null ? 0.3 : 1,
-                              duration: const Duration(seconds: 1),
-                              curve: Curves.easeOut,
-                            ),
-                          );
-                        },
                       ),
                     ),
                   ),
@@ -637,15 +526,8 @@ class PicPage extends StatelessWidget {
                     right: ScreenUtil().setWidth(5),
                     child: Container(
                       alignment: Alignment.center,
-                      // color: Colors.white,
                       height: ScreenUtil().setWidth(33),
                       width: ScreenUtil().setWidth(33),
-//            height: isLikedLocalState
-//                ? ScreenUtil().setWidth(33)
-//                : ScreenUtil().setWidth(27),
-//            width: isLikedLocalState
-//                ? ScreenUtil().setWidth(33)
-//                : ScreenUtil().setWidth(27),
                       child: MarkHeart(
                           picItem: picItem,
                           index: index,
@@ -683,7 +565,4 @@ class PicPage extends StatelessWidget {
         : Container();
   }
 
-////页面状态保持
-//  @override
-//  bool get wantKeepAlive => false;
 }
