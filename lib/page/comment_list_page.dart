@@ -13,10 +13,7 @@ import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/page/user_detail_page.dart';
 
-class CommentListPage extends StatefulWidget {
-  @override
-  _CommentListPageState createState() => _CommentListPageState();
-
+class CommentListPage extends StatelessWidget {
   CommentListPage(
       {this.comments,
       @required this.illustId,
@@ -39,76 +36,77 @@ class CommentListPage extends StatefulWidget {
   final String replyToName;
   final int replyParentId;
   final bool isReply;
-}
 
-class _CommentListPageState extends State<CommentListPage> {
-  TextZhCommentCell texts = TextZhCommentCell();
-  ScreenUtil screen = ScreenUtil();
-  List commentsList;
-  int replyToId;
-  int currentPage = 1;
-  String replyToName;
-  int replyParentId;
-  String hintText;
-  bool loadMoreAble = true;
-  TextEditingController textEditingController;
-  FocusNode replyFocus;
-  ScrollController scrollController;
-  CommentListModel commentProvider;
+  final TextZhCommentCell texts = TextZhCommentCell();
+  final ScreenUtil screen = ScreenUtil();
+//  List commentsList;
+//  int replyToId;
+//  int currentPage = 1;
+//  String replyToName;
+//  int replyParentId;
+//  String hintText;
+//  bool loadMoreAble = true;
+//  TextEditingController textEditingController;
+//  FocusNode replyFocus;
+//  ScrollController scrollController;
+// CommentListModel commentProvider;
 
-  @override
-  void initState() {
-    if (widget.comments != null) commentsList = widget.comments;
-    hintText = texts.addCommentHint;
-    replyToId = widget.replyToId;
-    replyToName = widget.replyToName;
-    replyParentId = widget.replyParentId;
+//  @override
+//  void initState() {
+////    if (widget.comments != null) commentsList = widget.comments;
+////    hintText = texts.addCommentHint;
+////    replyToId = widget.replyToId;
+////    replyToName = widget.replyToName;
+////    replyParentId = widget.replyParentId;
+//
+////    textEditingController = TextEditingController();
+////    replyFocus = FocusNode()..addListener(_replyFocusListener);
+////    scrollController = ScrollController()..addListener(_altLoading);
+////    _loadComments();
+//
+//    super.initState();
+//  }
 
-    textEditingController = TextEditingController();
-    replyFocus = FocusNode()..addListener(_replyFocusListener);
-    scrollController = ScrollController()..addListener(_altLoading);
-//    _loadComments();
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    textEditingController.dispose();
-    replyFocus.dispose();
-    super.dispose();
-  }
+//  @override
+//  void dispose() {
+////    textEditingController.dispose();
+////    replyFocus.dispose();
+//    super.dispose();
+//  }
 
   @override
   Widget build(BuildContext context) {
+
     return GestureDetector(
       onTap: () {
-        FocusScopeNode currentFocus = FocusScope.of(context);
-
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
-        }
+        //收键盘
+        FocusScope.of(context).requestFocus(FocusNode());
+//        FocusScopeNode currentFocus = FocusScope.of(context);
+//
+//        if (!currentFocus.hasPrimaryFocus) {
+//          currentFocus.unfocus();
+//        }
       },
       child: Scaffold(
         appBar: PappBar(
           title: texts.comment,
         ),
         body: ChangeNotifierProvider<CommentListModel>(
-          create: (_) => CommentListModel(),
+          create: (_) => CommentListModel(illustId,replyToId,replyToName,replyParentId),
           child: Consumer<CommentListModel>(
             builder: (context, CommentListModel commentProvider, _) {
-              this.commentProvider = commentProvider;
-              if (commentProvider.commentList == null) {
-                commentProvider.loadComments(widget.illustId);
-                commentProvider.commentList = [];
-                commentsList = [];
-              }
-              commentsList = commentsList + commentProvider.commentList;
+//              this.commentProvider = commentProvider;
+//              if (commentProvider.commentList == null) {
+//                commentProvider.loadComments(widget.illustId);
+//                commentProvider.commentList = [];
+//                commentsList = [];
+//              }
+//              commentsList = commentsList + commentProvider.commentList;
               return Container(
                 color: Colors.white,
                 child: Stack(
                   children: <Widget>[
-                    commentsList != null
+                    commentProvider.commentList != null
                         ? Positioned(
                             // top: screen.setHeight(5),
                             child: Container(
@@ -117,11 +115,12 @@ class _CommentListPageState extends State<CommentListPage> {
                             margin:
                                 EdgeInsets.only(bottom: screen.setHeight(35)),
                             child: ListView.builder(
-                                controller: scrollController,
+                                controller: commentProvider.scrollController,
                                 shrinkWrap: true,
-                                itemCount: commentsList.length,
+                                itemCount: commentProvider.commentList.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  return commentParentCell(commentsList[index]);
+                                  //TODO 解决参数传递问题
+                                  return commentParentCell(commentProvider.commentList[index],context,commentProvider);
                                 }),
                           ))
                         : Container(),
@@ -161,12 +160,12 @@ class _CommentListPageState extends State<CommentListPage> {
               right: ScreenUtil().setWidth(12),
             ),
             child: TextField(
-              focusNode: replyFocus,
-              controller: textEditingController,
-              autofocus: widget.isReply ? true : false,
+              focusNode: commentProvider.replyFocus,
+              controller: commentProvider.textEditingController,
+              autofocus: isReply ? true : false,
               decoration: InputDecoration(
                   border: InputBorder.none,
-                  hintText: hintText,
+                  hintText: commentProvider.hintText,
                   hintStyle: TextStyle(fontSize: 14),
                   contentPadding: EdgeInsets.only(
                       left: ScreenUtil().setWidth(8),
@@ -177,7 +176,7 @@ class _CommentListPageState extends State<CommentListPage> {
             child: InkWell(
               child: FaIcon(FontAwesomeIcons.paperPlane),
               onTap: () {
-                _reply(commentProvider);
+                commentProvider.reply();
               },
             ),
           ),
@@ -186,7 +185,7 @@ class _CommentListPageState extends State<CommentListPage> {
     );
   }
 
-  Widget commentParentCell(Map commentAllData) {
+  Widget commentParentCell(Map commentAllData,BuildContext context,commentProvider) {
     bool hasSub = commentAllData['subCommentList'] == null ? false : true;
 
     return Container(
@@ -199,7 +198,7 @@ class _CommentListPageState extends State<CommentListPage> {
           alignment: Alignment.topLeft,
           child: Column(
             children: <Widget>[
-              commentBaseCell(commentAllData),
+              commentBaseCell(commentAllData,context,commentProvider),
               hasSub
                   ? ListView.builder(
                       shrinkWrap: true,
@@ -207,7 +206,7 @@ class _CommentListPageState extends State<CommentListPage> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (BuildContext context, int index) {
                         return commentSubCell(
-                            commentAllData['subCommentList'][index]);
+                            commentAllData['subCommentList'][index],context,commentProvider);
                       })
                   : Container(),
               SizedBox(width: screen.setWidth(300), child: Divider())
@@ -216,15 +215,15 @@ class _CommentListPageState extends State<CommentListPage> {
         ));
   }
 
-  Widget commentSubCell(Map commentEachSubData) {
+  Widget commentSubCell(Map commentEachSubData,BuildContext context,commentProvider) {
     return Container(
       padding:
           EdgeInsets.only(left: screen.setWidth(15), top: screen.setHeight(7)),
-      child: commentBaseCell(commentEachSubData),
+      child: commentBaseCell(commentEachSubData,context,commentProvider),
     );
   }
 
-  Widget commentBaseCell(Map data) {
+  Widget commentBaseCell(Map data,BuildContext context,commentProvider) {
     String avaterUrl = 'https://pic.cheerfun.dev/${data['replyFrom']}.png';
 
     return Container(
@@ -301,15 +300,15 @@ class _CommentListPageState extends State<CommentListPage> {
                                   color: Colors.blue[600], fontSize: 12),
                             ),
                             onTap: () {
-                              replyToId = data['replyFrom'];
-                              replyToName = data['replyFromName'];
+                              commentProvider.replyToId = data['replyFrom'];
+                              commentProvider.replyToName = data['replyFromName'];
                               data['parentId'] == 0
-                                  ? replyParentId = data['id']
-                                  : replyParentId = data['parentId'];
-                              if (replyFocus.hasFocus)
-                                _replyFocusListener();
+                                  ? commentProvider.replyParentId = data['id']
+                                  : commentProvider.replyParentId = data['parentId'];
+                              if (commentProvider.replyFocus.hasFocus)
+                                commentProvider.replyFocusListener();
                               else
-                                replyFocus.requestFocus();
+                                commentProvider.replyFocus.requestFocus();
                             },
                           )
                         ],
@@ -321,94 +320,94 @@ class _CommentListPageState extends State<CommentListPage> {
     ]));
   }
 
-  _altLoading() {
-    if ((scrollController.position.extentAfter < 500) && loadMoreAble) {
-      print(" Load Comment");
-      loadMoreAble = false;
-      currentPage++;
-      print('current page is $currentPage');
-      try {
-        commentProvider
-            .loadComments(widget.illustId, page: currentPage)
-            .then((value) {
-          if (value.length != 0) {
-            loadMoreAble = true;
-          }
-        });
-      } catch (err) {
-        print('=========getJsonList==========');
-        print(err);
-        print('==============================');
-        if (err.toString().contains('SocketException'))
-          BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
-        loadMoreAble = true;
-      }
-    }
-  }
+//  _altLoading() {
+//    if ((scrollController.position.extentAfter < 500) && loadMoreAble) {
+//      print(" Load Comment");
+//      loadMoreAble = false;
+//      currentPage++;
+//      print('current page is $currentPage');
+//      try {
+//        commentProvider
+//            .loadComments(widget.illustId, page: currentPage)
+//            .then((value) {
+//          if (value.length != 0) {
+//            loadMoreAble = true;
+//          }
+//        });
+//      } catch (err) {
+//        print('=========getJsonList==========');
+//        print(err);
+//        print('==============================');
+//        if (err.toString().contains('SocketException'))
+//          BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+//        loadMoreAble = true;
+//      }
+//    }
+//  }
 
-  _replyFocusListener() {
-    if (replyFocus.hasFocus && replyToName != '') {
-      print('on focus');
-      setState(() {
-        hintText = '@$replyToName:';
-      });
-    } else if (!replyFocus.hasFocus) {
-      print('focus released');
+//  _replyFocusListener() {
+//    if (replyFocus.hasFocus && replyToName != '') {
+//      print('on focus');
 //      setState(() {
-      replyToId = 0;
-      replyToName = '';
-      replyParentId = 0;
-      hintText = texts.addCommentHint;
-      // print(textEditingController.text);
+//        hintText = '@$replyToName:';
 //      });
-    }
-    print('replyParentId now is $replyParentId');
-  }
+//    } else if (!replyFocus.hasFocus) {
+//      print('focus released');
+//      setState(() {
+//      replyToId = 0;
+//      replyToName = '';
+//      replyParentId = 0;
+//      hintText = texts.addCommentHint;
+//      // print(textEditingController.text);
+//      });
+//    }
+//    print('replyParentId now is $replyParentId');
+//  }
 
-  _reply(CommentListModel commentProvider) async {
-    if (prefs.getString('auth') == '') {
-      BotToast.showSimpleNotification(title: texts.pleaseLogin);
-      return false;
-    }
-
-    if (textEditingController.text == '') {
-      BotToast.showSimpleNotification(title: texts.commentCannotBeBlank);
-      return false;
-    }
-
-    String url = 'https://api.pixivic.com/illusts/${widget.illustId}/comments';
-    CancelFunc cancelLoading;
-    var dio = Dio();
-    Map<String, dynamic> payload = {
-      'content': textEditingController.text,
-      'parentId': replyParentId.toString(),
-      'replyFromName': prefs.getString('name'),
-      'replyTo': replyToId.toString(),
-      'replyToName': replyToName
-    };
-    Map<String, dynamic> headers = {'authorization': prefs.getString('auth')};
-    Response response = await dio.post(
-      url,
-      data: payload,
-      options: Options(headers: headers),
-      onReceiveProgress: (count, total) {
-        cancelLoading = BotToast.showLoading();
-      },
-    );
-    cancelLoading();
-    BotToast.showSimpleNotification(title: response.data['message']);
-    if (response.statusCode == 200) {
-      textEditingController.text = '';
-      replyToId = 0;
-      replyToName = '';
-      replyParentId = 0;
-      commentProvider.loadComments(widget.illustId);
-//      await _loadComments();
-      return true;
-    } else {
-      return false;
-    }
-  }
+//  _reply() async {
+//    if (prefs.getString('auth') == '') {
+//      BotToast.showSimpleNotification(title: texts.pleaseLogin);
+//      return false;
+//    }
+//
+//    if (commentProvider.textEditingController.text == '') {
+//      BotToast.showSimpleNotification(title: texts.commentCannotBeBlank);
+//      return false;
+//    }
+//
+//    String url = 'https://api.pixivic.com/illusts/${widget.illustId}/comments';
+//    CancelFunc cancelLoading;
+//    var dio = Dio();
+//    Map<String, dynamic> payload = {
+//      'content': commentProvider.textEditingController.text,
+//      'parentId': commentProvider.replyParentId.toString(),
+//      'replyFromName': prefs.getString('name'),
+//      'replyTo': commentProvider.replyToId.toString(),
+//      'replyToName': commentProvider.replyToName
+//    };
+//    Map<String, dynamic> headers = {'authorization': prefs.getString('auth')};
+//    Response response = await dio.post(
+//      url,
+//      data: payload,
+//      options: Options(headers: headers),
+//      onReceiveProgress: (count, total) {
+//        cancelLoading = BotToast.showLoading();
+//      },
+//    );
+//    cancelLoading();
+//    BotToast.showSimpleNotification(title: response.data['message']);
+//    if (response.statusCode == 200) {
+//      commentProvider.textEditingController.text = '';
+//      commentProvider.replyToId = 0;
+//      commentProvider.replyToName = '';
+//      commentProvider.replyParentId = 0;
+//      commentProvider.loadComments(widget.illustId);
+////      await _loadComments();
+//      return true;
+//    } else {
+//      return false;
+//    }
+//  }
 
 //  _loadComments() async {
 //    String url = 'https://api.pixivic.com/illusts/${widget.illustId}/comments';
