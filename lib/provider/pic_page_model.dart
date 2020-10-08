@@ -284,7 +284,8 @@ class PicPageModel with ChangeNotifier {
         url =
             'https://api.pixivic.com/users/$userId/bookmarked/illust?page=$currentPage&pageSize=30';
       } else {
-        url = 'https://api.pixivic.com/users/$userId/manga?page=$currentPage&pageSize=30';
+        url =
+            'https://api.pixivic.com/users/$userId/manga?page=$currentPage&pageSize=30';
       }
     } else if (jsonMode == 'collection') {
       url =
