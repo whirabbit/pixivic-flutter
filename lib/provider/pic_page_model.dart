@@ -285,9 +285,9 @@ class PicPageModel with ChangeNotifier {
     } else if (jsonMode == 'userdetail') {
       if (!isManga) {
         url =
-            'https://api.pixivic.com/users/$userId/bookmarked/illust?page=1&pageSize=30';
+            'https://api.pixivic.com/users/$userId/bookmarked/illust?page=$currentPage&pageSize=30';
       } else {
-        url = 'https://api.pixivic.com/users/$userId/manga?page=1&pageSize=30';
+        url = 'https://api.pixivic.com/users/$userId/manga?page=$currentPage&pageSize=30';
       }
     } else if (jsonMode == 'collection') {
       url =
