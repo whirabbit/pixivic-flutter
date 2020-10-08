@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
+import 'package:random_color/random_color.dart';
 
 import '../page/new_page.dart';
 import '../page/user_page.dart';
