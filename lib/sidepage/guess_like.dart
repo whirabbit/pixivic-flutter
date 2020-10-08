@@ -106,7 +106,7 @@ class _GuessLikePageState extends State<GuessLikePage> {
 
   _getJsonList() async {
     String url =
-        'https://api.pixivic.com/users/${prefs.getInt('id')}/recommendViewIllusts';
+        'https://api.pixivic.com/users/${prefs.getInt('id')}/recommendBookmarkIllusts';
     Map<String, String> headers = {'authorization': prefs.getString('auth')};
     try {
       Response response =
