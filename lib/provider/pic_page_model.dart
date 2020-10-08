@@ -297,7 +297,7 @@ class PicPageModel with ChangeNotifier {
         var requests = await Requests.get(url);
         jsonList = jsonDecode(requests.content())['data'];
         print(requests.statusCode);
-        if (requests.statusCode == 401)
+        if (requests.statusCode == 400)
           BotToast.showSimpleNotification(title: '请登录后再重新加载画作');
       } else {
         Map<String, String> headers = {

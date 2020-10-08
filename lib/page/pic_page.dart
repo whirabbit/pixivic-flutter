@@ -248,14 +248,13 @@ class PicPage extends StatelessWidget {
   // related page 中，用户开始下滑
   final VoidCallback onPageStart;
 
-  // pageProvider.picList - 图片的JSON文件列表
-  // picTotalNum - pageProvider.picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
+  // pageModel.picList - 图片的JSON文件列表
+  // picTotalNum - pageModel.picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
   // 针对最常访问的 Home 页面，临时变量记录于 common.dart
-  //  List pageProvider.picList = [];
+
+  //  List pageModel.picList = [];
 
   bool hasConnected = false; //TODO: 放置于 model
-  String previewQuality = prefs.getString('previewQuality');
-  RandomColor _randomColor = RandomColor();
 
   @override
   Widget build(BuildContext context) {
@@ -266,21 +265,23 @@ class PicPage extends StatelessWidget {
       child: Selector<PicPageModel, PicPageModel>(
         shouldRebuild: (pre, next) => true,
         selector: (context, provider) => provider,
-        builder: (context, PicPageModel pageProvider, _) {
-          pageProvider.context = context;
-          switchModel(pageProvider);
+        builder: (context, PicPageModel pageModel, _) {
+          pageModel.context = context;
+          switchModel(pageModel);
 
-          if (pageProvider.picList == null) {
-            pageProvider.picList = [];
-            pageProvider.jsonList = [];
-            print("get list from pageProvider");
-            pageProvider.getJsonList().then((value) {
-              value.length == 0 ? hasConnected = true : hasConnected = false;
+          if (pageModel.picList == null) {
+            pageModel.picList = [];
+            pageModel.jsonList = [];
+            print("get list from pageModel");
+            pageModel.getJsonList().then((value) {
+              value.length == 0
+                  ? pageModel.hasConnected = true
+                  : pageModel.hasConnected = false;
             });
           }
-          pageProvider.picList = pageProvider.picList + pageProvider.jsonList;
+          pageModel.picList = pageModel.picList + pageModel.jsonList;
 
-          if (pageProvider.picList.length == 0 && !hasConnected) {
+          if (pageModel.picList.length == 0 && !pageModel.hasConnected) {
             return Container(
                 height: ScreenUtil().setHeight(576),
                 width: ScreenUtil().setWidth(324),
@@ -289,7 +290,7 @@ class PicPage extends StatelessWidget {
                 child: Center(
                   child: Lottie.asset('image/loading-box.json'),
                 ));
-          } else if (pageProvider.picList.length == 0 && hasConnected) {
+          } else if (pageModel.picList.length == 0 && pageModel.hasConnected) {
             return Container(
               height: ScreenUtil().setHeight(576),
               width: ScreenUtil().setWidth(324),
@@ -319,17 +320,17 @@ class PicPage extends StatelessWidget {
                     right: ScreenUtil().setWidth(5)),
                 color: Colors.grey[50],
                 child: StaggeredGridView.countBuilder(
-                  controller: pageProvider.scrollController,
-                  physics: pageProvider.isScrollable
+                  controller: pageModel.scrollController,
+                  physics: pageModel.isScrollable
                       ? ClampingScrollPhysics()
                       : NeverScrollableScrollPhysics(),
                   crossAxisCount: 2,
-                  itemCount: pageProvider.picList.length,
+                  itemCount: pageModel.picList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Selector<PicPageModel, Map>(
                       selector: (context, provider) => provider.picList[index],
                       builder: (context, picItem, child) {
-                        return imageCell(picItem, index, context, pageProvider);
+                        return imageCell(picItem, index, context, pageModel);
                       },
                     );
                   },
@@ -344,7 +345,7 @@ class PicPage extends StatelessWidget {
   }
 
   //根据传入的jsonModel选择provider的方法来获取数据
-  void switchModel(PicPageModel provider) {
+  switchModel(PicPageModel provider) {
     switch (jsonMode) {
       case 'home':
         provider.homePage(picDate: picDate, picMode: picMode);
@@ -396,7 +397,8 @@ class PicPage extends StatelessWidget {
 
   List _picMainParameter(Map picItem) {
     // 预览图片的地址、数目、以及长宽比
-    // String url = pageProvider.picList[index]['imageUrls'][0]['squareMedium'];
+    // String url = pageModel.picList[index]['imageUrls'][0]['squareMedium'];
+    String previewQuality = prefs.getString('previewQuality');
     String url = picItem['imageUrls'][0][previewQuality]; //medium large
     int number = picItem['pageCount'];
     double width = picItem['width'].toDouble();
@@ -404,22 +406,9 @@ class PicPage extends StatelessWidget {
     return [url, number, width, height];
   }
 
-  ifLoadMoreAble() {
-    switch (jsonMode) {
-      case 'followed':
-        return false;
-        break;
-      case 'spotlight':
-        return false;
-        break;
-      default:
-        return true;
-    }
-  }
-
   Widget imageCell(
-      Map picItem, int index, BuildContext context, PicPageModel pageProvider) {
-    final Color color = _randomColor.randomColor();
+      Map picItem, int index, BuildContext context, PicPageModel pageModel) {
+    final Color color = RandomColor().randomColor();
     Map picMapData = Map.from(picItem);
     if (picMapData['xrestict'] == 1 ||
         picMapData['sanityLevel'] > prefs.getInt('sanityLevel'))
@@ -452,8 +441,7 @@ class PicPage extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => PicDetailPage(picMapData,
-                                  index: index,
-                                  getPageProvider: pageProvider)));
+                                  index: index, getPageProvider: pageModel)));
                   },
                   child: ShaderMask(
                     shaderCallback: false
@@ -532,7 +520,7 @@ class PicPage extends StatelessWidget {
                       child: MarkHeart(
                           picItem: picItem,
                           index: index,
-                          getPageProvider: pageProvider),
+                          getPageProvider: pageModel),
                     ))
                 : Container(),
           ],
