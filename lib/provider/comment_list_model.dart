@@ -8,7 +8,7 @@ import 'package:pixivic/data/texts.dart';
 class CommentListModel with ChangeNotifier {
   CommentListModel(
       int illustId, int replyToId, String replyToName, int replyParentId) {
-    scrollController = ScrollController()..addListener(_altLoading);
+    scrollController = ScrollController()..addListener(_autoLoading);
     textEditingController = TextEditingController();
     replyFocus = FocusNode()..addListener(replyFocusListener);
 
@@ -19,7 +19,7 @@ class CommentListModel with ChangeNotifier {
     this.illustId = illustId;
 
     //首次进入页面进行数据刷新
-    loadComments(this.illustId).then((value) {
+    _loadComments(this.illustId).then((value) {
       commentList = value;
       notifyListeners();
     });
@@ -70,9 +70,8 @@ class CommentListModel with ChangeNotifier {
       return false;
     }
 
-    String url = 'https://api.pixivic.com/illusts/${illustId}/comments';
+    String url = 'https://api.pixivic.com/illusts/$illustId/comments';
     CancelFunc cancelLoading;
-    var dio = Dio();
     Map<String, dynamic> payload = {
       'content': textEditingController.text,
       'parentId': replyParentId.toString(),
@@ -81,44 +80,54 @@ class CommentListModel with ChangeNotifier {
       'replyToName': replyToName
     };
     Map<String, dynamic> headers = {'authorization': prefs.getString('auth')};
-    Response response = await dio.post(
-      url,
-      data: payload,
-      options: Options(headers: headers),
-      onReceiveProgress: (count, total) {
-        cancelLoading = BotToast.showLoading();
-      },
-    );
-    cancelLoading();
-    BotToast.showSimpleNotification(title: response.data['message']);
-
-    if (response.statusCode == 200) {
+    try {
+      Response response = await Dio().post(
+        url,
+        data: payload,
+        options: Options(headers: headers),
+        onReceiveProgress: (count, total) {
+          cancelLoading = BotToast.showLoading();
+        },
+      );
+      cancelLoading();
+      BotToast.showSimpleNotification(title: response.data['message']);
+      
       textEditingController.text = '';
       replyToId = 0;
       replyToName = '';
       replyParentId = 0;
-//TODO 考虑在回复后 请求码为200的情况下直接在commentList.Add(payload),避免再请请求数据
-      //      commentList.add(payload);
-      loadComments(illustId).then((value) {
+
+      _loadComments(illustId).then((value) {
         commentList = value;
         notifyListeners();
       });
       return true;
-    } else {
-      return false;
+    } on DioError catch (e) {
+      if (e.response != null) {
+        BotToast.showSimpleNotification(title: e.response.data['message']);
+        print(e.response.data);
+        print(e.response.headers);
+        print(e.response.request);
+        return false;
+      } else {
+        // Something happened in setting up or sending the request that triggered an Error
+        BotToast.showSimpleNotification(title: e.message);
+        print(e.request);
+        print(e.message);
+        return false;
+      }
     }
   }
 
   //自动加载数据
-  _altLoading() {
+  _autoLoading() {
     if ((scrollController.position.extentAfter < 500) && loadMoreAble) {
-      print(" Load Comment");
+      print("Load Comment");
       loadMoreAble = false;
       this.currentPage++;
       print('current page is $currentPage');
       try {
-        loadComments(illustId, page: this.currentPage).then((value) {
-          print("自动加载");
+        _loadComments(illustId, page: this.currentPage).then((value) {
           if (value.length != 0) {
             commentList = commentList + value;
             notifyListeners();
@@ -137,7 +146,7 @@ class CommentListModel with ChangeNotifier {
   }
 
 //请求数据
-  loadComments(int illustId, {int page = 1}) async {
+  _loadComments(int illustId, {int page = 1}) async {
     String url =
         'https://api.pixivic.com/illusts/$illustId/comments?page=$page&pageSize=10';
     var dio = Dio();
