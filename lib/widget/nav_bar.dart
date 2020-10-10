@@ -29,12 +29,12 @@ class _NavBarState extends State<NavBar> {
 
   @override
   void initState() {
-    indexProvider = Provider.of<PageSwitchProvider>(context,listen: false);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    indexProvider = Provider.of<PageSwitchProvider>(context, listen: true);
     activeList = List.filled(4, false);
     activeList[indexProvider.currentIndex] = true;
     if (widget.alone) {
