@@ -52,6 +52,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BotToastInit(
       child: MaterialApp(
+        showPerformanceOverlay: true,
         navigatorObservers: [BotToastNavigatorObserver()],
         title: 'Pixivic',
         theme: ThemeData(
@@ -169,18 +170,30 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 324, height: 576);
     print("Reload main build func");
-    indexProvider = Provider.of<PageSwitchProvider>(context);
+//    indexProvider = Provider.of<PageSwitchProvider>(context);
     return Scaffold(
       appBar: pappBar,
       body: Stack(
         children: <Widget>[
-          PageView.builder(
-            itemCount: 4, //页面数量
-            onPageChanged: _onPageChanged, //页面切换
-            controller: _pageController,
-            itemBuilder: (context, index) {
-              return Center(
-                child: _getPageByIndex(index), //每个页面展示的组件
+          Selector<PageSwitchProvider, PageSwitchProvider>(
+            shouldRebuild: (pre, next) => false,
+            selector: (BuildContext context, PageSwitchProvider provider) {
+              return provider;
+            },
+            builder: (context, PageSwitchProvider provider, _) {
+              return PageView.builder(
+                itemCount: 4, //页面数量
+                onPageChanged: (index) {
+                  provider.changeIndex(index);
+                  provider.pageChanged(true);
+                  provider.changeScrolling(false);
+                }, //页面切换
+                controller: _pageController,
+                itemBuilder: (context, index) {
+                  return Center(
+                    child: _getPageByIndex(index), //每个页面展示的组件
+                  );
+                },
               );
             },
           ),
