@@ -31,7 +31,7 @@ class PicPageModel with ChangeNotifier {
   bool loadMoreAble = true;
   bool isScrolling = false;
   int currentPage = 1;
-  List picList;
+  List picList = [];
   List jsonList;
   ScrollController scrollController;
   BuildContext context;
@@ -63,12 +63,15 @@ class PicPageModel with ChangeNotifier {
       homePicList = [];
       homeScrollerPosition = 0;
       scrollController.jumpTo(0.0);
-      this.picList = null;
+      this.picList = [];
+      
+      initLoadData();
     }
-
     this.jsonMode = 'home';
     this.picDate = picDate;
     this.picMode = picMode;
+
+    if (picList.length < 1) initLoadData();
   }
 
   searchPage({@required String searchKeywords, @required bool searchManga}) {
@@ -78,6 +81,7 @@ class PicPageModel with ChangeNotifier {
     this.jsonMode = 'search';
     this.searchKeywords = searchKeywords;
     this.isManga = searchManga;
+    initLoadData();
   }
 
   relatedPage(
@@ -89,6 +93,7 @@ class PicPageModel with ChangeNotifier {
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
     this.isScrollable = true;
+    initLoadData();
   }
 
   artistPage(
@@ -101,31 +106,37 @@ class PicPageModel with ChangeNotifier {
     this.isManga = isManga;
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
+    initLoadData();
   }
 
   followedPage({@required String userId, @required bool isManga}) {
     this.jsonMode = 'followed';
     this.userId = userId;
     this.isManga = isManga;
+    initLoadData();
   }
 
   bookmarkPage({@required String userId, @required bool isManga}) {
     this.jsonMode = 'bookmark';
     this.userId = userId;
     this.isManga = isManga;
+    initLoadData();
   }
 
   spotlightPage({@required String spotlightId}) {
     this.jsonMode = 'spotlight';
     this.spotlightId = spotlightId;
+    initLoadData();
   }
 
   historyPage() {
     this.jsonMode = 'history';
+    initLoadData();
   }
 
   oldHistoryPage() {
     this.jsonMode = 'oldhistory';
+    initLoadData();
   }
 
   userdetailPage(
@@ -138,6 +149,13 @@ class PicPageModel with ChangeNotifier {
     this.isManga = isManga;
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
+    initLoadData();
+  }
+
+  collectionPage({@required String collectionId}) {
+    this.collectionId = collectionId;
+    // getJsonList();
+    //TODO: Collection need to be run specifically
   }
 
   //标记方法
@@ -151,11 +169,6 @@ class PicPageModel with ChangeNotifier {
       homePicList = picList;
       homeCurrentPage = currentPage;
     }
-  }
-
-  collectionPage({@required String collectionId}) {
-    this.collectionId = collectionId;
-    // getJsonList();
   }
 
   _doWhileScrolling() {
@@ -216,7 +229,9 @@ class PicPageModel with ChangeNotifier {
         getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
             .then((value) {
           if (value.length != 0) {
+            picList = picList + value;
             loadMoreAble = true;
+            notifyListeners();
           }
         });
       } catch (err) {
@@ -225,9 +240,26 @@ class PicPageModel with ChangeNotifier {
         print('==============================');
         if (err.toString().contains('SocketException'))
           BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+        currentPage -= 1;
         loadMoreAble = true;
       }
     }
+  }
+
+  initLoadData() async {
+    hasConnected = false;
+    notifyListeners();
+    getJsonList().then((value) {
+      picList = value;
+      notifyListeners();
+      hasConnected = true;
+    }).catchError((error) {
+      print('======================');
+      print(error);
+      print('======================');
+      if (error.toString().contains('NoSuchMethodError')) picList = null;
+      hasConnected = true;
+    });
   }
 
   getJsonList({bool loadMoreAble, int currentPage = 1}) async {
@@ -291,6 +323,7 @@ class PicPageModel with ChangeNotifier {
           'https://api.pixivic.com/collections/$collectionId/illustrations?page=$currentPage&pagesize=10';
     }
 
+    // TODO: Requests to Dio after package Dio
     try {
       if (prefs.getString('auth') == '') {
         var requests = await Requests.get(url);
