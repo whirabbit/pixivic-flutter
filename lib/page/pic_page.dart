@@ -19,7 +19,10 @@ import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/widget/markheart_icon.dart';
 
 // 可以作为页面中单个组件或者单独页面使用的pic瀑布流组件,因可以作为页面，故不归为widget
-class PicPage extends StatelessWidget {
+class PicPage extends StatefulWidget {
+  @override
+  _PicPageState createState() => _PicPageState();
+
   PicPage({
     this.picDate,
     this.picMode,
@@ -249,33 +252,41 @@ class PicPage extends StatelessWidget {
   // picTotalNum - pageModel.picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
   // 针对最常访问的 Home 页面，临时变量记录于 common.dart
   //  List pageModel.picList = [];
-  
-  bool hasConnected = false;  //TODO: 放置于 model
-  
-  
+}
+
+class _PicPageState extends State<PicPage> {
+  PicPageModel picPageModel;
+
+  @override
+  void initState() {
+    print('picpage created in ChangeNotifierProvider');
+    picPageModel = PicPageModel(jsonMode: widget.jsonMode);
+    switchModel(picPageModel);
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(PicPage oldWidget) {
+    switchModel(picPageModel);
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     print('build PicPage');
-    
-    return ChangeNotifierProvider<PicPageModel>(
-      create: (_) => PicPageModel(jsonMode: this.jsonMode),
+
+    return ChangeNotifierProvider<PicPageModel>.value(
+      value: picPageModel,
       child: Selector<PicPageModel, PicPageModel>(
         shouldRebuild: (pre, next) => true,
         selector: (context, provider) => provider,
         builder: (context, PicPageModel pageModel, _) {
           pageModel.context = context;
-          switchModel(pageModel);
-
-          if (pageModel.picList == null) {
-            pageModel.picList = [];
-            pageModel.jsonList = [];
-            print("get list from pageModel");
-            pageModel.getJsonList().then((value) {
-              value.length == 0 ? pageModel.hasConnected = true : pageModel.hasConnected = false;
-            });
-          }
-          pageModel.picList = pageModel.picList + pageModel.jsonList;
-
           if (pageModel.picList.length == 0 && !pageModel.hasConnected) {
             return Container(
                 height: ScreenUtil().setHeight(576),
@@ -341,35 +352,35 @@ class PicPage extends StatelessWidget {
 
   //根据传入的jsonModel选择provider的方法来获取数据
   switchModel(PicPageModel provider) {
-    switch (jsonMode) {
+    switch (widget.jsonMode) {
       case 'home':
-        provider.homePage(picDate: picDate, picMode: picMode);
+        provider.homePage(picDate: widget.picDate, picMode: widget.picMode);
         break;
       case 'related':
         provider.relatedPage(
-            relatedId: relatedId,
-            onTopOfPicpage: onPageTop,
-            onStartOfPicpage: onPageStart);
+            relatedId: widget.relatedId,
+            onTopOfPicpage: widget.onPageTop,
+            onStartOfPicpage: widget.onPageStart);
         break;
       case 'search':
         provider.searchPage(
-            searchKeywords: searchKeywords, searchManga: isManga);
+            searchKeywords: widget.searchKeywords, searchManga: widget.isManga);
         break;
       case 'artist':
         provider.artistPage(
-            artistId: artistId,
-            isManga: isManga,
-            onTopOfPicpage: onPageTop,
-            onStartOfPicpage: onPageStart);
+            artistId: widget.artistId,
+            isManga: widget.isManga,
+            onTopOfPicpage: widget.onPageTop,
+            onStartOfPicpage: widget.onPageStart);
         break;
       case 'followed':
-        provider.followedPage(userId: userId, isManga: isManga);
+        provider.followedPage(userId: widget.userId, isManga: widget.isManga);
         break;
       case 'bookmark':
-        provider.bookmarkPage(userId: userId, isManga: isManga);
+        provider.bookmarkPage(userId: widget.userId, isManga: widget.isManga);
         break;
       case 'spotlight':
-        provider.spotlightPage(spotlightId: spotlightId);
+        provider.spotlightPage(spotlightId: widget.spotlightId);
         break;
       case 'history':
         provider.historyPage();
@@ -379,13 +390,13 @@ class PicPage extends StatelessWidget {
         break;
       case 'userdetail':
         provider.userdetailPage(
-            userId: userId,
-            isManga: isManga,
-            onTopOfPicpage: onPageTop,
-            onStartOfPicpage: onPageStart);
+            userId: widget.userId,
+            isManga: widget.isManga,
+            onTopOfPicpage: widget.onPageTop,
+            onStartOfPicpage: widget.onPageStart);
         break;
       case 'collection':
-        provider.collectionPage(collectionId: collectionId);
+        provider.collectionPage(collectionId: widget.collectionId);
         break;
     }
   }
@@ -400,7 +411,6 @@ class PicPage extends StatelessWidget {
     double height = picItem['height'].toDouble();
     return [url, number, width, height];
   }
-
 
   Widget imageCell(
       Map picItem, int index, BuildContext context, PicPageModel pageModel) {
@@ -437,17 +447,17 @@ class PicPage extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => PicDetailPage(picMapData,
-                                  index: index,
-                                  getPageProvider: pageModel)));
+                                  index: index, getPageProvider: pageModel)));
                   },
                   child: ShaderMask(
                     shaderCallback: false
+                        // TODO: 为画集设置的遮罩，勿修改
                         ? (bounds) => LinearGradient(
                                 colors: [Colors.blue[200], Colors.blue[100]])
                             .createShader(bounds)
-                        : (bounds) => LinearGradient(
-                                colors: [Colors.white, Colors.white])
-                            .createShader(bounds),
+                        : (bounds) =>
+                            LinearGradient(colors: [Colors.white, Colors.white])
+                                .createShader(bounds),
                     child: Container(
                       // 限定constraints用于占用位置,经调试后以0.5为基准可以保证加载图片后不产生位移
                       constraints: BoxConstraints(
@@ -550,5 +560,4 @@ class PicPage extends StatelessWidget {
           )
         : Container();
   }
-
 }
