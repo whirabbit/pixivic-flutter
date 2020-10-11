@@ -176,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Stack(
         children: <Widget>[
           Selector<PageSwitchProvider, PageSwitchProvider>(
-            shouldRebuild: (pre, next) => false,
+            shouldRebuild: (pre, next) => true,
             selector: (BuildContext context, PageSwitchProvider provider) {
               return provider;
             },
