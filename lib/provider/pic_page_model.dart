@@ -27,6 +27,7 @@ class PicPageModel with ChangeNotifier {
   ValueChanged<bool> onPageScrolling;
   VoidCallback onPageTop;
   VoidCallback onPageStart;
+
   bool hasConnected = false;
   bool loadMoreAble = true;
   bool isScrolling = false;
@@ -36,19 +37,23 @@ class PicPageModel with ChangeNotifier {
   ScrollController scrollController;
   BuildContext context;
 
-  PicPageModel(
-      {String jsonMode,
-      String picDate,
-      String picMode,
-      String artistId,
-      String spotlightId,
-      String userId,
-      String collectionId,
-      String searchKeywords,
-      int relatedId,
-      ValueChanged<bool> onPageScrolling,
-      VoidCallback onPageTop,
-      VoidCallback onPageStart}) {
+  PicPageModel({
+    this.picDate,
+    this.picMode,
+    this.artistId,
+    this.spotlightId,
+    this.userId,
+    this.collectionId,
+    this.searchKeywords,
+    this.url,
+    this.jsonMode,
+    this.isManga = false,
+    this.isScrollable = true,
+    this.relatedId,
+    this.onPageScrolling,
+    this.onPageTop,
+    this.onPageStart,
+  }) {
     print("PicPageModel cteated and init");
 
     // load home list cache list data if existed
@@ -56,9 +61,9 @@ class PicPageModel with ChangeNotifier {
         picMode == homePicModel &&
         picDate == homePicDate &&
         (!listEquals(homePicList, []))) {
-      this.picMode = picMode;
-      this.picDate = picDate;
-      this.jsonMode = jsonMode;
+      // this.picMode = picMode;
+      // this.picDate = picDate;
+      // this.jsonMode = jsonMode;
       print("load home cache list data");
       scrollController =
           ScrollController(initialScrollOffset: homeScrollerPosition)
@@ -69,190 +74,190 @@ class PicPageModel with ChangeNotifier {
     } else {
       scrollController = ScrollController(initialScrollOffset: 0.0)
         ..addListener(_doWhileScrolling);
-      switchModel(
-          jsonMode,
-          picDate,
-          picMode,
-          artistId,
-          spotlightId,
-          userId,
-          collectionId,
-          searchKeywords,
-          relatedId,
-          onPageScrolling,
-          onPageTop,
-          onPageStart);
+      // switchModel(
+      //     jsonMode,
+      //     picDate,
+      //     picMode,
+      //     artistId,
+      //     spotlightId,
+      //     userId,
+      //     collectionId,
+      //     searchKeywords,
+      //     relatedId,
+      //     onPageScrolling,
+      //     onPageTop,
+      //     onPageStart);
       initLoadData();
     }
   }
 
-  switchModel(
-      jsonMode,
-      picDate,
-      picMode,
-      artistId,
-      spotlightId,
-      userId,
-      collectionId,
-      searchKeywords,
-      relatedId,
-      onPageScrolling,
-      onPageTop,
-      onPageStart) {
-    switch (jsonMode) {
-      case 'home':
-        homePage(picDate: picDate, picMode: picMode);
-        break;
-      case 'related':
-        relatedPage(
-            relatedId: relatedId,
-            onTopOfPicpage: onPageTop,
-            onStartOfPicpage: onPageStart);
-        break;
-      case 'search':
-        searchPage(searchKeywords: searchKeywords, searchManga: isManga);
-        break;
-      case 'artist':
-        artistPage(
-            artistId: artistId,
-            isManga: isManga,
-            onTopOfPicpage: onPageTop,
-            onStartOfPicpage: onPageStart);
-        break;
-      case 'followed':
-        followedPage(userId: userId, isManga: isManga);
-        break;
-      case 'bookmark':
-        bookmarkPage(userId: userId, isManga: isManga);
-        break;
-      case 'spotlight':
-        spotlightPage(spotlightId: spotlightId);
-        break;
-      case 'history':
-        historyPage();
-        break;
-      case 'oldhistory':
-        oldHistoryPage();
-        break;
-      case 'userdetail':
-        userdetailPage(
-            userId: userId,
-            isManga: isManga,
-            onTopOfPicpage: onPageTop,
-            onStartOfPicpage: onPageStart);
-        break;
-      case 'collection':
-        collectionPage(collectionId: collectionId);
-        break;
-    }
-  }
+//   switchModel(
+//       jsonMode,
+//       picDate,
+//       picMode,
+//       artistId,
+//       spotlightId,
+//       userId,
+//       collectionId,
+//       searchKeywords,
+//       relatedId,
+//       onPageScrolling,
+//       onPageTop,
+//       onPageStart) {
+//     switch (jsonMode) {
+//       case 'home':
+//         homePage(picDate: picDate, picMode: picMode);
+//         break;
+//       case 'related':
+//         relatedPage(
+//             relatedId: relatedId,
+//             onTopOfPicpage: onPageTop,
+//             onStartOfPicpage: onPageStart);
+//         break;
+//       case 'search':
+//         searchPage(searchKeywords: searchKeywords, searchManga: isManga);
+//         break;
+//       case 'artist':
+//         artistPage(
+//             artistId: artistId,
+//             isManga: isManga,
+//             onTopOfPicpage: onPageTop,
+//             onStartOfPicpage: onPageStart);
+//         break;
+//       case 'followed':
+//         followedPage(userId: userId, isManga: isManga);
+//         break;
+//       case 'bookmark':
+//         bookmarkPage(userId: userId, isManga: isManga);
+//         break;
+//       case 'spotlight':
+//         spotlightPage(spotlightId: spotlightId);
+//         break;
+//       case 'history':
+//         historyPage();
+//         break;
+//       case 'oldhistory':
+//         oldHistoryPage();
+//         break;
+//       case 'userdetail':
+//         userdetailPage(
+//             userId: userId,
+//             isManga: isManga,
+//             onTopOfPicpage: onPageTop,
+//             onStartOfPicpage: onPageStart);
+//         break;
+//       case 'collection':
+//         collectionPage(collectionId: collectionId);
+//         break;
+//     }
+//   }
 
-  homePage({
-    @required String picDate,
-    @required String picMode,
-  }) {
-//    if (this.picDate != null &&
-//        (this.picDate != picDate || this.picMode != picMode)) {
-//      //重新刷新页面所有缓存重置
-//      currentPage = 1;
-//      homeCurrentPage = 1;
-//      homePicList = [];
-//      homeScrollerPosition = 0;
-//      scrollController.jumpTo(0.0);
-//      this.picList = [];
-//
-//      initLoadData();
-//    }
-    this.jsonMode = 'home';
-    this.picDate = picDate;
-    this.picMode = picMode;
+//   homePage({
+//     @required String picDate,
+//     @required String picMode,
+//   }) {
+// //    if (this.picDate != null &&
+// //        (this.picDate != picDate || this.picMode != picMode)) {
+// //      //重新刷新页面所有缓存重置
+// //      currentPage = 1;
+// //      homeCurrentPage = 1;
+// //      homePicList = [];
+// //      homeScrollerPosition = 0;
+// //      scrollController.jumpTo(0.0);
+// //      this.picList = [];
+// //
+// //      initLoadData();
+// //    }
+//     this.jsonMode = 'home';
+//     this.picDate = picDate;
+//     this.picMode = picMode;
 
-//    if (picList.length < 1) initLoadData();
-  }
+// //    if (picList.length < 1) initLoadData();
+//   }
 
-  searchPage({@required String searchKeywords, @required bool searchManga}) {
-    if (this.searchKeywords != searchKeywords) {
-      this.picList = null;
-    }
-    this.jsonMode = 'search';
-    this.searchKeywords = searchKeywords;
-    this.isManga = searchManga;
-//    initLoadData();
-  }
+//   searchPage({@required String searchKeywords, @required bool searchManga}) {
+//     if (this.searchKeywords != searchKeywords) {
+//       this.picList = null;
+//     }
+//     this.jsonMode = 'search';
+//     this.searchKeywords = searchKeywords;
+//     this.isManga = searchManga;
+// //    initLoadData();
+//   }
 
-  relatedPage(
-      {@required num relatedId,
-      @required VoidCallback onTopOfPicpage,
-      @required VoidCallback onStartOfPicpage}) {
-    this.jsonMode = 'related';
-    this.relatedId = relatedId;
-    this.onPageTop = onTopOfPicpage;
-    this.onPageStart = onStartOfPicpage;
-    this.isScrollable = true;
-//    initLoadData();
-  }
+//   relatedPage(
+//       {@required num relatedId,
+//       @required VoidCallback onTopOfPicpage,
+//       @required VoidCallback onStartOfPicpage}) {
+//     this.jsonMode = 'related';
+//     this.relatedId = relatedId;
+//     this.onPageTop = onTopOfPicpage;
+//     this.onPageStart = onStartOfPicpage;
+//     this.isScrollable = true;
+// //    initLoadData();
+//   }
 
-  artistPage(
-      {@required String artistId,
-      @required bool isManga,
-      @required VoidCallback onTopOfPicpage,
-      @required VoidCallback onStartOfPicpage}) {
-    this.jsonMode = 'artist';
-    this.artistId = artistId;
-    this.isManga = isManga;
-    this.onPageTop = onTopOfPicpage;
-    this.onPageStart = onStartOfPicpage;
-//    initLoadData();
-  }
+//   artistPage(
+//       {@required String artistId,
+//       @required bool isManga,
+//       @required VoidCallback onTopOfPicpage,
+//       @required VoidCallback onStartOfPicpage}) {
+//     this.jsonMode = 'artist';
+//     this.artistId = artistId;
+//     this.isManga = isManga;
+//     this.onPageTop = onTopOfPicpage;
+//     this.onPageStart = onStartOfPicpage;
+// //    initLoadData();
+//   }
 
-  followedPage({@required String userId, @required bool isManga}) {
-    this.jsonMode = 'followed';
-    this.userId = userId;
-    this.isManga = isManga;
-//    initLoadData();
-  }
+//   followedPage({@required String userId, @required bool isManga}) {
+//     this.jsonMode = 'followed';
+//     this.userId = userId;
+//     this.isManga = isManga;
+// //    initLoadData();
+//   }
 
-  bookmarkPage({@required String userId, @required bool isManga}) {
-    this.jsonMode = 'bookmark';
-    this.userId = userId;
-    this.isManga = isManga;
-//    initLoadData();
-  }
+//   bookmarkPage({@required String userId, @required bool isManga}) {
+//     this.jsonMode = 'bookmark';
+//     this.userId = userId;
+//     this.isManga = isManga;
+// //    initLoadData();
+//   }
 
-  spotlightPage({@required String spotlightId}) {
-    this.jsonMode = 'spotlight';
-    this.spotlightId = spotlightId;
-//    initLoadData();
-  }
+//   spotlightPage({@required String spotlightId}) {
+//     this.jsonMode = 'spotlight';
+//     this.spotlightId = spotlightId;
+// //    initLoadData();
+//   }
 
-  historyPage() {
-    this.jsonMode = 'history';
-//    initLoadData();
-  }
+//   historyPage() {
+//     this.jsonMode = 'history';
+// //    initLoadData();
+//   }
 
-  oldHistoryPage() {
-    this.jsonMode = 'oldhistory';
-//    initLoadData();
-  }
+//   oldHistoryPage() {
+//     this.jsonMode = 'oldhistory';
+// //    initLoadData();
+//   }
 
-  userdetailPage(
-      {@required String userId,
-      @required bool isManga,
-      @required VoidCallback onTopOfPicpage,
-      @required VoidCallback onStartOfPicpage}) {
-    this.jsonMode = 'userdetail';
-    this.userId = userId;
-    this.isManga = isManga;
-    this.onPageTop = onTopOfPicpage;
-    this.onPageStart = onStartOfPicpage;
-//    initLoadData();
-  }
+//   userdetailPage(
+//       {@required String userId,
+//       @required bool isManga,
+//       @required VoidCallback onTopOfPicpage,
+//       @required VoidCallback onStartOfPicpage}) {
+//     this.jsonMode = 'userdetail';
+//     this.userId = userId;
+//     this.isManga = isManga;
+//     this.onPageTop = onTopOfPicpage;
+//     this.onPageStart = onStartOfPicpage;
+// //    initLoadData();
+//   }
 
-  collectionPage({@required String collectionId}) {
-    this.collectionId = collectionId;
-    // getJsonList();
-    //TODO: Collection need to be run specifically
-  }
+//   collectionPage({@required String collectionId}) {
+//     this.collectionId = collectionId;
+//     // getJsonList();
+//     //TODO: Collection need to be run specifically
+//   }
 
   //标记方法
   flipLikeState(int index) {
