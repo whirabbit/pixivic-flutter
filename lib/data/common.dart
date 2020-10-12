@@ -13,6 +13,8 @@ import '../function/identity.dart';
 double homeScrollerPosition = 0;
 List homePicList = [];
 int homeCurrentPage = 1;
+String homePicDate;
+String homePicModel;
 int cacheSize;
 
 SharedPreferences prefs;

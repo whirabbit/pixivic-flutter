@@ -21,7 +21,7 @@ class PicPageModel with ChangeNotifier {
   String searchKeywords;
   String url;
   String jsonMode;
-  bool isManga;
+  bool isManga = false;
   bool isScrollable = true;
   num relatedId;
   ValueChanged<bool> onPageScrolling;
@@ -35,19 +35,116 @@ class PicPageModel with ChangeNotifier {
   List jsonList;
   ScrollController scrollController;
   BuildContext context;
+  double scrollerPosition;
 
-  PicPageModel({this.jsonMode}) {
+  PicPageModel(
+      {String jsonMode,
+      String picDate,
+      String picMode,
+      String artistId,
+      String spotlightId,
+      String userId,
+      String collectionId,
+      String searchKeywords,
+      int relatedId,
+      ValueChanged<bool> onPageScrolling,
+      VoidCallback onPageTop,
+      VoidCallback onPageStart}) {
     print("PicPageModel cteated and init");
-    scrollController = ScrollController(
-        initialScrollOffset: jsonMode == 'home' ? homeScrollerPosition : 0.0)
-      ..addListener(_doWhileScrolling);
 
     // load home list cache list data if existed
-    if (this.jsonMode == 'home' && (!listEquals(homePicList, []))) {
+    if (jsonMode == 'home' &&
+        picMode == homePicModel &&
+        picDate == homePicDate &&
+        (!listEquals(homePicList, []))) {
+      this.picMode = picMode;
+      this.picDate = picDate;
+      this.jsonMode = jsonMode;
       print("load home cache list data");
+      scrollController =
+          ScrollController(initialScrollOffset: homeScrollerPosition)
+            ..addListener(_doWhileScrolling);
       picList = homePicList;
       currentPage = homeCurrentPage;
       jsonList = [];
+    } else {
+      scrollController = ScrollController(initialScrollOffset: 0.0)
+        ..addListener(_doWhileScrolling);
+      switchModel(
+          jsonMode,
+          picDate,
+          picMode,
+          artistId,
+          spotlightId,
+          userId,
+          collectionId,
+          searchKeywords,
+          relatedId,
+          onPageScrolling,
+          onPageTop,
+          onPageStart);
+      initLoadData();
+    }
+  }
+
+  switchModel(
+      jsonMode,
+      picDate,
+      picMode,
+      artistId,
+      spotlightId,
+      userId,
+      collectionId,
+      searchKeywords,
+      relatedId,
+      onPageScrolling,
+      onPageTop,
+      onPageStart) {
+    switch (jsonMode) {
+      case 'home':
+        homePage(picDate: picDate, picMode: picMode);
+        break;
+      case 'related':
+        relatedPage(
+            relatedId: relatedId,
+            onTopOfPicpage: onPageTop,
+            onStartOfPicpage: onPageStart);
+        break;
+      case 'search':
+        searchPage(searchKeywords: searchKeywords, searchManga: isManga);
+        break;
+      case 'artist':
+        artistPage(
+            artistId: artistId,
+            isManga: isManga,
+            onTopOfPicpage: onPageTop,
+            onStartOfPicpage: onPageStart);
+        break;
+      case 'followed':
+        followedPage(userId: userId, isManga: isManga);
+        break;
+      case 'bookmark':
+        bookmarkPage(userId: userId, isManga: isManga);
+        break;
+      case 'spotlight':
+        spotlightPage(spotlightId: spotlightId);
+        break;
+      case 'history':
+        historyPage();
+        break;
+      case 'oldhistory':
+        oldHistoryPage();
+        break;
+      case 'userdetail':
+        userdetailPage(
+            userId: userId,
+            isManga: isManga,
+            onTopOfPicpage: onPageTop,
+            onStartOfPicpage: onPageStart);
+        break;
+      case 'collection':
+        collectionPage(collectionId: collectionId);
+        break;
     }
   }
 
@@ -55,20 +152,23 @@ class PicPageModel with ChangeNotifier {
     @required String picDate,
     @required String picMode,
   }) {
-    if (this.picDate != null &&
-        (this.picDate != picDate || this.picMode != picMode)) {
-      //重新刷新页面所有缓存重置
-      currentPage = 1;
-      homeCurrentPage = 1;
-      homePicList = [];
-      homeScrollerPosition = 0;
-      scrollController.jumpTo(0.0);
-      this.picList = null;
-    }
-
+//    if (this.picDate != null &&
+//        (this.picDate != picDate || this.picMode != picMode)) {
+//      //重新刷新页面所有缓存重置
+//      currentPage = 1;
+//      homeCurrentPage = 1;
+//      homePicList = [];
+//      homeScrollerPosition = 0;
+//      scrollController.jumpTo(0.0);
+//      this.picList = [];
+//
+//      initLoadData();
+//    }
     this.jsonMode = 'home';
     this.picDate = picDate;
     this.picMode = picMode;
+
+//    if (picList.length < 1) initLoadData();
   }
 
   searchPage({@required String searchKeywords, @required bool searchManga}) {
@@ -78,6 +178,7 @@ class PicPageModel with ChangeNotifier {
     this.jsonMode = 'search';
     this.searchKeywords = searchKeywords;
     this.isManga = searchManga;
+    initLoadData();
   }
 
   relatedPage(
@@ -89,6 +190,7 @@ class PicPageModel with ChangeNotifier {
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
     this.isScrollable = true;
+    initLoadData();
   }
 
   artistPage(
@@ -101,31 +203,37 @@ class PicPageModel with ChangeNotifier {
     this.isManga = isManga;
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
+    initLoadData();
   }
 
   followedPage({@required String userId, @required bool isManga}) {
     this.jsonMode = 'followed';
     this.userId = userId;
     this.isManga = isManga;
+    initLoadData();
   }
 
   bookmarkPage({@required String userId, @required bool isManga}) {
     this.jsonMode = 'bookmark';
     this.userId = userId;
     this.isManga = isManga;
+    initLoadData();
   }
 
   spotlightPage({@required String spotlightId}) {
     this.jsonMode = 'spotlight';
     this.spotlightId = spotlightId;
+    initLoadData();
   }
 
   historyPage() {
     this.jsonMode = 'history';
+    initLoadData();
   }
 
   oldHistoryPage() {
     this.jsonMode = 'oldhistory';
+    initLoadData();
   }
 
   userdetailPage(
@@ -138,6 +246,13 @@ class PicPageModel with ChangeNotifier {
     this.isManga = isManga;
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
+    initLoadData();
+  }
+
+  collectionPage({@required String collectionId}) {
+    this.collectionId = collectionId;
+    // getJsonList();
+    //TODO: Collection need to be run specifically
   }
 
   //标记方法
@@ -153,16 +268,11 @@ class PicPageModel with ChangeNotifier {
     }
   }
 
-  collectionPage({@required String collectionId}) {
-    this.collectionId = collectionId;
-    // getJsonList();
-  }
-
   _doWhileScrolling() {
     // FocusScope.of(context).unfocus();
     // 如果为主页面 picPage，则记录滑动位置、判断滑动
     if (jsonMode == 'home') {
-      homeScrollerPosition = scrollController
+      this.scrollerPosition = scrollController
           .position.extentBefore; // 保持记录scrollposition，原因为dispose时无法记录
       PageSwitchProvider indexProvider =
           Provider.of<PageSwitchProvider>(context, listen: false);
@@ -172,7 +282,7 @@ class PicPageModel with ChangeNotifier {
         if (!indexProvider.judgeScrolling) {
           indexProvider.changeScrolling(true);
 //          isScrolling = true;
-//          widget.onPageScrolling(isScrolling);
+//           onPageScrolling(isScrolling);
         }
       }
       if (scrollController.position.userScrollDirection ==
@@ -181,7 +291,7 @@ class PicPageModel with ChangeNotifier {
         if (indexProvider.judgeScrolling) {
           indexProvider.changeScrolling(false);
 //          isScrolling = false;
-//          widget.onPageScrolling(isScrolling);
+//           onPageScrolling(isScrolling);
         }
       }
     }
@@ -215,8 +325,10 @@ class PicPageModel with ChangeNotifier {
       try {
         getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
             .then((value) {
-          if (value.length != 0) {
+          if (value != null) {
+            picList = picList + value;
             loadMoreAble = true;
+            notifyListeners();
           }
         });
       } catch (err) {
@@ -225,9 +337,26 @@ class PicPageModel with ChangeNotifier {
         print('==============================');
         if (err.toString().contains('SocketException'))
           BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+        currentPage -= 1;
         loadMoreAble = true;
       }
     }
+  }
+
+  initLoadData() async {
+    hasConnected = false;
+    notifyListeners();
+    getJsonList().then((value) {
+      picList = value;
+      notifyListeners();
+      hasConnected = true;
+    }).catchError((error) {
+      print('======================');
+      print(error);
+      print('======================');
+      if (error.toString().contains('NoSuchMethodError')) picList = null;
+      hasConnected = true;
+    });
   }
 
   getJsonList({bool loadMoreAble, int currentPage = 1}) async {
@@ -292,6 +421,7 @@ class PicPageModel with ChangeNotifier {
           'https://api.pixivic.com/collections/$collectionId/illustrations?page=$currentPage&pagesize=10';
     }
 
+    // TODO: Requests to Dio after package Dio
     try {
       if (prefs.getString('auth') == '') {
         var requests = await Requests.get(url);
@@ -308,10 +438,6 @@ class PicPageModel with ChangeNotifier {
         // requests.raiseForStatus();
         jsonList = jsonDecode(requests.content())['data'];
       }
-      if (jsonList == null) {
-        jsonList = [];
-      }
-      notifyListeners();
       return jsonList;
     } catch (error) {
       print('=========getJsonList==========');
@@ -329,6 +455,10 @@ class PicPageModel with ChangeNotifier {
     if (jsonMode == 'home' && picList != null) {
       homePicList = picList;
       homeCurrentPage = currentPage;
+      homeScrollerPosition = scrollerPosition == null ? 0.0 : scrollerPosition;
+      homePicDate = picDate;
+      homePicModel = picMode;
+//      homeScrollController=scrollController;
     }
     picList = [];
     jsonList = null;
