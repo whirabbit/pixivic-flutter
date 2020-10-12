@@ -287,19 +287,21 @@ class _PicPageState extends State<PicPage> {
 
   @override
   void didUpdateWidget(PicPage oldWidget) {
-    picPageModel = PicPageModel(
-        jsonMode: widget.jsonMode,
-        picMode: widget.picMode,
-        picDate: widget.picDate,
-        userId: widget.userId,
-        spotlightId: widget.spotlightId,
-        relatedId: widget.relatedId,
-        collectionId: widget.collectionId,
-        artistId: widget.artistId,
-        searchKeywords: widget.searchKeywords,
-        onPageTop: widget.onPageTop,
-        onPageStart: widget.onPageStart,
-        onPageScrolling: widget.onPageScrolling);
+    if(widget.picDate != oldWidget.picDate || widget.picMode != oldWidget.picMode) 
+      picPageModel=PicPageModel(
+          jsonMode: widget.jsonMode,
+          picMode: widget.picMode,
+          picDate: widget.picDate,
+          userId: widget.userId,
+          spotlightId: widget.spotlightId,
+          relatedId: widget.relatedId,
+          collectionId: widget.collectionId,
+          artistId: widget.artistId,
+          searchKeywords: widget.searchKeywords,
+          onPageTop: widget.onPageTop,
+          onPageStart: widget.onPageStart,
+          onPageScrolling: widget.onPageScrolling);
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
