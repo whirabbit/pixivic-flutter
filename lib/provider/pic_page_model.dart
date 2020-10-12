@@ -35,7 +35,6 @@ class PicPageModel with ChangeNotifier {
   List jsonList;
   ScrollController scrollController;
   BuildContext context;
-  double scrollerPosition;
 
   PicPageModel(
       {String jsonMode,
@@ -178,7 +177,7 @@ class PicPageModel with ChangeNotifier {
     this.jsonMode = 'search';
     this.searchKeywords = searchKeywords;
     this.isManga = searchManga;
-    initLoadData();
+//    initLoadData();
   }
 
   relatedPage(
@@ -190,7 +189,7 @@ class PicPageModel with ChangeNotifier {
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
     this.isScrollable = true;
-    initLoadData();
+//    initLoadData();
   }
 
   artistPage(
@@ -203,37 +202,37 @@ class PicPageModel with ChangeNotifier {
     this.isManga = isManga;
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
-    initLoadData();
+//    initLoadData();
   }
 
   followedPage({@required String userId, @required bool isManga}) {
     this.jsonMode = 'followed';
     this.userId = userId;
     this.isManga = isManga;
-    initLoadData();
+//    initLoadData();
   }
 
   bookmarkPage({@required String userId, @required bool isManga}) {
     this.jsonMode = 'bookmark';
     this.userId = userId;
     this.isManga = isManga;
-    initLoadData();
+//    initLoadData();
   }
 
   spotlightPage({@required String spotlightId}) {
     this.jsonMode = 'spotlight';
     this.spotlightId = spotlightId;
-    initLoadData();
+//    initLoadData();
   }
 
   historyPage() {
     this.jsonMode = 'history';
-    initLoadData();
+//    initLoadData();
   }
 
   oldHistoryPage() {
     this.jsonMode = 'oldhistory';
-    initLoadData();
+//    initLoadData();
   }
 
   userdetailPage(
@@ -246,7 +245,7 @@ class PicPageModel with ChangeNotifier {
     this.isManga = isManga;
     this.onPageTop = onTopOfPicpage;
     this.onPageStart = onStartOfPicpage;
-    initLoadData();
+//    initLoadData();
   }
 
   collectionPage({@required String collectionId}) {
@@ -272,7 +271,7 @@ class PicPageModel with ChangeNotifier {
     // FocusScope.of(context).unfocus();
     // 如果为主页面 picPage，则记录滑动位置、判断滑动
     if (jsonMode == 'home') {
-      this.scrollerPosition = scrollController
+      homeScrollerPosition = scrollController
           .position.extentBefore; // 保持记录scrollposition，原因为dispose时无法记录
       PageSwitchProvider indexProvider =
           Provider.of<PageSwitchProvider>(context, listen: false);
@@ -455,10 +454,8 @@ class PicPageModel with ChangeNotifier {
     if (jsonMode == 'home' && picList != null) {
       homePicList = picList;
       homeCurrentPage = currentPage;
-      homeScrollerPosition = scrollerPosition == null ? 0.0 : scrollerPosition;
       homePicDate = picDate;
       homePicModel = picMode;
-//      homeScrollController=scrollController;
     }
     picList = [];
     jsonList = null;

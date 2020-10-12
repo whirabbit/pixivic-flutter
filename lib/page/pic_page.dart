@@ -273,9 +273,9 @@ class _PicPageState extends State<PicPage> {
   void didUpdateWidget(PicPage oldWidget) {
     homePicList = picPageModel.picList;
     homeCurrentPage = picPageModel.currentPage;
-    homeScrollerPosition = picPageModel.scrollerPosition == null
-        ? 0.0
-        : picPageModel.scrollerPosition;
+//    homeScrollerPosition = picPageModel.scrollerPosition == null
+//        ? 0.0
+//        : picPageModel.scrollerPosition;
     homePicDate = oldWidget.picDate;
     homePicModel = oldWidget.picMode;
     super.didUpdateWidget(oldWidget);
