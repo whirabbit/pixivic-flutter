@@ -176,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Stack(
         children: <Widget>[
           Selector<PageSwitchProvider, PageSwitchProvider>(
-            shouldRebuild: (pre, next) => true,
+            shouldRebuild: (pre, next) => false,
             selector: (BuildContext context, PageSwitchProvider provider) {
               return provider;
             },
@@ -190,8 +190,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 }, //页面切换
                 controller: _pageController,
                 itemBuilder: (context, index) {
-                  return Center(
-                    child: _getPageByIndex(index), //每个页面展示的组件
+                  return Selector<PageSwitchProvider, PageSwitchProvider>(
+                    selector: (context, provider) => provider,
+                    shouldRebuild: (pre, next) => true,
+                    builder: (context, provider, child) {
+                      return Center(
+                        child: _getPageByIndex(index), //每个页面展示的组件
+                      );
+                    },
                   );
                 },
               );
