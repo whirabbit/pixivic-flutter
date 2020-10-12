@@ -279,7 +279,9 @@ class _PicPageState extends State<PicPage> {
         searchKeywords: widget.searchKeywords,
         onPageTop: widget.onPageTop,
         onPageStart: widget.onPageStart,
-        onPageScrolling: widget.onPageScrolling);
+        onPageScrolling: widget.onPageScrolling,
+        isManga: widget.isManga,
+        isScrollable: widget.isScrollable);
     super.initState();
   }
 
@@ -298,14 +300,6 @@ class _PicPageState extends State<PicPage> {
         onPageTop: widget.onPageTop,
         onPageStart: widget.onPageStart,
         onPageScrolling: widget.onPageScrolling);
-    homePicList = picPageModel.picList;
-    homeCurrentPage = picPageModel.currentPage;
-//    homeScrollerPosition = picPageModel.scrollerPosition == null
-//        ? 0.0
-//        : picPageModel.scrollerPosition;
-    homePicDate = oldWidget.picDate;
-    homePicModel = oldWidget.picMode;
-    super.didUpdateWidget(oldWidget);
   }
 
   @override
