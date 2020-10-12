@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
+import 'package:tuple/tuple.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:random_color/random_color.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -266,7 +267,7 @@ class _PicPageState extends State<PicPage> {
   void initState() {
     print('picpage created in ChangeNotifierProvider');
 //    switchModel(picPageModel);
-    picPageModel=PicPageModel(
+    picPageModel = PicPageModel(
         jsonMode: widget.jsonMode,
         picMode: widget.picMode,
         picDate: widget.picDate,
@@ -284,7 +285,7 @@ class _PicPageState extends State<PicPage> {
 
   @override
   void didUpdateWidget(PicPage oldWidget) {
-    picPageModel=PicPageModel(
+    picPageModel = PicPageModel(
         jsonMode: widget.jsonMode,
         picMode: widget.picMode,
         picDate: widget.picDate,
@@ -316,85 +317,78 @@ class _PicPageState extends State<PicPage> {
   @override
   Widget build(BuildContext context) {
     print('build PicPage');
-
     return ChangeNotifierProvider<PicPageModel>.value(
       value: picPageModel,
       child: Selector<PicPageModel, PicPageModel>(
-        shouldRebuild: (pre, next) => true,
+        shouldRebuild: (pre, next) => false,
         selector: (context, provider) => provider,
         builder: (context, PicPageModel pageModel, _) {
-          print("1111111111111111");
           pageModel.context = context;
-          return Selector<PicPageModel, List>(
+          return Selector<PicPageModel, Tuple2<List, bool>>(
               selector: (BuildContext context, PicPageModel provider) {
-                return provider.picList;
-              },
-              builder: (context, List picList, _) {
-                print("2222222222222222");
-                if (pageModel.picList == null && !pageModel.hasConnected) {
-                  return Container(
-                      height: ScreenUtil().setHeight(576),
-                      width: ScreenUtil().setWidth(324),
-                      alignment: Alignment.center,
-                      color: Colors.white,
-                      child: Center(
-                        child: Lottie.asset('image/loading-box.json'),
-                      ));
-                } else if (pageModel.picList == null &&
-                    pageModel.hasConnected) {
-                  return Container(
-                    height: ScreenUtil().setHeight(576),
-                    width: ScreenUtil().setWidth(324),
-                    color: Colors.white,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Lottie.asset('image/empty-box.json',
-                            repeat: false, height: ScreenUtil().setHeight(100)),
-                        Text(
-                          '这里什么都没有呢',
-                          style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: ScreenUtil().setHeight(10),
-                              decoration: TextDecoration.none),
-                        ),
-                        SizedBox(
-                          height: ScreenUtil().setHeight(250),
-                        )
-                      ],
+            return Tuple2(provider.picList, provider.hasConnected);
+          }, builder: (context, tuple, _) {
+            if (tuple.item1 == null && !tuple.item2) {
+              return Container(
+                  height: ScreenUtil().setHeight(576),
+                  width: ScreenUtil().setWidth(324),
+                  alignment: Alignment.center,
+                  color: Colors.white,
+                  child: Center(
+                    child: Lottie.asset('image/loading-box.json'),
+                  ));
+            } else if (tuple.item1 == null && tuple.item2) {
+              return Container(
+                height: ScreenUtil().setHeight(576),
+                width: ScreenUtil().setWidth(324),
+                color: Colors.white,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Lottie.asset('image/empty-box.json',
+                        repeat: false, height: ScreenUtil().setHeight(100)),
+                    Text(
+                      '这里什么都没有呢',
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: ScreenUtil().setHeight(10),
+                          decoration: TextDecoration.none),
                     ),
-                  );
-                } else {
-                  return Container(
-                      padding: EdgeInsets.only(
-                          left: ScreenUtil().setWidth(5),
-                          right: ScreenUtil().setWidth(5)),
-                      color: Colors.grey[50],
-                      child: StaggeredGridView.countBuilder(
-                        controller: pageModel.scrollController,
-                        physics: pageModel.isScrollable
-                            ? ClampingScrollPhysics()
-                            : NeverScrollableScrollPhysics(),
-                        crossAxisCount: 2,
-                        itemCount: pageModel.picList.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Selector<PicPageModel, Map>(
-                            shouldRebuild: (pre,next)=>true,
-                            selector: (context, provider) =>
-                                provider.picList[index],
-                            builder: (context, picItem, _) {
-                              print("333333333333333");
-                              return imageCell(
-                                  picItem, index, context, pageModel);
-                            },
-                          );
+                    SizedBox(
+                      height: ScreenUtil().setHeight(250),
+                    )
+                  ],
+                ),
+              );
+            } else {
+              return Container(
+                  padding: EdgeInsets.only(
+                      left: ScreenUtil().setWidth(5),
+                      right: ScreenUtil().setWidth(5)),
+                  color: Colors.grey[50],
+                  child: StaggeredGridView.countBuilder(
+                    controller: pageModel.scrollController,
+                    physics: pageModel.isScrollable
+                        ? ClampingScrollPhysics()
+                        : NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
+                    itemCount: pageModel.picList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Selector<PicPageModel, Map>(
+                        shouldRebuild: (pre, next) => true,
+                        selector: (context, provider) =>
+                            provider.picList[index],
+                        builder: (context, picItem, _) {
+                          return imageCell(picItem, index, context, pageModel);
                         },
-                        staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-                        mainAxisSpacing: 0.0,
-                        crossAxisSpacing: 0.0,
-                      ));
-                }
-              });
+                      );
+                    },
+                    staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+                    mainAxisSpacing: 0.0,
+                    crossAxisSpacing: 0.0,
+                  ));
+            }
+          });
         },
       ),
     );
