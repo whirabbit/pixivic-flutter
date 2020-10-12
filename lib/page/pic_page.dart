@@ -287,8 +287,9 @@ class _PicPageState extends State<PicPage> {
 
   @override
   void didUpdateWidget(PicPage oldWidget) {
-    if(widget.picDate != oldWidget.picDate || widget.picMode != oldWidget.picMode) 
-      picPageModel=PicPageModel(
+    if (widget.picDate != oldWidget.picDate ||
+        widget.picMode != oldWidget.picMode)
+      picPageModel = PicPageModel(
           jsonMode: widget.jsonMode,
           picMode: widget.picMode,
           picDate: widget.picDate,
@@ -319,11 +320,13 @@ class _PicPageState extends State<PicPage> {
         shouldRebuild: (pre, next) => false,
         selector: (context, provider) => provider,
         builder: (context, PicPageModel pageModel, _) {
+          print('Selector11111111111111111111');
           pageModel.context = context;
           return Selector<PicPageModel, Tuple2<List, bool>>(
               selector: (BuildContext context, PicPageModel provider) {
             return Tuple2(provider.picList, provider.hasConnected);
           }, builder: (context, tuple, _) {
+            print('Selector22222222222222222');
             if (tuple.item1 == null && !tuple.item2) {
               return Container(
                   height: ScreenUtil().setHeight(576),
@@ -370,14 +373,8 @@ class _PicPageState extends State<PicPage> {
                     crossAxisCount: 2,
                     itemCount: pageModel.picList.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return Selector<PicPageModel, Map>(
-                        shouldRebuild: (pre, next) => true,
-                        selector: (context, provider) =>
-                            provider.picList[index],
-                        builder: (context, picItem, _) {
-                          return imageCell(picItem, index, context, pageModel);
-                        },
-                      );
+                      print(pageModel.picList[index]['artistId']);
+                      return imageCell(pageModel.picList[index], index, context, pageModel);
                     },
                     staggeredTileBuilder: (index) => StaggeredTile.fit(1),
                     mainAxisSpacing: 0.0,
@@ -389,7 +386,6 @@ class _PicPageState extends State<PicPage> {
       ),
     );
   }
-
 
   List _picMainParameter(Map picItem) {
     // 预览图片的地址、数目、以及长宽比
@@ -404,6 +400,7 @@ class _PicPageState extends State<PicPage> {
 
   Widget imageCell(
       Map picItem, int index, BuildContext context, PicPageModel pageModel) {
+    print('imageCell刷新！！！！！！！！！！');
     final Color color = RandomColor().randomColor();
     Map picMapData = Map.from(picItem);
     if (picMapData['xrestict'] == 1 ||
