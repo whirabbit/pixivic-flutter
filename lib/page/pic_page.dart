@@ -394,56 +394,6 @@ class _PicPageState extends State<PicPage> {
     );
   }
 
-  //根据传入的jsonModel选择provider的方法来获取数据
-  switchModel(PicPageModel provider) {
-    switch (widget.jsonMode) {
-      case 'home':
-        provider.homePage(picDate: widget.picDate, picMode: widget.picMode);
-        break;
-      case 'related':
-        provider.relatedPage(
-            relatedId: widget.relatedId,
-            onTopOfPicpage: widget.onPageTop,
-            onStartOfPicpage: widget.onPageStart);
-        break;
-      case 'search':
-        provider.searchPage(
-            searchKeywords: widget.searchKeywords, searchManga: widget.isManga);
-        break;
-      case 'artist':
-        provider.artistPage(
-            artistId: widget.artistId,
-            isManga: widget.isManga,
-            onTopOfPicpage: widget.onPageTop,
-            onStartOfPicpage: widget.onPageStart);
-        break;
-      case 'followed':
-        provider.followedPage(userId: widget.userId, isManga: widget.isManga);
-        break;
-      case 'bookmark':
-        provider.bookmarkPage(userId: widget.userId, isManga: widget.isManga);
-        break;
-      case 'spotlight':
-        provider.spotlightPage(spotlightId: widget.spotlightId);
-        break;
-      case 'history':
-        provider.historyPage();
-        break;
-      case 'oldhistory':
-        provider.oldHistoryPage();
-        break;
-      case 'userdetail':
-        provider.userdetailPage(
-            userId: widget.userId,
-            isManga: widget.isManga,
-            onTopOfPicpage: widget.onPageTop,
-            onStartOfPicpage: widget.onPageStart);
-        break;
-      case 'collection':
-        provider.collectionPage(collectionId: widget.collectionId);
-        break;
-    }
-  }
 
   List _picMainParameter(Map picItem) {
     // 预览图片的地址、数目、以及长宽比
