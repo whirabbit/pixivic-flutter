@@ -266,11 +266,37 @@ class _PicPageState extends State<PicPage> {
   void initState() {
     print('picpage created in ChangeNotifierProvider');
 //    switchModel(picPageModel);
+    picPageModel=PicPageModel(
+        jsonMode: widget.jsonMode,
+        picMode: widget.picMode,
+        picDate: widget.picDate,
+        userId: widget.userId,
+        spotlightId: widget.spotlightId,
+        relatedId: widget.relatedId,
+        collectionId: widget.collectionId,
+        artistId: widget.artistId,
+        searchKeywords: widget.searchKeywords,
+        onPageTop: widget.onPageTop,
+        onPageStart: widget.onPageStart,
+        onPageScrolling: widget.onPageScrolling);
     super.initState();
   }
 
   @override
   void didUpdateWidget(PicPage oldWidget) {
+    picPageModel=PicPageModel(
+        jsonMode: widget.jsonMode,
+        picMode: widget.picMode,
+        picDate: widget.picDate,
+        userId: widget.userId,
+        spotlightId: widget.spotlightId,
+        relatedId: widget.relatedId,
+        collectionId: widget.collectionId,
+        artistId: widget.artistId,
+        searchKeywords: widget.searchKeywords,
+        onPageTop: widget.onPageTop,
+        onPageStart: widget.onPageStart,
+        onPageScrolling: widget.onPageScrolling);
     homePicList = picPageModel.picList;
     homeCurrentPage = picPageModel.currentPage;
 //    homeScrollerPosition = picPageModel.scrollerPosition == null
@@ -292,83 +318,83 @@ class _PicPageState extends State<PicPage> {
     print('build PicPage');
 
     return ChangeNotifierProvider<PicPageModel>.value(
-      value: picPageModel = PicPageModel(
-          jsonMode: widget.jsonMode,
-          picMode: widget.picMode,
-          picDate: widget.picDate,
-          userId: widget.userId,
-          spotlightId: widget.spotlightId,
-          relatedId: widget.relatedId,
-          collectionId: widget.collectionId,
-          artistId: widget.artistId,
-          searchKeywords: widget.searchKeywords,
-          onPageTop: widget.onPageTop,
-          onPageStart: widget.onPageStart,
-          onPageScrolling: widget.onPageScrolling),
+      value: picPageModel,
       child: Selector<PicPageModel, PicPageModel>(
         shouldRebuild: (pre, next) => true,
         selector: (context, provider) => provider,
         builder: (context, PicPageModel pageModel, _) {
+          print("1111111111111111");
           pageModel.context = context;
-
-          if (pageModel.picList == null && !pageModel.hasConnected) {
-            return Container(
-                height: ScreenUtil().setHeight(576),
-                width: ScreenUtil().setWidth(324),
-                alignment: Alignment.center,
-                color: Colors.white,
-                child: Center(
-                  child: Lottie.asset('image/loading-box.json'),
-                ));
-          } else if (pageModel.picList == null && pageModel.hasConnected) {
-            return Container(
-              height: ScreenUtil().setHeight(576),
-              width: ScreenUtil().setWidth(324),
-              color: Colors.white,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Lottie.asset('image/empty-box.json',
-                      repeat: false, height: ScreenUtil().setHeight(100)),
-                  Text(
-                    '这里什么都没有呢',
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: ScreenUtil().setHeight(10),
-                        decoration: TextDecoration.none),
-                  ),
-                  SizedBox(
-                    height: ScreenUtil().setHeight(250),
-                  )
-                ],
-              ),
-            );
-          } else {
-            return Container(
-                padding: EdgeInsets.only(
-                    left: ScreenUtil().setWidth(5),
-                    right: ScreenUtil().setWidth(5)),
-                color: Colors.grey[50],
-                child: StaggeredGridView.countBuilder(
-                  controller: pageModel.scrollController,
-                  physics: pageModel.isScrollable
-                      ? ClampingScrollPhysics()
-                      : NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  itemCount: pageModel.picList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Selector<PicPageModel, Map>(
-                      selector: (context, provider) => provider.picList[index],
-                      builder: (context, picItem, child) {
-                        return imageCell(picItem, index, context, pageModel);
-                      },
-                    );
-                  },
-                  staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-                  mainAxisSpacing: 0.0,
-                  crossAxisSpacing: 0.0,
-                ));
-          }
+          return Selector<PicPageModel, List>(
+              selector: (BuildContext context, PicPageModel provider) {
+                return provider.picList;
+              },
+              builder: (context, List picList, _) {
+                print("2222222222222222");
+                if (pageModel.picList == null && !pageModel.hasConnected) {
+                  return Container(
+                      height: ScreenUtil().setHeight(576),
+                      width: ScreenUtil().setWidth(324),
+                      alignment: Alignment.center,
+                      color: Colors.white,
+                      child: Center(
+                        child: Lottie.asset('image/loading-box.json'),
+                      ));
+                } else if (pageModel.picList == null &&
+                    pageModel.hasConnected) {
+                  return Container(
+                    height: ScreenUtil().setHeight(576),
+                    width: ScreenUtil().setWidth(324),
+                    color: Colors.white,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Lottie.asset('image/empty-box.json',
+                            repeat: false, height: ScreenUtil().setHeight(100)),
+                        Text(
+                          '这里什么都没有呢',
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: ScreenUtil().setHeight(10),
+                              decoration: TextDecoration.none),
+                        ),
+                        SizedBox(
+                          height: ScreenUtil().setHeight(250),
+                        )
+                      ],
+                    ),
+                  );
+                } else {
+                  return Container(
+                      padding: EdgeInsets.only(
+                          left: ScreenUtil().setWidth(5),
+                          right: ScreenUtil().setWidth(5)),
+                      color: Colors.grey[50],
+                      child: StaggeredGridView.countBuilder(
+                        controller: pageModel.scrollController,
+                        physics: pageModel.isScrollable
+                            ? ClampingScrollPhysics()
+                            : NeverScrollableScrollPhysics(),
+                        crossAxisCount: 2,
+                        itemCount: pageModel.picList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Selector<PicPageModel, Map>(
+                            shouldRebuild: (pre,next)=>true,
+                            selector: (context, provider) =>
+                                provider.picList[index],
+                            builder: (context, picItem, _) {
+                              print("333333333333333");
+                              return imageCell(
+                                  picItem, index, context, pageModel);
+                            },
+                          );
+                        },
+                        staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+                        mainAxisSpacing: 0.0,
+                        crossAxisSpacing: 0.0,
+                      ));
+                }
+              });
         },
       ),
     );

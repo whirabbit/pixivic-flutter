@@ -346,9 +346,12 @@ class PicPageModel with ChangeNotifier {
     hasConnected = false;
     notifyListeners();
     getJsonList().then((value) {
-      picList = value;
+      if (value != null) {
+        picList = value;
+      } else {
+        hasConnected = true;
+      }
       notifyListeners();
-      hasConnected = true;
     }).catchError((error) {
       print('======================');
       print(error);
