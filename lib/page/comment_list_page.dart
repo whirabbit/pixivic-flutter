@@ -39,6 +39,7 @@ class CommentListPage extends StatelessWidget {
 
   final TextZhCommentCell texts = TextZhCommentCell();
   final ScreenUtil screen = ScreenUtil();
+
 //  List commentsList;
 //  int replyToId;
 //  int currentPage = 1;
@@ -76,7 +77,6 @@ class CommentListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return GestureDetector(
       onTap: () {
         //收键盘
@@ -92,8 +92,11 @@ class CommentListPage extends StatelessWidget {
           title: texts.comment,
         ),
         body: ChangeNotifierProvider<CommentListModel>(
-          create: (_) => CommentListModel(illustId,replyToId,replyToName,replyParentId),
-          child: Consumer<CommentListModel>(
+          create: (_) =>
+              CommentListModel(illustId, replyToId, replyToName, replyParentId),
+          child: Selector<CommentListModel, CommentListModel>(
+            shouldRebuild: (pre, next) => false,
+            selector: (context, provider) => provider,
             builder: (context, CommentListModel commentProvider, _) {
 //              this.commentProvider = commentProvider;
 //              if (commentProvider.commentList == null) {
@@ -106,24 +109,34 @@ class CommentListPage extends StatelessWidget {
                 color: Colors.white,
                 child: Stack(
                   children: <Widget>[
-                    commentProvider.commentList != null
-                        ? Positioned(
-                            // top: screen.setHeight(5),
-                            child: Container(
-                            width: screen.setWidth(324),
-                            height: screen.setHeight(576),
-                            margin:
-                                EdgeInsets.only(bottom: screen.setHeight(35)),
-                            child: ListView.builder(
-                                controller: commentProvider.scrollController,
-                                shrinkWrap: true,
-                                itemCount: commentProvider.commentList.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  //TODO 解决参数传递问题
-                                  return commentParentCell(commentProvider.commentList[index],context,commentProvider);
-                                }),
-                          ))
-                        : Container(),
+                    Selector<CommentListModel, List>(
+                        selector: (context, provider) => provider.commentList,
+                        builder: (context, commentList, _) {
+                          return commentList != null
+                              ? Positioned(
+                                  // top: screen.setHeight(5),
+                                  child: Container(
+                                  width: screen.setWidth(324),
+                                  height: screen.setHeight(576),
+                                  margin: EdgeInsets.only(
+                                      bottom: screen.setHeight(35)),
+                                  child: ListView.builder(
+                                      controller:
+                                          commentProvider.scrollController,
+                                      shrinkWrap: true,
+                                      itemCount:
+                                          commentProvider.commentList.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        //TODO 解决参数传递问题
+                                        return commentParentCell(
+                                            commentList[index],
+                                            context,
+                                            commentProvider);
+                                      }),
+                                ))
+                              : Container();
+                        }),
                     Positioned(
                       bottom: 0.0,
                       left: 0.0,
@@ -149,29 +162,33 @@ class CommentListPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
-            width: ScreenUtil().setWidth(260),
-            height: ScreenUtil().setHeight(25),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: Color(0xFFF4F3F3F3),
-            ),
-            margin: EdgeInsets.only(
-              left: ScreenUtil().setWidth(13),
-              right: ScreenUtil().setWidth(12),
-            ),
-            child: TextField(
-              focusNode: commentProvider.replyFocus,
-              controller: commentProvider.textEditingController,
-              autofocus: isReply ? true : false,
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: commentProvider.hintText,
-                  hintStyle: TextStyle(fontSize: 14),
-                  contentPadding: EdgeInsets.only(
-                      left: ScreenUtil().setWidth(8),
-                      bottom: ScreenUtil().setHeight(9))),
-            ),
-          ),
+              width: ScreenUtil().setWidth(260),
+              height: ScreenUtil().setHeight(25),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Color(0xFFF4F3F3F3),
+              ),
+              margin: EdgeInsets.only(
+                left: ScreenUtil().setWidth(13),
+                right: ScreenUtil().setWidth(12),
+              ),
+              child: Selector<CommentListModel, String>(
+                selector: (context, provider) => provider.hintText,
+                builder: (context, hintString, _) {
+                  return TextField(
+                    focusNode: commentProvider.replyFocus,
+                    controller: commentProvider.textEditingController,
+                    autofocus: isReply ? true : false,
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: hintString,
+                        hintStyle: TextStyle(fontSize: 14),
+                        contentPadding: EdgeInsets.only(
+                            left: ScreenUtil().setWidth(8),
+                            bottom: ScreenUtil().setHeight(9))),
+                  );
+                },
+              )),
           Material(
             child: InkWell(
               child: FaIcon(FontAwesomeIcons.paperPlane),
@@ -185,7 +202,8 @@ class CommentListPage extends StatelessWidget {
     );
   }
 
-  Widget commentParentCell(Map commentAllData,BuildContext context,commentProvider) {
+  Widget commentParentCell(
+      Map commentAllData, BuildContext context, commentProvider) {
     bool hasSub = commentAllData['subCommentList'] == null ? false : true;
 
     return Container(
@@ -198,7 +216,7 @@ class CommentListPage extends StatelessWidget {
           alignment: Alignment.topLeft,
           child: Column(
             children: <Widget>[
-              commentBaseCell(commentAllData,context,commentProvider),
+              commentBaseCell(commentAllData, context, commentProvider),
               hasSub
                   ? ListView.builder(
                       shrinkWrap: true,
@@ -206,7 +224,9 @@ class CommentListPage extends StatelessWidget {
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (BuildContext context, int index) {
                         return commentSubCell(
-                            commentAllData['subCommentList'][index],context,commentProvider);
+                            commentAllData['subCommentList'][index],
+                            context,
+                            commentProvider);
                       })
                   : Container(),
               SizedBox(width: screen.setWidth(300), child: Divider())
@@ -215,15 +235,16 @@ class CommentListPage extends StatelessWidget {
         ));
   }
 
-  Widget commentSubCell(Map commentEachSubData,BuildContext context,commentProvider) {
+  Widget commentSubCell(
+      Map commentEachSubData, BuildContext context, commentProvider) {
     return Container(
       padding:
           EdgeInsets.only(left: screen.setWidth(15), top: screen.setHeight(7)),
-      child: commentBaseCell(commentEachSubData,context,commentProvider),
+      child: commentBaseCell(commentEachSubData, context, commentProvider),
     );
   }
 
-  Widget commentBaseCell(Map data,BuildContext context,commentProvider) {
+  Widget commentBaseCell(Map data, BuildContext context, commentProvider) {
     String avaterUrl = 'https://pic.cheerfun.dev/${data['replyFrom']}.png';
 
     return Container(
@@ -301,10 +322,12 @@ class CommentListPage extends StatelessWidget {
                             ),
                             onTap: () {
                               commentProvider.replyToId = data['replyFrom'];
-                              commentProvider.replyToName = data['replyFromName'];
+                              commentProvider.replyToName =
+                                  data['replyFromName'];
                               data['parentId'] == 0
                                   ? commentProvider.replyParentId = data['id']
-                                  : commentProvider.replyParentId = data['parentId'];
+                                  : commentProvider.replyParentId =
+                                      data['parentId'];
                               if (commentProvider.replyFocus.hasFocus)
                                 commentProvider.replyFocusListener();
                               else
