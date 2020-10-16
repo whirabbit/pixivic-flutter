@@ -323,7 +323,6 @@ class _PicPageState extends State<PicPage> {
           print('Selector11111111111111111111');
           pageModel.context = context;
           return Selector<PicPageModel, Tuple2<List, bool>>(
-              shouldRebuild: (pre, next) => true,
               selector: (BuildContext context, PicPageModel provider) {
             return Tuple2(provider.picList, provider.hasConnected);
           }, builder: (context, tuple, _) {
@@ -510,10 +509,15 @@ class _PicPageState extends State<PicPage> {
                       alignment: Alignment.center,
                       height: ScreenUtil().setWidth(33),
                       width: ScreenUtil().setWidth(33),
-                      child: MarkHeart(
-                          picItem: picItem,
-                          index: index,
-                          getPageProvider: pageModel),
+                      child: Selector<PicPageModel,bool>(
+                        selector: (context,provider)=>provider.picList[index]['isLiked'],
+                        builder: (context,isLike,_){
+                          return MarkHeart(
+                              picItem: picItem,
+                              index: index,
+                              getPageProvider: pageModel);
+                        },
+                      )
                     ))
                 : Container(),
           ],
