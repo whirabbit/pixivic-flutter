@@ -39,7 +39,6 @@ class CommentListModel with ChangeNotifier {
   int replyParentId;
   TextZhCommentCell texts = TextZhCommentCell();
 
-//TODO 使用select缩小hintText的刷新范围
   replyFocusListener() {
     if (replyFocus.hasFocus && replyToName != '') {
       print('on focus');
@@ -91,7 +90,7 @@ class CommentListModel with ChangeNotifier {
       );
       cancelLoading();
       BotToast.showSimpleNotification(title: response.data['message']);
-      
+
       textEditingController.text = '';
       replyToId = 0;
       replyToName = '';
