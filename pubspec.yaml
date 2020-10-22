@@ -57,6 +57,7 @@ dev_dependencies:
   # tencent_kit: ^1.1.0
   flutter_bugly: ^0.2.8
   tuple: ^1.0.3
+  waterfall_flow: ^2.0.3
 
 flutter_icons:
   android: true
