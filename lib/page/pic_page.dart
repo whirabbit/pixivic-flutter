@@ -289,7 +289,8 @@ class _PicPageState extends State<PicPage> {
   @override
   void didUpdateWidget(PicPage oldWidget) {
     if (widget.picDate != oldWidget.picDate ||
-        widget.picMode != oldWidget.picMode)
+        widget.picMode != oldWidget.picMode ||
+        widget.searchKeywords != oldWidget.searchKeywords)
       picPageModel = PicPageModel(
           jsonMode: widget.jsonMode,
           picMode: widget.picMode,
