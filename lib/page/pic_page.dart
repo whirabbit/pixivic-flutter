@@ -13,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:provider/provider.dart';
+import 'package:waterfall_flow/waterfall_flow.dart';
 
 import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/data/common.dart';
@@ -365,20 +366,37 @@ class _PicPageState extends State<PicPage> {
                       left: ScreenUtil().setWidth(5),
                       right: ScreenUtil().setWidth(5)),
                   color: Colors.grey[50],
-                  child: StaggeredGridView.countBuilder(
+                  child: WaterfallFlow.builder(
                     controller: pageModel.scrollController,
                     physics: pageModel.isScrollable
                         ? ClampingScrollPhysics()
                         : NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
                     itemCount: pageModel.picList.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return imageCell(pageModel.picList[index], index, context, pageModel);
+                      return imageCell(
+                          pageModel.picList[index], index, context, pageModel);
                     },
-                    staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-                    mainAxisSpacing: 0.0,
-                    crossAxisSpacing: 0.0,
-                  ));
+                    gridDelegate:
+                        SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                    ),
+                  )
+                  // StaggeredGridView.countBuilder(
+                  //   controller: pageModel.scrollController,
+                  //   physics: pageModel.isScrollable
+                  //       ? ClampingScrollPhysics()
+                  //       : NeverScrollableScrollPhysics(),
+                  //   crossAxisCount: 2,
+                  //   itemCount: pageModel.picList.length,
+                  //   itemBuilder: (BuildContext context, int index) {
+                  //     return imageCell(pageModel.picList[index], index, context, pageModel);
+                  //   },
+                  //   staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+                  //   mainAxisSpacing: 0.0,
+                  //   crossAxisSpacing: 0.0,
+                  // )
+
+                  );
             }
           });
         },
@@ -506,19 +524,19 @@ class _PicPageState extends State<PicPage> {
                     bottom: ScreenUtil().setHeight(5),
                     right: ScreenUtil().setWidth(5),
                     child: Container(
-                      alignment: Alignment.center,
-                      height: ScreenUtil().setWidth(33),
-                      width: ScreenUtil().setWidth(33),
-                      child: Selector<PicPageModel,bool>(
-                        selector: (context,provider)=>provider.picList[index]['isLiked'],
-                        builder: (context,isLike,_){
-                          return MarkHeart(
-                              picItem: picItem,
-                              index: index,
-                              getPageProvider: pageModel);
-                        },
-                      )
-                    ))
+                        alignment: Alignment.center,
+                        height: ScreenUtil().setWidth(33),
+                        width: ScreenUtil().setWidth(33),
+                        child: Selector<PicPageModel, bool>(
+                          selector: (context, provider) =>
+                              provider.picList[index]['isLiked'],
+                          builder: (context, isLike, _) {
+                            return MarkHeart(
+                                picItem: picItem,
+                                index: index,
+                                getPageProvider: pageModel);
+                          },
+                        )))
                 : Container(),
           ],
         ),
