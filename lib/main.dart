@@ -31,6 +31,7 @@ import 'package:pixivic/provider/page_switch.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // 强制竖屏
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   FlutterBugly.postCatchedException(() {
@@ -52,7 +53,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BotToastInit(
       child: MaterialApp(
-        showPerformanceOverlay: true,
+        // showPerformanceOverlay: true,
         navigatorObservers: [BotToastNavigatorObserver()],
         title: 'Pixivic',
         theme: ThemeData(
@@ -118,6 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    // Bugly 初始化以及检查更新
     FlutterBugly.init(
             androidAppId: buglyAndroid,
             iOSAppId: buglyIos,
@@ -138,6 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     });
     FlutterDownloader.initialize(debug: false).then((value) {
+      // 结束之前所有之前未完成的任务以免出现错误
       FlutterDownloader.cancelAll();
     });
 

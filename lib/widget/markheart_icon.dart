@@ -21,6 +21,7 @@ class MarkHeart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Build MarkHeart $index');
     bool isLikedLocalState = getPageProvider != null
         ? getPageProvider.picList[index]['isLiked']
         : picItem['isLiked'];
