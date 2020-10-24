@@ -5,7 +5,8 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:random_color/random_color.dart';
 import 'package:lottie/lottie.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+// import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:waterfall_flow/waterfall_flow.dart';
 
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
@@ -40,13 +41,12 @@ class _GuessLikePageState extends State<GuessLikePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PappBar(
-        title: texts.title,
-      ),
-      body: guessLikeBody(),
-      floatingActionButton: refreshButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat
-    );
+        appBar: PappBar(
+          title: texts.title,
+        ),
+        body: guessLikeBody(),
+        floatingActionButton: refreshButton(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat);
   }
 
   Widget guessLikeBody() {
@@ -66,12 +66,14 @@ class _GuessLikePageState extends State<GuessLikePage> {
           padding: EdgeInsets.only(
               left: ScreenUtil().setWidth(5), right: ScreenUtil().setWidth(5)),
           color: Colors.grey[50],
-          child: StaggeredGridView.countBuilder(
+          child: WaterfallFlow.builder(
             controller: scrollController,
             physics: isScrollAble
                 ? ClampingScrollPhysics()
                 : NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
+            gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+            ),
             itemCount: picTotalNum,
             itemBuilder: (BuildContext context, int index) => imageCell(
                 picList[index],
@@ -80,9 +82,9 @@ class _GuessLikePageState extends State<GuessLikePage> {
                 previewRule,
                 previewQuality,
                 context),
-            staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-            mainAxisSpacing: 0.0,
-            crossAxisSpacing: 0.0,
+            // staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+            // mainAxisSpacing: 0.0,
+            // crossAxisSpacing: 0.0,
           ));
     }
   }
@@ -91,15 +93,13 @@ class _GuessLikePageState extends State<GuessLikePage> {
     return FloatingActionButton(
       child: Icon(Icons.refresh),
       backgroundColor: Colors.orange[200],
-      onPressed: () async{
+      onPressed: () async {
         setState(() {
           picList = null;
           hasConnected = false;
         });
         await _getJsonList();
-        setState(() {
-          
-        });
+        setState(() {});
       },
     );
   }
@@ -112,8 +112,7 @@ class _GuessLikePageState extends State<GuessLikePage> {
       Response response =
           await Dio().get(url, options: Options(headers: headers));
       picList = response.data['data'];
-      if(picList != null)
-        picTotalNum = picList.length;
+      if (picList != null) picTotalNum = picList.length;
       setState(() {
         hasConnected = true;
         print(picList);

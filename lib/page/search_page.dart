@@ -4,10 +4,11 @@ import 'dart:convert';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+// import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:lottie/lottie.dart';
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:waterfall_flow/waterfall_flow.dart';
 
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/widget/suggestion_bar.dart';
@@ -146,10 +147,13 @@ class _SearchPageState extends State<SearchPage> {
                         ),
                         Expanded(
                           flex: 541,
-                          child: StaggeredGridView.countBuilder(
+                          child: WaterfallFlow.builder(
                             controller: ScrollController(),
                             physics: ClampingScrollPhysics(),
-                            crossAxisCount: 3,
+                            gridDelegate:
+                                SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                            ),
                             itemCount: currentTags.length,
                             padding: EdgeInsets.only(
                                 left: ScreenUtil().setWidth(1),
@@ -162,8 +166,8 @@ class _SearchPageState extends State<SearchPage> {
                                         ['imageUrls'][0]['medium'],
                                     currentTags[index]['illustration']
                                         ['sanityLevel']),
-                            staggeredTileBuilder: (index) =>
-                                StaggeredTile.fit(1),
+                            // staggeredTileBuilder: (index) =>
+                            //     StaggeredTile.fit(1),
                             // mainAxisSpacing: 4.0,
                             // crossAxisSpacing: 4.0,
                           ),
