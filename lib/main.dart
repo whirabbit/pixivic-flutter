@@ -171,7 +171,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 324, height: 576);
+    ScreenUtil.init(context,
+        designSize: Size(324, 576), allowFontScaling: true);
     print("Reload main build func");
 //    indexProvider = Provider.of<PageSwitchProvider>(context);
     return Scaffold(
