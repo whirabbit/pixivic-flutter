@@ -18,6 +18,7 @@ import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/widget/markheart_icon.dart';
+import 'package:pixivic/widget/select_mode_bar.dart';
 
 // 可以作为页面中单个组件或者单独页面使用的pic瀑布流组件,因可以作为页面，故不归为widget
 class PicPage extends StatefulWidget {
@@ -355,43 +356,30 @@ class _PicPageState extends State<PicPage> {
             ),
           );
         } else {
-          return Container(
-              margin: EdgeInsets.only(
-                  top: ScreenUtil().setWidth(5),
-                  left: ScreenUtil().setWidth(5),
-                  right: ScreenUtil().setWidth(5)),
-              color: Colors.grey[50],
-              child: WaterfallFlow.builder(
-                controller: picPageModel.scrollController,
-                physics: picPageModel.isScrollable
-                    ? ClampingScrollPhysics()
-                    : NeverScrollableScrollPhysics(),
-                itemCount: tuple.item1.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return imageCell(
-                      tuple.item1[index], index, context, picPageModel);
-                },
-                gridDelegate:
-                    SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                ),
-              )
-              // StaggeredGridView.countBuilder(
-              //   controller: pageModel.scrollController,
-              //   physics: pageModel.isScrollable
-              //       ? ClampingScrollPhysics()
-              //       : NeverScrollableScrollPhysics(),
-              //   crossAxisCount: 2,
-              //   itemCount: pageModel.picList.length,
-              //   itemBuilder: (BuildContext context, int index) {
-              //     return imageCell(pageModel.picList[index], index, context, pageModel);
-              //   },
-              //   staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-              //   mainAxisSpacing: 0.0,
-              //   crossAxisSpacing: 0.0,
-              // )
-
-              );
+          return Stack(children: <Widget>[
+            Container(
+                margin: EdgeInsets.only(
+                    top: ScreenUtil().setWidth(5),
+                    left: ScreenUtil().setWidth(5),
+                    right: ScreenUtil().setWidth(5)),
+                color: Colors.grey[50],
+                child: WaterfallFlow.builder(
+                  controller: picPageModel.scrollController,
+                  physics: picPageModel.isScrollable
+                      ? ClampingScrollPhysics()
+                      : NeverScrollableScrollPhysics(),
+                  itemCount: tuple.item1.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return imageCell(
+                        tuple.item1[index], index, context, picPageModel);
+                  },
+                  gridDelegate:
+                      SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                  ),
+                )),
+            SelectModeBar(),
+          ]);
         }
       }),
     );
@@ -430,6 +418,7 @@ class _PicPageState extends State<PicPage> {
                   bottom: ScreenUtil().setWidth(5),
                 ),
                 decoration: (tuple.item1 && tuple.item2)
+                    // 选中图片后添加阴影
                     ? BoxDecoration(
                         // boxShadow: shineShadow.boxShadows
                         boxShadow: [
@@ -442,8 +431,8 @@ class _PicPageState extends State<PicPage> {
                       )
                     : BoxDecoration(),
                 child: ShaderMask(
-                  shaderCallback: (!tuple.item1 && tuple.item2)
-                      // 长按进入选择模式时，为未选中的画作设置遮罩
+                  shaderCallback: (tuple.item1 && tuple.item2)
+                      // 长按进入选择模式时，为选中的画作设置遮罩
                       ? (bounds) => LinearGradient(
                               colors: [Colors.grey[600], Colors.grey[600]])
                           .createShader(bounds)
@@ -492,19 +481,20 @@ class _PicPageState extends State<PicPage> {
                             ),
                             decoration: BoxDecoration(
                                 shape: BoxShape.rectangle,
+                                // 若被选中，则添加边框
                                 border: tuple.item1
                                     ? Border.all(
-                                        width: 2.0, color: Colors.black38)
+                                        width: ScreenUtil().setWidth(3), color: Colors.black38)
                                     : Border.all(
                                         width: 0.0, color: Colors.white),
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(15))),
+                                    BorderRadius.all(Radius.circular(ScreenUtil().setWidth(15)))),
                             child: Hero(
                               tag: 'imageHero' + _picMainParameter(picItem)[0],
                               child: ClipRRect(
                                 clipBehavior: Clip.antiAlias,
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(15)),
+                                    BorderRadius.all(Radius.circular(ScreenUtil().setWidth(12))),
                                 child: Image(
                                   image: AdvancedNetworkImage(
                                     _picMainParameter(picItem)[0],
