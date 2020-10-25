@@ -34,10 +34,11 @@ class PicPageModel with ChangeNotifier {
   int currentPage = 1;
   List picList;
   List jsonList;
+  List<int> onSelectedList;
   ScrollController scrollController;
   PageSwitchProvider indexProvider;
   //用于共享 context 给 indexProvider
-  BuildContext context; 
+  BuildContext context;
 
   PicPageModel({
     this.context,
@@ -58,6 +59,9 @@ class PicPageModel with ChangeNotifier {
     this.onPageStart,
   }) {
     print("PicPageModel cteated and init");
+
+    // 清空或者初始化长按的选择列表
+    onSelectedList = [];
 
     // load home list cache list data if existed
     if (jsonMode == 'home' &&
@@ -85,15 +89,13 @@ class PicPageModel with ChangeNotifier {
   @override
   dispose() {
     super.dispose();
-    print("providerDispose");
+    print("PicPage Model dispose");
     if (jsonMode == 'home' && picList != null) {
       homePicList = picList;
       homeCurrentPage = currentPage;
       homePicDate = picDate;
       homePicModel = picMode;
     }
-    picList = [];
-    jsonList = null;
     scrollController.removeListener(_doWhileScrolling);
     scrollController.dispose();
   }
@@ -110,12 +112,30 @@ class PicPageModel with ChangeNotifier {
     }
   }
 
+  handlePicIndexToSelectedList(int index) {
+    if (onSelectedList.contains(index))
+      onSelectedList.remove(index);
+    else
+      onSelectedList.add(index);
+    notifyListeners();
+  }
+
+  bool isInSelectMode() {
+    return onSelectedList.length > 0 ? true : false;
+  }
+
+  bool isIndexInSelectedList(int index) => onSelectedList.contains(index);
+
+  cleanSelectedList() {
+    onSelectedList = [];
+    notifyListeners();
+  }
+
   _doWhileScrolling() {
     // FocusScope.of(context).unfocus();
     // 如果为主页面 picPage，则记录滑动位置、判断滑动
     if (jsonMode == 'home') {
-      homeScrollerPosition = scrollController
-          .position.extentBefore; 
+      homeScrollerPosition = scrollController.position.extentBefore;
       // 保持记录scrollposition，原因为 dispose 时无法记录
       // 判断是否在滑动，以便隐藏底部控件
       if (scrollController.position.userScrollDirection ==
@@ -184,6 +204,7 @@ class PicPageModel with ChangeNotifier {
   initAndLoadData() async {
     hasConnected = false;
     notifyListeners();
+
     getJsonList().then((value) {
       if (value != null) {
         picList = value;
@@ -288,6 +309,4 @@ class PicPageModel with ChangeNotifier {
         BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
     }
   }
-
-  
 }

@@ -58,6 +58,7 @@ dev_dependencies:
   flutter_bugly: ^0.2.8
   tuple: ^1.0.3
   waterfall_flow: ^2.0.3
+  flutter_shine: ^0.0.5
 
 flutter_icons:
   android: true
