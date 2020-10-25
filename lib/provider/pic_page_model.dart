@@ -74,7 +74,7 @@ class PicPageModel with ChangeNotifier {
     } else {
       scrollController = ScrollController(initialScrollOffset: 0.0)
         ..addListener(_doWhileScrolling);
-      initLoadData();
+      initAndLoadData();
     }
 
     indexProvider = Provider.of<PageSwitchProvider>(context, listen: false);
@@ -115,23 +115,20 @@ class PicPageModel with ChangeNotifier {
     // 如果为主页面 picPage，则记录滑动位置、判断滑动
     if (jsonMode == 'home') {
       homeScrollerPosition = scrollController
-          .position.extentBefore; // 保持记录scrollposition，原因为dispose时无法记录
+          .position.extentBefore; 
+      // 保持记录scrollposition，原因为 dispose 时无法记录
       // 判断是否在滑动，以便隐藏底部控件
       if (scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
         if (!indexProvider.judgeScrolling) {
           indexProvider.changeScrolling(true);
-//          isScrolling = true;
-//           onPageScrolling(isScrolling);
         }
       }
+      // 当页面平移时，底部导航栏需重新上浮
       if (scrollController.position.userScrollDirection ==
           ScrollDirection.forward) {
-        //显示
         if (indexProvider.judgeScrolling) {
           indexProvider.changeScrolling(false);
-//          isScrolling = false;
-//           onPageScrolling(isScrolling);
         }
       }
     }
@@ -183,7 +180,8 @@ class PicPageModel with ChangeNotifier {
     }
   }
 
-  initLoadData() async {
+  // 初始化以及加载数据
+  initAndLoadData() async {
     hasConnected = false;
     notifyListeners();
     getJsonList().then((value) {
