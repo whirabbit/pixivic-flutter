@@ -35,9 +35,12 @@ class PicPageModel with ChangeNotifier {
   List picList;
   List jsonList;
   ScrollController scrollController;
-  BuildContext context;
+  PageSwitchProvider indexProvider;
+  //用于共享 context 给 indexProvider
+  BuildContext context; 
 
   PicPageModel({
+    this.context,
     this.picDate,
     this.picMode,
     this.artistId,
@@ -61,9 +64,6 @@ class PicPageModel with ChangeNotifier {
         picMode == homePicModel &&
         picDate == homePicDate &&
         (!listEquals(homePicList, []))) {
-//      this.picMode = picMode;
-//      this.picDate = picDate;
-//      this.jsonMode = jsonMode;
       print("load home cache list data");
       scrollController =
           ScrollController(initialScrollOffset: homeScrollerPosition)
@@ -74,192 +74,30 @@ class PicPageModel with ChangeNotifier {
     } else {
       scrollController = ScrollController(initialScrollOffset: 0.0)
         ..addListener(_doWhileScrolling);
-      // switchModel(
-      //     jsonMode,
-      //     picDate,
-      //     picMode,
-      //     artistId,
-      //     spotlightId,
-      //     userId,
-      //     collectionId,
-      //     searchKeywords,
-      //     relatedId,
-      //     onPageScrolling,
-      //     onPageTop,
-      //     onPageStart);
       initLoadData();
     }
+
+    indexProvider = Provider.of<PageSwitchProvider>(context, listen: false);
+
+    notifyListeners();
   }
 
-//   switchModel(
-//       jsonMode,
-//       picDate,
-//       picMode,
-//       artistId,
-//       spotlightId,
-//       userId,
-//       collectionId,
-//       searchKeywords,
-//       relatedId,
-//       onPageScrolling,
-//       onPageTop,
-//       onPageStart) {
-//     switch (jsonMode) {
-//       case 'home':
-//         homePage(picDate: picDate, picMode: picMode);
-//         break;
-//       case 'related':
-//         relatedPage(
-//             relatedId: relatedId,
-//             onTopOfPicpage: onPageTop,
-//             onStartOfPicpage: onPageStart);
-//         break;
-//       case 'search':
-//         searchPage(searchKeywords: searchKeywords, searchManga: isManga);
-//         break;
-//       case 'artist':
-//         artistPage(
-//             artistId: artistId,
-//             isManga: isManga,
-//             onTopOfPicpage: onPageTop,
-//             onStartOfPicpage: onPageStart);
-//         break;
-//       case 'followed':
-//         followedPage(userId: userId, isManga: isManga);
-//         break;
-//       case 'bookmark':
-//         bookmarkPage(userId: userId, isManga: isManga);
-//         break;
-//       case 'spotlight':
-//         spotlightPage(spotlightId: spotlightId);
-//         break;
-//       case 'history':
-//         historyPage();
-//         break;
-//       case 'oldhistory':
-//         oldHistoryPage();
-//         break;
-//       case 'userdetail':
-//         userdetailPage(
-//             userId: userId,
-//             isManga: isManga,
-//             onTopOfPicpage: onPageTop,
-//             onStartOfPicpage: onPageStart);
-//         break;
-//       case 'collection':
-//         collectionPage(collectionId: collectionId);
-//         break;
-//     }
-//   }
+  @override
+  dispose() {
+    super.dispose();
+    print("providerDispose");
+    if (jsonMode == 'home' && picList != null) {
+      homePicList = picList;
+      homeCurrentPage = currentPage;
+      homePicDate = picDate;
+      homePicModel = picMode;
+    }
+    picList = [];
+    jsonList = null;
+    scrollController.removeListener(_doWhileScrolling);
+    scrollController.dispose();
+  }
 
-//   homePage({
-//     @required String picDate,
-//     @required String picMode,
-//   }) {
-// //    if (this.picDate != null &&
-// //        (this.picDate != picDate || this.picMode != picMode)) {
-// //      //重新刷新页面所有缓存重置
-// //      currentPage = 1;
-// //      homeCurrentPage = 1;
-// //      homePicList = [];
-// //      homeScrollerPosition = 0;
-// //      scrollController.jumpTo(0.0);
-// //      this.picList = [];
-// //
-// //      initLoadData();
-// //    }
-//     this.jsonMode = 'home';
-//     this.picDate = picDate;
-//     this.picMode = picMode;
-
-// //    if (picList.length < 1) initLoadData();
-//   }
-
-//   searchPage({@required String searchKeywords, @required bool searchManga}) {
-//     if (this.searchKeywords != searchKeywords) {
-//       this.picList = null;
-//     }
-//     this.jsonMode = 'search';
-//     this.searchKeywords = searchKeywords;
-//     this.isManga = searchManga;
-// //    initLoadData();
-//   }
-
-//   relatedPage(
-//       {@required num relatedId,
-//       @required VoidCallback onTopOfPicpage,
-//       @required VoidCallback onStartOfPicpage}) {
-//     this.jsonMode = 'related';
-//     this.relatedId = relatedId;
-//     this.onPageTop = onTopOfPicpage;
-//     this.onPageStart = onStartOfPicpage;
-//     this.isScrollable = true;
-// //    initLoadData();
-//   }
-
-//   artistPage(
-//       {@required String artistId,
-//       @required bool isManga,
-//       @required VoidCallback onTopOfPicpage,
-//       @required VoidCallback onStartOfPicpage}) {
-//     this.jsonMode = 'artist';
-//     this.artistId = artistId;
-//     this.isManga = isManga;
-//     this.onPageTop = onTopOfPicpage;
-//     this.onPageStart = onStartOfPicpage;
-// //    initLoadData();
-//   }
-
-//   followedPage({@required String userId, @required bool isManga}) {
-//     this.jsonMode = 'followed';
-//     this.userId = userId;
-//     this.isManga = isManga;
-// //    initLoadData();
-//   }
-
-//   bookmarkPage({@required String userId, @required bool isManga}) {
-//     this.jsonMode = 'bookmark';
-//     this.userId = userId;
-//     this.isManga = isManga;
-// //    initLoadData();
-//   }
-
-//   spotlightPage({@required String spotlightId}) {
-//     this.jsonMode = 'spotlight';
-//     this.spotlightId = spotlightId;
-// //    initLoadData();
-//   }
-
-//   historyPage() {
-//     this.jsonMode = 'history';
-// //    initLoadData();
-//   }
-
-//   oldHistoryPage() {
-//     this.jsonMode = 'oldhistory';
-// //    initLoadData();
-//   }
-
-//   userdetailPage(
-//       {@required String userId,
-//       @required bool isManga,
-//       @required VoidCallback onTopOfPicpage,
-//       @required VoidCallback onStartOfPicpage}) {
-//     this.jsonMode = 'userdetail';
-//     this.userId = userId;
-//     this.isManga = isManga;
-//     this.onPageTop = onTopOfPicpage;
-//     this.onPageStart = onStartOfPicpage;
-// //    initLoadData();
-//   }
-
-//   collectionPage({@required String collectionId}) {
-//     this.collectionId = collectionId;
-//     // getJsonList();
-//     //TODO: Collection need to be run specifically
-//   }
-
-  //标记方法
   flipLikeState(int index) {
     picList[index]['isLiked'] = !picList[index]['isLiked'];
     notifyListeners();
@@ -278,8 +116,6 @@ class PicPageModel with ChangeNotifier {
     if (jsonMode == 'home') {
       homeScrollerPosition = scrollController
           .position.extentBefore; // 保持记录scrollposition，原因为dispose时无法记录
-      PageSwitchProvider indexProvider =
-          Provider.of<PageSwitchProvider>(context, listen: false);
       // 判断是否在滑动，以便隐藏底部控件
       if (scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
@@ -455,19 +291,5 @@ class PicPageModel with ChangeNotifier {
     }
   }
 
-  @override
-  dispose() {
-    super.dispose();
-    print("providerDispose");
-    if (jsonMode == 'home' && picList != null) {
-      homePicList = picList;
-      homeCurrentPage = currentPage;
-      homePicDate = picDate;
-      homePicModel = picMode;
-    }
-    picList = [];
-    jsonList = null;
-    scrollController.removeListener(_doWhileScrolling);
-    scrollController.dispose();
-  }
+  
 }
