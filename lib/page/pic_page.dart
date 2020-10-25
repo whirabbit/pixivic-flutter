@@ -266,9 +266,8 @@ class _PicPageState extends State<PicPage> {
 
   @override
   void initState() {
-    print('picpage created in ChangeNotifierProvider');
-//    switchModel(picPageModel);
     picPageModel = PicPageModel(
+        context: context,
         jsonMode: widget.jsonMode,
         picMode: widget.picMode,
         picDate: widget.picDate,
@@ -292,6 +291,7 @@ class _PicPageState extends State<PicPage> {
         widget.picMode != oldWidget.picMode ||
         widget.searchKeywords != oldWidget.searchKeywords)
       picPageModel = PicPageModel(
+          context: context,
           jsonMode: widget.jsonMode,
           picMode: widget.picMode,
           picDate: widget.picDate,
@@ -315,93 +315,85 @@ class _PicPageState extends State<PicPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('build PicPage');
+    print('build in PicPage');
     return ChangeNotifierProvider<PicPageModel>.value(
       value: picPageModel,
-      child: Selector<PicPageModel, PicPageModel>(
-        shouldRebuild: (pre, next) => false,
-        selector: (context, provider) => provider,
-        builder: (context, PicPageModel pageModel, _) {
-          print('Selector11111111111111111111');
-          pageModel.context = context;
-          return Selector<PicPageModel, Tuple2<List, bool>>(
-              selector: (BuildContext context, PicPageModel provider) {
-            return Tuple2(provider.picList, provider.hasConnected);
-          }, builder: (context, tuple, _) {
-            print('Selector22222222222222222');
-            if (tuple.item1 == null && !tuple.item2) {
-              return Container(
-                  height: ScreenUtil().setHeight(576),
-                  width: ScreenUtil().setWidth(324),
-                  alignment: Alignment.center,
-                  color: Colors.white,
-                  child: Center(
-                    child: Lottie.asset('image/loading-box.json'),
-                  ));
-            } else if (tuple.item1 == null && tuple.item2) {
-              return Container(
-                height: ScreenUtil().setHeight(576),
-                width: ScreenUtil().setWidth(324),
-                color: Colors.white,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Lottie.asset('image/empty-box.json',
-                        repeat: false, height: ScreenUtil().setHeight(100)),
-                    Text(
-                      '这里什么都没有呢',
-                      style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: ScreenUtil().setHeight(10),
-                          decoration: TextDecoration.none),
-                    ),
-                    SizedBox(
-                      height: ScreenUtil().setHeight(250),
-                    )
-                  ],
+      child: Selector<PicPageModel, Tuple2<List, bool>>(
+          selector: (BuildContext context, PicPageModel provider) {
+        return Tuple2(provider.picList, provider.hasConnected);
+      }, builder: (context, tuple, _) {
+        print('PicPage Selector build with mode: ${widget.picMode}');
+        if (tuple.item1 == null && !tuple.item2) {
+          return Container(
+              height: ScreenUtil().setHeight(576),
+              width: ScreenUtil().setWidth(324),
+              alignment: Alignment.center,
+              color: Colors.white,
+              child: Center(
+                child: Lottie.asset('image/loading-box.json'),
+              ));
+        } else if (tuple.item1 == null && tuple.item2) {
+          return Container(
+            height: ScreenUtil().setHeight(576),
+            width: ScreenUtil().setWidth(324),
+            color: Colors.white,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Lottie.asset('image/empty-box.json',
+                    repeat: false, height: ScreenUtil().setHeight(100)),
+                Text(
+                  '这里什么都没有呢',
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: ScreenUtil().setHeight(10),
+                      decoration: TextDecoration.none),
                 ),
-              );
-            } else {
-              return Container(
-                  padding: EdgeInsets.only(
-                      left: ScreenUtil().setWidth(5),
-                      right: ScreenUtil().setWidth(5)),
-                  color: Colors.grey[50],
-                  child: WaterfallFlow.builder(
-                    controller: pageModel.scrollController,
-                    physics: pageModel.isScrollable
-                        ? ClampingScrollPhysics()
-                        : NeverScrollableScrollPhysics(),
-                    itemCount: pageModel.picList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return imageCell(
-                          pageModel.picList[index], index, context, pageModel);
-                    },
-                    gridDelegate:
-                        SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                    ),
-                  )
-                  // StaggeredGridView.countBuilder(
-                  //   controller: pageModel.scrollController,
-                  //   physics: pageModel.isScrollable
-                  //       ? ClampingScrollPhysics()
-                  //       : NeverScrollableScrollPhysics(),
-                  //   crossAxisCount: 2,
-                  //   itemCount: pageModel.picList.length,
-                  //   itemBuilder: (BuildContext context, int index) {
-                  //     return imageCell(pageModel.picList[index], index, context, pageModel);
-                  //   },
-                  //   staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-                  //   mainAxisSpacing: 0.0,
-                  //   crossAxisSpacing: 0.0,
-                  // )
+                SizedBox(
+                  height: ScreenUtil().setHeight(250),
+                )
+              ],
+            ),
+          );
+        } else {
+          return Container(
+              padding: EdgeInsets.only(
+                  left: ScreenUtil().setWidth(5),
+                  right: ScreenUtil().setWidth(5)),
+              color: Colors.grey[50],
+              child: WaterfallFlow.builder(
+                controller: picPageModel.scrollController,
+                physics: picPageModel.isScrollable
+                    ? ClampingScrollPhysics()
+                    : NeverScrollableScrollPhysics(),
+                itemCount: tuple.item1.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return imageCell(
+                      tuple.item1[index], index, context, picPageModel);
+                },
+                gridDelegate:
+                    SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                ),
+              )
+              // StaggeredGridView.countBuilder(
+              //   controller: pageModel.scrollController,
+              //   physics: pageModel.isScrollable
+              //       ? ClampingScrollPhysics()
+              //       : NeverScrollableScrollPhysics(),
+              //   crossAxisCount: 2,
+              //   itemCount: pageModel.picList.length,
+              //   itemBuilder: (BuildContext context, int index) {
+              //     return imageCell(pageModel.picList[index], index, context, pageModel);
+              //   },
+              //   staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+              //   mainAxisSpacing: 0.0,
+              //   crossAxisSpacing: 0.0,
+              // )
 
-                  );
-            }
-          });
-        },
-      ),
+              );
+        }
+      }),
     );
   }
 
