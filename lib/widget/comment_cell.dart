@@ -92,10 +92,14 @@ class _CommentCellState extends State<CommentCell> {
 
   Widget showFirstComment() {
     String avaterUrl =
-        'https://pic.cheerfun.dev/${commentJsonData[0]['replyFrom']}.png';
+        'https://static.pixivic.net/avatar/299x299/${commentJsonData[0]['replyFrom']}.jpg';
+    print(avaterUrl);
+
     return Container(
       padding: EdgeInsets.only(
-          left: ScreenUtil().setHeight(7), top: ScreenUtil().setHeight(5), right: ScreenUtil().setHeight(7)), 
+          left: ScreenUtil().setHeight(7),
+          top: ScreenUtil().setHeight(5),
+          right: ScreenUtil().setHeight(7)),
       alignment: Alignment.centerLeft,
       child: Column(
         children: <Widget>[
@@ -137,7 +141,8 @@ class _CommentCellState extends State<CommentCell> {
                         width: ScreenUtil().setWidth(235),
                         child: Text(
                           commentJsonData[0]['content'],
-                          style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                          style:
+                              TextStyle(color: Colors.grey[600], fontSize: 12),
                         ),
                       ),
                       Container(
@@ -178,7 +183,8 @@ class _CommentCellState extends State<CommentCell> {
                                             comments: commentJsonData,
                                             illustId: widget.id,
                                             isReply: true,
-                                            replyParentId: commentJsonData[0]['id'],
+                                            replyParentId: commentJsonData[0]
+                                                ['id'],
                                             replyToName: commentJsonData[0]
                                                 ['replyFromName'],
                                             replyToId: commentJsonData[0]

@@ -67,7 +67,7 @@ class BookmarkUsersState extends State<BookmarkUsers> {
             backgroundColor: Colors.white,
             radius: ScreenUtil().setHeight(12),
             backgroundImage: NetworkImage(
-                'https://pic.cheerfun.dev/${data[index]['userId'].toString()}.png',
+                'https://static.pixivic.net/avatar/299x299/${data[index]['userId'].toString()}.jpg',
                 headers: {'referer': 'https://pixivic.com'})),
       );
   }

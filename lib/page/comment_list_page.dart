@@ -242,7 +242,7 @@ class CommentListPage extends StatelessWidget {
   }
 
   Widget commentBaseCell(Map data, BuildContext context, commentProvider) {
-    String avaterUrl = 'https://pic.cheerfun.dev/${data['replyFrom']}.png';
+    String avaterUrl = 'https://static.pixivic.net/avatar/299x299/${data['replyFrom']}.jpg';
 
     return Container(
         child: Column(children: <Widget>[
