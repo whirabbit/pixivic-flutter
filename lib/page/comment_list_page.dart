@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:dio/dio.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:bot_toast/bot_toast.dart';
 import 'package:provider/provider.dart';
 
-import 'package:pixivic/data/common.dart';
 import 'package:pixivic/provider/comment_list_model.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/data/texts.dart';
