@@ -12,7 +12,6 @@ import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_advanced_networkimage/zoomable.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:lottie/lottie.dart';
 
 import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/page/artist_page.dart';
@@ -26,7 +25,7 @@ import 'package:pixivic/function/downloadImage.dart';
 import 'package:pixivic/function/collection.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/widget/markheart_icon.dart';
-// import 'package:pixivic/provider/get_page.dart';
+
 
 class PicDetailPage extends StatefulWidget {
   @override
@@ -66,10 +65,6 @@ class _PicDetailPageState extends State<PicDetailPage> {
     _uploadHistory();
     _initPappbar();
     _showUseTips();
-    if (prefs.getString('auth') != '')
-      getAlbumList().then((value) {
-        albumList = value;
-      });
 
     super.initState();
   }
@@ -536,114 +531,14 @@ class _PicDetailPageState extends State<PicDetailPage> {
             color: Colors.blueGrey,
           ),
           onTap: () {
-            _showAlbumList();
+            showAddToCollection(context, [widget._picData['id']]);
           },
         ),
       ),
     );
   }
 
-  _showAlbumList() {
-    if (albumList != null)
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              scrollable: true,
-              content: Wrap(
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Container(
-                      padding: EdgeInsets.only(bottom: screen.setHeight(5)),
-                      alignment: Alignment.center,
-                      child: Text(
-                        texts.addToCollection,
-                        style: TextStyle(color: Colors.orangeAccent),
-                      )),
-                  Container(
-                    height: screen.setHeight(albumList.length <= 7
-                        ? screen.setHeight(40) * albumList.length
-                        : screen.setHeight(40) * 7),
-                    width: screen.setWidth(250),
-                    child: ListView.builder(
-                        itemCount: albumList.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            child: ListTile(
-                              title: Text(albumList[index]['title']),
-                              subtitle: Text(albumList[index]['caption']),
-                              onTap: () {
-                                List signleId = [widget._picData['id']];
-                                addIllustToCollection(signleId,
-                                    albumList[index]['id']);
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          );
-                        }),
-                  ),
-                  Container(
-                    width: screen.setWidth(100),
-                    padding: EdgeInsets.only(top: screen.setHeight(8)),
-                    child: FlatButton(
-                      child: Icon(Icons.add),
-                      shape: StadiumBorder(),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        showAddNewCollectionDialog(context, () {
-                          getAlbumList().then((value) {
-                            setState(() {
-                              albumList = value;
-                            });
-                          });
-                        });
-                      },
-                    ),
-                  )
-                ],
-              ),
-            );
-          });
-    else {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              content: Wrap(
-                alignment: WrapAlignment.center,
-                children: [
-                  Lottie.asset('image/empty-box.json',
-                      repeat: false, height: ScreenUtil().setHeight(80)),
-                  Container(
-                    // width: screen.setWidth(300),
-                    padding: EdgeInsets.only(top: screen.setHeight(8)),
-                    child: Text(texts.addFirstCollection),
-                  ),
-                  Container(
-                    width: screen.setWidth(100),
-                    padding: EdgeInsets.only(top: screen.setHeight(8)),
-                    child: FlatButton(
-                      child: Icon(Icons.add),
-                      shape: StadiumBorder(),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        showAddNewCollectionDialog(context, () {
-                          getAlbumList().then((value) {
-                            setState(() {
-                              albumList = value;
-                            });
-                          });
-                        });
-                      },
-                    ),
-                  )
-                ],
-              ),
-            );
-          });
-    }
-  }
+  
 
   _longPressPic(String url) async {
     showModalBottomSheet(

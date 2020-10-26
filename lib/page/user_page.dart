@@ -207,7 +207,7 @@ class UserPageState extends State<UserPage> {
                     FlatButton(
                       child: Text("确定"),
                       onPressed: () {
-                        logout();
+                        logout(context);
                         Navigator.of(context).pop(true); //关闭对话框
                       },
                     ),

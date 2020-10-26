@@ -4,8 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tuple/tuple.dart';
+import 'package:bot_toast/bot_toast.dart';
 
 import 'package:pixivic/provider/pic_page_model.dart';
+import 'package:pixivic/function/collection.dart';
+import 'package:pixivic/data/common.dart';
 
 class SelectModeBar extends StatelessWidget {
   @override
@@ -15,7 +18,7 @@ class SelectModeBar extends StatelessWidget {
         // make list a Runtime constant list or selector won't rebuild when list change
         final list = List.unmodifiable(picPageModel.onSelectedList);
         Tuple2<bool, List> tuple = Tuple2(picPageModel.isInSelectMode(), list);
-        
+
         return tuple;
       },
       builder: (context, tuple, _) {
@@ -96,6 +99,15 @@ class SelectModeBar extends StatelessWidget {
                                   .cleanSelectedList();
                               break;
                             case 'addToCollection':
+                              if (prefs.getString('auth') == '')
+                                BotToast.showSimpleNotification(
+                                    title: '请登录后再进行画集操作');
+                              else
+                                showAddToCollection(
+                                    context,
+                                    Provider.of<PicPageModel>(context,
+                                            listen: false)
+                                        .outputPicIdList());
                               break;
                           }
                         },

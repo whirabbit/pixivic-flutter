@@ -120,6 +120,13 @@ class PicPageModel with ChangeNotifier {
     notifyListeners();
   }
 
+  List outputPicIdList() {
+    if (onSelectedList.length > 0)
+      return List.generate(onSelectedList.length, (index) => picList[index]['id']);
+    else
+      return [];
+  }
+
   bool isInSelectMode() {
     return onSelectedList.length > 0 ? true : false;
   }
