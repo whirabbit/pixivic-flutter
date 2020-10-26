@@ -406,6 +406,8 @@ class _PicPageState extends State<PicPage> {
     else
       return Selector<PicPageModel, Tuple2<bool, bool>>(
           selector: (context, picPageModel) => Tuple2(
+            // 前者用于判断当前画作是否被选中
+            // 后者用于判断当前是否出于多选模式，这会导致单击的逻辑更改
               picPageModel.isIndexInSelectedList(index),
               picPageModel.isInSelectMode()),
           builder: (context, tuple, _) {
@@ -417,21 +419,8 @@ class _PicPageState extends State<PicPage> {
                   top: ScreenUtil().setWidth(5),
                   bottom: ScreenUtil().setWidth(5),
                 ),
-                decoration: (tuple.item1 && tuple.item2)
-                    // 选中图片后添加阴影
-                    ? BoxDecoration(
-                        // boxShadow: shineShadow.boxShadows
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 3,
-                              blurRadius: 5,
-                              offset: Offset(0, 3)),
-                        ],
-                      )
-                    : BoxDecoration(),
                 child: ShaderMask(
-                  shaderCallback: (tuple.item1 && tuple.item2)
+                  shaderCallback: (tuple.item1)
                       // 长按进入选择模式时，为选中的画作设置遮罩
                       ? (bounds) => LinearGradient(
                               colors: [Colors.grey[600], Colors.grey[600]])
