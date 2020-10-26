@@ -574,7 +574,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
                               title: Text(albumList[index]['title']),
                               subtitle: Text(albumList[index]['caption']),
                               onTap: () {
-                                addIllustToCollection(widget._picData['id'],
+                                List signleId = [widget._picData['id']];
+                                addIllustToCollection(signleId,
                                     albumList[index]['id']);
                                 Navigator.of(context).pop();
                               },

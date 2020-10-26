@@ -43,18 +43,22 @@ getAlbumList() async {
 }
 
 // 将选中画作添加到指定的画集中
-addIllustToCollection(int illustId, int collectionId) async {
+addIllustToCollection(List illustIdList, int collectionId) async {
   String url =
       'https://api.pixivic.com/collections/$collectionId/illustrations';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
-  Map<String, String> data = {'illust_id': illustId.toString()};
+  // Map<String, String> data = {'illust_id': illustIdList.toString()};
+  final List data = illustIdList;
+
   try {
     Response response = await Dio().post(url,
         options: Options(
           headers: headers,
         ),
         data: data);
+    print(response.data);
     BotToast.showSimpleNotification(title: response.data['message']);
+    // BotToast.showSimpleNotification(title: response.data['data'].toString());
   } on DioError catch (e) {
     if (e.response != null) {
       BotToast.showSimpleNotification(title: e.response.data['message']);
