@@ -30,7 +30,7 @@ login(String userName, String pwd, String verificationCode,
     prefs.setInt('id', data['id']);
     prefs.setString('name', data['username']);
     prefs.setString('email', data['email']);
-    prefs.setString('avatarLink', 'https://pic.cheerfun.dev/${data['id']}.png');
+    prefs.setString('avatarLink', 'https://static.pixivic.net/avatar/299x299/${data['id']}.jpg');
     if (data['signature'] != null)
       prefs.setString('signature', data['signature']);
     if (data['location'] != null) prefs.setString('location', data['location']);

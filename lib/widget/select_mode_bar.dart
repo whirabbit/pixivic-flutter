@@ -15,7 +15,7 @@ class SelectModeBar extends StatelessWidget {
         // make list a Runtime constant list or selector won't rebuild when list change
         final list = List.unmodifiable(picPageModel.onSelectedList);
         Tuple2<bool, List> tuple = Tuple2(picPageModel.isInSelectMode(), list);
-        print(tuple);
+        
         return tuple;
       },
       builder: (context, tuple, _) {
