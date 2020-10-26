@@ -15,14 +15,14 @@ class CollectionPage extends StatefulWidget {
 }
 
 class _CollectionPageState extends State<CollectionPage> {
-  CollectionModel _model;
+  CollectionUiModel _model;
   ScrollController _viewerScrollController;
   TextZhCommentCell texts;
 
   @override
   void initState() {
     texts = TextZhCommentCell();
-    _model = CollectionModel()..initData();
+    _model = CollectionUiModel()..initData();
     _model.getViewerJsonList();
     _viewerScrollController = ScrollController()..addListener(_viewerListener);
     super.initState();
@@ -47,7 +47,7 @@ class _CollectionPageState extends State<CollectionPage> {
   }
 
   Widget collectionBody(context) {
-    var _collectionData = Provider.of<CollectionModel>(context);
+    var _collectionData = Provider.of<CollectionUiModel>(context);
     if (_collectionData.viewerList == []) {
       if (!_collectionData.onViewerBottom) {
         return loadingBox();
@@ -159,9 +159,9 @@ class _CollectionPageState extends State<CollectionPage> {
 
   _viewerListener() {
     if (_viewerScrollController.position.extentAfter < 1200 &&
-        !Provider.of<CollectionModel>(context).onViewerLoad &&
-        !Provider.of<CollectionModel>(context).onViewerBottom) {
-      Provider.of<CollectionModel>(context, listen: false).getViewerJsonList();
+        !Provider.of<CollectionUiModel>(context).onViewerLoad &&
+        !Provider.of<CollectionUiModel>(context).onViewerBottom) {
+      Provider.of<CollectionUiModel>(context, listen: false).getViewerJsonList();
     }
   }
 }

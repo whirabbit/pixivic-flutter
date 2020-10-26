@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
+import 'package:provider/provider.dart';
 
 import '../page/new_page.dart';
 import '../page/user_page.dart';
-
 import '../function/identity.dart';
+import 'package:pixivic/provider/collection_model.dart';
 
 // 用于 PicPage 的临时变量
 double homeScrollerPosition = 0;
@@ -45,7 +46,7 @@ GlobalKey<NewPageState> newPageKey;
 GlobalKey<UserPageState> userPageKey;
 
 // 初始化数据
-Future initData() async {
+Future initData(BuildContext context) async {
   newPageKey = GlobalKey();
   userPageKey = GlobalKey();
 
@@ -83,12 +84,16 @@ Future initData() async {
       if (result)
         isLogin = true;
       else {
-        logout(isInit: true);
+        logout(context, isInit: true);
       }
     });
   } else
-    logout(isInit: true);
+    logout(context, isInit: true);
   
+  if(prefs.getString('auth') != '') {
+    Provider.of<CollectionUserDataModel>(context, listen: false);
+  }
+
   if(prefs.getString('previewQuality') == '')
     prefs.setString('previewQuality', 'medium');
 }

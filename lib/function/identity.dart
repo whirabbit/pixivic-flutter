@@ -1,16 +1,20 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:bot_toast/bot_toast.dart';
 import 'package:requests/requests.dart';
+import 'package:provider/provider.dart';
 
 import '../data/common.dart';
 import '../data/texts.dart';
+import 'package:pixivic/provider/collection_model.dart';
 
 // identity.dart 文件包含与用户身份验证相关的所有方法，例如登录，验证 auth 是否过期，注册等等
 
 // 缺少刷新流程
-login(String userName, String pwd, String verificationCode,
+login(BuildContext context, String userName, String pwd, String verificationCode,
     String verificationInput,
     {String widgetFrom}) async {
   String url =
@@ -30,7 +34,8 @@ login(String userName, String pwd, String verificationCode,
     prefs.setInt('id', data['id']);
     prefs.setString('name', data['username']);
     prefs.setString('email', data['email']);
-    prefs.setString('avatarLink', 'https://static.pixivic.net/avatar/299x299/${data['id']}.jpg');
+    prefs.setString('avatarLink',
+        'https://static.pixivic.net/avatar/299x299/${data['id']}.jpg');
     if (data['signature'] != null)
       prefs.setString('signature', data['signature']);
     if (data['location'] != null) prefs.setString('location', data['location']);
@@ -57,6 +62,9 @@ login(String userName, String pwd, String verificationCode,
     homeScrollerPosition = 0;
     homePicList = [];
     homeCurrentPage = 1;
+    // 加载用户的画集列表
+    Provider.of<CollectionUserDataModel>(context, listen: false)
+        .getCollectionList();
   } else {
     // isLogin = false;
     BotToast.showSimpleNotification(
@@ -68,7 +76,7 @@ login(String userName, String pwd, String verificationCode,
   return response.statusCode;
 }
 
-logout({bool isInit = false}) {
+logout(BuildContext context, {bool isInit = false}) {
   prefs.setString('auth', '');
   isLogin = false;
   if (!isInit) {
@@ -77,6 +85,9 @@ logout({bool isInit = false}) {
     homeScrollerPosition = 0;
     homePicList = [];
     homeCurrentPage = 1;
+    // 清除用户的画集列表
+    Provider.of<CollectionUserDataModel>(context, listen: false)
+        .cleanUserCollectionList();
   }
 }
 
@@ -169,14 +180,12 @@ checkRegisterInfo(
 }
 
 hasLogin() {
-  if(prefs.getString('auth') == '') {
+  if (prefs.getString('auth') == '') {
     BotToast.showSimpleNotification(title: TextZhLoginPage().notLogin);
     return false;
   } else {
     return true;
   }
-    
-
 }
 
 changeAvatar() {}

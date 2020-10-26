@@ -8,76 +8,111 @@ import 'package:dio/dio.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:lottie/lottie.dart';
 
 import '../data/common.dart';
 import '../data/texts.dart';
+import 'package:pixivic/provider/collection_model.dart';
+import 'package:pixivic/provider/pic_page_model.dart';
 
-// 获取当前登录用户的画集列表
-getAlbumList() async {
-  List albumList;
-  String url =
-      'https://api.pixivic.com/users/${prefs.getInt('id')}/collections';
-  Map<String, String> headers = {'authorization': prefs.getString('auth')};
-  try {
-    Response response =
-        await Dio().get(url, options: Options(headers: headers));
-    // print(response.data['data']);
-    albumList = response.data['data'];
-    // print('The user album list:\n$albumList');
-    return albumList;
-  } on DioError catch (e) {
-    if (e.response != null) {
-      BotToast.showSimpleNotification(title: e.response.data['message']);
-      print(e.response.data);
-      print(e.response.headers);
-      print(e.response.request);
-      return null;
-    } else {
-      // Something happened in setting up or sending the request that triggered an Error
-      BotToast.showSimpleNotification(title: e.message);
-      print(e.request);
-      print(e.message);
-      return null;
-    }
+showAddToCollection(BuildContext context, List selectedPicIdList) {
+  final screen = ScreenUtil();
+  final texts = TextZhPicDetailPage();
+
+  if (!Provider.of<CollectionUserDataModel>(context, listen: false)
+      .isUserCollectionListEmpty())
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            scrollable: true,
+            content: Wrap(
+                alignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Container(
+                      padding: EdgeInsets.only(bottom: screen.setHeight(5)),
+                      alignment: Alignment.center,
+                      child: Text(
+                        texts.addToCollection,
+                        style: TextStyle(color: Colors.orangeAccent),
+                      )),
+                  Selector<CollectionUserDataModel, List>(
+                    selector: (context, collectionUserDataModel) =>
+                        collectionUserDataModel.userCollectionList,
+                    builder: (context, userCollectionList, _) => Container(
+                      height: screen.setHeight(userCollectionList.length <= 7
+                          ? screen.setHeight(40) * userCollectionList.length
+                          : screen.setHeight(40) * 7),
+                      width: screen.setWidth(250),
+                      child: ListView.builder(
+                          itemCount: userCollectionList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
+                              child: ListTile(
+                                title: Text(userCollectionList[index]['title']),
+                                subtitle:
+                                    Text(userCollectionList[index]['caption']),
+                                onTap: () {
+                                  addIllustToCollection(
+                                      context,
+                                      selectedPicIdList,
+                                      userCollectionList[index]['id']);
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            );
+                          }),
+                    ),
+                  ),
+                  Container(
+                      width: screen.setWidth(100),
+                      padding: EdgeInsets.only(top: screen.setHeight(8)),
+                      child: FlatButton(
+                          child: Icon(Icons.add),
+                          shape: StadiumBorder(),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            showAddNewCollectionDialog(context);
+                          })),
+                ]),
+          );
+        });
+  else {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                Lottie.asset('image/empty-box.json',
+                    repeat: false, height: ScreenUtil().setHeight(80)),
+                Container(
+                  // width: screen.setWidth(300),
+                  padding: EdgeInsets.only(top: screen.setHeight(8)),
+                  child: Text(texts.addFirstCollection),
+                ),
+                Container(
+                  width: screen.setWidth(100),
+                  padding: EdgeInsets.only(top: screen.setHeight(8)),
+                  child: FlatButton(
+                    child: Icon(Icons.add),
+                    shape: StadiumBorder(),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      showAddNewCollectionDialog(context);
+                    },
+                  ),
+                )
+              ],
+            ),
+          );
+        });
   }
 }
 
-// 将选中画作添加到指定的画集中
-addIllustToCollection(List illustIdList, int collectionId) async {
-  String url =
-      'https://api.pixivic.com/collections/$collectionId/illustrations';
-  Map<String, String> headers = {'authorization': prefs.getString('auth')};
-  // Map<String, String> data = {'illust_id': illustIdList.toString()};
-  final List data = illustIdList;
-
-  try {
-    Response response = await Dio().post(url,
-        options: Options(
-          headers: headers,
-        ),
-        data: data);
-    print(response.data);
-    BotToast.showSimpleNotification(title: response.data['message']);
-    // BotToast.showSimpleNotification(title: response.data['data'].toString());
-  } on DioError catch (e) {
-    if (e.response != null) {
-      BotToast.showSimpleNotification(title: e.response.data['message']);
-      print(e.response.data);
-      print(e.response.headers);
-      print(e.response.request);
-      return null;
-    } else {
-      // Something happened in setting up or sending the request that triggered an Error
-      BotToast.showSimpleNotification(title: e.message);
-      print(e.request);
-      print(e.message);
-      return null;
-    }
-  }
-}
-
-showAddNewCollectionDialog(
-    BuildContext context, VoidCallback reloadCollection) async {
+showAddNewCollectionDialog(BuildContext context) async {
   TextEditingController title = TextEditingController();
   TextEditingController caption = TextEditingController();
   TextZhCollection texts = TextZhCollection();
@@ -256,7 +291,9 @@ showAddNewCollectionDialog(
                             };
                             postNewCollection(payload).then((value) {
                               if (value) {
-                                reloadCollection();
+                                Provider.of<CollectionUserDataModel>(context,
+                                        listen: false)
+                                    .getCollectionList();
                                 Navigator.of(context).pop();
                               }
                             });
@@ -352,6 +389,41 @@ showTagSelector(context) async {
     Provider.of<NewCollectionParameterModel>(context, listen: false)
         .clearTagAdvice();
   });
+}
+
+// 将选中画作添加到指定的画集中
+addIllustToCollection(
+    BuildContext context, List illustIdList, int collectionId) async {
+  String url =
+      'https://api.pixivic.com/collections/$collectionId/illustrations';
+  Map<String, String> headers = {'authorization': prefs.getString('auth')};
+  // Map<String, String> data = {'illust_id': illustIdList.toString()};
+  final List data = illustIdList;
+  try {
+    Response response = await Dio().post(url,
+        options: Options(
+          headers: headers,
+        ),
+        data: data);
+    print(response.data);
+    BotToast.showSimpleNotification(title: response.data['message']);
+    // BotToast.showSimpleNotification(title: response.data['data'].toString());
+    Provider.of<PicPageModel>(context, listen: false).cleanSelectedList();
+  } on DioError catch (e) {
+    if (e.response != null) {
+      BotToast.showSimpleNotification(title: e.response.data['message']);
+      print(e.response.data);
+      print(e.response.headers);
+      print(e.response.request);
+      return null;
+    } else {
+      // Something happened in setting up or sending the request that triggered an Error
+      BotToast.showSimpleNotification(title: e.message);
+      print(e.request);
+      print(e.message);
+      return null;
+    }
+  }
 }
 
 postNewCollection(Map<String, dynamic> payload) async {
@@ -450,84 +522,4 @@ Widget singleTag(context, Map data, bool advice) {
       ),
     ),
   );
-}
-
-class NewCollectionParameterModel with ChangeNotifier {
-  bool _isPublic = true;
-  bool _isSexy = false;
-  bool _allowComment = true;
-  List _tags = [];
-  List _tagsAdvice = [];
-
-  bool get isPublic => _isPublic;
-  bool get isSexy => _isSexy;
-  bool get allowComment => _allowComment;
-  List get tags => _tags;
-  List get tagsAdvice => _tagsAdvice;
-
-  public(bool result) {
-    _isPublic = result;
-    notifyListeners();
-  }
-
-  sexy(bool result) {
-    _isSexy = result;
-    notifyListeners();
-  }
-
-  comment(bool result) {
-    _allowComment = result;
-    notifyListeners();
-  }
-
-  cleanTags() {
-    _tags = [];
-    // notifyListeners();
-  }
-
-  clearTagAdvice() {
-    _tagsAdvice = [];
-    notifyListeners();
-  }
-
-  getTagAdvice(String keywords) async {
-    _tagsAdvice = [
-      {'tagName': keywords}
-    ];
-    notifyListeners();
-    String url = 'https://api.pixivic.com/collections/tags?keyword=$keywords';
-    Map<String, String> headers = {'authorization': prefs.getString('auth')};
-
-    try {
-      Response response =
-          await Dio().get(url, options: Options(headers: headers));
-      if (response.data['data'] != null)
-        _tagsAdvice = _tagsAdvice + response.data['data'];
-      print(_tagsAdvice);
-      notifyListeners();
-      // _tagsAdvice = [];
-    } on DioError catch (e) {
-      if (e.response != null) {
-        BotToast.showSimpleNotification(title: e.response.data['message']);
-        print(e.response.data);
-        print(e.response.headers);
-        print(e.response.request);
-      } else {
-        // Something happened in setting up or sending the request that triggered an Error
-        BotToast.showSimpleNotification(title: e.message);
-        print(e.request);
-        print(e.message);
-      }
-    }
-  }
-
-  addTagToTagsList(Map tagData) {
-    if (!_tags.contains(tagData)) _tags.add(tagData);
-    notifyListeners();
-  }
-
-  removeTagFromTagsList(Map tagData) {
-    _tags.removeWhere((element) => element['tagName'] == tagData['tagName']);
-    notifyListeners();
-  }
 }
