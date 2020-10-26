@@ -239,10 +239,10 @@ class _MyHomePageState extends State<MyHomePage> {
         duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
-  _onPageChanged(int index) {
-    indexProvider.changeIndex(index);
-    indexProvider.pageChanged(true);
-    indexProvider.changeScrolling(false);
+  // _onPageChanged(int index) {
+  //   indexProvider.changeIndex(index);
+  //   indexProvider.pageChanged(true);
+  //   indexProvider.changeScrolling(false);
     // _menuButtonKey.currentState.changeTapState(false);
     // _menuListKey.currentState.changeActive(false);
 
@@ -255,7 +255,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // }
 //      _pappBarKey.currentState.changePappbarMode(index);
 //      _onPageScrolling(false);
-  }
+  // }
 
   // void _onMenuButoonTap() {
   //   _menuButtonKey.currentState.flipTapState();
