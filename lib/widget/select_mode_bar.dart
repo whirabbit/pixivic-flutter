@@ -48,37 +48,90 @@ class SelectModeBar extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          SizedBox(
-                            width: ScreenUtil().setWidth(8),
-                          ),
                           InkWell(
                             onTap: () {
                               Provider.of<PicPageModel>(context, listen: false)
                                   .cleanSelectedList();
                             },
-                            child: FaIcon(
-                              FontAwesomeIcons.times,
-                              color: Colors.orange,
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                  left: ScreenUtil().setWidth(15)),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  FaIcon(
+                                    FontAwesomeIcons.times,
+                                    color: Colors.orange,
+                                    size: ScreenUtil().setWidth(14),
+                                  ),
+                                  SizedBox(
+                                    width: ScreenUtil().setWidth(10),
+                                  ),
+                                  Text(
+                                    tuple.item2.length.toString(),
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.orange),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                          SizedBox(
-                            width: ScreenUtil().setWidth(10),
-                          ),
-                          Text(
-                            tuple.item2.length.toString(),
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.orange),
-                          )
                         ],
                       ),
-                      Text(
-                        'Test Widget',
-                        style: TextStyle(fontSize: 16, color: Colors.orange),
+                      PopupMenuButton(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            right: ScreenUtil().setWidth(20),
+                          ),
+                          child: FaIcon(
+                            FontAwesomeIcons.ellipsisV,
+                            color: Colors.orange,
+                            size: ScreenUtil().setWidth(14),
+                          ),
+                        ),
+                        onSelected: (value) {
+                          switch (value) {
+                            case 'exit':
+                              Provider.of<PicPageModel>(context, listen: false)
+                                  .cleanSelectedList();
+                              break;
+                            case 'addToCollection':
+                              break;
+                          }
+                        },
+                        itemBuilder: (context) {
+                          return <PopupMenuItem>[
+                            PopupMenuItem(
+                              child: popupCell(
+                                  '添加至画集', FontAwesomeIcons.solidBookmark),
+                              value: 'addToCollection',
+                            ),
+                            PopupMenuItem(
+                              child:
+                                  popupCell('退出多选', FontAwesomeIcons.doorOpen),
+                              value: 'exit',
+                            ),
+                          ];
+                        },
                       )
                     ])),
           ),
         );
       },
+    );
+  }
+
+  Widget popupCell(String text, IconData fontAwesomeIcons) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        FaIcon(
+          fontAwesomeIcons,
+          color: Colors.orange,
+          size: ScreenUtil().setWidth(12),
+        ),
+        Text(text)
+      ],
     );
   }
 }
