@@ -3,19 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tuple/tuple.dart';
 
 import 'package:pixivic/provider/pic_page_model.dart';
 
 class SelectModeBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Selector<PicPageModel, bool>(
-      selector: (context, picPageModel) => picPageModel.isInSelectMode(),
-      builder: (context, isInSelectMode, _) {
+    return Selector<PicPageModel, Tuple2<bool, List>>(
+      selector: (context, picPageModel) {
+        // make list a Runtime constant list or selector won't rebuild when list change
+        final list = List.unmodifiable(picPageModel.onSelectedList);
+        Tuple2<bool, List> tuple = Tuple2(picPageModel.isInSelectMode(), list);
+        print(tuple);
+        return tuple;
+      },
+      builder: (context, tuple, _) {
         return AnimatedPositioned(
           duration: Duration(milliseconds: 300),
           curve: Curves.easeOut,
-          top: isInSelectMode ? 0 : ScreenUtil().setHeight(-50),
+          top: tuple.item1 ? 0 : ScreenUtil().setHeight(-50),
           child: AnimatedContainer(
             duration: Duration(milliseconds: 350),
             height: ScreenUtil().setHeight(35),
@@ -44,15 +51,21 @@ class SelectModeBar extends StatelessWidget {
                           SizedBox(
                             width: ScreenUtil().setWidth(8),
                           ),
-                          FaIcon(
-                            FontAwesomeIcons.times,
-                            color: Colors.orange,
+                          InkWell(
+                            onTap: () {
+                              Provider.of<PicPageModel>(context, listen: false)
+                                  .cleanSelectedList();
+                            },
+                            child: FaIcon(
+                              FontAwesomeIcons.times,
+                              color: Colors.orange,
+                            ),
                           ),
                           SizedBox(
                             width: ScreenUtil().setWidth(10),
                           ),
                           Text(
-                            '2',
+                            tuple.item2.length.toString(),
                             style:
                                 TextStyle(fontSize: 16, color: Colors.orange),
                           )
