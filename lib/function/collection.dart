@@ -15,14 +15,14 @@ import '../data/texts.dart';
 import 'package:pixivic/provider/collection_model.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 
-showAddToCollection(BuildContext context, List selectedPicIdList) {
+showAddToCollection(BuildContext contextFrom, List selectedPicIdList) {
   final screen = ScreenUtil();
   final texts = TextZhPicDetailPage();
 
-  if (!Provider.of<CollectionUserDataModel>(context, listen: false)
+  if (!Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
       .isUserCollectionListEmpty())
     showDialog(
-        context: context,
+        context: contextFrom,
         builder: (BuildContext context) {
           return AlertDialog(
             scrollable: true,
@@ -47,18 +47,18 @@ showAddToCollection(BuildContext context, List selectedPicIdList) {
                       width: screen.setWidth(250),
                       child: ListView.builder(
                           itemCount: userCollectionList.length,
-                          itemBuilder: (BuildContext context, int index) {
+                          itemBuilder: (context, int index) {
                             return Container(
                               child: ListTile(
                                 title: Text(userCollectionList[index]['title']),
                                 subtitle:
                                     Text(userCollectionList[index]['caption']),
                                 onTap: () {
+                                  Navigator.of(context).pop();
                                   addIllustToCollection(
-                                      context,
+                                      contextFrom,
                                       selectedPicIdList,
                                       userCollectionList[index]['id']);
-                                  Navigator.of(context).pop();
                                 },
                               ),
                             );
@@ -80,8 +80,8 @@ showAddToCollection(BuildContext context, List selectedPicIdList) {
         });
   else {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
+        context: contextFrom,
+        builder: (context) {
           return AlertDialog(
             content: Wrap(
               alignment: WrapAlignment.center,
@@ -277,6 +277,7 @@ showAddNewCollectionDialog(BuildContext context) async {
                           if (checkBeforePost(title.text, caption.text,
                               newCollectionParameterModel.tags, texts)) {
                             Map<String, dynamic> payload = {
+                              'username': prefs.getString('name'),
                               'title': title.text,
                               'caption': caption.text,
                               'isPublic':
@@ -310,7 +311,7 @@ showAddNewCollectionDialog(BuildContext context) async {
       });
 }
 
-showTagSelector(context) async {
+showTagSelector(BuildContext context) async {
   TextZhCollection texts = TextZhCollection();
   await showDialog(
       context: context,
@@ -393,12 +394,13 @@ showTagSelector(context) async {
 
 // 将选中画作添加到指定的画集中
 addIllustToCollection(
-    BuildContext context, List illustIdList, int collectionId) async {
+    BuildContext contextFrom, List illustIdList, int collectionId) async {
   String url =
       'https://api.pixivic.com/collections/$collectionId/illustrations';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
   // Map<String, String> data = {'illust_id': illustIdList.toString()};
   final List data = illustIdList;
+  print(data);
   try {
     Response response = await Dio().post(url,
         options: Options(
@@ -408,7 +410,8 @@ addIllustToCollection(
     print(response.data);
     BotToast.showSimpleNotification(title: response.data['message']);
     // BotToast.showSimpleNotification(title: response.data['data'].toString());
-    Provider.of<PicPageModel>(context, listen: false).cleanSelectedList();
+    //TODO: fix context error
+    Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
   } on DioError catch (e) {
     if (e.response != null) {
       BotToast.showSimpleNotification(title: e.response.data['message']);
