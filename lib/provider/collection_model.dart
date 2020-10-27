@@ -6,14 +6,21 @@ import 'package:bot_toast/bot_toast.dart';
 
 import 'package:pixivic/data/common.dart';
 
+enum CollectionMode{
+  self,
+  user
+}
+
 class CollectionUiModel with ChangeNotifier {
   /* 画集 model 处理两块内容，展示画集卡片的列表(Viewer)，以及打开画集后的列表(Collection)  */
+
+  String viewerMode;
   int currentViewerPage;
   bool onVierwerEdit;
   bool onViewerLoad;
   bool onViewerBottom;
   List viewerList;
-
+  
   int currentCollectionPage;
   bool onCollectionEdit;
   bool onCollectionLoad;
@@ -21,6 +28,7 @@ class CollectionUiModel with ChangeNotifier {
   List collectionList;
 
   initData() {
+    // TODO: 对self模式做同步
     currentViewerPage = 1;
     onVierwerEdit = false;
     onViewerLoad = false;
@@ -182,6 +190,8 @@ class CollectionUserDataModel with ChangeNotifier {
     String url =
         'https://api.pixivic.com/users/${prefs.getInt('id')}/collections';
     Map<String, String> headers = {'authorization': prefs.getString('auth')};
+
+    //TODO: 循环获取用户所有的画集
     try {
       Response response =
           await Dio().get(url, options: Options(headers: headers));
