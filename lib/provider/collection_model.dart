@@ -169,7 +169,9 @@ class CollectionUserDataModel with ChangeNotifier {
 
   bool isUserCollectionListEmpty() {
     print(userCollectionList);
-    if (userCollectionList.length == 0)
+    if (userCollectionList == null)
+      return true;
+    else if (userCollectionList.length == 0)
       return true;
     else
       return false;

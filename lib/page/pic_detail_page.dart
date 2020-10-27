@@ -11,7 +11,7 @@ import 'package:requests/requests.dart' hide Response;
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_advanced_networkimage/zoomable.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'; 
 
 import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/page/artist_page.dart';
