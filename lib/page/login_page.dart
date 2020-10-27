@@ -219,22 +219,13 @@ class LoginPageState extends State<LoginPage> {
                 loginOnLoading = true;
                 _getVerificationCode();
               });
-              int loginResult = await identity
-                  .login(
+              int loginResult = await identity.login(
                 _userNameController.text,
                 _userPasswordController.text,
                 verificationCode,
                 _verificationController.text,
                 widgetFrom: widget.widgetFrom,
-              )
-                  .then((statusCode) {
-                if (statusCode == 200) {
-                  print("loginProvider");
-                  Provider.of<UserStateProvider>(context, listen: false)
-                      .changeLogin(true);
-                }
-              });
-
+              );
               if (loginResult != 200) {
                 _resetMode('login');
               }
