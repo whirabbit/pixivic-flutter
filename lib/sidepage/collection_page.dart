@@ -67,6 +67,7 @@ class _CollectionPageState extends State<CollectionPage> {
   }
 
   Widget cardCell(Map data) {
+    print(data);
     return Container(
       padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
       child: Card(
@@ -83,7 +84,7 @@ class _CollectionPageState extends State<CollectionPage> {
                     children: <Widget>[
                       data.keys.contains('cover')
                           ? Image.network(
-                              data['cover']['imageUrls'][0]['large'],
+                              data['cover'][0]['medium'],
                               headers: {'Referer': 'https://app-api.pixiv.net'},
                               fit: BoxFit.fitWidth,
                               width: ScreenUtil().setWidth(300),
