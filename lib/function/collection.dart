@@ -410,7 +410,6 @@ addIllustToCollection(
     print(response.data);
     BotToast.showSimpleNotification(title: response.data['message']);
     // BotToast.showSimpleNotification(title: response.data['data'].toString());
-    //TODO: fix context error
     Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
   } on DioError catch (e) {
     if (e.response != null) {

@@ -98,6 +98,7 @@ class UserPageState extends State<UserPage> {
               child: CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: ScreenUtil().setHeight(25),
+                  // 更换为 AdvancedNI
                   backgroundImage: NetworkImage(prefs.getString('avatarLink'),
                       headers: {'referer': 'https://pixivic.com'}))),
           Positioned(

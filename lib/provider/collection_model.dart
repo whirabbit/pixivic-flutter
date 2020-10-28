@@ -28,7 +28,6 @@ class CollectionUiModel with ChangeNotifier {
   List collectionList;
 
   initData() {
-    // TODO: 对self模式做同步
     currentViewerPage = 1;
     onVierwerEdit = false;
     onViewerLoad = false;
