@@ -407,10 +407,14 @@ addIllustToCollection(
           headers: headers,
         ),
         data: data);
+    print('=======================');
     print(response.data);
     BotToast.showSimpleNotification(title: response.data['message']);
     // BotToast.showSimpleNotification(title: response.data['data'].toString());
     Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
+    Provider.of<CollectionUserDataModel>(contextFrom,
+                                        listen: false)
+                                    .getCollectionList();
   } on DioError catch (e) {
     if (e.response != null) {
       BotToast.showSimpleNotification(title: e.response.data['message']);
@@ -429,6 +433,7 @@ addIllustToCollection(
 }
 
 postNewCollection(Map<String, dynamic> payload) async {
+  // TODO： 返回上层的逻辑修正
   String url = 'https://api.pixivic.com/collections';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
 
@@ -436,6 +441,7 @@ postNewCollection(Map<String, dynamic> payload) async {
     if (payload['tagList'] != null) {
       Response response = await Dio()
           .post(url, data: payload, options: Options(headers: headers));
+      print(response.data);
       BotToast.showSimpleNotification(title: response.data['message']);
       return true;
     } else {
