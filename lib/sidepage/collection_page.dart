@@ -71,6 +71,7 @@ class _CollectionPageState extends State<CollectionPage> {
   }
 
   Widget collectionCardCell(Map data) {
+    // TODO: 若无画作则空
     print(data);
     return Center(
       child: Container(
