@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -141,6 +140,7 @@ class _CollectionPageState extends State<CollectionPage> {
                   Container(
                     width: ScreenUtil().setWidth(101),
                     // height: ScreenUtil().setHeight(18),
+                    // TODO： 对个数、长度进行判断
                     child: Text(
                       '#${data['tagList'][0]['tagName']}',
                       overflow: TextOverflow.ellipsis,
