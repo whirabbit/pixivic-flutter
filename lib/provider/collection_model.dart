@@ -177,9 +177,7 @@ class CollectionUserDataModel with ChangeNotifier {
 
   bool isUserCollectionListEmpty() {
     print(userCollectionList);
-    if (userCollectionList == null)
-      return true;
-    else if (userCollectionList.length == 0)
+    if (userCollectionList.length == 0)
       return true;
     else
       return false;
@@ -198,7 +196,7 @@ class CollectionUserDataModel with ChangeNotifier {
       // print(response.data['data']);
       collectionList = response.data['data'];
       // print('The user album list:\n$collectionList');
-      userCollectionList = collectionList;
+      userCollectionList = collectionList ?? [];
       // print(userCollectionList);
       notifyListeners();
     } on DioError catch (e) {
