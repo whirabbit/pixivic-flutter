@@ -220,6 +220,7 @@ class LoginPageState extends State<LoginPage> {
                 _getVerificationCode();
               });
               int loginResult = await identity.login(
+                context,
                 _userNameController.text,
                 _userPasswordController.text,
                 verificationCode,

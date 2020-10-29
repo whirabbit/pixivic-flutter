@@ -120,6 +120,13 @@ class PicPageModel with ChangeNotifier {
     notifyListeners();
   }
 
+  List outputPicIdList() {
+    if (onSelectedList.length > 0)
+      return List.generate(onSelectedList.length, (index) => picList[index]['id']);
+    else
+      return [];
+  }
+
   bool isInSelectMode() {
     return onSelectedList.length > 0 ? true : false;
   }
@@ -283,7 +290,7 @@ class PicPageModel with ChangeNotifier {
           'https://api.pixivic.com/collections/$collectionId/illustrations?page=$currentPage&pagesize=10';
     }
 
-    // TODO: Requests to Dio after package Dio
+    // TODO: Dio 重做后更换为Dio
     try {
       if (prefs.getString('auth') == '') {
         var requests = await Requests.get(url);

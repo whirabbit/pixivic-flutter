@@ -20,7 +20,7 @@ import 'package:pixivic/page/search_page.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/bugly.dart';
 import 'package:pixivic/function/update.dart';
-import 'package:pixivic/function/collection.dart';
+import 'package:pixivic/provider/collection_model.dart';
 import 'package:pixivic/provider/page_switch.dart';
 
 // import 'provider/comment_list_model.dart';
@@ -40,6 +40,9 @@ void main() {
         ChangeNotifierProvider(create: (_) => PageSwitchProvider()),
         ChangeNotifierProvider<NewCollectionParameterModel>(
           create: (_) => NewCollectionParameterModel(),
+        ),
+        ChangeNotifierProvider<CollectionUserDataModel>(
+          create: (_) => CollectionUserDataModel(),
         )
       ],
       child: MyApp(),
@@ -144,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
       FlutterDownloader.cancelAll();
     });
 
-    initData().then((value) {
+    initData(context).then((value) {
       setState(() {
         picPage = PicPage.home(
           picDate: _picDateStr,
