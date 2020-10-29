@@ -19,7 +19,8 @@ showAddToCollection(BuildContext contextFrom, List selectedPicIdList) {
   final screen = ScreenUtil();
   final texts = TextZhPicDetailPage();
 
-  if (!Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
+  // TODO: 修改为 Tuple
+  if (!Provider.of<CollectionUserDataModel>(contextFrom, listen: true)
       .isUserCollectionListEmpty())
     showDialog(
         context: contextFrom,
@@ -54,11 +55,14 @@ showAddToCollection(BuildContext contextFrom, List selectedPicIdList) {
                                 subtitle:
                                     Text(userCollectionList[index]['caption']),
                                 onTap: () {
-                                  Navigator.of(context).pop();
                                   addIllustToCollection(
-                                      contextFrom,
-                                      selectedPicIdList,
-                                      userCollectionList[index]['id']);
+                                          contextFrom,
+                                          selectedPicIdList,
+                                          userCollectionList[index]['id'])
+                                      .then((value) {
+                                    print('添加画作结果: $value');
+                                    if (value) Navigator.of(context).pop();
+                                  });
                                 },
                               ),
                             );
@@ -395,6 +399,7 @@ showTagSelector(BuildContext context) async {
 // 将选中画作添加到指定的画集中
 addIllustToCollection(
     BuildContext contextFrom, List illustIdList, int collectionId) async {
+  print('illustIdList: $illustIdList');
   String url =
       'https://api.pixivic.com/collections/$collectionId/illustrations';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
@@ -412,28 +417,27 @@ addIllustToCollection(
     BotToast.showSimpleNotification(title: response.data['message']);
     // BotToast.showSimpleNotification(title: response.data['data'].toString());
     Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
-    Provider.of<CollectionUserDataModel>(contextFrom,
-                                        listen: false)
-                                    .getCollectionList();
+    Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
+        .getCollectionList();
+    return true;
   } on DioError catch (e) {
     if (e.response != null) {
       BotToast.showSimpleNotification(title: e.response.data['message']);
       print(e.response.data);
       print(e.response.headers);
       print(e.response.request);
-      return null;
+      return false;
     } else {
       // Something happened in setting up or sending the request that triggered an Error
       BotToast.showSimpleNotification(title: e.message);
       print(e.request);
       print(e.message);
-      return null;
+      return false;
     }
   }
 }
 
 postNewCollection(Map<String, dynamic> payload) async {
-  // TODO： 返回上层的逻辑修正
   String url = 'https://api.pixivic.com/collections';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
 

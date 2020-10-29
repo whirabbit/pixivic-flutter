@@ -121,8 +121,10 @@ class PicPageModel with ChangeNotifier {
   }
 
   List outputPicIdList() {
+    print('onSelectedList: $onSelectedList');
     if (onSelectedList.length > 0)
-      return List.generate(onSelectedList.length, (index) => picList[index]['id']);
+      return List.generate(
+          onSelectedList.length, (index) => picList[onSelectedList[index]]['id']);
     else
       return [];
   }
