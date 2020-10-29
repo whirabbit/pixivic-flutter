@@ -6,10 +6,7 @@ import 'package:bot_toast/bot_toast.dart';
 
 import 'package:pixivic/data/common.dart';
 
-enum CollectionMode{
-  self,
-  user
-}
+enum CollectionMode { self, user }
 
 class CollectionUiModel with ChangeNotifier {
   /* 画集 model 处理两块内容，展示画集卡片的列表(Viewer)，以及打开画集后的列表(Collection)  */
@@ -20,14 +17,14 @@ class CollectionUiModel with ChangeNotifier {
   bool onViewerLoad;
   bool onViewerBottom;
   List viewerList;
-  
+
   int currentCollectionPage;
   bool onCollectionEdit;
   bool onCollectionLoad;
   bool onCollectionBottom;
   List collectionList;
 
-  initData() {
+  CollectionUiModel() {
     currentViewerPage = 1;
     onVierwerEdit = false;
     onViewerLoad = false;
@@ -183,34 +180,43 @@ class CollectionUserDataModel with ChangeNotifier {
   }
 
   getCollectionList() async {
+    userCollectionList = [];
     List collectionList;
+    int page = 1;
     String url =
-        'https://api.pixivic.com/users/${prefs.getInt('id')}/collections';
+        'https://api.pixivic.com/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
     Map<String, String> headers = {'authorization': prefs.getString('auth')};
+    bool isEnd = false;
+    while (!isEnd) {
+      try {
+        Response response =
+            await Dio().get(url, options: Options(headers: headers));
+        // print(response.data['data']);
+        collectionList = response.data['data'] ?? [];
+        // print('The user album list:\n$collectionList');
+        userCollectionList += collectionList;
+        print('collectionList.length: ${collectionList.length}');
+        isEnd = collectionList.length == 0 ? true : false;
+        page += 1;
+        url =
+        'https://api.pixivic.com/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
+        if (isEnd) notifyListeners();
+        // print(userCollectionList);
 
-    //TODO: 循环获取用户所有的画集
-    try {
-      Response response =
-          await Dio().get(url, options: Options(headers: headers));
-      // print(response.data['data']);
-      collectionList = response.data['data'];
-      // print('The user album list:\n$collectionList');
-      userCollectionList = collectionList ?? [];
-      // print(userCollectionList);
-      notifyListeners();
-    } on DioError catch (e) {
-      if (e.response != null) {
-        BotToast.showSimpleNotification(title: e.response.data['message']);
-        print(e.response.data);
-        print(e.response.headers);
-        print(e.response.request);
-        return null;
-      } else {
-        // Something happened in setting up or sending the request that triggered an Error
-        BotToast.showSimpleNotification(title: e.message);
-        print(e.request);
-        print(e.message);
-        return null;
+      } on DioError catch (e) {
+        if (e.response != null) {
+          BotToast.showSimpleNotification(title: e.response.data['message']);
+          print(e.response.data);
+          print(e.response.headers);
+          print(e.response.request);
+          return null;
+        } else {
+          // Something happened in setting up or sending the request that triggered an Error
+          BotToast.showSimpleNotification(title: e.message);
+          print(e.request);
+          print(e.message);
+          return null;
+        }
       }
     }
   }
