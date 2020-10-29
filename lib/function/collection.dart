@@ -72,7 +72,7 @@ showAddToCollection(BuildContext contextFrom, List selectedPicIdList) {
                           child: Icon(Icons.add),
                           shape: StadiumBorder(),
                           onPressed: () {
-                            Navigator.of(context).pop();
+                            // Navigator.of(context).pop();
                             showAddNewCollectionDialog(context);
                           })),
                 ]),
@@ -100,7 +100,7 @@ showAddToCollection(BuildContext contextFrom, List selectedPicIdList) {
                     child: Icon(Icons.add),
                     shape: StadiumBorder(),
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      // Navigator.of(context).pop();
                       showAddNewCollectionDialog(context);
                     },
                   ),
