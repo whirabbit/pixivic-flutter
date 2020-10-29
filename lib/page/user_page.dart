@@ -98,6 +98,7 @@ class UserPageState extends State<UserPage> {
               child: CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: ScreenUtil().setHeight(25),
+                  // 更换为 AdvancedNI
                   backgroundImage: NetworkImage(prefs.getString('avatarLink'),
                       headers: {'referer': 'https://pixivic.com'}))),
           Positioned(
@@ -207,7 +208,7 @@ class UserPageState extends State<UserPage> {
                     FlatButton(
                       child: Text("确定"),
                       onPressed: () {
-                        logout();
+                        logout(context);
                         Navigator.of(context).pop(true); //关闭对话框
                       },
                     ),

@@ -63,7 +63,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                     children: <Widget>[
                       CircleAvatar(
                         backgroundImage: AdvancedNetworkImage(
-                          'https://pic.cheerfun.dev/${widget.userId.toString()}.png',
+                          'https://static.pixivic.net/avatar/299x299/${widget.userId.toString()}.jpg',
                           header: {'Referer': 'https://app-api.pixiv.net'},
                           useDiskCache: true,
                           cacheRule: CacheRule(
