@@ -73,7 +73,7 @@ class _CollectionPageState extends State<CollectionPage> {
 
   Widget collectionCardCell(Map data) {
     // TODO: 若无画作则空的图片
-    // TODO: 1、3、5的图画格分离
+    // TODO 003: 1、3、5的图画格分离
     print(data);
     return Center(
       child: Container(
@@ -94,7 +94,8 @@ class _CollectionPageState extends State<CollectionPage> {
         child: InkWell(
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => CollectionDetailPage(data['id'], data['title'])));
+                builder: (context) =>
+                    CollectionDetailPage(data['id'], data['title'])));
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -148,15 +149,8 @@ class _CollectionPageState extends State<CollectionPage> {
                     Container(
                       width: ScreenUtil().setWidth(101),
                       // height: ScreenUtil().setHeight(18),
-                      // TODO： 对标签个数、长度进行判断
-                      child: Text(
-                        '#${data['tagList'][0]['tagName']}',
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            color: Colors.orange[300],
-                            fontWeight: FontWeight.w400,
-                            fontSize: ScreenUtil().setSp(11)),
-                      ),
+                      // TODO 002： 对标签个数、长度进行判断
+                      child: collectionTagViewer(data['tagList']),
                     ),
                     Container(
                         decoration: BoxDecoration(
@@ -185,6 +179,29 @@ class _CollectionPageState extends State<CollectionPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget collectionTagViewer(List tagList) {
+    String show = '';
+    if (tagList.length <= 3) {
+      for (int index = 0; index < tagList.length; index++) {
+        show += '#${tagList[index]['tagName']}';
+      }
+    } else if (tagList.length > 3) {
+      for (int index = 0; index < 3; index++) {
+        show += '#${tagList[index]['tagName']}';
+      }
+    } else {
+      show += ' ';
+    }
+    return Text(
+      show,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+          color: Colors.orange[300],
+          fontWeight: FontWeight.w400,
+          fontSize: ScreenUtil().setSp(11)),
     );
   }
 
