@@ -167,6 +167,7 @@ class CollectionUserDataModel with ChangeNotifier {
   CollectionUserDataModel() {
     userCollectionList = [];
     if (prefs.getString('auth') != '') {
+      print('get collection list from user');
       getCollectionList();
     }
   }
@@ -199,7 +200,7 @@ class CollectionUserDataModel with ChangeNotifier {
         isEnd = collectionList.length == 0 ? true : false;
         page += 1;
         url =
-        'https://api.pixivic.com/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
+            'https://api.pixivic.com/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
         if (isEnd) notifyListeners();
         // print(userCollectionList);
 
