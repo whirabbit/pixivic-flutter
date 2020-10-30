@@ -356,12 +356,12 @@ class _PicPageState extends State<PicPage> {
         } else {
           return Stack(children: <Widget>[
             Container(
-                margin: EdgeInsets.only(
-                    top: ScreenUtil().setWidth(5),
+                padding: EdgeInsets.only(
                     left: ScreenUtil().setWidth(5),
                     right: ScreenUtil().setWidth(5)),
                 color: Colors.grey[50],
                 child: WaterfallFlow.builder(
+                  padding: EdgeInsets.only(top: ScreenUtil().setWidth(5)),
                   controller: picPageModel.scrollController,
                   physics: picPageModel.isScrollable
                       ? ClampingScrollPhysics()
@@ -404,8 +404,8 @@ class _PicPageState extends State<PicPage> {
     else
       return Selector<PicPageModel, Tuple2<bool, bool>>(
           selector: (context, picPageModel) => Tuple2(
-            // 前者用于判断当前画作是否被选中
-            // 后者用于判断当前是否出于多选模式，这会导致单击的逻辑更改
+              // 前者用于判断当前画作是否被选中
+              // 后者用于判断当前是否出于多选模式，这会导致单击的逻辑更改
               picPageModel.isIndexInSelectedList(index),
               picPageModel.isInSelectMode()),
           builder: (context, tuple, _) {
@@ -472,17 +472,18 @@ class _PicPageState extends State<PicPage> {
                                 // 若被选中，则添加边框
                                 border: tuple.item1
                                     ? Border.all(
-                                        width: ScreenUtil().setWidth(3), color: Colors.black38)
+                                        width: ScreenUtil().setWidth(3),
+                                        color: Colors.black38)
                                     : Border.all(
                                         width: 0.0, color: Colors.white),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(ScreenUtil().setWidth(15)))),
+                                borderRadius: BorderRadius.all(Radius.circular(
+                                    ScreenUtil().setWidth(15)))),
                             child: Hero(
                               tag: 'imageHero' + _picMainParameter(picItem)[0],
                               child: ClipRRect(
                                 clipBehavior: Clip.antiAlias,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(ScreenUtil().setWidth(12))),
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(ScreenUtil().setWidth(12))),
                                 child: Image(
                                   image: AdvancedNetworkImage(
                                     _picMainParameter(picItem)[0],
