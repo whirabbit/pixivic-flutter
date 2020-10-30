@@ -78,10 +78,9 @@ class _CollectionPageState extends State<CollectionPage> {
     return Center(
       child: Container(
         width: ScreenUtil().setWidth(292),
-        height: ScreenUtil().setHeight(220),
+        height: ScreenUtil().setWidth(220),
         margin: EdgeInsets.only(
-            bottom: ScreenUtil().setHeight(14),
-            top: ScreenUtil().setHeight(19)),
+            bottom: ScreenUtil().setWidth(14), top: ScreenUtil().setWidth(19)),
         decoration: BoxDecoration(
             color: Colors.white,
             boxShadow: [
@@ -102,7 +101,7 @@ class _CollectionPageState extends State<CollectionPage> {
             children: <Widget>[
               Container(
                 width: ScreenUtil().setWidth(292),
-                height: ScreenUtil().setHeight(156),
+                height: ScreenUtil().setWidth(156),
                 decoration: BoxDecoration(
                     color: Colors.orange[100],
                     borderRadius:
@@ -124,10 +123,10 @@ class _CollectionPageState extends State<CollectionPage> {
               ),
               Container(
                 width: ScreenUtil().setWidth(269),
-                height: ScreenUtil().setHeight(28),
+                height: ScreenUtil().setWidth(28),
                 margin: EdgeInsets.only(
-                  top: ScreenUtil().setHeight(18),
-                  bottom: ScreenUtil().setHeight(18),
+                  top: ScreenUtil().setWidth(18),
+                  bottom: ScreenUtil().setWidth(18),
                   left: ScreenUtil().setWidth(11),
                   right: ScreenUtil().setWidth(12),
                 ),
@@ -210,6 +209,143 @@ class _CollectionPageState extends State<CollectionPage> {
           fontWeight: FontWeight.w400,
           fontSize: ScreenUtil().setSp(11)),
     );
+  }
+
+  Widget collectionIllustCoverViewer(List coverList) {
+    if (coverList.length < 3) {
+      return Image(
+          fit: BoxFit.cover,
+          image: AdvancedNetworkImage(
+            coverList[0]['medium'],
+            useDiskCache: true,
+            timeoutDuration: const Duration(seconds: 35),
+            cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+            header: {'Referer': 'https://app-api.pixiv.net'},
+          ));
+    } else if (coverList.length < 5) {
+      return Stack(
+        children: [
+          Positioned(
+              left: 0,
+              top: 0,
+              width: ScreenUtil().setWidth(146),
+              height: ScreenUtil().setWidth(146),
+              child: Image(
+                  fit: BoxFit.cover,
+                  image: AdvancedNetworkImage(
+                    coverList[0]['medium'],
+                    useDiskCache: true,
+                    timeoutDuration: const Duration(seconds: 35),
+                    cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+                    header: {'Referer': 'https://app-api.pixiv.net'},
+                  ))),
+          Positioned(
+              right: 0,
+              top: 0,
+              width: ScreenUtil().setWidth(146),
+              height: ScreenUtil().setWidth(78),
+              child: Image(
+                  fit: BoxFit.cover,
+                  image: AdvancedNetworkImage(
+                    coverList[1]['medium'],
+                    useDiskCache: true,
+                    timeoutDuration: const Duration(seconds: 35),
+                    cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+                    header: {'Referer': 'https://app-api.pixiv.net'},
+                  ))),
+          Positioned(
+              right: 0,
+              bottom: 0,
+              width: ScreenUtil().setWidth(146),
+              height: ScreenUtil().setWidth(78),
+              child: Image(
+                  fit: BoxFit.cover,
+                  image: AdvancedNetworkImage(
+                    coverList[2]['medium'],
+                    useDiskCache: true,
+                    timeoutDuration: const Duration(seconds: 35),
+                    cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+                    header: {'Referer': 'https://app-api.pixiv.net'},
+                  ))),
+        ],
+      );
+    } else if (coverList.length >= 5) {
+      return Stack(
+        children: [
+          Positioned(
+              left: 0,
+              top: 0,
+              width: ScreenUtil().setWidth(146),
+              height: ScreenUtil().setWidth(146),
+              child: Image(
+                  fit: BoxFit.cover,
+                  image: AdvancedNetworkImage(
+                    coverList[0]['medium'],
+                    useDiskCache: true,
+                    timeoutDuration: const Duration(seconds: 35),
+                    cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+                    header: {'Referer': 'https://app-api.pixiv.net'},
+                  ))),
+          Positioned(
+              right: 0,
+              top: 0,
+              width: ScreenUtil().setWidth(73),
+              height: ScreenUtil().setWidth(78),
+              child: Image(
+                  fit: BoxFit.cover,
+                  image: AdvancedNetworkImage(
+                    coverList[1]['medium'],
+                    useDiskCache: true,
+                    timeoutDuration: const Duration(seconds: 35),
+                    cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+                    header: {'Referer': 'https://app-api.pixiv.net'},
+                  ))),
+          Positioned(
+              right: 0,
+              bottom: 0,
+              width: ScreenUtil().setWidth(73),
+              height: ScreenUtil().setWidth(78),
+              child: Image(
+                  fit: BoxFit.cover,
+                  image: AdvancedNetworkImage(
+                    coverList[2]['medium'],
+                    useDiskCache: true,
+                    timeoutDuration: const Duration(seconds: 35),
+                    cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+                    header: {'Referer': 'https://app-api.pixiv.net'},
+                  ))),
+          Positioned(
+              right: ScreenUtil().setWidth(73),
+              bottom: 0,
+              width: ScreenUtil().setWidth(73),
+              height: ScreenUtil().setWidth(78),
+              child: Image(
+                  fit: BoxFit.cover,
+                  image: AdvancedNetworkImage(
+                    coverList[3]['medium'],
+                    useDiskCache: true,
+                    timeoutDuration: const Duration(seconds: 35),
+                    cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+                    header: {'Referer': 'https://app-api.pixiv.net'},
+                  ))),
+          Positioned(
+              right: ScreenUtil().setWidth(73),
+              top: 0,
+              width: ScreenUtil().setWidth(73),
+              height: ScreenUtil().setWidth(78),
+              child: Image(
+                  fit: BoxFit.cover,
+                  image: AdvancedNetworkImage(
+                    coverList[4]['medium'],
+                    useDiskCache: true,
+                    timeoutDuration: const Duration(seconds: 35),
+                    cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+                    header: {'Referer': 'https://app-api.pixiv.net'},
+                  ))),
+        ],
+      );
+    }
+    // TODO: else no cover image
   }
 
   _viewerListener() {
