@@ -93,7 +93,7 @@ class _CollectionPageState extends State<CollectionPage> {
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) =>
-                    CollectionDetailPage(data['id'], data['title'])));
+                    CollectionDetailPage(data)));
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -218,7 +218,7 @@ class _CollectionPageState extends State<CollectionPage> {
               left: 0,
               top: 0,
               width: ScreenUtil().setWidth(146),
-              height: ScreenUtil().setWidth(146),
+              height: ScreenUtil().setWidth(156),
               child: Image(
                   fit: BoxFit.cover,
                   image: AdvancedNetworkImage(
@@ -265,7 +265,7 @@ class _CollectionPageState extends State<CollectionPage> {
               left: 0,
               top: 0,
               width: ScreenUtil().setWidth(146),
-              height: ScreenUtil().setWidth(146),
+              height: ScreenUtil().setWidth(156),
               child: Image(
                   fit: BoxFit.cover,
                   image: AdvancedNetworkImage(
