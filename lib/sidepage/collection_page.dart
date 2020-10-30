@@ -73,7 +73,6 @@ class _CollectionPageState extends State<CollectionPage> {
 
   Widget collectionCardCell(Map data) {
     // TODO: 若无画作则空的图片
-    // TODO 003: 1、3、5的图画格分离
     print(data);
     return Center(
       child: Container(
@@ -110,16 +109,7 @@ class _CollectionPageState extends State<CollectionPage> {
                     clipBehavior: Clip.antiAlias,
                     borderRadius: BorderRadius.all(
                         Radius.circular(ScreenUtil().setWidth(8))),
-                    child: Image(
-                      image: AdvancedNetworkImage(
-                        data['cover'][0]['large'],
-                        useDiskCache: true,
-                        timeoutDuration: const Duration(seconds: 35),
-                        cacheRule: CacheRule(maxAge: const Duration(days: 7)),
-                        header: {'Referer': 'https://app-api.pixiv.net'},
-                      ),
-                      fit: BoxFit.cover,
-                    )),
+                    child: collectionIllustCoverViewer(data['cover'])),
               ),
               Container(
                 width: ScreenUtil().setWidth(269),
@@ -148,7 +138,6 @@ class _CollectionPageState extends State<CollectionPage> {
                     Container(
                       width: ScreenUtil().setWidth(101),
                       // height: ScreenUtil().setHeight(18),
-                      // TODO 002： 对标签个数、长度进行判断
                       child: collectionTagViewer(data['tagList']),
                     ),
                     Container(

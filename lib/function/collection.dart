@@ -21,7 +21,6 @@ showAddToCollection(BuildContext contextFrom, List selectedPicIdList) {
   final texts = TextZhPicDetailPage();
 
 
-  // TODO 001: 修改为 Tuple
   showDialog(
       context: contextFrom,
       builder: (context) {
