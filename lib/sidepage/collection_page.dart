@@ -91,7 +91,7 @@ class _CollectionPageState extends State<CollectionPage> {
                   color: Color(0x73D1D9E6)),
             ],
             borderRadius: BorderRadius.circular(ScreenUtil().setWidth(8))),
-        child: InkWell(
+        child: GestureDetector(
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) =>
@@ -163,15 +163,22 @@ class _CollectionPageState extends State<CollectionPage> {
                             clipBehavior: Clip.antiAlias,
                             borderRadius: BorderRadius.all(
                                 Radius.circular(ScreenUtil().setWidth(25))),
-                            child: Image(
-                                image: AdvancedNetworkImage(
-                              prefs.getString('avatarLink'),
-                              useDiskCache: true,
-                              timeoutDuration: const Duration(seconds: 35),
-                              cacheRule:
-                                  CacheRule(maxAge: const Duration(days: 7)),
-                              header: {'referer': 'https://pixivic.com'},
-                            ))))
+                            child: AnimatedContainer(
+                              duration: Duration(milliseconds: 500),
+                              constraints: BoxConstraints(
+                                minHeight: ScreenUtil().setWidth(25),
+                                minWidth: ScreenUtil().setWidth(25),
+                              ),
+                              child: Image(
+                                  image: AdvancedNetworkImage(
+                                prefs.getString('avatarLink'),
+                                useDiskCache: true,
+                                timeoutDuration: const Duration(seconds: 35),
+                                cacheRule:
+                                    CacheRule(maxAge: const Duration(days: 7)),
+                                header: {'referer': 'https://pixivic.com'},
+                              )),
+                            )))
                   ],
                 ),
               )
