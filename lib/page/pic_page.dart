@@ -455,6 +455,7 @@ class _PicPageState extends State<PicPage> {
                             }
                           },
                           onLongPress: () {
+                            // TODO 006: add shock
                             picPageModel.handlePicIndexToSelectedList(index);
                           },
                           child: AnimatedContainer(
