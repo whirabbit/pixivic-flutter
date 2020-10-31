@@ -14,7 +14,6 @@ import 'package:pixivic/data/common.dart';
 enum SelectMode { normal, collection }
 
 class SelectModeBar extends StatelessWidget {
-  //TODO 005： enum collection mode
 
   final SelectMode selectMode;
 

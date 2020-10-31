@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:pixivic/provider/collection_model.dart';
 
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/screenutil.dart';
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
-import 'package:pixivic/provider/collection_model.dart';
+
 
 import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/function/collection.dart';
+import 'package:pixivic/provider/collection_model.dart';
 
-//TODO: 001 finish this from figma
-
+// TODO: 001 scroller
+// TODO: 002 remove pic
 class CollectionDetailPage extends StatelessWidget {
   final int index;
 

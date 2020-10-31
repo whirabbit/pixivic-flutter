@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// TODO: Useless?
+// TODO: work with login
 class UserStateProvider with ChangeNotifier {
   bool loginState = false;
 
