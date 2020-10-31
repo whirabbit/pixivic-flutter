@@ -366,13 +366,13 @@ showTagSelector(BuildContext context) async {
                       borderRadius: BorderRadius.all(Radius.circular(20.0))),
                   contentPadding: EdgeInsets.all(0),
                   content: Container(
-                      width: ScreenUtil().setWidth(250),
-                      height: ScreenUtil().setWidth(400),
+                      width: ScreenUtil().setWidth(270),
+                      height: ScreenUtil().setWidth(500),
                       padding: EdgeInsets.zero,
                       child: Column(
                         children: [
                           Container(
-                            width: ScreenUtil().setWidth(250),
+                            width: ScreenUtil().setWidth(270),
                             height: ScreenUtil().setHeight(30),
                             decoration: BoxDecoration(
                               shape: BoxShape.rectangle,
