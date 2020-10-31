@@ -5,28 +5,37 @@ import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
+import 'package:pixivic/provider/collection_model.dart';
 
 import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/data/common.dart';
+import 'package:pixivic/function/collection.dart';
 
 //TODO: 001 finish this from figma
 
 class CollectionDetailPage extends StatelessWidget {
-  final Map basicData;
+  final int index;
 
-  CollectionDetailPage(this.basicData);
+  CollectionDetailPage(this.index);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PappBar(title: basicData['title']),
-      // body: PicPage.collection(collectionId: basicData['id'].toString()),
-      body: collectionDetailBody(),
-    );
+    return Selector<CollectionUserDataModel, Map>(
+        selector: (context, collectionUserDataModel) =>
+            collectionUserDataModel.userCollectionList[index],
+        builder: (context, basicData, _) {
+          return Scaffold(
+            appBar: PappBar.collection(
+              title: basicData['title'],
+              collectionSetting: collectionSetting,
+            ),
+            body: collectionDetailBody(basicData),
+          );
+        });
   }
 
-  Widget collectionDetailBody() {
+  Widget collectionDetailBody(Map basicData) {
     final screen = ScreenUtil();
 
     return Container(
@@ -126,5 +135,11 @@ class CollectionDetailPage extends StatelessWidget {
               fontWeight: FontWeight.w400,
               fontSize: ScreenUtil().setSp(12)),
         ));
+  }
+
+  collectionSetting(BuildContext context) {
+    print('collectionSetting 竟然在执行');
+    showCollectionInfoEditDialog(context,
+        isCreate: false, index: index);
   }
 }

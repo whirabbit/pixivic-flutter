@@ -20,7 +20,6 @@ showAddToCollection(BuildContext contextFrom, List selectedPicIdList) {
   final screen = ScreenUtil();
   final texts = TextZhPicDetailPage();
 
-
   showDialog(
       context: contextFrom,
       builder: (context) {
@@ -48,7 +47,7 @@ showAddToCollection(BuildContext contextFrom, List selectedPicIdList) {
                             shape: StadiumBorder(),
                             onPressed: () {
                               // Navigator.of(context).pop();
-                              showAddNewCollectionDialog(context);
+                              showCollectionInfoEditDialog(context);
                             },
                           ),
                         )
@@ -70,37 +69,33 @@ showAddToCollection(BuildContext contextFrom, List selectedPicIdList) {
                                 style: TextStyle(color: Colors.orangeAccent),
                               )),
                           Container(
-                              height: screen.setHeight(
-                                  tuple2.item1.length <= 7
-                                      ? screen.setHeight(40) *
-                                          tuple2.item1.length
-                                      : screen.setHeight(40) * 7),
-                              width: screen.setWidth(250),
-                              child: ListView.builder(
-                                  itemCount: tuple2.item1.length,
-                                  itemBuilder: (context, int index) {
-                                    return Container(
-                                      child: ListTile(
-                                        title: Text(
-                                            tuple2.item1[index]['title']),
-                                        subtitle: Text(tuple2.item1[index]
-                                            ['caption']),
-                                        onTap: () {
-                                          addIllustToCollection(
-                                                  contextFrom,
-                                                  selectedPicIdList,
-                                                  tuple2.item1[index]
-                                                      ['id'])
-                                              .then((value) {
-                                            print('添加画作结果: $value');
-                                            if (value)
-                                              Navigator.of(context).pop();
-                                          });
-                                        },
-                                      ),
-                                    );
-                                  }),
-                            ),
+                            height: screen.setHeight(tuple2.item1.length <= 7
+                                ? screen.setHeight(40) * tuple2.item1.length
+                                : screen.setHeight(40) * 7),
+                            width: screen.setWidth(250),
+                            child: ListView.builder(
+                                itemCount: tuple2.item1.length,
+                                itemBuilder: (context, int index) {
+                                  return Container(
+                                    child: ListTile(
+                                      title: Text(tuple2.item1[index]['title']),
+                                      subtitle:
+                                          Text(tuple2.item1[index]['caption']),
+                                      onTap: () {
+                                        addIllustToCollection(
+                                                contextFrom,
+                                                selectedPicIdList,
+                                                tuple2.item1[index]['id'])
+                                            .then((value) {
+                                          print('添加画作结果: $value');
+                                          if (value)
+                                            Navigator.of(context).pop();
+                                        });
+                                      },
+                                    ),
+                                  );
+                                }),
+                          ),
                           Container(
                               width: screen.setWidth(100),
                               padding:
@@ -110,18 +105,41 @@ showAddToCollection(BuildContext contextFrom, List selectedPicIdList) {
                                   shape: StadiumBorder(),
                                   onPressed: () {
                                     // Navigator.of(context).pop();
-                                    showAddNewCollectionDialog(context);
+                                    showCollectionInfoEditDialog(contextFrom);
                                   })),
                         ]),
                   ));
       });
 }
 
-showAddNewCollectionDialog(BuildContext context) async {
-  TextEditingController title = TextEditingController();
-  TextEditingController caption = TextEditingController();
+showCollectionInfoEditDialog(
+  BuildContext context, {
+  bool isCreate = true,
+  int index,
+}) async {
+  TextEditingController title;
+  TextEditingController caption;
   TextZhCollection texts = TextZhCollection();
-  Provider.of<NewCollectionParameterModel>(context, listen: false).cleanTags();
+  Map inputData;
+  if (!isCreate && index != null) {
+    inputData = Provider.of<CollectionUserDataModel>(context, listen: false)
+        .userCollectionList[index];
+    title = TextEditingController(text: inputData['title']);
+    caption = TextEditingController(text: inputData['caption']);
+    Provider.of<NewCollectionParameterModel>(context, listen: false)
+        .passTags(inputData['tagList']);
+    Provider.of<NewCollectionParameterModel>(context, listen: false)
+        .public(inputData['isPublic'] == 1 ? true : false);
+    Provider.of<NewCollectionParameterModel>(context, listen: false)
+        .sexy(inputData['pornWarning'] == 1 ? true : false);
+    Provider.of<NewCollectionParameterModel>(context, listen: false)
+        .comment(inputData['forbidComment'] == 1 ? true : false);
+  } else {
+    title = TextEditingController();
+    caption = TextEditingController();
+    Provider.of<NewCollectionParameterModel>(context, listen: false)
+        .cleanTags();
+  }
   //TODO：点击按钮后，键盘自动释放焦点
   await showDialog(
       context: context,
@@ -271,14 +289,17 @@ showAddNewCollectionDialog(BuildContext context) async {
                       alignment: Alignment.center,
                       child: FlatButton(
                         child: Text(
-                          texts.submit,
+                          isCreate
+                              ? texts.createCollection
+                              : texts.editCollection,
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.w700),
                         ),
                         color: Colors.orange[300],
                         shape: StadiumBorder(),
                         onPressed: () {
-                          print(newCollectionParameterModel.tags);
+                          print(
+                              'newCollectionParameterModel.tags: ${newCollectionParameterModel.tags}');
                           if (checkBeforePost(title.text, caption.text,
                               newCollectionParameterModel.tags, texts)) {
                             Map<String, dynamic> payload = {
@@ -295,14 +316,28 @@ showAddNewCollectionDialog(BuildContext context) async {
                                       : 0,
                               'tagList': newCollectionParameterModel.tags
                             };
-                            postNewCollection(payload).then((value) {
-                              if (value) {
-                                Provider.of<CollectionUserDataModel>(context,
-                                        listen: false)
-                                    .getCollectionList();
-                                Navigator.of(context).pop();
-                              }
-                            });
+                            if (isCreate)
+                              postNewCollection(payload).then((value) {
+                                if (value) {
+                                  Provider.of<CollectionUserDataModel>(context,
+                                          listen: false)
+                                      .getCollectionList();
+                                  Navigator.of(context).pop();
+                                }
+                              });
+                            else {
+                              payload['id'] = inputData['id'];
+                              putEditCollection(
+                                      payload, inputData['id'].toString())
+                                  .then((value) {
+                                if (value) {
+                                  Provider.of<CollectionUserDataModel>(context,
+                                          listen: false)
+                                      .getCollectionList();
+                                  Navigator.of(context).pop();
+                                }
+                              });
+                            }
                           }
                         },
                       ),
@@ -446,6 +481,38 @@ postNewCollection(Map<String, dynamic> payload) async {
     if (payload['tagList'] != null) {
       Response response = await Dio()
           .post(url, data: payload, options: Options(headers: headers));
+      print(response.data);
+      BotToast.showSimpleNotification(title: response.data['message']);
+      return true;
+    } else {
+      BotToast.showSimpleNotification(title: TextZhCollection().needForTag);
+      return false;
+    }
+  } on DioError catch (e) {
+    if (e.response != null) {
+      BotToast.showSimpleNotification(title: e.response.data['message']);
+      print(e.response.data);
+      print(e.response.headers);
+      print(e.response.request);
+      return false;
+    } else {
+      // Something happened in setting up or sending the request that triggered an Error
+      BotToast.showSimpleNotification(title: e.message);
+      print(e.request);
+      print(e.message);
+      return false;
+    }
+  }
+}
+
+putEditCollection(Map<String, dynamic> payload, String id) async {
+  String url = 'https://api.pixivic.com/collections/$id';
+  Map<String, String> headers = {'authorization': prefs.getString('auth')};
+  print(payload);
+  try {
+    if (payload['tagList'] != null) {
+      Response response = await Dio()
+          .put(url, data: payload, options: Options(headers: headers));
       print(response.data);
       BotToast.showSimpleNotification(title: response.data['message']);
       return true;

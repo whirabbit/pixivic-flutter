@@ -109,6 +109,11 @@ class NewCollectionParameterModel with ChangeNotifier {
     notifyListeners();
   }
 
+  passTags(List tags) {
+    _tags = tags;
+    notifyListeners();
+  }
+
   cleanTags() {
     _tags = [];
     // notifyListeners();
