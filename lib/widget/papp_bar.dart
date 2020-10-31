@@ -145,7 +145,6 @@ class PappBarState extends State<PappBar> {
   }
 
   Widget chooseWidget() {
-    //TODO 004: 添加 collection mode
     if (mode == 'home') {
       return homeWidgets();
     } else if (mode == 'default') {

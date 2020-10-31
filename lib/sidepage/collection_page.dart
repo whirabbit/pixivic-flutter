@@ -70,7 +70,7 @@ class _CollectionPageState extends State<CollectionPage> {
   }
 
   Widget collectionCardCell(int index) {
-    // TODO: 若无画作则空的图片
+    // TODO: 003 若无画作则空的图片
 
     return Center(
         child: Selector<CollectionUserDataModel, Map>(
@@ -343,7 +343,6 @@ class _CollectionPageState extends State<CollectionPage> {
     } else {
       return Container();
     }
-    // TODO: else no cover image
   }
 
   _viewerListener() {
