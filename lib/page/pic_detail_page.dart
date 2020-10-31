@@ -115,12 +115,14 @@ class _PicDetailPageState extends State<PicDetailPage> {
                         children: <Widget>[
                           // 标题栏、喜欢爱心
                           Container(
+                            // width: ScreenUtil().setWidth(324),
                             width: ScreenUtil().setWidth(324),
                             height: ScreenUtil().setHeight(25),
                             child: Stack(
                               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Container(
+                                  width: ScreenUtil().setWidth(280),
                                   alignment: Alignment.centerLeft,
                                   child: SelectableText(
                                     widget._picData['title'],
