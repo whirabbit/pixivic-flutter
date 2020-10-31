@@ -9,6 +9,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
+import 'package:tuple/tuple.dart';
 
 import '../data/common.dart';
 import '../data/texts.dart';
@@ -19,97 +20,102 @@ showAddToCollection(BuildContext contextFrom, List selectedPicIdList) {
   final screen = ScreenUtil();
   final texts = TextZhPicDetailPage();
 
-  if (!Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
-      .isUserCollectionListEmpty())
-    showDialog(
-        context: contextFrom,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            scrollable: true,
-            content: Wrap(
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Container(
-                      padding: EdgeInsets.only(bottom: screen.setHeight(5)),
-                      alignment: Alignment.center,
-                      child: Text(
-                        texts.addToCollection,
-                        style: TextStyle(color: Colors.orangeAccent),
-                      )),
-                  Selector<CollectionUserDataModel, List>(
-                    selector: (context, collectionUserDataModel) =>
-                        collectionUserDataModel.userCollectionList,
-                    builder: (context, userCollectionList, _) => Container(
-                      height: screen.setHeight(userCollectionList.length <= 7
-                          ? screen.setHeight(40) * userCollectionList.length
-                          : screen.setHeight(40) * 7),
-                      width: screen.setWidth(250),
-                      child: ListView.builder(
-                          itemCount: userCollectionList.length,
-                          itemBuilder: (context, int index) {
-                            return Container(
-                              child: ListTile(
-                                title: Text(userCollectionList[index]['title']),
-                                subtitle:
-                                    Text(userCollectionList[index]['caption']),
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                  addIllustToCollection(
-                                      contextFrom,
-                                      selectedPicIdList,
-                                      userCollectionList[index]['id']);
-                                },
-                              ),
-                            );
-                          }),
+
+  // TODO 001: 修改为 Tuple
+  showDialog(
+      context: contextFrom,
+      builder: (context) {
+        return Selector<CollectionUserDataModel, Tuple2>(
+            selector: (context, collectionUserDataModel) => Tuple2(
+                collectionUserDataModel.userCollectionList,
+                collectionUserDataModel.isUserCollectionListEmpty()),
+            builder: (context, tuple2, _) => tuple2.item2
+                ? AlertDialog(
+                    content: Wrap(
+                      alignment: WrapAlignment.center,
+                      children: [
+                        Lottie.asset('image/empty-box.json',
+                            repeat: false, height: ScreenUtil().setHeight(80)),
+                        Container(
+                          // width: screen.setWidth(300),
+                          padding: EdgeInsets.only(top: screen.setHeight(8)),
+                          child: Text(texts.addFirstCollection),
+                        ),
+                        Container(
+                          width: screen.setWidth(100),
+                          padding: EdgeInsets.only(top: screen.setHeight(8)),
+                          child: FlatButton(
+                            child: Icon(Icons.add),
+                            shape: StadiumBorder(),
+                            onPressed: () {
+                              // Navigator.of(context).pop();
+                              showAddNewCollectionDialog(context);
+                            },
+                          ),
+                        )
+                      ],
                     ),
-                  ),
-                  Container(
-                      width: screen.setWidth(100),
-                      padding: EdgeInsets.only(top: screen.setHeight(8)),
-                      child: FlatButton(
-                          child: Icon(Icons.add),
-                          shape: StadiumBorder(),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            showAddNewCollectionDialog(context);
-                          })),
-                ]),
-          );
-        });
-  else {
-    showDialog(
-        context: contextFrom,
-        builder: (context) {
-          return AlertDialog(
-            content: Wrap(
-              alignment: WrapAlignment.center,
-              children: [
-                Lottie.asset('image/empty-box.json',
-                    repeat: false, height: ScreenUtil().setHeight(80)),
-                Container(
-                  // width: screen.setWidth(300),
-                  padding: EdgeInsets.only(top: screen.setHeight(8)),
-                  child: Text(texts.addFirstCollection),
-                ),
-                Container(
-                  width: screen.setWidth(100),
-                  padding: EdgeInsets.only(top: screen.setHeight(8)),
-                  child: FlatButton(
-                    child: Icon(Icons.add),
-                    shape: StadiumBorder(),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      showAddNewCollectionDialog(context);
-                    },
-                  ),
-                )
-              ],
-            ),
-          );
-        });
-  }
+                  )
+                : AlertDialog(
+                    scrollable: true,
+                    content: Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Container(
+                              padding:
+                                  EdgeInsets.only(bottom: screen.setHeight(5)),
+                              alignment: Alignment.center,
+                              child: Text(
+                                texts.addToCollection,
+                                style: TextStyle(color: Colors.orangeAccent),
+                              )),
+                          Container(
+                              height: screen.setHeight(
+                                  tuple2.item1.length <= 7
+                                      ? screen.setHeight(40) *
+                                          tuple2.item1.length
+                                      : screen.setHeight(40) * 7),
+                              width: screen.setWidth(250),
+                              child: ListView.builder(
+                                  itemCount: tuple2.item1.length,
+                                  itemBuilder: (context, int index) {
+                                    return Container(
+                                      child: ListTile(
+                                        title: Text(
+                                            tuple2.item1[index]['title']),
+                                        subtitle: Text(tuple2.item1[index]
+                                            ['caption']),
+                                        onTap: () {
+                                          addIllustToCollection(
+                                                  contextFrom,
+                                                  selectedPicIdList,
+                                                  tuple2.item1[index]
+                                                      ['id'])
+                                              .then((value) {
+                                            print('添加画作结果: $value');
+                                            if (value)
+                                              Navigator.of(context).pop();
+                                          });
+                                        },
+                                      ),
+                                    );
+                                  }),
+                            ),
+                          Container(
+                              width: screen.setWidth(100),
+                              padding:
+                                  EdgeInsets.only(top: screen.setHeight(8)),
+                              child: FlatButton(
+                                  child: Icon(Icons.add),
+                                  shape: StadiumBorder(),
+                                  onPressed: () {
+                                    // Navigator.of(context).pop();
+                                    showAddNewCollectionDialog(context);
+                                  })),
+                        ]),
+                  ));
+      });
 }
 
 showAddNewCollectionDialog(BuildContext context) async {
@@ -395,6 +401,7 @@ showTagSelector(BuildContext context) async {
 // 将选中画作添加到指定的画集中
 addIllustToCollection(
     BuildContext contextFrom, List illustIdList, int collectionId) async {
+  print('illustIdList: $illustIdList');
   String url =
       'https://api.pixivic.com/collections/$collectionId/illustrations';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
@@ -407,23 +414,27 @@ addIllustToCollection(
           headers: headers,
         ),
         data: data);
+    print('=======================');
     print(response.data);
     BotToast.showSimpleNotification(title: response.data['message']);
     // BotToast.showSimpleNotification(title: response.data['data'].toString());
     Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
+    Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
+        .getCollectionList();
+    return true;
   } on DioError catch (e) {
     if (e.response != null) {
       BotToast.showSimpleNotification(title: e.response.data['message']);
       print(e.response.data);
       print(e.response.headers);
       print(e.response.request);
-      return null;
+      return false;
     } else {
       // Something happened in setting up or sending the request that triggered an Error
       BotToast.showSimpleNotification(title: e.message);
       print(e.request);
       print(e.message);
-      return null;
+      return false;
     }
   }
 }
@@ -436,6 +447,7 @@ postNewCollection(Map<String, dynamic> payload) async {
     if (payload['tagList'] != null) {
       Response response = await Dio()
           .post(url, data: payload, options: Options(headers: headers));
+      print(response.data);
       BotToast.showSimpleNotification(title: response.data['message']);
       return true;
     } else {

@@ -11,6 +11,8 @@ import 'package:pixivic/function/collection.dart';
 import 'package:pixivic/data/common.dart';
 
 class SelectModeBar extends StatelessWidget {
+  //TODO 005： enum collection mode
+
   @override
   Widget build(BuildContext context) {
     return Selector<PicPageModel, Tuple2<bool, List>>(
