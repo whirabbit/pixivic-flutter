@@ -376,7 +376,11 @@ class _PicPageState extends State<PicPage> {
                     crossAxisCount: 2,
                   ),
                 )),
-            SelectModeBar(),
+            widget.jsonMode == 'collection'
+                ? SelectModeBar(
+                    selectMode: SelectMode.collection,
+                  )
+                : SelectModeBar(),
           ]);
         }
       }),
