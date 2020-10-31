@@ -190,7 +190,7 @@ class TextZhSettingPage {
 }
 
 class TextZhGuessLikePage {
-  String title = '猜你喜欢'; 
+  String title = '猜你喜欢';
 }
 
 class TextZhCollection {
@@ -201,7 +201,8 @@ class TextZhCollection {
   String isSexy = 'R16内容';
   String allowComment = '允许评论';
   String addTag = '添加标签';
-  String submit = '创建画集';
+  String createCollection = '创建画集';
+  String editCollection = '修改画集';
   String needForTag = '请添加至少一个标签';
   String needForTitle = '请输入标题';
   String needForCaption = '请输入介绍';
