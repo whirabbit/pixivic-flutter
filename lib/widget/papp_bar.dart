@@ -26,6 +26,7 @@ class PappBar extends StatefulWidget implements PreferredSizeWidget {
   final String searchKeywordsIn;
   final ValueChanged<String> searchFucntion;
   final ValueChanged<String> homeModeOptionsFucntion;
+  final Function(BuildContext) collectionSetting;
   final Key key;
 
   PappBar({
@@ -34,6 +35,7 @@ class PappBar extends StatefulWidget implements PreferredSizeWidget {
     this.searchKeywordsIn,
     this.searchFucntion,
     this.homeModeOptionsFucntion,
+    this.collectionSetting,
     this.key,
   }) : super();
 
@@ -43,6 +45,7 @@ class PappBar extends StatefulWidget implements PreferredSizeWidget {
       @required this.searchKeywordsIn,
       @required this.searchFucntion,
       this.homeModeOptionsFucntion,
+      this.collectionSetting,
       this.key})
       : super();
 
@@ -52,8 +55,18 @@ class PappBar extends StatefulWidget implements PreferredSizeWidget {
       this.searchKeywordsIn,
       this.searchFucntion,
       @required this.homeModeOptionsFucntion,
+      this.collectionSetting,
       this.key})
       : super();
+
+  PappBar.collection(
+      {this.title,
+      this.mode = 'collection',
+      this.searchKeywordsIn,
+      this.searchFucntion,
+      this.homeModeOptionsFucntion,
+      this.collectionSetting,
+      this.key});
 
   @override
   PappBarState createState() => PappBarState();
@@ -132,13 +145,14 @@ class PappBarState extends State<PappBar> {
   }
 
   Widget chooseWidget() {
-    //TODO 004: 添加 collection mode
     if (mode == 'home') {
       return homeWidgets();
     } else if (mode == 'default') {
       return defaultWidgets();
     } else if (mode == 'search') {
       return searchWidgets();
+    } else if (mode == 'collection') {
+      return collectionWidgets();
     } else {
       return Container();
     }
@@ -219,6 +233,51 @@ class PappBarState extends State<PappBar> {
             ),
           ],
         ));
+  }
+
+  Widget collectionWidgets() {
+    return Container(
+      height: contentHeight,
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(
+          left: ScreenUtil().setWidth(18), right: ScreenUtil().setWidth(18)),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Container(
+            height: contentHeight,
+            alignment: Alignment.center,
+            // padding: EdgeInsets.only(left: 5, right: 5),
+            child: Text(title,
+                style: TextStyle(
+                    fontSize: 14,
+                    // color: Color(0xFF515151),
+                    color: Colors.grey[700],
+                    fontWeight: FontWeight.w700)),
+          ),
+          Material(
+            color: Colors.white,
+            child: InkWell(
+              onTap: () {
+                print(widget.collectionSetting);
+                widget.collectionSetting(context);
+              },
+              child: Container(
+                height: contentHeight,
+                alignment: Alignment.center,
+                // padding: EdgeInsets.only(left: 8),
+                child: FaIcon(
+                  FontAwesomeIcons.cog,
+                  color: Color(0xFF515151),
+                  size: ScreenUtil().setWidth(15),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget defaultWidgets() {
@@ -427,6 +486,7 @@ class PappBarState extends State<PappBar> {
     );
   }
 
+  // 首页的模式选择
   Widget selectorContainer(String type) {
     if (type == 'illust') {
       return Container(

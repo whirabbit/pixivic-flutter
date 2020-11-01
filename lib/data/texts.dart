@@ -1,8 +1,8 @@
 class TextZhForAboutPage {
   String title = '关于我们';
-  static String version = '0.1.0';
+  static String version = '0.1.1';
   String description =
-      'Just4Fun\nPixivc 出生于2018-10-01，是一位兴趣使然的工具酱。\n她精致（ui统一），敏捷（前后分离&纯js）。\n将提供以下有限的服务：pixiv日排行的浏览与免费高级会员热门排序搜索。她希望能在茫茫互联网留下一些存在的痕迹，翘首以盼大家能通过各大搜索引擎访问她（将有助于提升她的搜索排名），\n搜索关键词：Pixiv\n当前版本: 公测版 V0.0.4 200712 \n有任何使用上的疑问和建议，请反馈于官方群或论坛。\n\n更新内容：\n- 增加以图搜图功能\n- 修复 iOS 文字选框长按错误';
+      'Just4Fun\nPixivc 出生于2018-10-01，是一位兴趣使然的工具酱。\n她精致（ui统一），敏捷（前后分离&纯js）。\n将提供以下有限的服务：pixiv日排行的浏览与免费高级会员热门排序搜索。她希望能在茫茫互联网留下一些存在的痕迹，翘首以盼大家能通过各大搜索引擎访问她（将有助于提升她的搜索排名），\n搜索关键词：Pixiv\n当前版本: 公测版 V0.1.1 201101 \n有任何使用上的疑问和建议，请反馈于官方群或论坛。\n\n更新内容：\n- 修复 评论加载的 bug\n- 修复 瀑布流流畅性问题\n- 功能 增加了个人画集\n- 功能 增加了猜你喜欢';
   String versionInfo = 'Pixivic 官方客户端 $version beta';
   String updateTitle = '$version 更新内容';
   String updateInfo = '- 修复了iOS下长按文字框触发失败的bug\n- 增加了以图搜图功能';
@@ -190,7 +190,7 @@ class TextZhSettingPage {
 }
 
 class TextZhGuessLikePage {
-  String title = '猜你喜欢'; 
+  String title = '猜你喜欢';
 }
 
 class TextZhCollection {
@@ -201,7 +201,8 @@ class TextZhCollection {
   String isSexy = 'R16内容';
   String allowComment = '允许评论';
   String addTag = '添加标签';
-  String submit = '创建画集';
+  String createCollection = '创建画集';
+  String editCollection = '修改画集';
   String needForTag = '请添加至少一个标签';
   String needForTitle = '请输入标题';
   String needForCaption = '请输入介绍';

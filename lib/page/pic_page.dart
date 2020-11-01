@@ -376,7 +376,11 @@ class _PicPageState extends State<PicPage> {
                     crossAxisCount: 2,
                   ),
                 )),
-            SelectModeBar(),
+            widget.jsonMode == 'collection'
+                ? SelectModeBar(
+                    selectMode: SelectMode.collection,
+                  )
+                : SelectModeBar(),
           ]);
         }
       }),
@@ -455,7 +459,6 @@ class _PicPageState extends State<PicPage> {
                             }
                           },
                           onLongPress: () {
-                            // TODO 006: add shock
                             picPageModel.handlePicIndexToSelectedList(index);
                           },
                           child: AnimatedContainer(

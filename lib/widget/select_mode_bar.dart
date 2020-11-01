@@ -5,13 +5,21 @@ import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tuple/tuple.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:vibration/vibration.dart';
 
 import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/function/collection.dart';
 import 'package:pixivic/data/common.dart';
 
+enum SelectMode { normal, collection }
+
 class SelectModeBar extends StatelessWidget {
-  //TODO 005： enum collection mode
+
+  final SelectMode selectMode;
+
+  SelectModeBar({this.selectMode = SelectMode.normal}) {
+    print('SelectModeBar construct with ${this.selectMode}');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +30,18 @@ class SelectModeBar extends StatelessWidget {
         Tuple2<bool, List> tuple = Tuple2(picPageModel.isInSelectMode(), list);
 
         return tuple;
+      },
+      shouldRebuild: (preTuple, nextTuple) {
+        if (!preTuple.item1 & nextTuple.item1) {
+          Vibration.hasCustomVibrationsSupport().then((value) {
+            Vibration.vibrate(duration: 50);
+          });
+        }
+        if (preTuple.item1 != nextTuple.item1 ||
+            preTuple.item2.length != nextTuple.item2.length)
+          return true;
+        else
+          return false;
       },
       builder: (context, tuple, _) {
         return AnimatedPositioned(
@@ -111,21 +131,13 @@ class SelectModeBar extends StatelessWidget {
                                             listen: false)
                                         .outputPicIdList());
                               break;
+                            case 'removeFromCollection':
+                              BotToast.showSimpleNotification(title: '暂时不能用');
+                              break;
                           }
                         },
                         itemBuilder: (context) {
-                          return <PopupMenuItem>[
-                            PopupMenuItem(
-                              child: popupCell(
-                                  '添加至画集', FontAwesomeIcons.solidBookmark),
-                              value: 'addToCollection',
-                            ),
-                            PopupMenuItem(
-                              child:
-                                  popupCell('退出多选', FontAwesomeIcons.doorOpen),
-                              value: 'exit',
-                            ),
-                          ];
+                          return popupMenu();
                         },
                       )
                     ])),
@@ -133,6 +145,34 @@ class SelectModeBar extends StatelessWidget {
         );
       },
     );
+  }
+
+  List popupMenu() {
+    print('selectMode: $selectMode');
+    if (selectMode == SelectMode.normal)
+      return <PopupMenuItem>[
+        PopupMenuItem(
+          child: popupCell('添加至画集', FontAwesomeIcons.solidBookmark),
+          value: 'addToCollection',
+        ),
+        PopupMenuItem(
+          child: popupCell('退出多选', FontAwesomeIcons.doorOpen),
+          value: 'exit',
+        ),
+      ];
+    else if (selectMode == SelectMode.collection)
+      return <PopupMenuItem>[
+        PopupMenuItem(
+          child: popupCell('移除图片', FontAwesomeIcons.solidBookmark),
+          value: 'removeFromCollection',
+        ),
+        PopupMenuItem(
+          child: popupCell('退出多选', FontAwesomeIcons.doorOpen),
+          value: 'exit',
+        ),
+      ];
+    else
+      return [];
   }
 
   Widget popupCell(String text, IconData fontAwesomeIcons) {
