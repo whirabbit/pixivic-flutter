@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:bot_toast/bot_toast.dart';
 import 'package:requests/requests.dart';
 import 'package:provider/provider.dart';
+import 'package:dio/dio.dart';
 
 import '../data/common.dart';
 import '../data/texts.dart';
@@ -64,6 +65,13 @@ login(BuildContext context, String userName, String pwd,
     homeCurrentPage = 1;
     // 加载用户的画集列表
     Provider.of<CollectionUserDataModel>(context, listen: false);
+    dioPixivic = Dio(BaseOptions(
+      baseUrl: 'https://api.pixivic.com/',
+      connectTimeout: 150000,
+      receiveTimeout: 150000,
+      headers: prefs.getString('auth') == ''
+          ? {}
+          : {'authorization': prefs.getString('auth')}));
   } else {
     // isLogin = false;
     BotToast.showSimpleNotification(

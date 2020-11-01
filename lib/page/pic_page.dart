@@ -259,6 +259,7 @@ class PicPage extends StatefulWidget {
 
 }
 
+// TODO： 005 画集的引导提示，移除之前的长按
 class _PicPageState extends State<PicPage> {
   PicPageModel picPageModel;
 
@@ -379,6 +380,7 @@ class _PicPageState extends State<PicPage> {
             widget.jsonMode == 'collection'
                 ? SelectModeBar(
                     selectMode: SelectMode.collection,
+                    collectionId: widget.collectionId,
                   )
                 : SelectModeBar(),
           ]);

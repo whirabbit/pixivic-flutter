@@ -85,7 +85,7 @@ showAddToCollection(BuildContext contextFrom, List selectedPicIdList) {
                                         addIllustToCollection(
                                                 contextFrom,
                                                 selectedPicIdList,
-                                                tuple2.item1[index]['id'])
+                                                tuple2.item1[index]['id'].toString())
                                             .then((value) {
                                           print('添加画作结果: $value');
                                           if (value)
@@ -327,8 +327,7 @@ showCollectionInfoEditDialog(
                               });
                             else {
                               payload['id'] = inputData['id'];
-                              putEditCollection(
-                                      payload, inputData['id'].toString())
+                              putEditCollection(payload, inputData['id'])
                                   .then((value) {
                                 if (value) {
                                   Provider.of<CollectionUserDataModel>(context,
@@ -434,21 +433,18 @@ showTagSelector(BuildContext context) async {
 
 // 将选中画作添加到指定的画集中
 addIllustToCollection(
-    BuildContext contextFrom, List illustIdList, int collectionId) async {
+    BuildContext contextFrom, List illustIdList, String collectionId) async {
   print('illustIdList: $illustIdList');
   String url =
       'https://api.pixivic.com/collections/$collectionId/illustrations';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
-  // Map<String, String> data = {'illust_id': illustIdList.toString()};
-  final List data = illustIdList;
-  print(data);
+
   try {
     Response response = await Dio().post(url,
         options: Options(
           headers: headers,
         ),
-        data: data);
-    print('=======================');
+        data: illustIdList);
     print(response.data);
     BotToast.showSimpleNotification(title: response.data['message']);
     // BotToast.showSimpleNotification(title: response.data['data'].toString());
@@ -470,6 +466,36 @@ addIllustToCollection(
       print(e.message);
       return false;
     }
+  }
+}
+
+setCollectionCover(
+    BuildContext contextFrom, String collectionId, List illustIdList) async {
+  try {
+    print(illustIdList);
+    Response response = await dioPixivic.put('/collections/$collectionId/cover',
+        data: illustIdList);
+    print(response.data);
+    BotToast.showSimpleNotification(title: response.data['message']);
+    Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
+    Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
+        .getCollectionList();
+  } finally {}
+}
+
+removeIllustFromCollection(
+    BuildContext contextFrom, String collectionId, List illustIdList) async {
+  try {
+    Response response = await dioPixivic
+        .delete('/collections/$collectionId/illustrations', data: illustIdList);
+    print(response.data);
+    BotToast.showSimpleNotification(title: response.data['message']);
+    Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
+    Provider.of<PicPageModel>(contextFrom, listen: false).initAndLoadData();
+    Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
+        .getCollectionList();
+  } finally {
+
   }
 }
 
@@ -505,10 +531,10 @@ postNewCollection(Map<String, dynamic> payload) async {
   }
 }
 
-putEditCollection(Map<String, dynamic> payload, String id) async {
-  String url = 'https://api.pixivic.com/collections/$id';
+putEditCollection(Map<String, dynamic> payload, int collectionId) async {
+  String url = 'https://api.pixivic.com/collections/$collectionId';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
-  print(payload);
+  // print(payload);
   try {
     if (payload['tagList'] != null) {
       Response response = await Dio()
