@@ -533,7 +533,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
             color: Colors.blueGrey,
           ),
           onTap: () {
-            showAddToCollection(context, [widget._picData['id']]);
+            showAddToCollection(context, [widget._picData['id']], multiSelect: false);
           },
         ),
       ),
