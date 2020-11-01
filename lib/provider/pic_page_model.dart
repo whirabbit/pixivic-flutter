@@ -215,6 +215,8 @@ class PicPageModel with ChangeNotifier {
   // 初始化以及加载数据
   initAndLoadData() async {
     hasConnected = false;
+    currentPage = 1;
+    picList = [];
     notifyListeners();
 
     getJsonList().then((value) {
