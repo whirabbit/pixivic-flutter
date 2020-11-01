@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
+import 'package:lottie/lottie.dart';
 
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/data/common.dart';
@@ -70,7 +71,6 @@ class _CollectionPageState extends State<CollectionPage> {
   }
 
   Widget collectionCardCell(int index) {
-    // TODO: 003 若无画作则空的图片
 
     return Center(
         child: Selector<CollectionUserDataModel, Map>(
@@ -105,7 +105,7 @@ class _CollectionPageState extends State<CollectionPage> {
                         width: ScreenUtil().setWidth(292),
                         height: ScreenUtil().setWidth(156),
                         decoration: BoxDecoration(
-                            color: Colors.orange[100],
+                            color: Colors.blue[50],
                             borderRadius: BorderRadius.circular(
                                 ScreenUtil().setWidth(8))),
                         child: ClipRRect(
@@ -128,7 +128,10 @@ class _CollectionPageState extends State<CollectionPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Container(
-                              width: ScreenUtil().setWidth(107),
+                              constraints: BoxConstraints(
+                                  minWidth: ScreenUtil().setWidth(10),
+                                  maxWidth: ScreenUtil().setWidth(107)),
+                              // width: ScreenUtil().setWidth(107),
                               // height: ScreenUtil().setHeight(28),
                               child: Text(
                                 data['title'],
@@ -139,7 +142,10 @@ class _CollectionPageState extends State<CollectionPage> {
                               ),
                             ),
                             Container(
-                              width: ScreenUtil().setWidth(101),
+                              constraints: BoxConstraints(
+                                  minWidth: ScreenUtil().setWidth(10),
+                                  maxWidth: ScreenUtil().setWidth(131)),
+                              // width: ScreenUtil().setWidth(101),
                               // height: ScreenUtil().setHeight(18),
                               child: collectionTagViewer(data['tagList']),
                             ),
@@ -208,7 +214,10 @@ class _CollectionPageState extends State<CollectionPage> {
   }
 
   Widget collectionIllustCoverViewer(List coverList) {
-    if (coverList.length < 3) {
+    if (coverList == null) {
+      return Lottie.asset('image/empty-status.json',
+          repeat: true, height: ScreenUtil().setHeight(100));
+    } else if (coverList.length < 3) {
       return Image(
           fit: BoxFit.cover,
           image: AdvancedNetworkImage(

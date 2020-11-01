@@ -17,7 +17,8 @@ import '../data/texts.dart';
 import 'package:pixivic/provider/collection_model.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 
-showAddToCollection(BuildContext contextFrom, List selectedPicIdList) {
+showAddToCollection(BuildContext contextFrom, List selectedPicIdList,
+    {bool multiSelect = true}) {
   final screen = ScreenUtil();
   final texts = TextZhPicDetailPage();
 
@@ -87,7 +88,8 @@ showAddToCollection(BuildContext contextFrom, List selectedPicIdList) {
                                                 contextFrom,
                                                 selectedPicIdList,
                                                 tuple2.item1[index]['id']
-                                                    .toString())
+                                                    .toString(),
+                                                multiSelect)
                                             .then((value) {
                                           print('添加画作结果: $value');
                                           if (value)
@@ -468,8 +470,8 @@ showTagSelector(BuildContext context) async {
 }
 
 // 将选中画作添加到指定的画集中
-addIllustToCollection(
-    BuildContext contextFrom, List illustIdList, String collectionId) async {
+addIllustToCollection(BuildContext contextFrom, List illustIdList,
+    String collectionId, bool multiSelect) async {
   print('illustIdList: $illustIdList');
   String url =
       'https://api.pixivic.com/collections/$collectionId/illustrations';
@@ -484,7 +486,8 @@ addIllustToCollection(
     print(response.data);
     BotToast.showSimpleNotification(title: response.data['message']);
     // BotToast.showSimpleNotification(title: response.data['data'].toString());
-    Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
+    if (multiSelect)
+      Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
     Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
         .getCollectionList();
     return true;
@@ -579,18 +582,22 @@ deleteCollection(BuildContext contextFrom, String collectionId) {
                 },
                 child: Text(texts.deleteCollectionNo)),
             FlatButton(
-                onPressed: () async {
-                  try {
-                    await dioPixivic.delete('/collections/$collectionId');
-                    Provider.of<CollectionUserDataModel>(contextFrom,
-                            listen: false)
-                        .getCollectionList();
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
-                  } finally {}
-                },
-                child: Text(texts.deleteCollectionYes, style: TextStyle(color: Colors.red),),)
+              onPressed: () async {
+                try {
+                  await dioPixivic.delete('/collections/$collectionId');
+                  Provider.of<CollectionUserDataModel>(contextFrom,
+                          listen: false)
+                      .getCollectionList();
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                } finally {}
+              },
+              child: Text(
+                texts.deleteCollectionYes,
+                style: TextStyle(color: Colors.red),
+              ),
+            )
           ],
         );
       });
