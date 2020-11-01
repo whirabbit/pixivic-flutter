@@ -14,8 +14,8 @@ import 'package:pixivic/provider/collection_model.dart';
 // identity.dart 文件包含与用户身份验证相关的所有方法，例如登录，验证 auth 是否过期，注册等等
 
 // 缺少刷新流程
-login(BuildContext context, String userName, String pwd, String verificationCode,
-    String verificationInput,
+login(BuildContext context, String userName, String pwd,
+    String verificationCode, String verificationInput,
     {String widgetFrom}) async {
   String url =
       'https://api.pixivic.com/users/token?vid=$verificationCode&value=$verificationInput';
@@ -63,8 +63,7 @@ login(BuildContext context, String userName, String pwd, String verificationCode
     homePicList = [];
     homeCurrentPage = 1;
     // 加载用户的画集列表
-    Provider.of<CollectionUserDataModel>(context, listen: false)
-        .getCollectionList();
+    Provider.of<CollectionUserDataModel>(context, listen: false).getCollectionList();
   } else {
     // isLogin = false;
     BotToast.showSimpleNotification(

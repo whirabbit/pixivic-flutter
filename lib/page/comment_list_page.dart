@@ -125,7 +125,6 @@ class CommentListPage extends StatelessWidget {
                                           commentProvider.commentList.length,
                                       itemBuilder:
                                           (BuildContext context, int index) {
-                                        //TODO 解决参数传递问题
                                         return commentParentCell(
                                             commentList[index],
                                             context,

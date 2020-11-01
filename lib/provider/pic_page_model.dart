@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:provider/provider.dart';
+import 'package:vibration/vibration.dart';
 
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:pixivic/data/common.dart';
@@ -115,16 +116,18 @@ class PicPageModel with ChangeNotifier {
   handlePicIndexToSelectedList(int index) {
     if (onSelectedList.contains(index))
       onSelectedList.remove(index);
-    else
+    else {
       onSelectedList.add(index);
+    }
+
     notifyListeners();
   }
 
   List outputPicIdList() {
     print('onSelectedList: $onSelectedList');
     if (onSelectedList.length > 0)
-      return List.generate(
-          onSelectedList.length, (index) => picList[onSelectedList[index]]['id']);
+      return List.generate(onSelectedList.length,
+          (index) => picList[onSelectedList[index]]['id']);
     else
       return [];
   }

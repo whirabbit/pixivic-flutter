@@ -58,9 +58,7 @@ class _CollectionPageState extends State<CollectionPage> {
         return ListView.builder(
           itemCount: selfCollectionList.length,
           itemBuilder: (context, index) {
-            return collectionCardCell(
-                Provider.of<CollectionUserDataModel>(context)
-                    .userCollectionList[index]);
+            return collectionCardCell(index);
           },
         );
       }
@@ -71,121 +69,119 @@ class _CollectionPageState extends State<CollectionPage> {
     }
   }
 
-  Widget collectionCardCell(Map data) {
-    // TODO: 若无画作则空的图片
-    // TODO 003: 1、3、5的图画格分离
-    print(data);
+  Widget collectionCardCell(int index) {
+    // TODO: 003 若无画作则空的图片
+
     return Center(
-      child: Container(
-        width: ScreenUtil().setWidth(292),
-        height: ScreenUtil().setWidth(220),
-        margin: EdgeInsets.only(
-            bottom: ScreenUtil().setWidth(14), top: ScreenUtil().setWidth(19)),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                  blurRadius: 15,
-                  offset: Offset(2, 2),
-                  color: Color(0x73D1D9E6)),
-            ],
-            borderRadius: BorderRadius.circular(ScreenUtil().setWidth(8))),
-        child: GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    CollectionDetailPage(data['id'], data['title'])));
-          },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Container(
+        child: Selector<CollectionUserDataModel, Map>(
+            selector: (context, collectionUserDataModel) =>
+                collectionUserDataModel.userCollectionList[index],
+            builder: (context, data, _) {
+              return Container(
                 width: ScreenUtil().setWidth(292),
-                height: ScreenUtil().setWidth(156),
+                height: ScreenUtil().setWidth(220),
+                margin: EdgeInsets.only(
+                    bottom: ScreenUtil().setWidth(14),
+                    top: ScreenUtil().setWidth(19)),
                 decoration: BoxDecoration(
-                    color: Colors.orange[100],
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 15,
+                          offset: Offset(2, 2),
+                          color: Color(0x73D1D9E6)),
+                    ],
                     borderRadius:
                         BorderRadius.circular(ScreenUtil().setWidth(8))),
-                child: ClipRRect(
-                    clipBehavior: Clip.antiAlias,
-                    borderRadius: BorderRadius.all(
-                        Radius.circular(ScreenUtil().setWidth(8))),
-                    child: Image(
-                      image: AdvancedNetworkImage(
-                        data['cover'][0]['large'],
-                        useDiskCache: true,
-                        timeoutDuration: const Duration(seconds: 35),
-                        cacheRule: CacheRule(maxAge: const Duration(days: 7)),
-                        header: {'Referer': 'https://app-api.pixiv.net'},
-                      ),
-                      fit: BoxFit.cover,
-                    )),
-              ),
-              Container(
-                width: ScreenUtil().setWidth(269),
-                height: ScreenUtil().setWidth(28),
-                margin: EdgeInsets.only(
-                  top: ScreenUtil().setWidth(18),
-                  bottom: ScreenUtil().setWidth(18),
-                  left: ScreenUtil().setWidth(11),
-                  right: ScreenUtil().setWidth(12),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: ScreenUtil().setWidth(107),
-                      // height: ScreenUtil().setHeight(28),
-                      child: Text(
-                        data['title'],
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: ScreenUtil().setSp(14)),
-                      ),
-                    ),
-                    Container(
-                      width: ScreenUtil().setWidth(101),
-                      // height: ScreenUtil().setHeight(18),
-                      // TODO 002： 对标签个数、长度进行判断
-                      child: collectionTagViewer(data['tagList']),
-                    ),
-                    Container(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => CollectionDetailPage(index)));
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        width: ScreenUtil().setWidth(292),
+                        height: ScreenUtil().setWidth(156),
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              width: ScreenUtil().setWidth(2),
-                              color: Colors.grey[300]),
-                        ),
+                            color: Colors.orange[100],
+                            borderRadius: BorderRadius.circular(
+                                ScreenUtil().setWidth(8))),
                         child: ClipRRect(
                             clipBehavior: Clip.antiAlias,
                             borderRadius: BorderRadius.all(
-                                Radius.circular(ScreenUtil().setWidth(25))),
-                            child: AnimatedContainer(
-                              duration: Duration(milliseconds: 500),
-                              constraints: BoxConstraints(
-                                minHeight: ScreenUtil().setWidth(25),
-                                minWidth: ScreenUtil().setWidth(25),
+                                Radius.circular(ScreenUtil().setWidth(8))),
+                            child: collectionIllustCoverViewer(data['cover'])),
+                      ),
+                      Container(
+                        width: ScreenUtil().setWidth(269),
+                        height: ScreenUtil().setWidth(28),
+                        margin: EdgeInsets.only(
+                          top: ScreenUtil().setWidth(18),
+                          bottom: ScreenUtil().setWidth(18),
+                          left: ScreenUtil().setWidth(11),
+                          right: ScreenUtil().setWidth(12),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: ScreenUtil().setWidth(107),
+                              // height: ScreenUtil().setHeight(28),
+                              child: Text(
+                                data['title'],
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: ScreenUtil().setSp(14)),
                               ),
-                              child: Image(
-                                  image: AdvancedNetworkImage(
-                                prefs.getString('avatarLink'),
-                                useDiskCache: true,
-                                timeoutDuration: const Duration(seconds: 35),
-                                cacheRule:
-                                    CacheRule(maxAge: const Duration(days: 7)),
-                                header: {'referer': 'https://pixivic.com'},
-                              )),
-                            )))
-                  ],
+                            ),
+                            Container(
+                              width: ScreenUtil().setWidth(101),
+                              // height: ScreenUtil().setHeight(18),
+                              child: collectionTagViewer(data['tagList']),
+                            ),
+                            Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      width: ScreenUtil().setWidth(2),
+                                      color: Colors.grey[300]),
+                                ),
+                                child: ClipRRect(
+                                    clipBehavior: Clip.antiAlias,
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(
+                                            ScreenUtil().setWidth(25))),
+                                    child: AnimatedContainer(
+                                      duration: Duration(milliseconds: 500),
+                                      constraints: BoxConstraints(
+                                        minHeight: ScreenUtil().setWidth(25),
+                                        minWidth: ScreenUtil().setWidth(25),
+                                      ),
+                                      child: Image(
+                                          image: AdvancedNetworkImage(
+                                        prefs.getString('avatarLink'),
+                                        useDiskCache: true,
+                                        timeoutDuration:
+                                            const Duration(seconds: 35),
+                                        cacheRule: CacheRule(
+                                            maxAge: const Duration(days: 7)),
+                                        header: {
+                                          'referer': 'https://pixivic.com'
+                                        },
+                                      )),
+                                    )))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+              );
+            }));
   }
 
   Widget collectionTagViewer(List tagList) {
@@ -229,7 +225,7 @@ class _CollectionPageState extends State<CollectionPage> {
               left: 0,
               top: 0,
               width: ScreenUtil().setWidth(146),
-              height: ScreenUtil().setWidth(146),
+              height: ScreenUtil().setWidth(156),
               child: Image(
                   fit: BoxFit.cover,
                   image: AdvancedNetworkImage(
@@ -276,7 +272,7 @@ class _CollectionPageState extends State<CollectionPage> {
               left: 0,
               top: 0,
               width: ScreenUtil().setWidth(146),
-              height: ScreenUtil().setWidth(146),
+              height: ScreenUtil().setWidth(156),
               child: Image(
                   fit: BoxFit.cover,
                   image: AdvancedNetworkImage(
@@ -344,8 +340,9 @@ class _CollectionPageState extends State<CollectionPage> {
                   ))),
         ],
       );
+    } else {
+      return Container();
     }
-    // TODO: else no cover image
   }
 
   _viewerListener() {
