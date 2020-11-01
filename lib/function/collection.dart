@@ -2,6 +2,7 @@
 fxt0706 2020-08-20
 description: 文件封装了与画集有关的相关功能
 */
+
 import 'package:flutter/material.dart';
 
 import 'package:dio/dio.dart';
@@ -70,8 +71,8 @@ showAddToCollection(BuildContext contextFrom, List selectedPicIdList) {
                               )),
                           Container(
                             height: screen.setHeight(tuple2.item1.length <= 7
-                                ? screen.setHeight(40) * tuple2.item1.length
-                                : screen.setHeight(40) * 7),
+                                ? screen.setHeight(50) * tuple2.item1.length
+                                : screen.setHeight(50) * 7),
                             width: screen.setWidth(250),
                             child: ListView.builder(
                                 itemCount: tuple2.item1.length,
@@ -85,7 +86,8 @@ showAddToCollection(BuildContext contextFrom, List selectedPicIdList) {
                                         addIllustToCollection(
                                                 contextFrom,
                                                 selectedPicIdList,
-                                                tuple2.item1[index]['id'].toString())
+                                                tuple2.item1[index]['id']
+                                                    .toString())
                                             .then((value) {
                                           print('添加画作结果: $value');
                                           if (value)
@@ -188,6 +190,10 @@ showCollectionInfoEditDialog(
                             cursorColor: Colors.orange,
                             controller: title,
                             textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: ScreenUtil().setSp(13),
+                                color: Colors.grey[700]),
                             decoration: InputDecoration(
                               focusedBorder: UnderlineInputBorder(
                                   borderSide:
@@ -208,6 +214,10 @@ showCollectionInfoEditDialog(
                             maxLines: 3,
                             minLines: 1,
                             textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: ScreenUtil().setSp(11),
+                                color: Colors.grey[500]),
                             decoration: InputDecoration(
                               focusedBorder: UnderlineInputBorder(
                                   borderSide:
@@ -268,8 +278,33 @@ showCollectionInfoEditDialog(
                           onPressed: () {
                             showTagSelector(context);
                           },
-                          child: Text(texts.addTag),
+                          child: Text(
+                            texts.addTag,
+                            style: TextStyle(
+                                color: Colors.orange,
+                                fontWeight: FontWeight.w600),
+                          ),
                         ),
+                        isCreate
+                            ? Container()
+                            : FlatButton(
+                                shape: StadiumBorder(),
+                                onPressed: () {
+                                  deleteCollection(
+                                      context,
+                                      Provider.of<CollectionUserDataModel>(
+                                              context,
+                                              listen: false)
+                                          .userCollectionList[index]['id']
+                                          .toString());
+                                },
+                                child: Text(
+                                  texts.removeCollection,
+                                  style: TextStyle(
+                                      color: Colors.grey[400],
+                                      fontWeight: FontWeight.w300),
+                                ),
+                              ),
                       ],
                     ),
                   ),
@@ -327,7 +362,8 @@ showCollectionInfoEditDialog(
                               });
                             else {
                               payload['id'] = inputData['id'];
-                              putEditCollection(payload, inputData['id'])
+                              putEditCollection(
+                                      payload, inputData['id'].toString())
                                   .then((value) {
                                 if (value) {
                                   Provider.of<CollectionUserDataModel>(context,
@@ -473,10 +509,9 @@ setCollectionCover(
     BuildContext contextFrom, String collectionId, List illustIdList) async {
   try {
     print(illustIdList);
-    Response response = await dioPixivic.put('/collections/$collectionId/cover',
+    await dioPixivic.put('/collections/$collectionId/cover',
         data: illustIdList);
-    print(response.data);
-    BotToast.showSimpleNotification(title: response.data['message']);
+
     Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
     Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
         .getCollectionList();
@@ -486,17 +521,14 @@ setCollectionCover(
 removeIllustFromCollection(
     BuildContext contextFrom, String collectionId, List illustIdList) async {
   try {
-    Response response = await dioPixivic
-        .delete('/collections/$collectionId/illustrations', data: illustIdList);
-    print(response.data);
-    BotToast.showSimpleNotification(title: response.data['message']);
+    await dioPixivic.delete('/collections/$collectionId/illustrations',
+        data: illustIdList);
+
     Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
     Provider.of<PicPageModel>(contextFrom, listen: false).initAndLoadData();
     Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
         .getCollectionList();
-  } finally {
-
-  }
+  } finally {}
 }
 
 postNewCollection(Map<String, dynamic> payload) async {
@@ -531,7 +563,40 @@ postNewCollection(Map<String, dynamic> payload) async {
   }
 }
 
-putEditCollection(Map<String, dynamic> payload, int collectionId) async {
+deleteCollection(BuildContext contextFrom, String collectionId) {
+  final texts = TextZhPicDetailPage();
+
+  showDialog(
+      context: contextFrom,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(texts.deleteCollectionTitle),
+          content: Text(texts.deleteCollectionContent),
+          actions: [
+            FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(texts.deleteCollectionNo)),
+            FlatButton(
+                onPressed: () async {
+                  try {
+                    await dioPixivic.delete('/collections/$collectionId');
+                    Provider.of<CollectionUserDataModel>(contextFrom,
+                            listen: false)
+                        .getCollectionList();
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  } finally {}
+                },
+                child: Text(texts.deleteCollectionYes, style: TextStyle(color: Colors.red),),)
+          ],
+        );
+      });
+}
+
+putEditCollection(Map<String, dynamic> payload, String collectionId) async {
   String url = 'https://api.pixivic.com/collections/$collectionId';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
   // print(payload);
