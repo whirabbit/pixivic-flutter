@@ -259,7 +259,7 @@ class PicPage extends StatefulWidget {
 
 }
 
-// TODO： 005 画集的引导提示，移除之前的长按
+// TODO： 003 画集的引导提示，移除之前的长按
 class _PicPageState extends State<PicPage> {
   PicPageModel picPageModel;
 
