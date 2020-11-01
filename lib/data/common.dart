@@ -118,6 +118,8 @@ Future initData(BuildContext context) async {
     print(options.headers);
     return options;
   }, onResponse: (Response response) async {
+    print(response.data);
+    BotToast.showSimpleNotification(title: response.data['message']);
     return response;
   }, onError: (DioError e) async {
     if (e.response != null) {
