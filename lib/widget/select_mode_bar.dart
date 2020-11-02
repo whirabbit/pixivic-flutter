@@ -14,10 +14,10 @@ import 'package:pixivic/data/common.dart';
 enum SelectMode { normal, collection }
 
 class SelectModeBar extends StatelessWidget {
-
   final SelectMode selectMode;
+  final String collectionId;
 
-  SelectModeBar({this.selectMode = SelectMode.normal}) {
+  SelectModeBar({this.selectMode = SelectMode.normal, this.collectionId}) {
     print('SelectModeBar construct with ${this.selectMode}');
   }
 
@@ -132,7 +132,20 @@ class SelectModeBar extends StatelessWidget {
                                         .outputPicIdList());
                               break;
                             case 'removeFromCollection':
-                              BotToast.showSimpleNotification(title: '暂时不能用');
+                              removeIllustFromCollection(
+                                  context,
+                                  collectionId,
+                                  Provider.of<PicPageModel>(context,
+                                          listen: false)
+                                      .outputPicIdList());
+                              break;
+                            case 'setCover':
+                              setCollectionCover(
+                                  context,
+                                  collectionId,
+                                  Provider.of<PicPageModel>(context,
+                                          listen: false)
+                                      .outputPicIdList());
                               break;
                           }
                         },
@@ -163,8 +176,12 @@ class SelectModeBar extends StatelessWidget {
     else if (selectMode == SelectMode.collection)
       return <PopupMenuItem>[
         PopupMenuItem(
-          child: popupCell('移除图片', FontAwesomeIcons.solidBookmark),
+          child: popupCell('移除图片', FontAwesomeIcons.solidTrashAlt),
           value: 'removeFromCollection',
+        ),
+        PopupMenuItem(
+          child: popupCell('设为封面', FontAwesomeIcons.book),
+          value: 'setCover',
         ),
         PopupMenuItem(
           child: popupCell('退出多选', FontAwesomeIcons.doorOpen),
