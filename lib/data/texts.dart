@@ -78,6 +78,10 @@ class TextZhPicDetailPage {
   String alreadyCopied = '已拷贝id至剪贴板';
   String addToCollection = '添加至画集';
   String addFirstCollection = '添加您的第一个画集';
+  String deleteCollectionTitle = '删除当前画集';
+  String deleteCollectionContent = '画集删除后将无法恢复，请谨慎操作!';
+  String deleteCollectionYes = '删除';
+  String deleteCollectionNo = '取消';
 }
 
 class TextZhArtistPage {
@@ -201,8 +205,9 @@ class TextZhCollection {
   String isSexy = 'R16内容';
   String allowComment = '允许评论';
   String addTag = '添加标签';
+  String removeCollection = '移除画集';
   String createCollection = '创建画集';
-  String editCollection = '修改画集';
+  String editCollection = '提交修改';
   String needForTag = '请添加至少一个标签';
   String needForTitle = '请输入标题';
   String needForCaption = '请输入介绍';

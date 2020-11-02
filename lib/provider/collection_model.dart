@@ -176,7 +176,7 @@ class CollectionUserDataModel with ChangeNotifier {
       getCollectionList();
     }
   }
-
+  
   bool isUserCollectionListEmpty() {
     print(userCollectionList);
     if (userCollectionList.length == 0)

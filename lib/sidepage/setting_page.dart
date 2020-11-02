@@ -8,6 +8,7 @@ import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/sidepage/about_page.dart';
 
+//TODO： 004 画质细分
 class SettingPage extends StatefulWidget {
   @override
   _SettingPageState createState() => _SettingPageState();

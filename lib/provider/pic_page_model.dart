@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:provider/provider.dart';
-import 'package:vibration/vibration.dart';
 
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:pixivic/data/common.dart';
@@ -215,6 +214,8 @@ class PicPageModel with ChangeNotifier {
   // 初始化以及加载数据
   initAndLoadData() async {
     hasConnected = false;
+    currentPage = 1;
+    picList = [];
     notifyListeners();
 
     getJsonList().then((value) {

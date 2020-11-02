@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:provider/provider.dart';
+import 'package:dio/dio.dart';
+import 'package:bot_toast/bot_toast.dart';
 
 import '../page/new_page.dart';
 import '../page/user_page.dart';
@@ -22,6 +24,8 @@ SharedPreferences prefs;
 String tempVerificationCode;
 String tempVerificationImage;
 bool isLogin; // 记录登录状态（已登录，未登录）用于控制是否展示loginPage
+
+Dio dioPixivic;
 
 List<String> keywordsString = [
   'auth',
@@ -52,7 +56,6 @@ Future initData(BuildContext context) async {
 
   prefs = await SharedPreferences.getInstance();
   cacheSize = await DiskCache().cacheSize();
-  
 
   print('The disk usage for cache is $cacheSize');
   // 遍历所有key，对不存在的 key 进行 value 初始化
@@ -64,13 +67,13 @@ Future initData(BuildContext context) async {
   }
   for (var item in keywordsInt) {
     if (prefs.getInt(item) == null) {
-      if(item == 'sanityLevel')
+      if (item == 'sanityLevel')
         prefs.setInt(item, 3);
-      else if(item == 'previewRule')
+      else if (item == 'previewRule')
         prefs.setInt(item, 7);
-      else 
+      else
         prefs.setInt(item, 0);
-    } 
+    }
   }
   for (var item in keywordsBool) {
     if (prefs.getBool(item) == null) prefs.setBool(item, false);
@@ -89,13 +92,49 @@ Future initData(BuildContext context) async {
     });
   } else
     logout(context, isInit: true);
-  
-  if(prefs.getString('auth') != '') {
+
+  if (prefs.getString('auth') != '') {
     Provider.of<CollectionUserDataModel>(context, listen: false);
   }
 
-  if(prefs.getString('previewQuality') == '')
+  if (prefs.getString('previewQuality') == '')
     prefs.setString('previewQuality', 'medium');
+
+  // Dio 单例暂时放置于此
+  dioPixivic = Dio(BaseOptions(
+      baseUrl: 'https://api.pixivic.com',
+      connectTimeout: 150000,
+      receiveTimeout: 150000,
+      headers: prefs.getString('auth') == ''
+          ? {'Content-Type': 'application/json'}
+          : {
+              'authorization': prefs.getString('auth'),
+              'Content-Type': 'application/json'
+            }));
+
+  dioPixivic.interceptors
+      .add(InterceptorsWrapper(onRequest: (RequestOptions options) async {
+    print(options.uri);
+    print(options.headers);
+    return options;
+  }, onResponse: (Response response) async {
+    print(response.data);
+    BotToast.showSimpleNotification(title: response.data['message']);
+    return response;
+  }, onError: (DioError e) async {
+    if (e.response != null) {
+      BotToast.showSimpleNotification(title: e.response.data['message']);
+      print(e.response.statusCode);
+      print(e.response.data);
+      print(e.response.headers);
+      print(e.response.request);
+      return e;
+    } else {
+      // Something happened in setting up or sending the request that triggered an Error
+      BotToast.showSimpleNotification(title: e.message);
+      print(e.request);
+      print(e.message);
+      return e;
+    }
+  }));
 }
-
-

@@ -12,7 +12,6 @@ import 'package:pixivic/function/collection.dart';
 import 'package:pixivic/provider/collection_model.dart';
 
 // TODO: 001 scroller
-// TODO: 002 remove pic
 class CollectionDetailPage extends StatelessWidget {
   final int index;
 
