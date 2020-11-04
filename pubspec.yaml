@@ -40,20 +40,20 @@ dev_dependencies:
   url_launcher: ^5.4.2
   bot_toast: ^2.2.1
   provider: ^4.3.2+2
-  flutter_downloader: ^1.4.4
+  flutter_downloader: ^1.5.2
   path_provider: ^1.6.5
   permission_handler: '^4.4.0'
   shared_preferences: ^0.5.6+3
   font_awesome_flutter: ^8.10.0
   flutter_advanced_networkimage: ^0.7.0
   lottie: ^0.5.1
-  image_downloader: ^0.19.2
+  image_downloader: ^0.20.1
   flutter_launcher_icons: ^0.7.4
-  image_gallery_saver: ^1.2.2
+  image_gallery_saver: ^1.6.1
   dio: ^3.0.9
   open_file: ^3.0.1
   ota_update: ^2.3.0
-  file_picker: ^1.12.0
+  file_picker: ^1.13.3
   # tencent_kit: ^1.1.0
   flutter_bugly: ^0.2.8
   tuple: ^1.0.3
