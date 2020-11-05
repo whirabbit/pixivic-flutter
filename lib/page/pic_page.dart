@@ -37,6 +37,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.betweenEdgeOfScroller,
     this.isScrollable = true,
   });
 
@@ -55,6 +56,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.betweenEdgeOfScroller,
     this.isScrollable = true,
   });
 
@@ -72,6 +74,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     @required this.onPageTop,
     @required this.onPageStart,
+    this.betweenEdgeOfScroller,
     this.isScrollable = true,
   });
 
@@ -89,6 +92,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.betweenEdgeOfScroller,
     this.isScrollable = true,
   });
 
@@ -106,6 +110,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     @required this.onPageTop,
     @required this.onPageStart,
+    this.betweenEdgeOfScroller,
     this.isScrollable = true,
   });
 
@@ -123,6 +128,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.betweenEdgeOfScroller,
     this.isScrollable = true,
   });
 
@@ -140,6 +146,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.betweenEdgeOfScroller,
     this.isScrollable = true,
   });
 
@@ -157,6 +164,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.betweenEdgeOfScroller,
     this.isScrollable = true,
   });
 
@@ -174,6 +182,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.betweenEdgeOfScroller,
     this.isScrollable = true,
   });
 
@@ -191,6 +200,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.betweenEdgeOfScroller,
     this.isScrollable = true,
   });
 
@@ -208,6 +218,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.betweenEdgeOfScroller,
     this.isScrollable = true,
   });
 
@@ -225,6 +236,7 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
+    this.betweenEdgeOfScroller,
     this.isScrollable = true,
   });
 
@@ -250,6 +262,9 @@ class PicPage extends StatefulWidget {
 
   // related page 中，用户开始下滑
   final VoidCallback onPageStart;
+
+  final ValueChanged<double> betweenEdgeOfScroller;
+
 
 // pageModel.picList - 图片的JSON文件列表
 // picTotalNum - pageModel.picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
@@ -279,8 +294,10 @@ class _PicPageState extends State<PicPage> {
         onPageTop: widget.onPageTop,
         onPageStart: widget.onPageStart,
         onPageScrolling: widget.onPageScrolling,
+        betweenEdgeOfScroller: widget.betweenEdgeOfScroller,
         isManga: widget.isManga,
-        isScrollable: widget.isScrollable);
+        isScrollable: widget.isScrollable,
+        );
     super.initState();
   }
 

@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_screenutil/screenutil.dart';
 
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:pixivic/data/common.dart';
@@ -27,6 +28,7 @@ class PicPageModel with ChangeNotifier {
   ValueChanged<bool> onPageScrolling;
   VoidCallback onPageTop;
   VoidCallback onPageStart;
+  ValueChanged<double> betweenEdgeOfScroller;
 
   bool hasConnected = false;
   bool loadMoreAble = true;
@@ -40,24 +42,24 @@ class PicPageModel with ChangeNotifier {
   //用于共享 context 给 indexProvider
   BuildContext context;
 
-  PicPageModel({
-    this.context,
-    this.picDate,
-    this.picMode,
-    this.artistId,
-    this.spotlightId,
-    this.userId,
-    this.collectionId,
-    this.searchKeywords,
-    this.url,
-    this.jsonMode,
-    this.isManga = false,
-    this.isScrollable = true,
-    this.relatedId,
-    this.onPageScrolling,
-    this.onPageTop,
-    this.onPageStart,
-  }) {
+  PicPageModel(
+      {this.context,
+      this.picDate,
+      this.picMode,
+      this.artistId,
+      this.spotlightId,
+      this.userId,
+      this.collectionId,
+      this.searchKeywords,
+      this.url,
+      this.jsonMode,
+      this.isManga = false,
+      this.isScrollable = true,
+      this.relatedId,
+      this.onPageScrolling,
+      this.onPageTop,
+      this.onPageStart,
+      this.betweenEdgeOfScroller}) {
     print("PicPageModel cteated and init");
 
     // 清空或者初始化长按的选择列表
@@ -164,9 +166,19 @@ class PicPageModel with ChangeNotifier {
       }
     }
 
-    if (jsonMode == 'related' ||
-        jsonMode == 'artist' ||
-        jsonMode == 'userdetail') {
+    // if (jsonMode == 'related') {
+    //   double move = scrollController.position.extentBefore;
+    //   if (move > 0 && move <= ScreenUtil().setHeight(450)) if (scrollController
+    //           .position.userScrollDirection ==
+    //       ScrollDirection.reverse)
+    //     betweenEdgeOfScroller(move);
+    //   else if (scrollController.position.userScrollDirection ==
+    //       ScrollDirection.forward) betweenEdgeOfScroller(-move);
+    // }
+
+    if (
+        jsonMode == 'related' ||
+        jsonMode == 'artist' || jsonMode == 'userdetail') {
       if (scrollController.position.extentBefore == 0 &&
           scrollController.position.userScrollDirection ==
               ScrollDirection.forward) {
