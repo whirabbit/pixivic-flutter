@@ -250,7 +250,7 @@ class PicPage extends StatefulWidget {
     this.onPageStart,
     this.betweenEdgeOfScroller,
     this.isScrollable = true,
-    this.topWidget,
+    @required this.topWidget,
   });
 
   final String picDate;
@@ -347,49 +347,61 @@ class _PicPageState extends State<PicPage> {
   @override
   Widget build(BuildContext context) {
     print('build in PicPage');
+    final bool isSliver = ['collection', 'related'].contains(widget.jsonMode);
+
     return ChangeNotifierProvider<PicPageModel>.value(
-      value: picPageModel,
-      child: Selector<PicPageModel, Tuple2<List, bool>>(
-          selector: (BuildContext context, PicPageModel model) {
-        return Tuple2(model.picList, model.hasConnected);
-      }, builder: (context, tuple, _) {
-        print('PicPage Selector build with mode: ${widget.jsonMode}');
-        if (tuple.item1 == null && !tuple.item2) {
-          print('PicPage on waiting json response');
-          if (widget.jsonMode != 'collection')
-            return loadingBox();
-          else
-            return Column(
-              children: [
-                widget.topWidget,
-                loadingBox(isFullScreen: false),
-              ],
+        value: picPageModel,
+        child: Selector<PicPageModel, Tuple2<List, bool>>(
+            selector: (BuildContext context, PicPageModel model) {
+          return Tuple2(model.picList, model.hasConnected);
+        }, builder: (context, tuple, _) {
+          if (!isSliver) {
+            return Center(
+              child: stateChangeWidget(isSliver, tuple),
             );
-        } else if (tuple.item1 == null && tuple.item2) {
-          print('PicPage connected and got nothing');
-          if (widget.jsonMode != 'collection')
-            return nothingHereBox();
-          else
-            return Column(
-              children: [
-                widget.topWidget,
-                nothingHereBox(isFullScreen: false),
-              ],
-            );
-        } else {
-          print('PicPage connected and got illsut list');
-          return _waterFlow(tuple);
-        }
-      }),
-    );
+          } else {
+            return Stack(children: [
+              CustomScrollView(slivers: [
+                SliverToBoxAdapter(
+                  child: widget.topWidget,
+                ),
+                stateChangeWidget(isSliver, tuple),
+              ]),
+              selectBar(),
+            ]);
+          }
+        }));
   }
 
-  Widget _waterFlow(Tuple2 tuple) {
+  Widget stateChangeWidget(bool isSliver, Tuple2 tuple) {
+    print('PicPage Selector build with mode: ${widget.jsonMode}');
+    if (tuple.item1 == null && !tuple.item2) {
+      print('PicPage on waiting json response');
+      if (!isSliver)
+        return loadingBox();
+      else
+        return SliverToBoxAdapter(
+          child: loadingBox(isFullScreen: false),
+        );
+    } else if (tuple.item1 == null && tuple.item2) {
+      print('PicPage connected and got nothing');
+      if (!isSliver)
+        return nothingHereBox();
+      else
+        return SliverToBoxAdapter(
+          child: nothingHereBox(isFullScreen: false),
+        );
+    } else {
+      print('PicPage connected and got illsut list');
+      return _waterFlow(isSliver);
+    }
+  }
+
+  Widget _waterFlow(bool isSliver) {
     return Selector<PicPageModel, List>(
       selector: (BuildContext context, PicPageModel model) => model.picList,
       builder: (context, picList, _) {
-        print(picList.length);
-        if (widget.jsonMode != 'collection')
+        if (!isSliver)
           return Stack(children: <Widget>[
             Container(
                 padding: EdgeInsets.only(
@@ -415,32 +427,20 @@ class _PicPageState extends State<PicPage> {
             selectBar(),
           ]);
         else
-          return Stack(
-            children: [
-              CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: widget.topWidget,
-                  ),
-                  SliverWaterfallFlow.count(
-                    crossAxisCount: 2,
-                    viewportBuilder: (int firstIndex, int lastIndex) {
-                      if (lastIndex == picList.length - 1) {
-                        if (picPageModel.loadMoreAble) {
-                          print('viewportBuilder : at the list bottom, start to load');
-                          picPageModel.loadData();
-                        }
-                      }
-                    },
-                    children: List<Widget>.generate(
-                        picList.length,
-                        (index) => imageCell(
-                            picList[index], index, context, picPageModel)),
-                  )
-                ],
-              ),
-              selectBar(),
-            ],
+          return SliverWaterfallFlow.count(
+            crossAxisCount: 2,
+            viewportBuilder: (int firstIndex, int lastIndex) {
+              if (lastIndex == picList.length - 1) {
+                if (picPageModel.loadMoreAble) {
+                  print('viewportBuilder : at the list bottom, start to load');
+                  picPageModel.loadData();
+                }
+              }
+            },
+            children: List<Widget>.generate(
+                picList.length,
+                (index) =>
+                    imageCell(picList[index], index, context, picPageModel)),
           );
       },
     );
