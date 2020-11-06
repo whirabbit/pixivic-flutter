@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_screenutil/screenutil.dart';
+// import 'package:flutter_screenutil/screenutil.dart';
 
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:pixivic/data/common.dart';
