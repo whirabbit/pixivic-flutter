@@ -264,14 +264,14 @@ class PicPageModel with ChangeNotifier {
             'https://api.pixivic.com/illustrations?page=$currentPage&keyword=$searchKeywords&pageSize=10';
     } else if (jsonMode == 'related') {
       url =
-          'https://api.pixivic.com/illusts/$relatedId/related?page=$currentPage&pageSize=10';
+          'https://api.pixivic.com/illusts/$relatedId/related?page=$currentPage&pageSize=15';
     } else if (jsonMode == 'artist') {
       if (!isManga) {
         url =
-            'https://api.pixivic.com/artists/$artistId/illusts/illust?page=$currentPage&pageSize=10&maxSanityLevel=10';
+            'https://api.pixivic.com/artists/$artistId/illusts/illust?page=$currentPage&pageSize=15&maxSanityLevel=10';
       } else {
         url =
-            'https://api.pixivic.com/artists/$artistId/illusts/manga?page=$currentPage&pageSize=10&maxSanityLevel=10';
+            'https://api.pixivic.com/artists/$artistId/illusts/manga?page=$currentPage&pageSize=15&maxSanityLevel=10';
       }
     } else if (jsonMode == 'followed') {
       this.loadMoreAble = false;

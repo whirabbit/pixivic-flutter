@@ -7,7 +7,7 @@ import 'package:random_color/random_color.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:lottie/lottie.dart';
+// import 'package:lottie/lottie.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:provider/provider.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
@@ -79,7 +79,7 @@ class PicPage extends StatefulWidget {
     @required this.onPageStart,
     this.betweenEdgeOfScroller,
     this.isScrollable = true,
-    this.topWidget,
+    @required this.topWidget,
   });
 
   PicPage.search({
