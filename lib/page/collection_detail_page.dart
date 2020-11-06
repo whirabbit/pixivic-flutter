@@ -9,6 +9,7 @@ import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/function/collection.dart';
 import 'package:pixivic/provider/collection_model.dart';
+import 'package:pixivic/widget/select_mode_bar.dart';
 
 // TODO: 001 scroller
 class CollectionDetailPage extends StatelessWidget {
@@ -23,19 +24,17 @@ class CollectionDetailPage extends StatelessWidget {
             collectionUserDataModel.userCollectionList[index],
         builder: (context, basicData, _) {
           return Scaffold(
-            appBar: PappBar.collection(
-              title: basicData['title'],
-              collectionSetting: collectionSetting,
-            ),
-            body: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: collectionDetailBody(basicData),
+              appBar: PappBar.collection(
+                title: basicData['title'],
+                collectionSetting: collectionSetting,
+              ),
+              body: Container(
+                color: Colors.white,
+                child: PicPage.collection(
+                  collectionId: basicData['id'].toString(),
+                  topWidget: collectionDetailBody(basicData),
                 ),
-                PicPage.collection(collectionId: basicData['id'].toString())
-              ],
-            ),
-          );
+              ));
         });
   }
 
