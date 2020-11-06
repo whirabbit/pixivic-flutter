@@ -176,9 +176,9 @@ class PicPageModel with ChangeNotifier {
     //       ScrollDirection.forward) betweenEdgeOfScroller(-move);
     // }
 
-    if (
-        jsonMode == 'related' ||
-        jsonMode == 'artist' || jsonMode == 'userdetail') {
+    if (jsonMode == 'related' ||
+        jsonMode == 'artist' ||
+        jsonMode == 'userdetail') {
       if (scrollController.position.extentBefore == 0 &&
           scrollController.position.userScrollDirection ==
               ScrollDirection.forward) {
@@ -197,30 +197,7 @@ class PicPageModel with ChangeNotifier {
     // Auto Load
     if ((scrollController.position.extentAfter < 1200) &&
         (currentPage < 30) &&
-        loadMoreAble) {
-      print("Picpage: Load Data");
-      loadMoreAble = false;
-      currentPage++;
-      print('current page is $currentPage');
-      try {
-        getJsonList(currentPage: currentPage, loadMoreAble: loadMoreAble)
-            .then((value) {
-          if (value != null) {
-            picList = picList + value;
-            loadMoreAble = true;
-            notifyListeners();
-          }
-        });
-      } catch (err) {
-        print('=========getJsonList==========');
-        print(err);
-        print('==============================');
-        if (err.toString().contains('SocketException'))
-          BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
-        currentPage -= 1;
-        loadMoreAble = true;
-      }
-    }
+        loadMoreAble) loadData();
   }
 
   // 初始化以及加载数据
@@ -246,7 +223,34 @@ class PicPageModel with ChangeNotifier {
     });
   }
 
-  getJsonList({bool loadMoreAble, int currentPage = 1}) async {
+  loadData() {
+    print("Picpage Model: Load data start");
+    loadMoreAble = false;
+    currentPage++;
+    print('current page is $currentPage');
+    try {
+      getJsonList(currentPage: currentPage).then((value) {
+        // 如果不为空，则更新列表，且可继续加载
+        if (value != null) {
+          picList = picList + value;
+          loadMoreAble = true;
+          notifyListeners();
+        } else {
+          print("Picpage: Load data return end");
+        }
+      });
+    } catch (err) {
+      print('=========getJsonList==========');
+      print(err);
+      print('==============================');
+      if (err.toString().contains('SocketException'))
+        BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+      currentPage -= 1;
+      loadMoreAble = true;
+    }
+  }
+
+  getJsonList({int currentPage = 1}) async {
     // 获取所有的图片数据
     if (jsonMode == 'home') {
       url =
@@ -305,7 +309,7 @@ class PicPageModel with ChangeNotifier {
       }
     } else if (jsonMode == 'collection') {
       url =
-          'https://api.pixivic.com/collections/$collectionId/illustrations?page=$currentPage&pagesize=10';
+          'https://api.pixivic.com/collections/$collectionId/illustrations?page=$currentPage&pageSize=10';
     }
 
     // TODO: Dio 重做后更换为Dio

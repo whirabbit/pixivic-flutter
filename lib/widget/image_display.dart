@@ -235,7 +235,7 @@ class _BookMarkHeartState extends State<BookMarkHeart> {
   }
 }
 
-Widget nothingHereBox() {
+Widget nothingHereBox({bool isFullScreen}) {
   return Container(
     height: ScreenUtil().setHeight(576),
     width: ScreenUtil().setWidth(324),
@@ -260,13 +260,25 @@ Widget nothingHereBox() {
   );
 }
 
-Widget loadingBox() {
-  return Container(
-      height: ScreenUtil().setHeight(576),
-      width: ScreenUtil().setWidth(324),
-      alignment: Alignment.center,
-      color: Colors.white,
-      child: Center(
-        child: Lottie.asset('image/loading-box.json'),
-      ));
+Widget loadingBox({bool isFullScreen = true}) {
+  if (isFullScreen)
+    return Container(
+        height: ScreenUtil().setHeight(576),
+        width: ScreenUtil().setWidth(324),
+        alignment: Alignment.center,
+        color: Colors.white,
+        child: Center(
+          child: Lottie.asset('image/loading-box.json'),
+        ));
+  else 
+   return Center(
+     child: Container(
+          // height: ScreenUtil().setHeight(576),
+          // width: ScreenUtil().setWidth(324),
+          alignment: Alignment.center,
+          color: Colors.white,
+          child: Center(
+            child: Lottie.asset('image/loading-box.json'),
+          )),
+   );
 }
