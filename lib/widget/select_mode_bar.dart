@@ -34,7 +34,7 @@ class SelectModeBar extends StatelessWidget {
       shouldRebuild: (preTuple, nextTuple) {
         if (!preTuple.item1 & nextTuple.item1) {
           Vibration.hasCustomVibrationsSupport().then((value) {
-            Vibration.vibrate(duration: 50);
+            Vibration.vibrate(duration: 10);
           });
         }
         if (preTuple.item1 != nextTuple.item1 ||
