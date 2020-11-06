@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 
-
 import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/data/common.dart';
@@ -28,7 +27,14 @@ class CollectionDetailPage extends StatelessWidget {
               title: basicData['title'],
               collectionSetting: collectionSetting,
             ),
-            body: collectionDetailBody(basicData),
+            body: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: collectionDetailBody(basicData),
+                ),
+                PicPage.collection(collectionId: basicData['id'].toString())
+              ],
+            ),
           );
         });
   }
@@ -114,10 +120,10 @@ class CollectionDetailPage extends StatelessWidget {
                 children: List.generate(basicData['tagList'].length,
                     (index) => tagLink(basicData['tagList'][index]['tagName'])),
               )),
-          Flexible(
-            // constraints: BoxConstraints(maxHeight: screen.setHeight(360),),
-            child: PicPage.collection(collectionId: basicData['id'].toString()),
-          )
+          // Flexible(
+          //   // constraints: BoxConstraints(maxHeight: screen.setHeight(360),),
+          //   child: PicPage.collection(collectionId: basicData['id'].toString()),
+          // )
         ],
       ),
     );
@@ -137,7 +143,6 @@ class CollectionDetailPage extends StatelessWidget {
 
   collectionSetting(BuildContext context) {
     print('collectionSetting 竟然在执行');
-    showCollectionInfoEditDialog(context,
-        isCreate: false, index: index);
+    showCollectionInfoEditDialog(context, isCreate: false, index: index);
   }
 }
