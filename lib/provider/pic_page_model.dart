@@ -227,7 +227,7 @@ class PicPageModel with ChangeNotifier {
   initAndLoadData() async {
     hasConnected = false;
     currentPage = 1;
-    picList = [];
+    picList = null;
     notifyListeners();
 
     getJsonList().then((value) {
