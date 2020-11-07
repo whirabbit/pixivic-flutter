@@ -176,7 +176,7 @@ class PicPageModel with ChangeNotifier {
     //       ScrollDirection.forward) betweenEdgeOfScroller(-move);
     // }
 
-    if (jsonMode == 'related' ||
+    if (
         jsonMode == 'artist' ||
         jsonMode == 'userdetail') {
       if (scrollController.position.extentBefore == 0 &&
@@ -195,9 +195,9 @@ class PicPageModel with ChangeNotifier {
     }
 
     // Auto Load
-    if ((scrollController.position.extentAfter < 1200) &&
-        (currentPage < 30) &&
-        loadMoreAble) loadData();
+    // if ((scrollController.position.extentAfter < 1200) &&
+    //     (currentPage < 30) &&
+    //     loadMoreAble) loadData();
   }
 
   // 初始化以及加载数据
