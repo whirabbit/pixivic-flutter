@@ -393,11 +393,11 @@ class _PicPageState extends State<PicPage> {
         );
     } else {
       print('PicPage connected and got illsut list');
-      return _waterFlow(isSliver);
+      return waterFlow(isSliver);
     }
   }
 
-  Widget _waterFlow(bool isSliver) {
+  Widget waterFlow(bool isSliver) {
     return Selector<PicPageModel, List>(
       selector: (BuildContext context, PicPageModel model) => model.picList,
       builder: (context, picList, _) {
@@ -422,6 +422,15 @@ class _PicPageState extends State<PicPage> {
                   gridDelegate:
                       SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
+                    viewportBuilder: (int firstIndex, int lastIndex) {
+                      if (lastIndex == picList.length - 1) {
+                        if (picPageModel.loadMoreAble) {
+                          print(
+                              'viewportBuilder : at the list bottom, start to load');
+                          picPageModel.loadData();
+                        }
+                      }
+                    },
                   ),
                 )),
             selectBar(),
