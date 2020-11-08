@@ -7,7 +7,7 @@ import 'package:random_color/random_color.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:lottie/lottie.dart';
+// import 'package:lottie/lottie.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:provider/provider.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
@@ -17,6 +17,7 @@ import 'package:pixivic/data/common.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/widget/markheart_icon.dart';
 import 'package:pixivic/widget/select_mode_bar.dart';
+import 'package:pixivic/widget/image_display.dart';
 
 // 可以作为页面中单个组件或者单独页面使用的pic瀑布流组件,因可以作为页面，故不归为widget
 class PicPage extends StatefulWidget {
@@ -39,6 +40,7 @@ class PicPage extends StatefulWidget {
     this.onPageStart,
     this.betweenEdgeOfScroller,
     this.isScrollable = true,
+    this.topWidget,
   });
 
   PicPage.home({
@@ -58,6 +60,7 @@ class PicPage extends StatefulWidget {
     this.onPageStart,
     this.betweenEdgeOfScroller,
     this.isScrollable = true,
+    this.topWidget,
   });
 
   PicPage.related({
@@ -76,6 +79,7 @@ class PicPage extends StatefulWidget {
     @required this.onPageStart,
     this.betweenEdgeOfScroller,
     this.isScrollable = true,
+    @required this.topWidget,
   });
 
   PicPage.search({
@@ -94,6 +98,7 @@ class PicPage extends StatefulWidget {
     this.onPageStart,
     this.betweenEdgeOfScroller,
     this.isScrollable = true,
+    this.topWidget,
   });
 
   PicPage.artist({
@@ -112,6 +117,7 @@ class PicPage extends StatefulWidget {
     @required this.onPageStart,
     this.betweenEdgeOfScroller,
     this.isScrollable = true,
+    this.topWidget,
   });
 
   PicPage.followed({
@@ -130,6 +136,7 @@ class PicPage extends StatefulWidget {
     this.onPageStart,
     this.betweenEdgeOfScroller,
     this.isScrollable = true,
+    this.topWidget,
   });
 
   PicPage.bookmark({
@@ -148,6 +155,7 @@ class PicPage extends StatefulWidget {
     this.onPageStart,
     this.betweenEdgeOfScroller,
     this.isScrollable = true,
+    this.topWidget,
   });
 
   PicPage.spotlight({
@@ -166,6 +174,7 @@ class PicPage extends StatefulWidget {
     this.onPageStart,
     this.betweenEdgeOfScroller,
     this.isScrollable = true,
+    this.topWidget,
   });
 
   PicPage.history({
@@ -184,6 +193,7 @@ class PicPage extends StatefulWidget {
     this.onPageStart,
     this.betweenEdgeOfScroller,
     this.isScrollable = true,
+    this.topWidget,
   });
 
   PicPage.oldHistory({
@@ -202,6 +212,7 @@ class PicPage extends StatefulWidget {
     this.onPageStart,
     this.betweenEdgeOfScroller,
     this.isScrollable = true,
+    this.topWidget,
   });
 
   PicPage.userdetail({
@@ -220,6 +231,7 @@ class PicPage extends StatefulWidget {
     this.onPageStart,
     this.betweenEdgeOfScroller,
     this.isScrollable = true,
+    this.topWidget,
   });
 
   PicPage.collection({
@@ -238,6 +250,7 @@ class PicPage extends StatefulWidget {
     this.onPageStart,
     this.betweenEdgeOfScroller,
     this.isScrollable = true,
+    @required this.topWidget,
   });
 
   final String picDate;
@@ -263,8 +276,10 @@ class PicPage extends StatefulWidget {
   // related page 中，用户开始下滑
   final VoidCallback onPageStart;
 
+  // bad try: 尝试衔接两个 scroller 的方法
   final ValueChanged<double> betweenEdgeOfScroller;
 
+  final Widget topWidget;
 
 // pageModel.picList - 图片的JSON文件列表
 // picTotalNum - pageModel.picList 中项目的总数（非图片总数，因为单个项目有可能有多个图片）
@@ -281,23 +296,23 @@ class _PicPageState extends State<PicPage> {
   @override
   void initState() {
     picPageModel = PicPageModel(
-        context: context,
-        jsonMode: widget.jsonMode,
-        picMode: widget.picMode,
-        picDate: widget.picDate,
-        userId: widget.userId,
-        spotlightId: widget.spotlightId,
-        relatedId: widget.relatedId,
-        collectionId: widget.collectionId,
-        artistId: widget.artistId,
-        searchKeywords: widget.searchKeywords,
-        onPageTop: widget.onPageTop,
-        onPageStart: widget.onPageStart,
-        onPageScrolling: widget.onPageScrolling,
-        betweenEdgeOfScroller: widget.betweenEdgeOfScroller,
-        isManga: widget.isManga,
-        isScrollable: widget.isScrollable,
-        );
+      context: context,
+      jsonMode: widget.jsonMode,
+      picMode: widget.picMode,
+      picDate: widget.picDate,
+      userId: widget.userId,
+      spotlightId: widget.spotlightId,
+      relatedId: widget.relatedId,
+      collectionId: widget.collectionId,
+      artistId: widget.artistId,
+      searchKeywords: widget.searchKeywords,
+      onPageTop: widget.onPageTop,
+      onPageStart: widget.onPageStart,
+      onPageScrolling: widget.onPageScrolling,
+      betweenEdgeOfScroller: widget.betweenEdgeOfScroller,
+      isManga: widget.isManga,
+      isScrollable: widget.isScrollable,
+    );
     super.initState();
   }
 
@@ -332,46 +347,61 @@ class _PicPageState extends State<PicPage> {
   @override
   Widget build(BuildContext context) {
     print('build in PicPage');
+    final bool isSliver = ['collection', 'related'].contains(widget.jsonMode);
+
     return ChangeNotifierProvider<PicPageModel>.value(
-      value: picPageModel,
-      child: Selector<PicPageModel, Tuple2<List, bool>>(
-          selector: (BuildContext context, PicPageModel provider) {
-        return Tuple2(provider.picList, provider.hasConnected);
-      }, builder: (context, tuple, _) {
-        print('PicPage Selector build with mode: ${widget.jsonMode}');
-        if (tuple.item1 == null && !tuple.item2) {
-          return Container(
-              height: ScreenUtil().setHeight(576),
-              width: ScreenUtil().setWidth(324),
-              alignment: Alignment.center,
-              color: Colors.white,
-              child: Center(
-                child: Lottie.asset('image/loading-box.json'),
-              ));
-        } else if (tuple.item1 == null && tuple.item2) {
-          return Container(
-            height: ScreenUtil().setHeight(576),
-            width: ScreenUtil().setWidth(324),
-            color: Colors.white,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Lottie.asset('image/empty-box.json',
-                    repeat: false, height: ScreenUtil().setHeight(100)),
-                Text(
-                  '这里什么都没有呢',
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: ScreenUtil().setHeight(10),
-                      decoration: TextDecoration.none),
+        value: picPageModel,
+        child: Selector<PicPageModel, Tuple2<List, bool>>(
+            selector: (BuildContext context, PicPageModel model) {
+          return Tuple2(model.picList, model.hasConnected);
+        }, builder: (context, tuple, _) {
+          if (!isSliver) {
+            return Center(
+              child: stateChangeWidget(isSliver, tuple),
+            );
+          } else {
+            return Stack(children: [
+              CustomScrollView(slivers: [
+                SliverToBoxAdapter(
+                  child: widget.topWidget,
                 ),
-                SizedBox(
-                  height: ScreenUtil().setHeight(250),
-                )
-              ],
-            ),
-          );
-        } else {
+                stateChangeWidget(isSliver, tuple),
+              ]),
+              selectBar(),
+            ]);
+          }
+        }));
+  }
+
+  Widget stateChangeWidget(bool isSliver, Tuple2 tuple) {
+    print('PicPage Selector build with mode: ${widget.jsonMode}');
+    if (tuple.item1 == null && !tuple.item2) {
+      print('PicPage on waiting json response');
+      if (!isSliver)
+        return loadingBox();
+      else
+        return SliverToBoxAdapter(
+          child: loadingBox(isFullScreen: false),
+        );
+    } else if (tuple.item1 == null && tuple.item2) {
+      print('PicPage connected and got nothing');
+      if (!isSliver)
+        return nothingHereBox();
+      else
+        return SliverToBoxAdapter(
+          child: nothingHereBox(isFullScreen: false),
+        );
+    } else {
+      print('PicPage connected and got illsut list');
+      return waterFlow(isSliver);
+    }
+  }
+
+  Widget waterFlow(bool isSliver) {
+    return Selector<PicPageModel, List>(
+      selector: (BuildContext context, PicPageModel model) => model.picList,
+      builder: (context, picList, _) {
+        if (!isSliver)
           return Stack(children: <Widget>[
             Container(
                 padding: EdgeInsets.only(
@@ -384,26 +414,54 @@ class _PicPageState extends State<PicPage> {
                   physics: picPageModel.isScrollable
                       ? ClampingScrollPhysics()
                       : NeverScrollableScrollPhysics(),
-                  itemCount: tuple.item1.length,
+                  itemCount: picList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return imageCell(
-                        tuple.item1[index], index, context, picPageModel);
+                        picList[index], index, context, picPageModel);
                   },
                   gridDelegate:
                       SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
+                    viewportBuilder: (int firstIndex, int lastIndex) {
+                      if (lastIndex == picList.length - 1) {
+                        if (picPageModel.loadMoreAble) {
+                          print(
+                              'viewportBuilder : at the list bottom, start to load');
+                          picPageModel.loadData();
+                        }
+                      }
+                    },
                   ),
                 )),
-            widget.jsonMode == 'collection'
-                ? SelectModeBar(
-                    selectMode: SelectMode.collection,
-                    collectionId: widget.collectionId,
-                  )
-                : SelectModeBar(),
+            selectBar(),
           ]);
-        }
-      }),
+        else
+          return SliverWaterfallFlow.count(
+            crossAxisCount: 2,
+            viewportBuilder: (int firstIndex, int lastIndex) {
+              if (lastIndex == picList.length - 1) {
+                if (picPageModel.loadMoreAble) {
+                  print('viewportBuilder : at the list bottom, start to load');
+                  picPageModel.loadData();
+                }
+              }
+            },
+            children: List<Widget>.generate(
+                picList.length,
+                (index) =>
+                    imageCell(picList[index], index, context, picPageModel)),
+          );
+      },
     );
+  }
+
+  Widget selectBar() {
+    return widget.jsonMode == 'collection'
+        ? SelectModeBar(
+            selectMode: SelectMode.collection,
+            collectionId: widget.collectionId,
+          )
+        : SelectModeBar();
   }
 
   List _picMainParameter(Map picItem) {

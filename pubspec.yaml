@@ -47,7 +47,7 @@ dev_dependencies:
   font_awesome_flutter: ^8.10.0
   flutter_advanced_networkimage: ^0.7.0
   lottie: ^0.5.1
-  image_downloader: ^0.19.2
+  image_downloader: ^0.20.1
   flutter_launcher_icons: ^0.7.4
   image_gallery_saver: ^1.2.2
   dio: ^3.0.9
