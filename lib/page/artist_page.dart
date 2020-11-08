@@ -70,156 +70,156 @@ class _ArtistPageState extends State<ArtistPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: pappBar,
-      body: !isDataLoaded
-          ? Container(
-              padding: EdgeInsets.only(top: ScreenUtil().setHeight(30)),
-              alignment: Alignment.center,
-              color: Colors.white,
-              child: Center(
-                child: Column(
-                  children: <Widget>[
-                    Hero(
-                      tag: widget.artistAvatar,
-                      child: CircleAvatar(
-                        backgroundImage: AdvancedNetworkImage(
-                          widget.artistAvatar,
-                          header: {'Referer': 'https://app-api.pixiv.net'},
-                          useDiskCache: true,
-                          cacheRule: CacheRule(
-                              maxAge:
-                                  Duration(days: prefs.getInt('previewRule'))),
-                        ),
+      body: artistPageBody(),
+    );
+  }
+
+  Widget artistPageBody() {
+    return !isDataLoaded
+        ? Container(
+            padding: EdgeInsets.only(top: ScreenUtil().setHeight(30)),
+            alignment: Alignment.center,
+            color: Colors.white,
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  Hero(
+                    tag: widget.artistAvatar,
+                    child: CircleAvatar(
+                      backgroundImage: AdvancedNetworkImage(
+                        widget.artistAvatar,
+                        header: {'Referer': 'https://app-api.pixiv.net'},
+                        useDiskCache: true,
+                        cacheRule: CacheRule(
+                            maxAge:
+                                Duration(days: prefs.getInt('previewRule'))),
                       ),
                     ),
-                    Lottie.asset('image/loading-box.json'),
-                  ],
-                ),
-              ))
-          : Container(
-              color: Colors.white,
-              child: ListView(
-                controller: scrollController,
-                shrinkWrap: true,
-                children: <Widget>[
-                  // 头像、名称、关注按钮
-                  Container(
-                      padding: EdgeInsets.all(ScreenUtil().setHeight(10)),
-                      margin: EdgeInsets.all(ScreenUtil().setHeight(20)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Hero(
-                            tag: widget.artistAvatar,
-                            child: CircleAvatar(
-                              backgroundImage: AdvancedNetworkImage(
-                                widget.artistAvatar,
-                                header: {
-                                  'Referer': 'https://app-api.pixiv.net'
-                                },
-                                useDiskCache: true,
-                                cacheRule: CacheRule(
-                                    maxAge: Duration(
-                                        days: prefs.getInt('previewRule'))),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(20),
-                          ),
-                          Text(
-                            widget.artistName,
-                            style: normalTextStyle,
-                          ),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(10),
-                          ),
-                          GestureDetector(
-                            child: Text('ID:${widget.artistId}',
-                                style: smallTextStyle),
-                            onLongPress: () {
-                              Clipboard.setData(ClipboardData(
-                                  text: widget.artistId.toString()));
-                              BotToast.showSimpleNotification(
-                                  title: texts.alreadyCopied);
-                            },
-                          ),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(25),
-                          ),
-                          loginState ? _subscribeButton() : Container(),
-                        ],
-                      )),
-                  // 个人网站和 Twitter
-                  Container(
-                    padding: EdgeInsets.all(ScreenUtil().setHeight(0)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        GestureDetector(
-                            onTap: () async {
-                              if (await canLaunch(urlWebPage)) {
-                                await launch(urlWebPage);
-                              } else {
-                                BotToast.showSimpleNotification(
-                                    title: '唤起网页失败');
-                                throw 'Could not launch $urlWebPage';
-                              }
-                            },
-                            child: FaIcon(
-                              FontAwesomeIcons.home,
-                              color: Colors.blue,
-                            )),
-                        SizedBox(
-                          width: ScreenUtil().setWidth(8),
-                        ),
-                        GestureDetector(
-                            onTap: () async {
-                              if (await canLaunch(urlTwitter)) {
-                                await launch(urlTwitter);
-                              } else {
-                                BotToast.showSimpleNotification(
-                                    title: '唤起网页失败');
-                                throw 'Could not launch $urlTwitter';
-                              }
-                            },
-                            child: FaIcon(
-                              FontAwesomeIcons.twitterSquare,
-                              color: Colors.blue,
-                            ))
-                      ],
-                    ),
                   ),
-                  // 关注人数
-                  Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(ScreenUtil().setHeight(10)),
-                    child: (Text(
-                      '$numOfFollower 关注',
-                      style: smallTextStyle,
-                    )),
-                  ),
-                  // 简介
-                  Container(
-                    margin: EdgeInsets.all(ScreenUtil().setHeight(20)),
-                    child: Wrap(
-                      children: <Widget>[
-                        Text(
-                          '$comment',
-                          style: smallTextStyle,
-                        ),
-                      ],
-                    ),
-                  ),
-                  // 相关图片
-                  Container(
-                    height: ScreenUtil().setHeight(521),
-                    width: ScreenUtil().setWidth(324),
-                    child: _tabViewer(),
-                  )
+                  Lottie.asset('image/loading-box.json'),
                 ],
               ),
+            ))
+        : Container(
+            color: Colors.white,
+            child: ListView(
+              controller: scrollController,
+              shrinkWrap: true,
+              children: <Widget>[
+                // 头像、名称、关注按钮
+                Container(
+                    padding: EdgeInsets.all(ScreenUtil().setHeight(10)),
+                    margin: EdgeInsets.all(ScreenUtil().setHeight(20)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Hero(
+                          tag: widget.artistAvatar,
+                          child: CircleAvatar(
+                            backgroundImage: AdvancedNetworkImage(
+                              widget.artistAvatar,
+                              header: {'Referer': 'https://app-api.pixiv.net'},
+                              useDiskCache: true,
+                              cacheRule: CacheRule(
+                                  maxAge: Duration(
+                                      days: prefs.getInt('previewRule'))),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: ScreenUtil().setHeight(20),
+                        ),
+                        Text(
+                          widget.artistName,
+                          style: normalTextStyle,
+                        ),
+                        SizedBox(
+                          height: ScreenUtil().setHeight(10),
+                        ),
+                        GestureDetector(
+                          child: Text('ID:${widget.artistId}',
+                              style: smallTextStyle),
+                          onLongPress: () {
+                            Clipboard.setData(ClipboardData(
+                                text: widget.artistId.toString()));
+                            BotToast.showSimpleNotification(
+                                title: texts.alreadyCopied);
+                          },
+                        ),
+                        SizedBox(
+                          height: ScreenUtil().setHeight(25),
+                        ),
+                        loginState ? _subscribeButton() : Container(),
+                      ],
+                    )),
+                // 个人网站和 Twitter
+                Container(
+                  padding: EdgeInsets.all(ScreenUtil().setHeight(0)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      GestureDetector(
+                          onTap: () async {
+                            if (await canLaunch(urlWebPage)) {
+                              await launch(urlWebPage);
+                            } else {
+                              BotToast.showSimpleNotification(title: '唤起网页失败');
+                              throw 'Could not launch $urlWebPage';
+                            }
+                          },
+                          child: FaIcon(
+                            FontAwesomeIcons.home,
+                            color: Colors.blue,
+                          )),
+                      SizedBox(
+                        width: ScreenUtil().setWidth(8),
+                      ),
+                      GestureDetector(
+                          onTap: () async {
+                            if (await canLaunch(urlTwitter)) {
+                              await launch(urlTwitter);
+                            } else {
+                              BotToast.showSimpleNotification(title: '唤起网页失败');
+                              throw 'Could not launch $urlTwitter';
+                            }
+                          },
+                          child: FaIcon(
+                            FontAwesomeIcons.twitterSquare,
+                            color: Colors.blue,
+                          ))
+                    ],
+                  ),
+                ),
+                // 关注人数
+                Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(ScreenUtil().setHeight(10)),
+                  child: (Text(
+                    '$numOfFollower 关注',
+                    style: smallTextStyle,
+                  )),
+                ),
+                // 简介
+                Container(
+                  margin: EdgeInsets.all(ScreenUtil().setHeight(20)),
+                  child: Wrap(
+                    children: <Widget>[
+                      Text(
+                        '$comment',
+                        style: smallTextStyle,
+                      ),
+                    ],
+                  ),
+                ),
+                // 相关图片
+                Container(
+                  height: ScreenUtil().setHeight(521),
+                  width: ScreenUtil().setWidth(324),
+                  child: _tabViewer(),
+                )
+              ],
             ),
-    );
+          );
   }
 
   _loadArtistData() async {
