@@ -9,6 +9,7 @@ import 'package:pixivic/provider/comment_list_model.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/page/user_detail_page.dart';
+import 'package:pixivic/widget/meme_box.dart';
 
 class CommentListPage extends StatelessWidget {
   CommentListPage(
@@ -139,6 +140,12 @@ class CommentListPage extends StatelessWidget {
                       right: 0.0,
                       child: bottomCommentBar(commentProvider),
                     ),
+                    Positioned(
+                      bottom: 0.0,
+                      left: 0.0,
+                      right: 0.0,
+                      child: MemeBox(),
+                    )
                   ],
                 ),
               );
@@ -157,6 +164,14 @@ class CommentListPage extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
+          // Material(
+          //   child: InkWell(
+          //     child: FaIcon(FontAwesomeIcons.paperPlane),
+          //     onTap: () {
+          //       commentProvider.reply();
+          //     },
+          //   ),
+          // ),
           Container(
               width: ScreenUtil().setWidth(260),
               height: ScreenUtil().setHeight(25),
