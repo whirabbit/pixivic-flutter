@@ -139,13 +139,12 @@ class _CommentCellState extends State<CommentCell> {
                         style: TextStyle(fontSize: 12),
                       ),
                       Container(
-                        width: ScreenUtil().setWidth(235),
-                        child: Text(
-                          commentJsonData[0]['content'],
-                          style:
-                              TextStyle(color: Colors.grey[600], fontSize: 12),
-                        ),
-                      ),
+                          width: ScreenUtil().setWidth(235),
+                          alignment: Alignment.centerLeft,
+                          child: commentContentDisplay(
+                            context,
+                            commentJsonData[0]['content'],
+                          )),
                       Container(
                         padding: EdgeInsets.only(
                           top: ScreenUtil().setHeight(4),
@@ -232,6 +231,29 @@ class _CommentCellState extends State<CommentCell> {
         ],
       ),
     );
+  }
+
+  Widget commentContentDisplay(BuildContext context, String content) {
+    if (content[0] == '[' &&
+        content[content.length - 1] == ']' &&
+        content.contains('_:')) {
+      String memeStr = content.substring(1, content.length - 1).split('_')[1];
+      String memeId = memeStr.substring(1, memeStr.length - 1);
+      String memeHead = memeId.split('-')[0];
+      print(memeHead);
+      print(memeId);
+      return Container(
+        width: ScreenUtil().setWidth(30),
+        height: ScreenUtil().setWidth(30),
+        child: Image(image: AssetImage('image/meme/$memeHead/$memeId.webp')),
+      );
+    } else {
+      return Text(
+        content,
+        softWrap: true,
+        style: TextStyle(color: Colors.grey[600], fontSize: 12),
+      );
+    }
   }
 
   _loadCommentData() async {
