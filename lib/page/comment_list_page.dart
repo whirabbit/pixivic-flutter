@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'package:pixivic/provider/comment_list_model.dart';
+import 'package:pixivic/provider/meme_model.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/page/user_detail_page.dart';
@@ -77,7 +78,7 @@ class CommentListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        //收键盘
+        //键盘移除焦点
         FocusScope.of(context).requestFocus(FocusNode());
 //        FocusScopeNode currentFocus = FocusScope.of(context);
 //
@@ -213,6 +214,7 @@ class CommentListPage extends StatelessWidget {
     );
   }
 
+  // 单条回复
   Widget commentParentCell(
       Map commentAllData, BuildContext context, commentProvider) {
     bool hasSub = commentAllData['subCommentList'] == null ? false : true;
@@ -246,6 +248,7 @@ class CommentListPage extends StatelessWidget {
         ));
   }
 
+  // 楼中楼
   Widget commentSubCell(
       Map commentEachSubData, BuildContext context, commentProvider) {
     return Container(
@@ -255,8 +258,10 @@ class CommentListPage extends StatelessWidget {
     );
   }
 
+  // 基础的展示条
   Widget commentBaseCell(Map data, BuildContext context, commentProvider) {
-    String avaterUrl = 'https://static.pixivic.net/avatar/299x299/${data['replyFrom']}.jpg';
+    String avaterUrl =
+        'https://static.pixivic.net/avatar/299x299/${data['replyFrom']}.jpg';
 
     return Container(
         child: Column(children: <Widget>[
@@ -295,13 +300,8 @@ class CommentListPage extends StatelessWidget {
                     ),
                     Container(
                       width: screen.setWidth(235),
-                      child: Text(
-                        data['replyToName'] == ''
-                            ? data['content']
-                            : '@${data['replyToName']}: ${data['content']}',
-                        softWrap: true,
-                        style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                      ),
+                      alignment: Alignment.centerLeft,
+                      child: commentContentDisplay(context, data),
                     ),
                     Container(
                       padding: EdgeInsets.only(
@@ -352,6 +352,47 @@ class CommentListPage extends StatelessWidget {
                 )
               ])))
     ]));
+  }
+
+  Widget commentContentDisplay(BuildContext context, Map data) {
+    String content = data['content'];
+
+    if (content[0] == '[' &&
+        content[content.length - 1] == ']' &&
+        content.contains('_:')) {
+      String memeStr = content.substring(1, content.length - 1).split('_')[1];
+      String memeId = memeStr.substring(1, memeStr.length - 1);
+      String memeHead = memeId.split('-')[0];
+      print(memeHead);
+      print(memeId);
+      Widget image = Container(
+        width: ScreenUtil().setWidth(50),
+        height: ScreenUtil().setWidth(50),
+      child: Image(image: AssetImage('image/meme/$memeHead/$memeId.webp')),);
+      return data['replyToName'] == ''
+          ? image
+          : Row(
+              children: [
+                Text(
+                  '@${data['replyToName']}',
+                  softWrap: true,
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                ),
+                SizedBox(
+                  width: ScreenUtil().setWidth(8),
+                ),
+                image
+              ],
+            );
+    } else {
+      return Text(
+        data['replyToName'] == ''
+            ? data['content']
+            : '@${data['replyToName']}: ${data['content']}',
+        softWrap: true,
+        style: TextStyle(color: Colors.grey[600], fontSize: 12),
+      );
+    }
   }
 
 //  _altLoading() {
@@ -458,4 +499,5 @@ class CommentListPage extends StatelessWidget {
 //      BotToast.showSimpleNotification(title: response.data['message']);
 //    }
 //  }
+
 }
