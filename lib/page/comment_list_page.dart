@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 import 'package:pixivic/provider/comment_list_model.dart';
 import 'package:pixivic/provider/meme_model.dart';
@@ -39,157 +40,124 @@ class CommentListPage extends StatelessWidget {
   final TextZhCommentCell texts = TextZhCommentCell();
   final ScreenUtil screen = ScreenUtil();
 
-//  List commentsList;
-//  int replyToId;
-//  int currentPage = 1;
-//  String replyToName;
-//  int replyParentId;
-//  String hintText;
-//  bool loadMoreAble = true;
-//  TextEditingController textEditingController;
-//  FocusNode replyFocus;
-//  ScrollController scrollController;
-// CommentListModel commentProvider;
-
-//  @override
-//  void initState() {
-////    if (widget.comments != null) commentsList = widget.comments;
-////    hintText = texts.addCommentHint;
-////    replyToId = widget.replyToId;
-////    replyToName = widget.replyToName;
-////    replyParentId = widget.replyParentId;
-//
-////    textEditingController = TextEditingController();
-////    replyFocus = FocusNode()..addListener(_replyFocusListener);
-////    scrollController = ScrollController()..addListener(_altLoading);
-////    _loadComments();
-//
-//    super.initState();
-//  }
-
-//  @override
-//  void dispose() {
-////    textEditingController.dispose();
-////    replyFocus.dispose();
-//    super.dispose();
-//  }
-
   @override
   Widget build(BuildContext context) {
+    CommentListModel commentListModel =
+        CommentListModel(illustId, replyToId, replyToName, replyParentId);
+
     return GestureDetector(
-      onTap: () {
-        //键盘移除焦点
-        FocusScope.of(context).requestFocus(FocusNode());
-//        FocusScopeNode currentFocus = FocusScope.of(context);
-//
-//        if (!currentFocus.hasPrimaryFocus) {
-//          currentFocus.unfocus();
-//        }
-      },
-      child: Scaffold(
-        appBar: PappBar(
-          title: texts.comment,
-        ),
-        body: ChangeNotifierProvider<CommentListModel>(
-          create: (_) =>
-              CommentListModel(illustId, replyToId, replyToName, replyParentId),
-          child: Selector<CommentListModel, CommentListModel>(
-            shouldRebuild: (pre, next) => false,
-            selector: (context, provider) => provider,
-            builder: (context, CommentListModel commentProvider, _) {
-//              this.commentProvider = commentProvider;
-//              if (commentProvider.commentList == null) {
-//                commentProvider.loadComments(widget.illustId);
-//                commentProvider.commentList = [];
-//                commentsList = [];
-//              }
-//              commentsList = commentsList + commentProvider.commentList;
-              return Container(
-                color: Colors.white,
-                child: Stack(
-                  children: <Widget>[
-                    Selector<CommentListModel, List>(
-                        selector: (context, provider) => provider.commentList,
-                        builder: (context, commentList, _) {
-                          return commentList != null
-                              ? Positioned(
-                                  // top: screen.setHeight(5),
-                                  child: Container(
-                                  width: screen.setWidth(324),
-                                  height: screen.setHeight(576),
-                                  margin: EdgeInsets.only(
-                                      bottom: screen.setHeight(35)),
-                                  child: ListView.builder(
-                                      controller:
-                                          commentProvider.scrollController,
-                                      shrinkWrap: true,
-                                      itemCount:
-                                          commentProvider.commentList.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return commentParentCell(
-                                            commentList[index],
-                                            context,
-                                            commentProvider);
-                                      }),
-                                ))
-                              : Container();
-                        }),
-                    Positioned(
-                      bottom: 0.0,
-                      left: 0.0,
-                      right: 0.0,
-                      child: bottomCommentBar(commentProvider),
-                    ),
-                    Positioned(
-                      bottom: 0.0,
-                      left: 0.0,
-                      right: 0.0,
-                      child: MemeBox(),
-                    )
-                  ],
-                ),
-              );
-            },
+        onTap: () {
+          //键盘移除焦点
+          FocusScope.of(context).requestFocus(FocusNode());
+          // FocusScopeNode currentFocus = FocusScope.of(context);
+
+          // if (!currentFocus.hasPrimaryFocus) {
+          //   currentFocus.unfocus();
+          // }
+          if (commentListModel.isMemeMode) commentListModel.flipMemeMode();
+        },
+        child: Scaffold(
+          appBar: PappBar(
+            title: texts.comment,
           ),
-        ),
-      ),
-    );
+          body: ChangeNotifierProvider<CommentListModel>.value(
+            value: commentListModel,
+            child: Selector<CommentListModel, Tuple2>(
+                selector: (context, provider) =>
+                    Tuple2(provider.commentList, provider.isMemeMode),
+                builder: (context, tuple2, _) {
+                  return Container(
+                    color: Colors.white,
+                    child: Stack(
+                      children: <Widget>[
+                        tuple2.item1 != null
+                            ? Positioned(
+                                // top: screen.setHeight(5),
+                                child: Container(
+                                width: screen.setWidth(324),
+                                height: screen.setHeight(576),
+                                margin: EdgeInsets.only(
+                                    bottom: screen.setHeight(35)),
+                                child: ListView.builder(
+                                    controller:
+                                        commentListModel.scrollController,
+                                    shrinkWrap: true,
+                                    itemCount:
+                                        commentListModel.commentList.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return commentParentCell(
+                                          tuple2.item1[index],
+                                          context,
+                                          commentListModel);
+                                    }),
+                              ))
+                            : Container(),
+                        AnimatedPositioned(
+                          duration: Duration(milliseconds: 100),
+                          bottom:
+                              tuple2.item2 ? ScreenUtil().setHeight(256) : 0.0,
+                          left: 0.0,
+                          right: 0.0,
+                          child: bottomCommentBar(commentListModel),
+                        ),
+                        AnimatedPositioned(
+                          duration: Duration(milliseconds: 100),
+                          bottom:
+                              tuple2.item2 ? 0.0 : -ScreenUtil().setHeight(256),
+                          left: 0.0,
+                          right: 0.0,
+                          child: MemeBox(),
+                        )
+                      ],
+                    ),
+                  );
+                }),
+          ),
+        ));
   }
 
-  Widget bottomCommentBar(CommentListModel commentProvider) {
+  Widget bottomCommentBar(CommentListModel commentListModel) {
     return Container(
-      padding: EdgeInsets.only(bottom: screen.setHeight(5)),
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(
+          bottom: screen.setHeight(5),
+          left: screen.setWidth(5),
+          right: screen.setWidth(5)),
       width: screen.setWidth(324),
       height: screen.setHeight(35),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          // Material(
-          //   child: InkWell(
-          //     child: FaIcon(FontAwesomeIcons.paperPlane),
-          //     onTap: () {
-          //       commentProvider.reply();
-          //     },
-          //   ),
-          // ),
+          Material(
+            color: Colors.white,
+            child: InkWell(
+              child: FaIcon(
+                FontAwesomeIcons.smile,
+                color: Colors.pink[300],
+              ),
+              onTap: () {
+                commentListModel.flipMemeMode();
+              },
+            ),
+          ),
           Container(
-              width: ScreenUtil().setWidth(260),
+              width: ScreenUtil().setWidth(262),
               height: ScreenUtil().setHeight(25),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 color: Color(0xFFF4F3F3F3),
               ),
               margin: EdgeInsets.only(
-                left: ScreenUtil().setWidth(13),
-                right: ScreenUtil().setWidth(12),
+                left: ScreenUtil().setWidth(5),
+                right: ScreenUtil().setWidth(5),
               ),
               child: Selector<CommentListModel, String>(
                 selector: (context, provider) => provider.hintText,
                 builder: (context, hintString, _) {
                   return TextField(
-                    focusNode: commentProvider.replyFocus,
-                    controller: commentProvider.textEditingController,
+                    focusNode: commentListModel.replyFocus,
+                    controller: commentListModel.textEditingController,
                     autofocus: isReply ? true : false,
                     decoration: InputDecoration(
                         border: InputBorder.none,
@@ -202,10 +170,11 @@ class CommentListPage extends StatelessWidget {
                 },
               )),
           Material(
+            color: Colors.white,
             child: InkWell(
               child: FaIcon(FontAwesomeIcons.paperPlane),
               onTap: () {
-                commentProvider.reply();
+                commentListModel.reply();
               },
             ),
           ),
@@ -216,7 +185,7 @@ class CommentListPage extends StatelessWidget {
 
   // 单条回复
   Widget commentParentCell(
-      Map commentAllData, BuildContext context, commentProvider) {
+      Map commentAllData, BuildContext context, commentListModel) {
     bool hasSub = commentAllData['subCommentList'] == null ? false : true;
 
     return Container(
@@ -229,7 +198,7 @@ class CommentListPage extends StatelessWidget {
           alignment: Alignment.topLeft,
           child: Column(
             children: <Widget>[
-              commentBaseCell(commentAllData, context, commentProvider),
+              commentBaseCell(commentAllData, context, commentListModel),
               hasSub
                   ? ListView.builder(
                       shrinkWrap: true,
@@ -239,7 +208,7 @@ class CommentListPage extends StatelessWidget {
                         return commentSubCell(
                             commentAllData['subCommentList'][index],
                             context,
-                            commentProvider);
+                            commentListModel);
                       })
                   : Container(),
               SizedBox(width: screen.setWidth(300), child: Divider())
@@ -250,16 +219,16 @@ class CommentListPage extends StatelessWidget {
 
   // 楼中楼
   Widget commentSubCell(
-      Map commentEachSubData, BuildContext context, commentProvider) {
+      Map commentEachSubData, BuildContext context, commentListModel) {
     return Container(
       padding:
           EdgeInsets.only(left: screen.setWidth(15), top: screen.setHeight(7)),
-      child: commentBaseCell(commentEachSubData, context, commentProvider),
+      child: commentBaseCell(commentEachSubData, context, commentListModel),
     );
   }
 
   // 基础的展示条
-  Widget commentBaseCell(Map data, BuildContext context, commentProvider) {
+  Widget commentBaseCell(Map data, BuildContext context, commentListModel) {
     String avaterUrl =
         'https://static.pixivic.net/avatar/299x299/${data['replyFrom']}.jpg';
 
@@ -332,17 +301,17 @@ class CommentListPage extends StatelessWidget {
                                   color: Colors.blue[600], fontSize: 12),
                             ),
                             onTap: () {
-                              commentProvider.replyToId = data['replyFrom'];
-                              commentProvider.replyToName =
+                              commentListModel.replyToId = data['replyFrom'];
+                              commentListModel.replyToName =
                                   data['replyFromName'];
                               data['parentId'] == 0
-                                  ? commentProvider.replyParentId = data['id']
-                                  : commentProvider.replyParentId =
+                                  ? commentListModel.replyParentId = data['id']
+                                  : commentListModel.replyParentId =
                                       data['parentId'];
-                              if (commentProvider.replyFocus.hasFocus)
-                                commentProvider.replyFocusListener();
+                              if (commentListModel.replyFocus.hasFocus)
+                                commentListModel.replyFocusListener();
                               else
-                                commentProvider.replyFocus.requestFocus();
+                                commentListModel.replyFocus.requestFocus();
                             },
                           )
                         ],
@@ -363,12 +332,13 @@ class CommentListPage extends StatelessWidget {
       String memeStr = content.substring(1, content.length - 1).split('_')[1];
       String memeId = memeStr.substring(1, memeStr.length - 1);
       String memeHead = memeId.split('-')[0];
-      print(memeHead);
-      print(memeId);
+      // print(memeHead);
+      // print(memeId);
       Widget image = Container(
         width: ScreenUtil().setWidth(50),
         height: ScreenUtil().setWidth(50),
-      child: Image(image: AssetImage('image/meme/$memeHead/$memeId.webp')),);
+        child: Image(image: AssetImage('image/meme/$memeHead/$memeId.webp')),
+      );
       return data['replyToName'] == ''
           ? image
           : Row(
@@ -402,7 +372,7 @@ class CommentListPage extends StatelessWidget {
 //      currentPage++;
 //      print('current page is $currentPage');
 //      try {
-//        commentProvider
+//        commentListModel
 //            .loadComments(widget.illustId, page: currentPage)
 //            .then((value) {
 //          if (value.length != 0) {
@@ -445,7 +415,7 @@ class CommentListPage extends StatelessWidget {
 //      return false;
 //    }
 //
-//    if (commentProvider.textEditingController.text == '') {
+//    if (commentListModel.textEditingController.text == '') {
 //      BotToast.showSimpleNotification(title: texts.commentCannotBeBlank);
 //      return false;
 //    }
@@ -454,11 +424,11 @@ class CommentListPage extends StatelessWidget {
 //    CancelFunc cancelLoading;
 //    var dio = Dio();
 //    Map<String, dynamic> payload = {
-//      'content': commentProvider.textEditingController.text,
-//      'parentId': commentProvider.replyParentId.toString(),
+//      'content': commentListModel.textEditingController.text,
+//      'parentId': commentListModel.replyParentId.toString(),
 //      'replyFromName': prefs.getString('name'),
-//      'replyTo': commentProvider.replyToId.toString(),
-//      'replyToName': commentProvider.replyToName
+//      'replyTo': commentListModel.replyToId.toString(),
+//      'replyToName': commentListModel.replyToName
 //    };
 //    Map<String, dynamic> headers = {'authorization': prefs.getString('auth')};
 //    Response response = await dio.post(
@@ -472,11 +442,11 @@ class CommentListPage extends StatelessWidget {
 //    cancelLoading();
 //    BotToast.showSimpleNotification(title: response.data['message']);
 //    if (response.statusCode == 200) {
-//      commentProvider.textEditingController.text = '';
-//      commentProvider.replyToId = 0;
-//      commentProvider.replyToName = '';
-//      commentProvider.replyParentId = 0;
-//      commentProvider.loadComments(widget.illustId);
+//      commentListModel.textEditingController.text = '';
+//      commentListModel.replyToId = 0;
+//      commentListModel.replyToName = '';
+//      commentListModel.replyParentId = 0;
+//      commentListModel.loadComments(widget.illustId);
 ////      await _loadComments();
 //      return true;
 //    } else {
