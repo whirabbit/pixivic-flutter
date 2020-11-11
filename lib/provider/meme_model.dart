@@ -9,7 +9,7 @@ class MemeModel with ChangeNotifier {
   MemeModel() {
     rootBundle.loadString('image/meme/meme.json').then((value) {
       memeMap = jsonDecode(value);
-      print(memeMap);
+      // print(memeMap);
       notifyListeners();
     });
   }

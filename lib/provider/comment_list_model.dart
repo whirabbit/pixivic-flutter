@@ -6,39 +6,37 @@ import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 
 class CommentListModel with ChangeNotifier {
+  int illustId;
+  int replyToId;
+  int currentPage = 1;
+  int replyParentId;
+  List commentList;
+  List jsonList;
+  ScrollController scrollController;
+  bool loadMoreAble = true;
+  bool isMemeMode = false;
+  String replyToName;
+  String hintText;
+  TextEditingController textEditingController;
+  FocusNode replyFocus;
+  TextZhCommentCell texts = TextZhCommentCell();
+
   CommentListModel(
-      int illustId, int replyToId, String replyToName, int replyParentId) {
+      this.illustId, this.replyToId, this.replyToName, this.replyParentId) {
     scrollController = ScrollController()..addListener(_autoLoading);
     textEditingController = TextEditingController();
     replyFocus = FocusNode()..addListener(replyFocusListener);
 
     this.hintText = texts.addCommentHint;
-    this.replyToId = replyToId;
-    this.replyToName = replyToName;
-    this.replyParentId = replyParentId;
-    this.illustId = illustId;
 
-    //首次进入页面进行数据刷新
-    _loadComments(this.illustId).then((value) {
+    //初始化Model时拉取评论数据
+    loadComments(this.illustId).then((value) {
       commentList = value;
       notifyListeners();
     });
   }
 
-  int illustId;
-  List commentList;
-  List jsonList;
-  ScrollController scrollController;
-  bool loadMoreAble = true;
-  int currentPage = 1;
-  String hintText;
-  TextEditingController textEditingController;
-  FocusNode replyFocus;
-  int replyToId;
-  String replyToName;
-  int replyParentId;
-  TextZhCommentCell texts = TextZhCommentCell();
-
+  // 根据回复框的焦点做判断
   replyFocusListener() {
     if (replyFocus.hasFocus && replyToName != '') {
       print('on focus');
@@ -96,7 +94,7 @@ class CommentListModel with ChangeNotifier {
       replyToName = '';
       replyParentId = 0;
 
-      _loadComments(illustId).then((value) {
+      loadComments(illustId).then((value) {
         commentList = value;
         notifyListeners();
       });
@@ -123,10 +121,10 @@ class CommentListModel with ChangeNotifier {
     if ((scrollController.position.extentAfter < 500) && loadMoreAble) {
       print("Load Comment");
       loadMoreAble = false;
-      this.currentPage++;
+      currentPage++;
       print('current page is $currentPage');
       try {
-        _loadComments(illustId, page: this.currentPage).then((value) {
+        loadComments(illustId, page: currentPage).then((value) {
           if (value.length != 0) {
             commentList = commentList + value;
             notifyListeners();
@@ -145,7 +143,7 @@ class CommentListModel with ChangeNotifier {
   }
 
 //请求数据
-  _loadComments(int illustId, {int page = 1}) async {
+  loadComments(int illustId, {int page = 1}) async {
     String url =
         'https://api.pixivic.com/illusts/$illustId/comments?page=$page&pageSize=10';
     var dio = Dio();
@@ -160,6 +158,11 @@ class CommentListModel with ChangeNotifier {
     } else {
       BotToast.showSimpleNotification(title: response.data['message']);
     }
+  }
+
+  flipMemeMode() {
+    isMemeMode = !isMemeMode;
+    notifyListeners();
   }
 
   @override
