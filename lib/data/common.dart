@@ -10,6 +10,7 @@ import '../page/new_page.dart';
 import '../page/user_page.dart';
 import '../function/identity.dart';
 import 'package:pixivic/provider/collection_model.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 // 用于 PicPage 的临时变量
 double homeScrollerPosition = 0;
@@ -24,8 +25,6 @@ SharedPreferences prefs;
 String tempVerificationCode;
 String tempVerificationImage;
 bool isLogin; // 记录登录状态（已登录，未登录）用于控制是否展示loginPage
-
-Dio dioPixivic;
 
 List<String> keywordsString = [
   'auth',
@@ -100,41 +99,6 @@ Future initData(BuildContext context) async {
   if (prefs.getString('previewQuality') == '')
     prefs.setString('previewQuality', 'medium');
 
-  // Dio 单例暂时放置于此
-  dioPixivic = Dio(BaseOptions(
-      baseUrl: 'https://api.pixivic.com',
-      connectTimeout: 150000,
-      receiveTimeout: 150000,
-      headers: prefs.getString('auth') == ''
-          ? {'Content-Type': 'application/json'}
-          : {
-              'authorization': prefs.getString('auth'),
-              'Content-Type': 'application/json'
-            }));
-
-  dioPixivic.interceptors
-      .add(InterceptorsWrapper(onRequest: (RequestOptions options) async {
-    print(options.uri);
-    print(options.headers);
-    return options;
-  }, onResponse: (Response response) async {
-    print(response.data);
-    BotToast.showSimpleNotification(title: response.data['message']);
-    return response;
-  }, onError: (DioError e) async {
-    if (e.response != null) {
-      BotToast.showSimpleNotification(title: e.response.data['message']);
-      print(e.response.statusCode);
-      print(e.response.data);
-      print(e.response.headers);
-      print(e.response.request);
-      return e;
-    } else {
-      // Something happened in setting up or sending the request that triggered an Error
-      BotToast.showSimpleNotification(title: e.message);
-      print(e.request);
-      print(e.message);
-      return e;
-    }
-  }));
+  // Dio 单例初始化
+  initDioClient();
 }

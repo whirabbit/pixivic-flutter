@@ -16,6 +16,7 @@ import '../data/common.dart';
 import '../data/texts.dart';
 import 'package:pixivic/provider/collection_model.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 showAddToCollection(BuildContext contextFrom, List selectedPicIdList,
     {bool multiSelect = true}) {

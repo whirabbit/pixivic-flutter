@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 import '../data/common.dart';
 import '../data/texts.dart';
 import 'package:pixivic/provider/collection_model.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 // identity.dart 文件包含与用户身份验证相关的所有方法，例如登录，验证 auth 是否过期，注册等等
 
@@ -65,13 +66,7 @@ login(BuildContext context, String userName, String pwd,
     homeCurrentPage = 1;
     // 加载用户的画集列表
     Provider.of<CollectionUserDataModel>(context, listen: false);
-    dioPixivic = Dio(BaseOptions(
-      baseUrl: 'https://api.pixivic.com/',
-      connectTimeout: 150000,
-      receiveTimeout: 150000,
-      headers: prefs.getString('auth') == ''
-          ? {}
-          : {'authorization': prefs.getString('auth')}));
+    initDioClient();
   } else {
     // isLogin = false;
     BotToast.showSimpleNotification(
