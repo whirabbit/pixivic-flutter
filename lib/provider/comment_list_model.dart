@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'package:dio/dio.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:dio/dio.dart';
+import 'package:provider/provider.dart';
+
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/provider/meme_model.dart';
 
 class CommentListModel with ChangeNotifier {
   int illustId;
@@ -15,6 +19,7 @@ class CommentListModel with ChangeNotifier {
   ScrollController scrollController;
   bool loadMoreAble = true;
   bool isMemeMode = false;
+  bool isReplyAble = true;
   String replyToName;
   String hintText;
   TextEditingController textEditingController;
@@ -38,13 +43,17 @@ class CommentListModel with ChangeNotifier {
 
   // 根据回复框的焦点做判断
   replyFocusListener() {
-    if (replyFocus.hasFocus && replyToName != '') {
-      print('on focus');
-
-      hintText = '@$replyToName:';
-      notifyListeners();
+    if (replyFocus.hasFocus) {
+      print('replyFocus on focus');
+      if(isMemeMode)
+        flipMemeMode();
+      if (replyToName != '') {
+        print('replyFocusListener: replyParentId is $replyParentId');
+        hintText = '@$replyToName:';
+        notifyListeners();
+      }
     } else if (!replyFocus.hasFocus) {
-      print('focus released');
+      print('replyFocus released');
 
       replyToId = 0;
       replyToName = '';
@@ -53,41 +62,40 @@ class CommentListModel with ChangeNotifier {
       // print(textEditingController.text);
       notifyListeners();
     }
-    print('replyParentId now is $replyParentId');
   }
 
   reply() async {
-    if (prefs.getString('auth') == '') {
-      BotToast.showSimpleNotification(title: texts.pleaseLogin);
-      return false;
-    }
+    if (isReplyAble) {
+      if (prefs.getString('auth') == '') {
+        BotToast.showSimpleNotification(title: texts.pleaseLogin);
+        return false;
+      }
 
-    if (textEditingController.text == '') {
-      BotToast.showSimpleNotification(title: texts.commentCannotBeBlank);
-      return false;
-    }
+      if (textEditingController.text == '') {
+        BotToast.showSimpleNotification(title: texts.commentCannotBeBlank);
+        return false;
+      }
 
-    String url = 'https://api.pixivic.com/illusts/$illustId/comments';
-    CancelFunc cancelLoading;
-    Map<String, dynamic> payload = {
-      'content': textEditingController.text,
-      'parentId': replyParentId.toString(),
-      'replyFromName': prefs.getString('name'),
-      'replyTo': replyToId.toString(),
-      'replyToName': replyToName
-    };
-    Map<String, dynamic> headers = {'authorization': prefs.getString('auth')};
-    try {
-      Response response = await Dio().post(
+      isReplyAble = false;
+
+      String url = 'https://api.pixivic.com/illusts/$illustId/comments';
+      CancelFunc cancelLoading;
+      Map<String, dynamic> payload = {
+        'content': textEditingController.text,
+        'parentId': replyParentId.toString(),
+        'replyFromName': prefs.getString('name'),
+        'replyTo': replyToId.toString(),
+        'replyToName': replyToName
+      };
+
+      await dioPixivic.post(
         url,
         data: payload,
-        options: Options(headers: headers),
         onReceiveProgress: (count, total) {
           cancelLoading = BotToast.showLoading();
         },
       );
       cancelLoading();
-      BotToast.showSimpleNotification(title: response.data['message']);
 
       textEditingController.text = '';
       replyToId = 0;
@@ -98,21 +106,17 @@ class CommentListModel with ChangeNotifier {
         commentList = value;
         notifyListeners();
       });
+      isReplyAble = true;
       return true;
-    } on DioError catch (e) {
-      if (e.response != null) {
-        BotToast.showSimpleNotification(title: e.response.data['message']);
-        print(e.response.data);
-        print(e.response.headers);
-        print(e.response.request);
-        return false;
-      } else {
-        // Something happened in setting up or sending the request that triggered an Error
-        BotToast.showSimpleNotification(title: e.message);
-        print(e.request);
-        print(e.message);
-        return false;
-      }
+    } else {
+      return false;
+    }
+  }
+
+  replyMeme(String memeGroup, String memeId) {
+    if (prefs.getString('auth') == '') {
+      BotToast.showSimpleNotification(title: texts.pleaseLogin);
+      return false;
     }
   }
 
