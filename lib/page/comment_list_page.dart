@@ -42,73 +42,105 @@ class CommentListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    CommentListModel commentListModel =
-        CommentListModel(illustId, replyToId, replyToName, replyParentId);
+    // CommentListModel commentListModel =
+    //     CommentListModel(illustId, replyToId, replyToName, replyParentId);
 
     return GestureDetector(
         onTap: () {
           //键盘移除焦点
           FocusScope.of(context).requestFocus(FocusNode());
+          // commentListModel.replyFocus.unfocus();
           // FocusScopeNode currentFocus = FocusScope.of(context);
 
           // if (!currentFocus.hasPrimaryFocus) {
           //   currentFocus.unfocus();
           // }
-          if (commentListModel.isMemeMode) commentListModel.flipMemeMode();
+          // if (commentListModel.isMemeMode) commentListModel.flipMemeMode();
         },
         child: Scaffold(
           appBar: PappBar(
             title: texts.comment,
           ),
-          body: ChangeNotifierProvider<CommentListModel>.value(
-            value: commentListModel,
-            child: Selector<CommentListModel, Tuple2>(
-                selector: (context, provider) =>
-                    Tuple2(provider.commentList, provider.isMemeMode),
-                builder: (context, tuple2, _) {
+          body: ChangeNotifierProvider<CommentListModel>(
+            // : commentListModel,
+            create: (_) =>  CommentListModel(illustId, replyToId, replyToName, replyParentId),
+            child: Selector<CommentListModel, CommentListModel>(
+                shouldRebuild: (pre, next) => false,
+                selector: (context, provider) => provider,
+                builder: (context, commentListModel, _) {
+                  print("列表selector");
                   return Container(
                     color: Colors.white,
                     child: Stack(
                       children: <Widget>[
-                        tuple2.item1 != null
-                            ? Positioned(
-                                // top: screen.setHeight(5),
-                                child: Container(
-                                width: screen.setWidth(324),
-                                height: screen.setHeight(576),
-                                margin: EdgeInsets.only(
-                                    bottom: screen.setHeight(35)),
-                                child: ListView.builder(
-                                    controller:
-                                        commentListModel.scrollController,
-                                    shrinkWrap: true,
-                                    itemCount:
-                                        commentListModel.commentList.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return commentParentCell(
-                                          tuple2.item1[index],
-                                          context,
-                                          commentListModel);
-                                    }),
-                              ))
-                            : Container(),
-                        AnimatedPositioned(
-                          duration: Duration(milliseconds: 100),
-                          bottom:
-                              tuple2.item2 ? ScreenUtil().setHeight(256) : 0.0,
-                          left: 0.0,
-                          right: 0.0,
-                          child: bottomCommentBar(commentListModel),
-                        ),
-                        AnimatedPositioned(
-                          duration: Duration(milliseconds: 100),
-                          bottom:
-                              tuple2.item2 ? 0.0 : -ScreenUtil().setHeight(256),
-                          left: 0.0,
-                          right: 0.0,
-                          child: MemeBox(),
-                        )
+                        Selector<CommentListModel, List>(
+                            selector: (context, provider) =>
+                                provider.commentList,
+                            builder: (context, commentList, _) {
+                              print("listSelector");
+                              return commentList != null
+                                  ? Positioned(
+                                      // top: screen.setHeight(5),
+                                      child: Container(
+                                      width: screen.setWidth(324),
+                                      height: screen.setHeight(576),
+                                      margin: EdgeInsets.only(
+                                          bottom: screen.setHeight(35)),
+                                      child: ListView.builder(
+                                          controller:
+                                              commentListModel.scrollController,
+                                          shrinkWrap: true,
+                                          itemCount: commentList.length,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return commentParentCell(
+                                                commentList[index],
+                                                context,
+                                                commentListModel);
+                                          }),
+                                    ))
+                                  : Container();
+                            }),
+                        Selector<CommentListModel, bool>(
+                            selector: (context, provider) =>
+                                provider.isMemeMode,
+                            builder: (context, isMemeMode, _) {
+                              return AnimatedPositioned(
+                                duration: Duration(milliseconds: 100),
+                                bottom: 0.0,
+                                left: 0.0,
+                                right: 0.0,
+                                child: Column(
+                                  children: [
+                                    bottomCommentBar(commentListModel),
+                                    isMemeMode == true
+                                        ? AnimatedContainer(
+                                            duration:
+                                                Duration(milliseconds: 1000),
+                                        curve: Curves.bounceInOut,
+                                            child: MemeBox(),
+                                          )
+                                        : Container()
+                                  ],
+                                ),
+                              );
+                            })
+                        // AnimatedPositioned(
+                        //   duration: Duration(milliseconds: 100),
+                        //   bottom:
+                        //       tuple2.item2 ? ScreenUtil().setHeight(256) : 0.0,
+                        //   left: 0.0,
+                        //   right: 0.0,
+                        //   child: bottomCommentBar(commentListModel),
+                        // ),
+                        // AnimatedPositioned(
+                        //   duration: Duration(milliseconds: 100),
+                        //   bottom:
+                        //       tuple2.item2 ? 0.0 : -ScreenUtil().setHeight(256),
+                        //   left: 0.0,
+                        //   right: 0.0,
+                        //   child: MemeBox(),
+                        // )
                       ],
                     ),
                   );
