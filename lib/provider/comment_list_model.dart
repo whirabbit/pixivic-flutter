@@ -45,8 +45,7 @@ class CommentListModel with ChangeNotifier {
   replyFocusListener() {
     if (replyFocus.hasFocus) {
       print('replyFocus on focus');
-      if(isMemeMode)
-        flipMemeMode();
+      if (isMemeMode) flipMemeMode();
       if (replyToName != '') {
         print('replyFocusListener: replyParentId is $replyParentId');
         hintText = '@$replyToName:';
@@ -55,12 +54,14 @@ class CommentListModel with ChangeNotifier {
     } else if (!replyFocus.hasFocus) {
       print('replyFocus released');
 
-      replyToId = 0;
-      replyToName = '';
-      replyParentId = 0;
-      hintText = texts.addCommentHint;
-      // print(textEditingController.text);
-      notifyListeners();
+      if (!isMemeMode) {
+        replyToId = 0;
+        replyToName = '';
+        replyParentId = 0;
+        hintText = texts.addCommentHint;
+        // print(textEditingController.text);
+        notifyListeners();
+      }
     }
   }
 
@@ -78,14 +79,15 @@ class CommentListModel with ChangeNotifier {
 
       isReplyAble = false;
 
-      String url = 'https://api.pixivic.com/illusts/$illustId/comments';
+      String url = '/illusts/$illustId/comments';
       CancelFunc cancelLoading;
       Map<String, dynamic> payload = {
         'content': textEditingController.text,
         'parentId': replyParentId.toString(),
         'replyFromName': prefs.getString('name'),
         'replyTo': replyToId.toString(),
-        'replyToName': replyToName
+        'replyToName': replyToName,
+        'platform': 'Mobile 客户端'
       };
 
       await dioPixivic.post(
@@ -101,6 +103,7 @@ class CommentListModel with ChangeNotifier {
       replyToId = 0;
       replyToName = '';
       replyParentId = 0;
+      hintText = texts.addCommentHint;
 
       loadComments(illustId).then((value) {
         commentList = value;
@@ -113,9 +116,48 @@ class CommentListModel with ChangeNotifier {
     }
   }
 
-  replyMeme(String memeGroup, String memeId) {
-    if (prefs.getString('auth') == '') {
-      BotToast.showSimpleNotification(title: texts.pleaseLogin);
+  replyMeme(String memeGroup, String memeId) async {
+    if (isReplyAble) {
+      if (prefs.getString('auth') == '') {
+        BotToast.showSimpleNotification(title: texts.pleaseLogin);
+        return false;
+      }
+
+      isReplyAble = false;
+
+      String content = '[${memeGroup}_$memeId]';
+      String url = '/illusts/$illustId/comments';
+      CancelFunc cancelLoading;
+      Map<String, dynamic> payload = {
+        'content': content,
+        'parentId': replyParentId.toString(),
+        'replyFromName': prefs.getString('name'),
+        'replyTo': replyToId.toString(),
+        'replyToName': replyToName,
+        'platform': 'Mobile 客户端'
+      };
+      await dioPixivic.post(
+        url,
+        data: payload,
+        onReceiveProgress: (count, total) {
+          cancelLoading = BotToast.showLoading();
+        },
+      );
+      cancelLoading();
+
+      replyToId = 0;
+      replyToName = '';
+      replyParentId = 0;
+      hintText = texts.addCommentHint;
+
+      loadComments(illustId).then((value) {
+        commentList = value;
+        notifyListeners();
+      });
+      flipMemeMode();
+      isReplyAble = true;
+      return true;
+    } else {
       return false;
     }
   }
