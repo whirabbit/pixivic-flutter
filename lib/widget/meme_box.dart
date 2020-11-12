@@ -5,6 +5,7 @@ import 'package:pixivic/provider/meme_model.dart';
 import 'package:provider/provider.dart';
 
 import 'package:pixivic/widget/image_display.dart';
+import 'package:pixivic/provider/comment_list_model.dart';
 
 class MemeBox extends StatelessWidget {
   @override
@@ -44,29 +45,34 @@ class MemeBox extends StatelessWidget {
         }));
   }
 
-  Widget memePanel(String key) {
+  Widget memePanel(String memeGroup) {
     return Consumer<MemeModel>(builder: (context, memeModel, _) {
       if (memeModel.memeMap == null)
         return loadingBox();
       else {
-        List memeKeys = memeModel.memeMap[key].keys.toList();
-        List memePath = memeModel.memeMap[key].values.toList();
+        List memeKeys = memeModel.memeMap[memeGroup].keys.toList();
+        List memePath = memeModel.memeMap[memeGroup].values.toList();
         return SingleChildScrollView(
           child: Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
               alignment: WrapAlignment.center,
               runAlignment: WrapAlignment.start,
-              children: List.generate(memeKeys.length,
-                  (index) => memeCell(memePath[index], memeKeys[index]))),
+              children: List.generate(
+                  memeKeys.length,
+                  (index) =>
+                      memeCell(context, memePath[index], memeKeys[index], memeGroup))),
         );
       }
     });
   }
 
-  Widget memeCell(String path, String memeName) {
+  Widget memeCell(
+      BuildContext context, String path, String memeName, String memeGroup) {
     return GestureDetector(
       onTap: () {
-        print('onTap memeCell $memeName');
+        print('memeCell onTap$memeName');
+        Provider.of<CommentListModel>(context, listen: false)
+            .replyMeme(memeGroup, memeName);
       },
       child: Container(
         color: Colors.white,
