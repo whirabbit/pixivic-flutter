@@ -22,6 +22,7 @@ import 'package:pixivic/data/bugly.dart';
 import 'package:pixivic/function/update.dart';
 import 'package:pixivic/provider/collection_model.dart';
 import 'package:pixivic/provider/page_switch.dart';
+import 'package:pixivic/provider/meme_model.dart';
 
 // import 'provider/comment_list_model.dart';
 // import 'provider/pic_page_model.dart';
@@ -43,7 +44,10 @@ void main() {
         ),
         ChangeNotifierProvider<CollectionUserDataModel>(
           create: (_) => CollectionUserDataModel(),
-        )
+        ),
+        ChangeNotifierProvider<MemeModel>(
+          create: (_) => MemeModel(),
+        ),
       ],
       child: MyApp(),
     ));
@@ -131,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
       print('FlutterBugly: ${onValue.isSuccess}');
       print('FlutterBugly: ${onValue.appId}');
       print('FlutterBugly: ${onValue.message}');
-      FlutterBugly.setUserId('pixivic 0.1.0');
+      FlutterBugly.setUserId('pixivic 0.1.1');
       if (Theme.of(context).platform == TargetPlatform.android) {
         FlutterBugly.checkUpgrade().then((UpgradeInfo info) {
           print('==============checkUpgrade============');

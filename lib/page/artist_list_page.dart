@@ -176,6 +176,7 @@ class _ArtistListPageState extends State<ArtistListPage> {
 
   Widget picsCell(Map picData) {
     int itemNum = picData['recentlyIllustrations'].length;
+    // TODO: 优化 generate 使用方法
     List<int> allIndex = List<int>.generate(itemNum, (int index) => index);
     return Row(
       children: allIndex.map((int item) {
