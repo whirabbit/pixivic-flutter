@@ -235,7 +235,7 @@ class _ArtistListPageState extends State<ArtistListPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
       color: Colors.blueAccent[200],
       onPressed: () async {
-        String url = 'https://api.pixivic.com/users/followed';
+        String url = 'https://pix.ipv4.host/users/followed';
         Map<String, String> body = {
           'artistId': data['id'].toString(),
           'userId': prefs.getInt('id').toString(),
@@ -282,13 +282,13 @@ class _ArtistListPageState extends State<ArtistListPage> {
 
     if (widget.mode == 'search') {
       url =
-          'https://api.pixivic.com/artists?page=$currentPage&artistName=${widget.searchKeyWords}&pageSize=30';
+          'https://pix.ipv4.host/artists?page=$currentPage&artistName=${widget.searchKeyWords}&pageSize=30';
     } else if (widget.mode == 'follow') {
       url =
-          'https://api.pixivic.com/users/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
+          'https://pix.ipv4.host/users/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
     } else if (widget.mode == 'userfollow') {
       url =
-          'https://api.pixivic.com/users/${widget.userId}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
+          'https://pix.ipv4.host/users/${widget.userId}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
     }
 
     try {

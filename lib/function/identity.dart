@@ -20,7 +20,7 @@ login(BuildContext context, String userName, String pwd,
     String verificationCode, String verificationInput,
     {String widgetFrom}) async {
   String url =
-      'https://api.pixivic.com/users/token?vid=$verificationCode&value=$verificationInput';
+      'https://pix.ipv4.host/users/token?vid=$verificationCode&value=$verificationInput';
   Map<String, String> body = {'username': userName, 'password': pwd};
   Map<String, String> header = {'Content-Type': 'application/json'};
   var encoder = JsonEncoder.withIndent("     ");
@@ -99,7 +99,7 @@ checkAuth() async {
     return false;
   else {
     String url =
-        'https://api.pixivic.com/users/${prefs.getInt('id').toString()}/isBindQQ';
+        'https://pix.ipv4.host/users/${prefs.getInt('id').toString()}/isBindQQ';
     Map<String, String> header = {
       'Content-Type': 'application/json',
       'authorization': authStored
@@ -128,7 +128,7 @@ register(String userName, String pwd, String pwdRepeat, String verificationCode,
     String verificationInput, String emailInput) async {
   // 检查用户名和邮箱，密码（新建邮箱controller)
   String url =
-      'https://api.pixivic.com/users/?vid=$verificationCode&value=$verificationInput';
+      'https://pix.ipv4.host/users/?vid=$verificationCode&value=$verificationInput';
   Map<String, String> body = {
     'username': userName,
     'email': emailInput,
@@ -168,7 +168,7 @@ checkRegisterInfo(
     return TextZhLoginPage().errorNameLength;
   }
 
-  String url = 'https://api.pixivic.com/users/usernames/$userName';
+  String url = 'https://pix.ipv4.host/users/usernames/$userName';
   try {
     var r = await Requests.get(url);
     if (r.statusCode == 409) {

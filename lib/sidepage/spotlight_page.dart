@@ -151,7 +151,7 @@ class _SpotlightPageState extends State<SpotlightPage> {
 
   _getJsonList() async {
     String url =
-        'https://api.pixivic.com/spotlights?page=$currentPage&pageSize=30';
+        'https://pix.ipv4.host/spotlights?page=$currentPage&pageSize=30';
     try {
       var r = await Requests.get(url);
       r.raiseForStatus();

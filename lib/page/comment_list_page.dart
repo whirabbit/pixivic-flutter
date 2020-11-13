@@ -435,7 +435,7 @@ class CommentListPage extends StatelessWidget {
 //      return false;
 //    }
 //
-//    String url = 'https://api.pixivic.com/illusts/${widget.illustId}/comments';
+//    String url = 'https://pix.ipv4.host/illusts/${widget.illustId}/comments';
 //    CancelFunc cancelLoading;
 //    var dio = Dio();
 //    Map<String, dynamic> payload = {
@@ -470,7 +470,7 @@ class CommentListPage extends StatelessWidget {
 //  }
 
 //  _loadComments() async {
-//    String url = 'https://api.pixivic.com/illusts/${widget.illustId}/comments';
+//    String url = 'https://pix.ipv4.host/illusts/${widget.illustId}/comments';
 //    var dio = Dio();
 //    Response response = await dio.get(url);
 //    if (response.statusCode == 200 && response.data['data'] != null) {

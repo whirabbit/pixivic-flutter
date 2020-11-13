@@ -176,9 +176,7 @@ class PicPageModel with ChangeNotifier {
     //       ScrollDirection.forward) betweenEdgeOfScroller(-move);
     // }
 
-    if (
-        jsonMode == 'artist' ||
-        jsonMode == 'userdetail') {
+    if (jsonMode == 'artist' || jsonMode == 'userdetail') {
       if (scrollController.position.extentBefore == 0 &&
           scrollController.position.userScrollDirection ==
               ScrollDirection.forward) {
@@ -254,62 +252,62 @@ class PicPageModel with ChangeNotifier {
     // 获取所有的图片数据
     if (jsonMode == 'home') {
       url =
-          'https://api.pixivic.com/ranks?page=$currentPage&date=$picDate&mode=$picMode&pageSize=10';
+          'https://pix.ipv4.host/ranks?page=$currentPage&date=$picDate&mode=$picMode&pageSize=10';
     } else if (jsonMode == 'search') {
       if (!isManga)
         url =
-            'https://api.pixivic.com/illustrations?page=$currentPage&keyword=$searchKeywords&pageSize=10';
+            'https://pix.ipv4.host/illustrations?page=$currentPage&keyword=$searchKeywords&pageSize=10';
       else
         url =
-            'https://api.pixivic.com/illustrations?page=$currentPage&keyword=$searchKeywords&pageSize=10';
+            'https://pix.ipv4.host/illustrations?page=$currentPage&keyword=$searchKeywords&pageSize=10';
     } else if (jsonMode == 'related') {
       url =
-          'https://api.pixivic.com/illusts/$relatedId/related?page=$currentPage&pageSize=15';
+          'https://pix.ipv4.host/illusts/$relatedId/related?page=$currentPage&pageSize=15';
     } else if (jsonMode == 'artist') {
       if (!isManga) {
         url =
-            'https://api.pixivic.com/artists/$artistId/illusts/illust?page=$currentPage&pageSize=15&maxSanityLevel=10';
+            'https://pix.ipv4.host/artists/$artistId/illusts/illust?page=$currentPage&pageSize=15&maxSanityLevel=10';
       } else {
         url =
-            'https://api.pixivic.com/artists/$artistId/illusts/manga?page=$currentPage&pageSize=15&maxSanityLevel=10';
+            'https://pix.ipv4.host/artists/$artistId/illusts/manga?page=$currentPage&pageSize=15&maxSanityLevel=10';
       }
     } else if (jsonMode == 'followed') {
       this.loadMoreAble = false;
       if (!isManga) {
         url =
-            'https://api.pixivic.com/users/$userId/followed/latest/illust?page=$currentPage&pageSize=10';
+            'https://pix.ipv4.host/users/$userId/followed/latest/illust?page=$currentPage&pageSize=10';
       } else {
         url =
-            'https://api.pixivic.com/users/$userId/followed/latest/manga?page=$currentPage&pageSize=10';
+            'https://pix.ipv4.host/users/$userId/followed/latest/manga?page=$currentPage&pageSize=10';
       }
     } else if (jsonMode == 'bookmark') {
       if (!isManga) {
         url =
-            'https://api.pixivic.com/users/$userId/bookmarked/illust?page=$currentPage&pageSize=10';
+            'https://pix.ipv4.host/users/$userId/bookmarked/illust?page=$currentPage&pageSize=10';
       } else {
         url =
-            'https://api.pixivic.com/users/$userId/bookmarked/manga?page=$currentPage&pageSize=10';
+            'https://pix.ipv4.host/users/$userId/bookmarked/manga?page=$currentPage&pageSize=10';
       }
     } else if (jsonMode == 'spotlight') {
       this.loadMoreAble = false;
-      url = 'https://api.pixivic.com/spotlights/$spotlightId/illustrations';
+      url = 'https://pix.ipv4.host/spotlights/$spotlightId/illustrations';
     } else if (jsonMode == 'history') {
       url =
-          'https://api.pixivic.com/users/${prefs.getInt('id').toString()}/illustHistory?page=$currentPage&pageSize=10';
+          'https://pix.ipv4.host/users/${prefs.getInt('id').toString()}/illustHistory?page=$currentPage&pageSize=10';
     } else if (jsonMode == 'oldhistory') {
       url =
-          'https://api.pixivic.com/users/${prefs.getInt('id').toString()}/oldIllustHistory?page=$currentPage&pageSize=10';
+          'https://pix.ipv4.host/users/${prefs.getInt('id').toString()}/oldIllustHistory?page=$currentPage&pageSize=10';
     } else if (jsonMode == 'userdetail') {
       if (!isManga) {
         url =
-            'https://api.pixivic.com/users/$userId/bookmarked/illust?page=$currentPage&pageSize=10';
+            'https://pix.ipv4.host/users/$userId/bookmarked/illust?page=$currentPage&pageSize=10';
       } else {
         url =
-            'https://api.pixivic.com/users/$userId/manga?page=$currentPage&pageSize=10';
+            'https://pix.ipv4.host/users/$userId/manga?page=$currentPage&pageSize=10';
       }
     } else if (jsonMode == 'collection') {
       url =
-          'https://api.pixivic.com/collections/$collectionId/illustrations?page=$currentPage&pageSize=10';
+          'https://pix.ipv4.host/collections/$collectionId/illustrations?page=$currentPage&pageSize=10';
     }
 
     // TODO: Dio 重做后更换为Dio

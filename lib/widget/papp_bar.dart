@@ -612,7 +612,7 @@ class PappBarState extends State<PappBar> {
 
   onTranslateThenSearch() async {
     var response = await Requests.get(
-            'https://api.pixivic.com/keywords/${searchController.text}/translations')
+            'https://pix.ipv4.host/keywords/${searchController.text}/translations')
         .catchError((e) {
       print(e);
       BotToast.showSimpleNotification(title: texts.translateError);
@@ -637,7 +637,7 @@ class PappBarState extends State<PappBar> {
     } else {
       CancelFunc cancelLoading = BotToast.showLoading();
       var response = await Requests.get(
-              'https://api.pixivic.com/artists/${searchController.text}',
+              'https://pix.ipv4.host/artists/${searchController.text}',
               headers: prefs.getString('auth') != ''
                   ? {'authorization': prefs.getString('auth')}
                   : {})
@@ -686,7 +686,7 @@ class PappBarState extends State<PappBar> {
     } else {
       CancelFunc cancelLoading = BotToast.showLoading();
       var response = await Requests.get(
-              'https://api.pixivic.com/illusts/${searchController.text}',
+              'https://pix.ipv4.host/illusts/${searchController.text}',
               headers: prefs.getString('auth') != ''
                   ? {'authorization': prefs.getString('auth')}
                   : {})

@@ -206,7 +206,7 @@ class _SearchPageState extends State<SearchPage> {
         .format(DateTime.now().subtract(Duration(days: 3)));
 
     var response = await Requests.get(
-      'https://api.pixivic.com/trendingTags?date=$_picDateStr',
+      'https://pix.ipv4.host/trendingTags?date=$_picDateStr',
     ).catchError((e) {
       BotToast.showSimpleNotification(title: text.connectError);
     });

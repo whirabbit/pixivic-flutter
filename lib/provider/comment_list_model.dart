@@ -191,7 +191,7 @@ class CommentListModel with ChangeNotifier {
 //请求数据
   loadComments(int illustId, {int page = 1}) async {
     String url =
-        'https://api.pixivic.com/illusts/$illustId/comments?page=$page&pageSize=10';
+        'https://pix.ipv4.host/illusts/$illustId/comments?page=$page&pageSize=10';
     var dio = Dio();
     Response response = await dio.get(url);
     if (response.statusCode == 200 && response.data['data'] != null) {
