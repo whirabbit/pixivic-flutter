@@ -150,7 +150,7 @@ class _UserListPageState extends State<UserListPage> {
 
     if (widget.mode == 'bookmark') {
       url =
-          'https://api.pixivic.com/illusts/${widget.illustId}/bookmarkedUsers?page=$currentPage&pageSize=30';
+          'https://pix.ipv4.host/illusts/${widget.illustId}/bookmarkedUsers?page=$currentPage&pageSize=30';
     }
     try {
       if (prefs.getString('auth') == '') {

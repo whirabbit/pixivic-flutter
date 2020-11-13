@@ -364,7 +364,7 @@ class LoginPageState extends State<LoginPage> {
   }
 
   _getVerificationCode() async {
-    var r = await Requests.get("https://api.pixivic.com/verificationCode");
+    var r = await Requests.get("https://pix.ipv4.host/verificationCode");
     r.raiseForStatus();
     if (r.statusCode == 200) {
       dynamic json = r.json();
@@ -418,8 +418,7 @@ class LoginPageState extends State<LoginPage> {
   }
 
   _submitMailForForget(String mail) async {
-    String url =
-        'https://api.pixivic.com/users/emails/$mail/resetPasswordEmail';
+    String url = 'https://pix.ipv4.host/users/emails/$mail/resetPasswordEmail';
     var r = await Requests.get(url);
     print(r.content());
     showDialog(

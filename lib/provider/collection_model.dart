@@ -50,7 +50,7 @@ class CollectionUiModel with ChangeNotifier {
     notifyListeners();
 
     String url =
-        'https://api.pixivic.com/users/${prefs.getInt('id')}/collections?page=$currentViewerPage&pagesize=10';
+        'https://pix.ipv4.host/users/${prefs.getInt('id')}/collections?page=$currentViewerPage&pagesize=10';
     Map<String, String> headers = {'authorization': prefs.getString('auth')};
 
     try {
@@ -129,7 +129,7 @@ class NewCollectionParameterModel with ChangeNotifier {
       {'tagName': keywords}
     ];
     notifyListeners();
-    String url = 'https://api.pixivic.com/collections/tags?keyword=$keywords';
+    String url = 'https://pix.ipv4.host/collections/tags?keyword=$keywords';
     Map<String, String> headers = {'authorization': prefs.getString('auth')};
 
     try {
@@ -176,7 +176,7 @@ class CollectionUserDataModel with ChangeNotifier {
       getCollectionList();
     }
   }
-  
+
   bool isUserCollectionListEmpty() {
     print(userCollectionList);
     if (userCollectionList.length == 0)
@@ -190,7 +190,7 @@ class CollectionUserDataModel with ChangeNotifier {
     List collectionList;
     int page = 1;
     String url =
-        'https://api.pixivic.com/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
+        'https://pix.ipv4.host/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
     Map<String, String> headers = {'authorization': prefs.getString('auth')};
     bool isEnd = false;
     while (!isEnd) {
@@ -205,7 +205,7 @@ class CollectionUserDataModel with ChangeNotifier {
         isEnd = collectionList.length == 0 ? true : false;
         page += 1;
         url =
-            'https://api.pixivic.com/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
+            'https://pix.ipv4.host/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
         if (isEnd) notifyListeners();
         // print(userCollectionList);
 

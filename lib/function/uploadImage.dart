@@ -53,8 +53,7 @@ uploadImageToSaucenao(File file, BuildContext context) async {
           BotToast.showSimpleNotification(title: texts.similarityLow);
           return false;
         } else if (id != 'null') {
-          illustResponse = await Dio().get(
-              'https://api.pixivic.com/illusts/$id',
+          illustResponse = await Dio().get('https://pix.ipv4.host/illusts/$id',
               options: Options(
                   headers: prefs.getString('auth') == ''
                       ? {}

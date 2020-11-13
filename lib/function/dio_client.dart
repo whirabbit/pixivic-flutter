@@ -6,7 +6,7 @@ Dio dioPixivic;
 
 initDioClient() {
   dioPixivic = Dio(BaseOptions(
-      baseUrl: 'https://api.pixivic.com',
+      baseUrl: 'https://pix.ipv4.host',
       connectTimeout: 150000,
       receiveTimeout: 150000,
       headers: prefs.getString('auth') == ''
