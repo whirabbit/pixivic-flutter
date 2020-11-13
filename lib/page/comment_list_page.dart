@@ -108,20 +108,15 @@ class CommentListPage extends StatelessWidget {
                               builder: (context, isMemeMode, _) {
                                 return AnimatedPositioned(
                                   duration: Duration(milliseconds: 100),
-                                  bottom: 0.0,
+                                  bottom: isMemeMode
+                                      ? 0.0
+                                      : -ScreenUtil().setHeight(256),
                                   left: 0.0,
                                   right: 0.0,
                                   child: Column(
                                     children: [
                                       bottomCommentBar(commentListModel),
-                                      isMemeMode == true
-                                          ? AnimatedContainer(
-                                              duration:
-                                                  Duration(milliseconds: 1000),
-                                              curve: Curves.bounceInOut,
-                                              child: MemeBox(),
-                                            )
-                                          : Container()
+                                      MemeBox()
                                     ],
                                   ),
                                 );
