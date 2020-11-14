@@ -63,7 +63,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
     picTotalNum = widget._picData['pageCount'];
     _uploadHistory();
     _initPappbar();
-    _showUseTips();
+    // _showUseTips();
 
     super.initState();
   }
