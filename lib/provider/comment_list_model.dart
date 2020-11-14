@@ -47,36 +47,40 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
       commentList = value;
       notifyListeners();
     });
+    // print('CommentListModel: $memeBoxHeight');
   }
 
   // 对键盘高度的监听，同时赋值键盘高度为 memeBox 高度
   @override
   void didChangeMetrics() {
-    print('CommentListModel run didChangeMetrics');
-    final renderObject = context.findRenderObject();
-    final renderBox = renderObject as RenderBox;
-    final offset = renderBox.localToGlobal(Offset.zero);
-    final widgetRect = Rect.fromLTWH(
-      offset.dx,
-      offset.dy,
-      renderBox.size.width,
-      renderBox.size.height,
-    );
-    final keyboardTopPixels =
-        window.physicalSize.height - window.viewInsets.bottom;
-    final keyboardTopPoints = keyboardTopPixels / window.devicePixelRatio;
-    double keyHeight = widgetRect.bottom - keyboardTopPoints;
+    Future.delayed(Duration(milliseconds: 200), () {
+      print('CommentListModel run didChangeMetrics');
+      final renderObject = context.findRenderObject();
+      final renderBox = renderObject as RenderBox;
+      final offset = renderBox.localToGlobal(Offset.zero);
+      final widgetRect = Rect.fromLTWH(
+        offset.dx,
+        offset.dy,
+        renderBox.size.width,
+        renderBox.size.height,
+      );
+      final keyboardTopPixels =
+          window.physicalSize.height - window.viewInsets.bottom;
+      final keyboardTopPoints = keyboardTopPixels / window.devicePixelRatio;
+      double keyHeight = widgetRect.bottom - keyboardTopPoints;
 
-    if (keyHeight > 0) {
-      currentKeyboardHeight = keyHeight;
-      memeBoxHeight = keyHeight;
-      prefs.setDouble('keyboardHeight', memeBoxHeight);
-    } else {
-      currentKeyboardHeight = 0;
-    }
+      if (keyHeight > 0) {
+        currentKeyboardHeight = keyHeight;
+        memeBoxHeight = keyHeight;
+        prefs.setDouble('keyboardHeight', memeBoxHeight);
+        print('didChangeMetrics memeBoxHeight: $keyHeight');
+      } else {
+        currentKeyboardHeight = 0;
+      }
 
-    notifyListeners();
-    super.didChangeMetrics();
+      notifyListeners();
+      super.didChangeMetrics();
+    });
   }
 
   // 根据回复框的焦点做判断
