@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
+import 'package:collection/collection.dart';
 
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -85,8 +86,6 @@ class CommentListPage extends StatelessWidget {
                               selector: (context, provider) =>
                                   provider.commentList,
                               builder: (context, commentList, _) {
-                                print(
-                                    'Selector<CommentListModel, List> builder');
                                 return commentList != null
                                     ? Positioned(
                                         // top: screen.setHeight(5),
@@ -365,7 +364,7 @@ class CommentListPage extends StatelessWidget {
                             width: ScreenUtil().setWidth(5),
                           ),
                           commentPlatform(data['platform']),
-                          commentLikeButton(data['isLike'], data['likedCount'],
+                          commentLikeButton(context,
                               parentIndex, commentListModel,
                               subIndex: subIndex),
                           GestureDetector(
@@ -443,59 +442,71 @@ class CommentListPage extends StatelessWidget {
     }
   }
 
-  Widget commentLikeButton(bool isLike, int likeCount, int parentIndex,
-      CommentListModel commentListModel,
+  Widget commentLikeButton(BuildContext context,
+      int parentIndex, CommentListModel commentListModel,
       {int subIndex}) {
-    print('$parentIndex : $isLike');
-    bool lock = false;
-    return Container(
-      // width: ScreenUtil().setWidth(30),
-      alignment: Alignment.bottomCenter,
-      // height: ScreenUtil().setHeight(8),
-      margin: EdgeInsets.only(
-        right: ScreenUtil().setWidth(7),
-      ),
-      child: GestureDetector(
-          onTap: () async {
-            if (lock) return false;
-            if (!isLike) {
-              lock = true;
-              await commentListModel.likeComment(parentIndex,
-                  subIndex: subIndex);
-              lock = false;
-            } else {
-              lock = true;
-              await commentListModel.unlikeComment(parentIndex,
-                  subIndex: subIndex);
-              lock = false;
-            }
-          },
-          child: Row(
-            children: [
-              Container(
-                alignment: Alignment.bottomCenter,
-                // color: Colors.red,
-                child: Icon(
-                  Icons.thumb_up_alt_outlined,
-                  color: isLike ? Colors.pinkAccent : Colors.grey,
-                  size: ScreenUtil().setWidth(11),
-                ),
-              ),
-              likeCount == 0
-                  ? Container()
-                  : Container(
-                      padding: EdgeInsets.only(left: ScreenUtil().setWidth(3)),
-                      child: Text(likeCount.toString(),
-                          strutStyle: StrutStyle(
-                            fontSize: ScreenUtil().setSp(11),
-                            height: ScreenUtil().setWidth(1.3),
-                          ),
-                          style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: ScreenUtil().setSp(9))),
-                    )
-            ],
-          )),
+    return Selector<CommentListModel, Tuple2>(
+      selector: (context, provider) {
+        if (subIndex == null)
+          return Tuple2(provider.commentList[parentIndex]['isLike'], provider.commentList[parentIndex]['likedCount']);
+        else
+          return Tuple2(provider.commentList[parentIndex]['subCommentList'][subIndex]
+              ['isLike'], provider.commentList[parentIndex]['subCommentList'][subIndex]
+              ['likedCount']);
+      },
+      builder: (context, tuple2, _) {
+        bool lock = false;
+        return Container(
+          // width: ScreenUtil().setWidth(30),
+          alignment: Alignment.bottomCenter,
+          // height: ScreenUtil().setHeight(8),
+          margin: EdgeInsets.only(
+            right: ScreenUtil().setWidth(7),
+          ),
+          child: GestureDetector(
+              onTap: () async {
+                if (lock) return false;
+                if (!tuple2.item1) {
+                  lock = true;
+                  await commentListModel.likeComment(parentIndex,
+                      subIndex: subIndex);
+                  lock = false;
+                } else {
+                  lock = true;
+                  await commentListModel.unlikeComment(parentIndex,
+                      subIndex: subIndex);
+                  lock = false;
+                }
+              },
+              child: Row(
+                children: [
+                  Container(
+                    alignment: Alignment.bottomCenter,
+                    // color: Colors.red,
+                    child: Icon(
+                      Icons.thumb_up_alt_outlined,
+                      color: tuple2.item1 ? Colors.pinkAccent : Colors.grey,
+                      size: ScreenUtil().setWidth(13),
+                    ),
+                  ),
+                  tuple2.item2 == 0
+                      ? Container()
+                      : Container(
+                          padding:
+                              EdgeInsets.only(left: ScreenUtil().setWidth(3)),
+                          child: Text(tuple2.item2.toString(),
+                              strutStyle: StrutStyle(
+                                fontSize: ScreenUtil().setSp(11),
+                                height: ScreenUtil().setWidth(1.3),
+                              ),
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: ScreenUtil().setSp(10))),
+                        )
+                ],
+              )),
+        );
+      },
     );
   }
 
