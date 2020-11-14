@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'dart:convert';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 // import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:lottie/lottie.dart';
-import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
@@ -16,6 +14,7 @@ import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/page/artist_list_page.dart';
 import 'package:pixivic/data/common.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -205,20 +204,22 @@ class _SearchPageState extends State<SearchPage> {
     String _picDateStr = DateFormat('yyyy-MM-dd')
         .format(DateTime.now().subtract(Duration(days: 3)));
 
-    var response = await Requests.get(
-      'https://pix.ipv4.host/trendingTags?date=$_picDateStr',
-    ).catchError((e) {
-      BotToast.showSimpleNotification(title: text.connectError);
-    });
+    var response = await dioPixivic.get(
+      '/trendingTags?date=$_picDateStr',
+    );
+    if (response.runtimeType != bool) {
+      if (response.statusCode == 200) {
+        currentTags = response.data['data'];
+        return false;
+      } else {
+        BotToast.showSimpleNotification(title: text.getCurrentError);
+        return true;
+      }
+    } else {
+      return false;
+    }
 
     // response.raiseForStatus();
-    if (response.statusCode == 200) {
-      currentTags = jsonDecode(response.content())['data'];
-      return false;
-    } else {
-      BotToast.showSimpleNotification(title: text.getCurrentError);
-      return true;
-    }
   }
 
   _currentCell(String jpTitle, String transTitle, String url, int sanityLevel) {

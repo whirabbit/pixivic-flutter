@@ -113,7 +113,7 @@ class NewCollectionParameterModel with ChangeNotifier {
       {'tagName': keywords}
     ];
     notifyListeners();
-    String url = 'https://pix.ipv4.host/collections/tags?keyword=$keywords';
+    String url = '/collections/tags?keyword=$keywords';
 
     var response =
         await dioPixivic.get(url);

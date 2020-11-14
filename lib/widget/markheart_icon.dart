@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pixivic/data/common.dart';
 
-import 'package:requests/requests.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 
 import 'package:pixivic/provider/favorite_animation_model.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 class MarkHeart extends StatelessWidget {
   MarkHeart(
@@ -43,27 +43,25 @@ class MarkHeart extends StatelessWidget {
             onPressed: () async {
               //点击动画
               favProvider.clickFunc();
-              String url = 'https://pix.ipv4.host/users/bookmarked';
+              String url = '/users/bookmarked';
+              var response;
               Map<String, String> body = {
                 'userId': prefs.getInt('id').toString(),
                 'illustId': picId.toString(),
                 'username': prefs.getString('name')
               };
-              Map<String, String> headers = {
-                'authorization': prefs.getString('auth')
-              };
-              try {
-                if (isLikedLocalState) {
-                  await Requests.delete(url,
-                      body: body,
-                      headers: headers,
-                      bodyEncoding: RequestBodyEncoding.JSON);
-                } else {
-                  await Requests.post(url,
-                      body: body,
-                      headers: headers,
-                      bodyEncoding: RequestBodyEncoding.JSON);
-                }
+              if (isLikedLocalState) {
+                response = await dioPixivic.delete(
+                  url,
+                  data: body,
+                );
+              } else {
+                response = await dioPixivic.post(
+                  url,
+                  data: body,
+                );
+              }
+              if (response.runtimeType != bool) {
                 Future.delayed(Duration(milliseconds: 400), () {
                   getPageProvider != null
                       ? getPageProvider.flipLikeState(index)
@@ -72,8 +70,6 @@ class MarkHeart extends StatelessWidget {
                   color =
                       isLikedLocalState ? Colors.redAccent : Colors.grey[300];
                 });
-              } catch (e) {
-                print(e);
               }
             },
           );

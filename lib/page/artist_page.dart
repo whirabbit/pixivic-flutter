@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pixivic/function/dio_client.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:pixivic/page/pic_page.dart';
@@ -223,33 +222,35 @@ class _ArtistPageState extends State<ArtistPage> {
   }
 
   _loadArtistData() async {
-    String urlId = 'https://pix.ipv4.host/artists/${widget.artistId}';
-    String urlSummary =
-        'https://pix.ipv4.host/artists/${widget.artistId}/summary';
+    String urlId = '/artists/${widget.artistId}';
+    String urlSummary = '/artists/${widget.artistId}/summary';
 
-    try {
-      var requests = await Requests.get(urlId,
-          headers: prefs.getString('auth') != ''
-              ? {'authorization': prefs.getString('auth')}
-              : {});
-      if (requests.statusCode == 401) {
+    var response = await dioPixivic.get(
+      urlId,
+    );
+    if (response.runtimeType != bool) {
+      if (response.statusCode == 401) {
         BotToast.showSimpleNotification(title: texts.needLogin);
         isDataLoaded = false;
         return false;
       }
-
-      var jsonList = jsonDecode(requests.content())['data'];
+      var jsonList = response.data['data'];
       this.comment = jsonList['comment'].replaceAll("\n", "");
       this.urlTwitter = jsonList['twitterUrl'];
       this.urlWebPage = jsonList['webPage'];
       this.numOfBookmarksPublic = jsonList['totalIllustnumOfBookmarksPublic'];
       this.numOfFollower = jsonList['totalFollowUsers'];
+    } else {
+      BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+      isDataLoaded = false;
+      return ('finished');
+    }
 
-      requests = await Requests.get(urlSummary,
-          headers: prefs.getString('auth') != ''
-              ? {'authorization': prefs.getString('auth')}
-              : {});
-      jsonList = jsonDecode(requests.content())['data'];
+    response = await dioPixivic.get(
+      urlSummary,
+    );
+    if (response.runtimeType != bool) {
+      var jsonList = response.data['data'];
       this.numOfIllust = jsonList['illustSum'].toString();
       this.numOfManga = jsonList['mangaSum'].toString();
       this.tabs = <Tab>[
@@ -261,15 +262,11 @@ class _ArtistPageState extends State<ArtistPage> {
         ),
       ];
       isDataLoaded = true;
-    } catch (error) {
-      print('======================');
-      print(error);
-      print('======================');
+    } else {
       BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
       isDataLoaded = false;
+      return ('finished');
     }
-
-    return ('finished');
   }
 
   _onTopOfPicpage() {
@@ -334,37 +331,32 @@ class _ArtistPageState extends State<ArtistPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
       color: Colors.blueAccent[200],
       onPressed: () async {
-        String url = 'https://pix.ipv4.host/users/followed';
+        String url = '/users/followed';
+        var response;
         Map<String, String> body = {
           'artistId': widget.artistId,
           'userId': prefs.getInt('id').toString(),
           'username': prefs.getString('name'),
         };
-        Map<String, String> headers = {
-          'authorization': prefs.getString('auth')
-        };
-        try {
-          if (currentFollowedState) {
-            var r = await Requests.delete(url,
-                body: body,
-                headers: headers,
-                bodyEncoding: RequestBodyEncoding.JSON);
-            r.raiseForStatus();
-          } else {
-            var r = await Requests.post(url,
-                body: body,
-                headers: headers,
-                bodyEncoding: RequestBodyEncoding.JSON);
-            r.raiseForStatus();
-          }
+
+        if (currentFollowedState) {
+          response = await dioPixivic.delete(
+            url,
+            data: body,
+          );
+        } else {
+          response = await dioPixivic.post(
+            url,
+            data: body,
+          );
+        }
+        if (response.runtimeType != bool) {
           setState(() {
             isFollowed = !isFollowed;
           });
           if (widget.followedRefresh != null)
             widget.followedRefresh(isFollowed);
-        } catch (e) {
-          print(e);
-          // print(homePicList[widget.index]['artistPreView']['isFollowed']);
+        } else {
           BotToast.showSimpleNotification(title: texts.followError);
         }
       },

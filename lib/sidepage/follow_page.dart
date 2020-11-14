@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:lottie/lottie.dart';
 
@@ -12,6 +9,7 @@ import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/page/artist_page.dart';
 import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/widget/papp_bar.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 class FollowPage extends StatefulWidget {
   @override
@@ -156,35 +154,29 @@ class _FollowPageState extends State<FollowPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
       color: Colors.blueAccent[200],
       onPressed: () async {
-        String url = 'https://pix.ipv4.host/users/followed';
+        String url = 'users/followed';
+        var response;
         Map<String, String> body = {
           'artistId': data['id'].toString(),
           'userId': prefs.getInt('id').toString(),
           'username': prefs.getString('name'),
         };
-        Map<String, String> headers = {
-          'authorization': prefs.getString('auth')
-        };
-        try {
-          if (currentFollowedState) {
-            var r = await Requests.delete(url,
-                body: body,
-                headers: headers,
-                bodyEncoding: RequestBodyEncoding.JSON);
-            r.raiseForStatus();
-          } else {
-            var r = await Requests.post(url,
-                body: body,
-                headers: headers,
-                bodyEncoding: RequestBodyEncoding.JSON);
-            r.raiseForStatus();
-          }
+        if (currentFollowedState) {
+          response = await dioPixivic.delete(
+            url,
+            data: body,
+          );
+        } else {
+          response = await dioPixivic.post(
+            url,
+            data: body,
+          );
+        }
+        if (response.runtimeType != bool) {
           setState(() {
             data['isFollowed'] = !data['isFollowed'];
           });
-        } catch (e) {
-          print(e);
-          // print(homePicList[widget.index]['artistPreView']['isFollowed']);
+        } else {
           BotToast.showSimpleNotification(title: texts.followError);
         }
       },
@@ -198,16 +190,14 @@ class _FollowPageState extends State<FollowPage> {
 
   _getJsonList() async {
     String url =
-        'https://pix.ipv4.host/users/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
-    try {
-      Map<String, String> headers = {'authorization': prefs.getString('auth')};
-      var r = await Requests.get(url, headers: headers);
-      r.raiseForStatus();
-      List jsonList = jsonDecode(r.content())['data'];
+        'users/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
+    var response;
+    response = await dioPixivic.get(url);
+    if (response.runtimeType != bool) {
+      List jsonList = response.data['data'];
       if (jsonList.length < 30) loadMoreAble = false;
       return (jsonList);
-    } catch (e) {
-      print('followPage error: $e');
+    } else {
       BotToast.showSimpleNotification(title: texts.httpLoadError);
     }
   }
