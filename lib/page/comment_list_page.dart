@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 import 'package:pixivic/provider/comment_list_model.dart';
 import 'package:pixivic/provider/meme_model.dart';
@@ -54,8 +55,7 @@ class CommentListPage extends StatelessWidget {
           selector: (context, provider) => provider,
           builder: (context, commentListModel, _) {
             if (isReply) {
-              Future.delayed(Duration(milliseconds: 200))
-                  .then((value) => commentListModel.replyFocus.requestFocus());
+              commentListModel.replyFocus.requestFocus();
             }
             return GestureDetector(
                 onTap: () {
@@ -85,7 +85,6 @@ class CommentListPage extends StatelessWidget {
                               selector: (context, provider) =>
                                   provider.commentList,
                               builder: (context, commentList, _) {
-                                print("listSelector");
                                 return commentList != null
                                     ? Positioned(
                                         // top: screen.setHeight(5),
@@ -113,34 +112,55 @@ class CommentListPage extends StatelessWidget {
                           //TODO: selector 细化至单个显示组建中，这里改为只有 length 修改后才 build
                           // parentCell 组件中需要判断 subList 改变才重构
                           // baseCell 组件中需要判断 like 状态重构
-                          Selector<CommentListModel, bool>(
-                              shouldRebuild: (pre, next) => true,
-                              selector: (context, provider) =>
+                          Selector<CommentListModel, Tuple2<bool, num>>(
+                              shouldRebuild: (pre, next) {
+                                if (pre.item1 &&
+                                    !next.item1 &&
+                                    commentListModel.replyFocus.hasFocus) {
+                                  return false;
+                                } else {
+                                  if (pre != next)
+                                    return true;
+                                  else
+                                    return false;
+                                }
+                              },
+                              selector: (context, provider) => Tuple2(
                                   provider.isMemeMode,
-                              builder: (context, isMemeMode, _) {
+                                  provider.currentKeyboardHeight),
+                              builder: (context, tuple2, _) {
+                                print(
+                                    'Selector<CommentListModel, Tuple2<bool, num>>');
+                                num bottom;
+                                if (tuple2.item1 || tuple2.item2 > 0)
+                                  bottom = 0.0;
+                                else
+                                  bottom = -commentListModel.memeBoxHeight;
                                 return AnimatedPositioned(
                                   duration: Duration(milliseconds: 100),
-                                  // bottom: 0.0,
-                                  // left: 0.0,
-                                  // right: 0.0,
+                                  bottom: bottom,
+                                  left: 0.0,
+                                  right: 0.0,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      Container(
-                                        child:
-                                            bottomCommentBar(commentListModel),
-                                      ),
-                                      Container(
-                                        width: double.infinity,
-                                        color: Colors.white,
-                                        height: commentListModel.curKeyboardH,
-                                      ),
-                                      Container(
-                                        height: !isMemeMode
-                                            ? 0.0
-                                            : commentListModel.faceH,
-                                        child: MemeBox(),
-                                      )
+                                      bottomCommentBar(commentListModel),
+                                      tuple2.item1
+                                          ? MemeBox(
+                                              commentListModel.memeBoxHeight)
+                                          : Container(
+                                              height: commentListModel
+                                                  .memeBoxHeight,
+                                            )
+                                      // Container(
+                                      //   width: ScreenUtil().setWidth(324),
+                                      //   color: Colors.white,
+                                      //   height: tuple2.item2,
+                                      // ),
+                                      // !tuple2.item1
+                                      //     ? Container()
+                                      //     : MemeBox(
+                                      //         commentListModel.memeBoxHeight),
                                     ],
                                   ),
                                 );
@@ -173,12 +193,13 @@ class CommentListPage extends StatelessWidget {
                 color: Colors.pink[300],
               ),
               onTap: () {
-                commentListModel.faceH = prefs.getDouble('KeyboardH');
+                // commentListModel.memeBoxHeight =
+                //     prefs.getDouble('KeyboardHeight');
                 if (commentListModel.replyFocus.hasFocus) {
                   commentListModel.replyFocus.unfocus();
                 }
-                if (commentListModel.curKeyboardH != 0)
-                  commentListModel.curKeyboardH = 0.0;
+                if (commentListModel.currentKeyboardHeight != 0)
+                  commentListModel.currentKeyboardHeight = 0.0;
                 commentListModel.flipMemeMode();
               },
             ),
