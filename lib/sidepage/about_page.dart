@@ -67,7 +67,7 @@ class _AboutPageState extends State<AboutPage> {
                 ),
               ),
               Container(
-                  padding: EdgeInsets.only(top: ScreenUtil().setHeight(200)),
+                  padding: EdgeInsets.only(top: ScreenUtil().setHeight(100)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
