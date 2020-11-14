@@ -53,6 +53,10 @@ class CommentListPage extends StatelessWidget {
           shouldRebuild: (pre, next) => false,
           selector: (context, provider) => provider,
           builder: (context, commentListModel, _) {
+            if (isReply) {
+              Future.delayed(Duration(milliseconds: 200))
+                  .then((value) => commentListModel.replyFocus.requestFocus());
+            }
             return GestureDetector(
                 onTap: () {
                   //键盘移除焦点
@@ -115,7 +119,7 @@ class CommentListPage extends StatelessWidget {
                                   provider.isMemeMode,
                               builder: (context, isMemeMode, _) {
                                 return AnimatedPositioned(
-                                  duration: Duration(milliseconds: 1000),
+                                  duration: Duration(milliseconds: 100),
                                   // bottom: 0.0,
                                   // left: 0.0,
                                   // right: 0.0,
@@ -128,6 +132,7 @@ class CommentListPage extends StatelessWidget {
                                       ),
                                       Container(
                                         width: double.infinity,
+                                        color: Colors.white,
                                         height: commentListModel.curKeyboardH,
                                       ),
                                       Container(
@@ -169,8 +174,6 @@ class CommentListPage extends StatelessWidget {
               ),
               onTap: () {
                 commentListModel.faceH = prefs.getDouble('KeyboardH');
-                print("storge" + commentListModel.storeKeyboardH.toString());
-
                 if (commentListModel.replyFocus.hasFocus) {
                   commentListModel.replyFocus.unfocus();
                 }
