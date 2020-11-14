@@ -9,6 +9,8 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 
 import 'package:pixivic/widget/nav_bar.dart';
 import 'package:pixivic/widget/papp_bar.dart';
@@ -58,10 +60,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    FirebaseAnalytics analytics = FirebaseAnalytics();
+
     return BotToastInit(
       child: MaterialApp(
         // showPerformanceOverlay: true,
-        navigatorObservers: [BotToastNavigatorObserver()],
+        navigatorObservers: [
+          BotToastNavigatorObserver(),
+          FirebaseAnalyticsObserver(analytics: analytics),
+        ],
         title: 'Pixivic',
         theme: ThemeData(
           primarySwatch: Colors.blue,
@@ -250,16 +257,16 @@ class _MyHomePageState extends State<MyHomePage> {
   //   indexProvider.changeIndex(index);
   //   indexProvider.pageChanged(true);
   //   indexProvider.changeScrolling(false);
-    // _menuButtonKey.currentState.changeTapState(false);
-    // _menuListKey.currentState.changeActive(false);
+  // _menuButtonKey.currentState.changeTapState(false);
+  // _menuListKey.currentState.changeActive(false);
 
-    // if (index == 0) {
-    //   _navBarAlone = false;
-    //   _menuButtonKey.currentState.changeVisible(true);
-    // } else {
-    //   _navBarAlone = true;
-    //   _menuButtonKey.currentState.changeVisible(false);
-    // }
+  // if (index == 0) {
+  //   _navBarAlone = false;
+  //   _menuButtonKey.currentState.changeVisible(true);
+  // } else {
+  //   _navBarAlone = true;
+  //   _menuButtonKey.currentState.changeVisible(false);
+  // }
 //      _pappBarKey.currentState.changePappbarMode(index);
 //      _onPageScrolling(false);
   // }

@@ -59,6 +59,7 @@ dev_dependencies:
   tuple: ^1.0.3
   waterfall_flow: ^2.0.3
   vibration: ^1.7.1
+  firebase_analytics: ^6.2.0
 
 flutter_icons:
   android: true
