@@ -740,6 +740,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
           target:
               Offset(ScreenUtil().setWidth(10), ScreenUtil().setHeight(250)));
 
+    // TODO: 移除和加入引导
     if (!prefs.getBool('isPicTipsKnown'))
       BotToast.showAttachedWidget(
           attachedBuilder: (CancelFunc cancel) => Card(

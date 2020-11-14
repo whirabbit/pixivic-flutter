@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:bot_toast/bot_toast.dart';
 import 'package:requests/requests.dart';
 import 'package:provider/provider.dart';
-import 'package:dio/dio.dart';
 
 import '../data/common.dart';
 import '../data/texts.dart';

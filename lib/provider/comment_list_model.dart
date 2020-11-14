@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
-import 'package:provider/provider.dart';
 
 import '../data/common.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/function/dio_client.dart';
-import 'package:pixivic/provider/meme_model.dart';
 
 class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   int illustId;

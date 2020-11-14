@@ -9,9 +9,7 @@ import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/function/collection.dart';
 import 'package:pixivic/provider/collection_model.dart';
-import 'package:pixivic/widget/select_mode_bar.dart';
 
-// TODO: 001 scroller
 class CollectionDetailPage extends StatelessWidget {
   final int index;
 
