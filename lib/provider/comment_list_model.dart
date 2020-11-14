@@ -207,12 +207,13 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   likeComment(int parentIndex, {int subIndex}) async {
     String url = '/user/likedComments';
     Map<String, dynamic> payload = {
-      'commentAppId': commentList[0]['id'],
+      'commentAppId': commentList[0]['appId'],
       'commentAppType': commentList[0]['appType'],
       'commentId': subIndex == null
           ? commentList[parentIndex]['id']
           : commentList[parentIndex]['subCommentList'][subIndex]['id'],
     };
+    print(payload);
     var result = await dioPixivic.post(
       url,
       data: payload,
@@ -238,6 +239,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
         : commentList[parentIndex]['subCommentList'][subIndex]['id'];
     String url =
         'ikedComments/${commentList[0]['appType']}/${commentList[0]['appId']}/$commentId';
+    print(url);
     var result = await dioPixivic.delete(
       url,
     );
@@ -284,15 +286,14 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
 //请求数据
   loadComments(int illustId, {int page = 1}) async {
     String url =
-        'https://pix.ipv4.host/illusts/$illustId/comments?page=$page&pageSize=10';
-    var dio = Dio();
-    Response response = await dio.get(url);
+        '/illusts/$illustId/comments?page=$page&pageSize=10';
+    Response response = await dioPixivic.get(url);
     if (response.statusCode == 200 && response.data['data'] != null) {
       // print(response.data);
       jsonList = response.data['data'];
       return jsonList;
     } else if (response.statusCode == 200 && response.data['data'] == null) {
-      print('comments: null but 200');
+      print('comments: no comments but code 200');
       return jsonList = [];
     } else {
       BotToast.showSimpleNotification(title: response.data['message']);
