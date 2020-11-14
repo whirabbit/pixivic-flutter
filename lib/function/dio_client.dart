@@ -22,16 +22,17 @@ initDioClient() {
     print(options.headers);
     return options;
   }, onResponse: (Response response) async {
-    print(response.data);
+    // print(response.data);
     // BotToast.showSimpleNotification(title: response.data['message']);
     return response;
   }, onError: (DioError e) async {
     if (e.response != null) {
-      BotToast.showSimpleNotification(title: e.response.data['message']);
-      print(e.response.statusCode);
+      print(e.response);
+      print(e.response.statusCode.toString());
       print(e.response.data);
       print(e.response.headers);
       print(e.response.request);
+      BotToast.showSimpleNotification(title: e.response.data['message']);
       return false;
     } else {
       // Something happened in setting up or sending the request that triggered an Error
