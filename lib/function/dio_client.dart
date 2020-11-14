@@ -23,7 +23,7 @@ initDioClient() {
     return options;
   }, onResponse: (Response response) async {
     print(response.data);
-    BotToast.showSimpleNotification(title: response.data['message']);
+    // BotToast.showSimpleNotification(title: response.data['message']);
     return response;
   }, onError: (DioError e) async {
     if (e.response != null) {

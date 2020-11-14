@@ -85,6 +85,8 @@ class CommentListPage extends StatelessWidget {
                               selector: (context, provider) =>
                                   provider.commentList,
                               builder: (context, commentList, _) {
+                                print(
+                                    'Selector<CommentListModel, List> builder');
                                 return commentList != null
                                     ? Positioned(
                                         // top: screen.setHeight(5),
@@ -129,8 +131,6 @@ class CommentListPage extends StatelessWidget {
                                   provider.isMemeMode,
                                   provider.currentKeyboardHeight),
                               builder: (context, tuple2, _) {
-                                print(
-                                    'Selector<CommentListModel, Tuple2<bool, num>>');
                                 num bottom;
                                 if (tuple2.item1 || tuple2.item2 > 0)
                                   bottom = 0.0;
@@ -302,6 +302,7 @@ class CommentListPage extends StatelessWidget {
     String avaterUrl =
         'https://static.pixivic.net/avatar/299x299/${data['replyFrom']}.jpg';
 
+    print('commentBaseCell: ${data['isLike']}');
     return Container(
         child: Column(children: <Widget>[
       Material(
@@ -446,6 +447,7 @@ class CommentListPage extends StatelessWidget {
   Widget commentLikeButton(bool isLike, int likeCount, int parentIndex,
       CommentListModel commentListModel,
       {int subIndex}) {
+    print('$parentIndex : $isLike');
     bool lock = false;
     return Container(
       // width: ScreenUtil().setWidth(30),
