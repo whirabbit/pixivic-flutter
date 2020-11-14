@@ -1,11 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:requests/requests.dart';
 
 import 'package:pixivic/page/user_list_page.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 class BookmarkUsers extends StatefulWidget {
   @override
@@ -79,10 +77,11 @@ class BookmarkUsersState extends State<BookmarkUsers> {
   }
 
   void getBookmarkData() async {
-    String url =
-        'https://pix.ipv4.host/illusts/${widget.illustId}/bookmarkedUsers?page=1&pageSize=3';
-    var requests = await Requests.get(url);
-    data = jsonDecode(requests.content())['data'];
+    String url = '/illusts/${widget.illustId}/bookmarkedUsers?page=1&pageSize=3';
+    var response = await dioPixivic.get(url);
+    if (response.runtimeType != bool) {
+      data = response.data['data'];
+    }
 
     if (data != null) {
       numOfData = data.length;

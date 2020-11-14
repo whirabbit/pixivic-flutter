@@ -32,11 +32,18 @@ initDioClient() {
       print(e.response.data);
       print(e.response.headers);
       print(e.response.request);
-      BotToast.showSimpleNotification(title: e.response.data['message']);
+      if(e.response.statusCode == 400)
+        BotToast.showSimpleNotification(title: '请登陆后重新加载页面');
+      if(e.response.statusCode == 403) {
+        
+      }
+      else if(e.response.data['message'] != '')
+        BotToast.showSimpleNotification(title: e.response.data['message']);
       return false;
     } else {
       // Something happened in setting up or sending the request that triggered an Error
-      BotToast.showSimpleNotification(title: e.message);
+      if(e.message!= '')
+        BotToast.showSimpleNotification(title: e.message);
       print(e.request);
       print(e.message);
       return false;

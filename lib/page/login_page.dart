@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'dart:convert';
-import 'package:requests/requests.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bot_toast/bot_toast.dart';
 
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/function/identity.dart' as identity;
+import 'package:pixivic/function/dio_client.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -362,20 +362,23 @@ class LoginPageState extends State<LoginPage> {
   }
 
   _getVerificationCode() async {
-    var r = await Requests.get("https://pix.ipv4.host/verificationCode");
-    r.raiseForStatus();
-    if (r.statusCode == 200) {
-      dynamic json = r.json();
-      setState(() {
-        verificationCode = json['data']['vid'];
-        verificationImage = json['data']['imageBase64'];
-        tempVerificationImage = verificationImage;
-        tempVerificationCode = verificationCode;
-      });
-      return true;
+    var response = await dioPixivic.get("/verificationCode");
+
+    if (response.runtimeType != bool) {
+      if (response.statusCode == 200) {
+        setState(() {
+          verificationCode = response.data['data']['vid'];
+          verificationImage = response.data['data']['imageBase64'];
+          tempVerificationImage = verificationImage;
+          tempVerificationCode = verificationCode;
+        });
+        return true;
+      } else {
+        BotToast.showSimpleNotification(title: texts.errorGetVerificationCode);
+        return false;
+      }
     } else {
       BotToast.showSimpleNotification(title: texts.errorGetVerificationCode);
-      print('无法获取验证码');
       return false;
     }
   }
@@ -416,22 +419,24 @@ class LoginPageState extends State<LoginPage> {
   }
 
   _submitMailForForget(String mail) async {
-    String url = 'https://pix.ipv4.host/users/emails/$mail/resetPasswordEmail';
-    var r = await Requests.get(url);
-    print(r.content());
-    showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-              content: Text(jsonDecode(r.content())['message']),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text(texts.sure),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    if (r.statusCode == 200) Navigator.of(context).pop();
-                  },
-                )
-              ],
-            ));
+    String url = '/users/emails/$mail/resetPasswordEmail';
+    var response = await dioPixivic.get(url);
+    if (response.runtimeType != bool) {
+      showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+                content: Text(response.data['message']),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text(texts.sure),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      if (response.statusCode == 200)
+                        Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ));
+    }
   }
 }

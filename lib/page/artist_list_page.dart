@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:lottie/lottie.dart';
 
@@ -12,6 +10,7 @@ import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/page/artist_page.dart';
 import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/widget/papp_bar.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 class ArtistListPage extends StatefulWidget {
   @override
@@ -234,34 +233,31 @@ class _ArtistListPageState extends State<ArtistListPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
       color: Colors.blueAccent[200],
       onPressed: () async {
-        String url = 'https://pix.ipv4.host/users/followed';
+        String url = '/users/followed';
+        var response;
+
         Map<String, String> body = {
           'artistId': data['id'].toString(),
           'userId': prefs.getInt('id').toString(),
           'username': prefs.getString('name'),
         };
-        Map<String, String> headers = {
-          'authorization': prefs.getString('auth')
-        };
-        try {
-          if (currentFollowedState) {
-            var r = await Requests.delete(url,
-                body: body,
-                headers: headers,
-                bodyEncoding: RequestBodyEncoding.JSON);
-            r.raiseForStatus();
-          } else {
-            var r = await Requests.post(url,
-                body: body,
-                headers: headers,
-                bodyEncoding: RequestBodyEncoding.JSON);
-            r.raiseForStatus();
-          }
+
+        if (currentFollowedState) {
+          response = await dioPixivic.delete(
+            url,
+            data: body,
+          );
+        } else {
+          response = await dioPixivic.post(
+            url,
+            data: body,
+          );
+        }
+        if (response.runtimeType != bool) {
           setState(() {
             data['isFollowed'] = !data['isFollowed'];
           });
-        } catch (e) {
-          print(e);
+        } else {
           // print(homePicList[widget.index]['artistPreView']['isFollowed']);
           BotToast.showSimpleNotification(title: text.followError);
         }
@@ -277,41 +273,29 @@ class _ArtistListPageState extends State<ArtistListPage> {
   _getJsonList() async {
     String url;
     List jsonList;
-    var requests;
+    var response;
 
     if (widget.mode == 'search') {
       url =
-          'https://pix.ipv4.host/artists?page=$currentPage&artistName=${widget.searchKeyWords}&pageSize=30';
+          '/artists?page=$currentPage&artistName=${widget.searchKeyWords}&pageSize=30';
     } else if (widget.mode == 'follow') {
       url =
-          'https://pix.ipv4.host/users/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
+          '/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
     } else if (widget.mode == 'userfollow') {
       url =
-          'https://pix.ipv4.host/users/${widget.userId}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
+          '/${widget.userId}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
     }
 
-    try {
-      if (prefs.getString('auth') == '') {
-        requests = await Requests.get(url);
-      } else {
-        Map<String, String> headers = {
-          'authorization': prefs.getString('auth')
-        };
-        requests = await Requests.get(url, headers: headers);
-      }
-      jsonList = jsonDecode(requests.content())['data'];
-      // print(jsonList);
+    response = await dioPixivic.get(url);
+    if (response.runtimeType != bool) {
+      jsonList = response.data['data'];
       if (jsonList == null)
         loadMoreAble = false;
       else
         loadMoreAble = true;
       return (jsonList);
-    } catch (error) {
-      print('=========getJsonList==========');
-      print(error);
-      print('==============================');
-      if (error.toString().contains('SocketException'))
-        BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+    } else {
+      BotToast.showSimpleNotification(title: '数据获取失败，请检查网络');
     }
   }
 

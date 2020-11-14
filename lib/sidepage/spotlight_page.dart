@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:lottie/lottie.dart';
 
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 class SpotlightPage extends StatefulWidget {
   @override
@@ -150,16 +149,13 @@ class _SpotlightPageState extends State<SpotlightPage> {
   }
 
   _getJsonList() async {
-    String url =
-        'https://pix.ipv4.host/spotlights?page=$currentPage&pageSize=30';
-    try {
-      var r = await Requests.get(url);
-      r.raiseForStatus();
-      List jsonList = jsonDecode(r.content())['data'];
+    String url = '/spotlights?page=$currentPage&pageSize=30';
+    var response = await dioPixivic.get(url);
+    if (response.runtimeType != bool) {
+      List jsonList = response.data['data'];
       if (jsonList.length < 30) loadMoreAble = false;
       return (jsonList);
-    } catch (e) {
-      print('spotlightPage error: $e');
+    } else {
       BotToast.showSimpleNotification(title: text.httpLoadError);
     }
   }

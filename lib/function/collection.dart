@@ -475,7 +475,6 @@ addIllustToCollection(BuildContext contextFrom, List illustIdList,
     String collectionId, bool multiSelect) async {
   print('illustIdList: $illustIdList');
   String url = '/collections/$collectionId/illustrations';
-  Map<String, String> headers = {'authorization': prefs.getString('auth')};
 
   var response = await dioPixivic.post(url, data: illustIdList);
   if (response.runtimeType != bool) {
@@ -576,33 +575,18 @@ deleteCollection(BuildContext contextFrom, String collectionId) {
 
 putEditCollection(Map<String, dynamic> payload, String collectionId) async {
   String url = 'https://pix.ipv4.host/collections/$collectionId';
-  Map<String, String> headers = {'authorization': prefs.getString('auth')};
   // print(payload);
-  try {
-    if (payload['tagList'] != null) {
-      Response response = await Dio()
-          .put(url, data: payload, options: Options(headers: headers));
-      print(response.data);
+  if (payload['tagList'] != null) {
+    var response = await dioPixivic.put(url, data: payload);
+    if (response.runtimeType != bool) {
       BotToast.showSimpleNotification(title: response.data['message']);
       return true;
     } else {
-      BotToast.showSimpleNotification(title: TextZhCollection().needForTag);
       return false;
     }
-  } on DioError catch (e) {
-    if (e.response != null) {
-      BotToast.showSimpleNotification(title: e.response.data['message']);
-      print(e.response.data);
-      print(e.response.headers);
-      print(e.response.request);
-      return false;
-    } else {
-      // Something happened in setting up or sending the request that triggered an Error
-      BotToast.showSimpleNotification(title: e.message);
-      print(e.request);
-      print(e.message);
-      return false;
-    }
+  } else {
+    BotToast.showSimpleNotification(title: TextZhCollection().needForTag);
+    return false;
   }
 }
 

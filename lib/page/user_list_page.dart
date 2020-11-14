@@ -1,16 +1,14 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:requests/requests.dart';
 import 'package:lottie/lottie.dart';
 import 'package:bot_toast/bot_toast.dart';
 
 import 'package:pixivic/data/texts.dart';
-import 'package:pixivic/data/common.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/page/user_detail_page.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 class UserListPage extends StatefulWidget {
   @override
@@ -146,34 +144,22 @@ class _UserListPageState extends State<UserListPage> {
   _getJsonList() async {
     String url;
     List jsonList;
-    var requests;
+    var response;
 
     if (widget.mode == 'bookmark') {
       url =
-          'https://pix.ipv4.host/illusts/${widget.illustId}/bookmarkedUsers?page=$currentPage&pageSize=30';
+          '/illusts/${widget.illustId}/bookmarkedUsers?page=$currentPage&pageSize=30';
     }
-    try {
-      if (prefs.getString('auth') == '') {
-        requests = await Requests.get(url);
-      } else {
-        Map<String, String> headers = {
-          'authorization': prefs.getString('auth')
-        };
-        requests = await Requests.get(url, headers: headers);
-      }
-      jsonList = jsonDecode(requests.content())['data'];
-      // print(jsonList);
+    response = await dioPixivic.get(url);
+    if (response.runtimeType != bool) {
+      jsonList = response.data['data'];
       if (jsonList == null)
         loadMoreAble = false;
       else
         loadMoreAble = true;
-      return (jsonList);
-    } catch (error) {
-      print('=========getJsonList==========');
-      print(error);
-      print('==============================');
-      if (error.toString().contains('SocketException'))
-        BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+      return jsonList;
+    } else {
+      return null;
     }
   }
 

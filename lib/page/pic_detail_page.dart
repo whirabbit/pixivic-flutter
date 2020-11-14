@@ -7,7 +7,6 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:bot_toast/bot_toast.dart';
-import 'package:requests/requests.dart' hide Response;
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_advanced_networkimage/zoomable.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
@@ -23,6 +22,7 @@ import 'package:pixivic/widget/bookmark_users.dart';
 import 'package:pixivic/widget/comment_cell.dart';
 import 'package:pixivic/function/downloadImage.dart';
 import 'package:pixivic/function/collection.dart';
+import 'package:pixivic/function/dio_client.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/widget/markheart_icon.dart';
 
@@ -449,35 +449,31 @@ class _PicDetailPageState extends State<PicDetailPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
       color: Colors.blueAccent[200],
       onPressed: () async {
-        String url = 'https://pix.ipv4.host/users/followed';
+        String url = '/users/followed';
+        var response;
         Map<String, String> body = {
           'artistId': widget._picData['artistPreView']['id'].toString(),
           'userId': prefs.getInt('id').toString(),
           'username': prefs.getString('name'),
         };
-        Map<String, String> headers = {
-          'authorization': prefs.getString('auth')
-        };
-        try {
-          if (currentFollowedState) {
-            var r = await Requests.delete(url,
-                body: body,
-                headers: headers,
-                bodyEncoding: RequestBodyEncoding.JSON);
-            r.raiseForStatus();
-          } else {
-            var r = await Requests.post(url,
-                body: body,
-                headers: headers,
-                bodyEncoding: RequestBodyEncoding.JSON);
-            r.raiseForStatus();
-          }
+
+        if (currentFollowedState) {
+          response = await dioPixivic.delete(
+            url,
+            data: body,
+          );
+        } else {
+          response = await dioPixivic.post(
+            url,
+            data: body,
+          );
+        }
+        if (response.runtimeType != bool) {
           setState(() {
             widget._picData['artistPreView']['isFollowed'] =
                 !widget._picData['artistPreView']['isFollowed'];
           });
-        } catch (e) {
-          print(e);
+        } else {
           // print(homePicList[widget.index]['artistPreView']['isFollowed']);
           BotToast.showSimpleNotification(title: texts.followError);
         }
@@ -659,15 +655,12 @@ class _PicDetailPageState extends State<PicDetailPage> {
   // 留下查看图片的痕迹
   _uploadHistory() async {
     if (prefs.getString('auth') != '') {
-      String url =
-          'https://pix.ipv4.host/users/${widget._picData['id'].toString()}/illustHistory';
-      Map<String, String> headers = {'authorization': prefs.getString('auth')};
+      String url = '/users/${widget._picData['id'].toString()}/illustHistory';
       Map<String, String> body = {
         'userId': prefs.getInt('id').toString(),
         'illustId': widget._picData['id'].toString()
       };
-      await Requests.post(url,
-          headers: headers, body: body, bodyEncoding: RequestBodyEncoding.JSON);
+      await dioPixivic.post(url, data: body);
     }
   }
 

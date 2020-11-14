@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
+import 'package:pixivic/function/dio_client.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../page/pic_detail_page.dart';
@@ -53,21 +54,23 @@ uploadImageToSaucenao(File file, BuildContext context) async {
           BotToast.showSimpleNotification(title: texts.similarityLow);
           return false;
         } else if (id != 'null') {
-          illustResponse = await Dio().get('https://pix.ipv4.host/illusts/$id',
-              options: Options(
-                  headers: prefs.getString('auth') == ''
-                      ? {}
-                      : {'authorization': prefs.getString('auth')}));
-          if (illustResponse.statusCode == 200) {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              return PicDetailPage(illustResponse.data['data']);
-            }));
-            return true;
+          illustResponse = await dioPixivic.get(
+            '/illusts/$id',
+          );
+          if (response.runtimeType != bool) {
+            if (illustResponse.statusCode == 200) {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return PicDetailPage(illustResponse.data['data']);
+              }));
+              return true;
+            } else {
+              print(illustResponse.statusCode);
+              print('on low error');
+              BotToast.showSimpleNotification(
+                  title: illustResponse.data['meesage']);
+              return false;
+            }
           } else {
-            print(illustResponse.statusCode);
-            print('on low error');
-            BotToast.showSimpleNotification(
-                title: illustResponse.data['meesage']);
             return false;
           }
         } else if (id == 'null' && extUrl != null) {

@@ -1,10 +1,8 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +15,7 @@ import 'package:pixivic/function/uploadImage.dart';
 import 'package:pixivic/function/identity.dart';
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:pixivic/provider/common_model.dart';
+import 'package:pixivic/function/dio_client.dart';
 // import 'package:pixivic/provider/pic_page_model.dart';
 
 class PappBar extends StatefulWidget implements PreferredSizeWidget {
@@ -611,17 +610,16 @@ class PappBarState extends State<PappBar> {
   }
 
   onTranslateThenSearch() async {
-    var response = await Requests.get(
-            'https://pix.ipv4.host/keywords/${searchController.text}/translations')
-        .catchError((e) {
-      print(e);
-      BotToast.showSimpleNotification(title: texts.translateError);
-    });
-    if (response.statusCode == 200) {
-      widget.searchFucntion(jsonDecode(response.content())['data']['keyword']);
-    } else if (response.statusCode == 400) {
-      BotToast.showSimpleNotification(
-          title: jsonDecode(response.content())['message']);
+    var response =
+        await dioPixivic.get('/keywords/${searchController.text}/translations');
+    if (response.runtimeType != bool) {
+      if (response.statusCode == 200) {
+        widget.searchFucntion(response.data['data']['keyword']);
+      } else if (response.statusCode == 400) {
+        BotToast.showSimpleNotification(title: response.data['message']);
+      } else {
+        BotToast.showSimpleNotification(title: texts.translateError);
+      }
     } else {
       BotToast.showSimpleNotification(title: texts.translateError);
     }
@@ -636,41 +634,36 @@ class PappBarState extends State<PappBar> {
       return false;
     } else {
       CancelFunc cancelLoading = BotToast.showLoading();
-      var response = await Requests.get(
-              'https://pix.ipv4.host/artists/${searchController.text}',
-              headers: prefs.getString('auth') != ''
-                  ? {'authorization': prefs.getString('auth')}
-                  : {})
-          .catchError((e) {
-        if (e.toString().contains('TimeoutException'))
-          BotToast.showSimpleNotification(title: texts.searchTimeout);
-        else
-          BotToast.showSimpleNotification(title: texts.networkError);
+      var response = await dioPixivic.get(
+        '/artists/${searchController.text}',
+      );
+      if (response.runtimeType != bool) {
         cancelLoading();
-        return false;
-      });
-      cancelLoading();
-      Map result = jsonDecode(response.content());
-      if (response.statusCode == 200) {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) {
-            return ArtistPage(
-              result['data']['avatar'],
-              result['data']['name'],
-              result['data']['id'].toString(),
-              isFollowed: prefs.getString('auth') != ''
-                  ? result['data']['isFollowed']
-                  : false,
-            );
-          },
-        ));
-        return true;
-      } else if (response.statusCode == 400) {
-        print('search artist 400');
-        BotToast.showSimpleNotification(title: result['message']);
-        return false;
+        Map result = response.data;
+        if (response.statusCode == 200) {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) {
+              return ArtistPage(
+                result['data']['avatar'],
+                result['data']['name'],
+                result['data']['id'].toString(),
+                isFollowed: prefs.getString('auth') != ''
+                    ? result['data']['isFollowed']
+                    : false,
+              );
+            },
+          ));
+          return true;
+        } else if (response.statusCode == 400) {
+          print('search artist 400');
+          BotToast.showSimpleNotification(title: result['message']);
+          return false;
+        } else {
+          BotToast.showSimpleNotification(title: result['message']);
+          return false;
+        }
       } else {
-        BotToast.showSimpleNotification(title: result['message']);
+        cancelLoading();
         return false;
       }
     }
@@ -685,30 +678,24 @@ class PappBarState extends State<PappBar> {
       return false;
     } else {
       CancelFunc cancelLoading = BotToast.showLoading();
-      var response = await Requests.get(
-              'https://pix.ipv4.host/illusts/${searchController.text}',
-              headers: prefs.getString('auth') != ''
-                  ? {'authorization': prefs.getString('auth')}
-                  : {})
-          .catchError((e) {
-        if (e.toString().contains('TimeoutException'))
-          BotToast.showSimpleNotification(title: texts.searchTimeout);
-        else
-          BotToast.showSimpleNotification(title: texts.networkError);
+      var response = await dioPixivic.get(
+        '/illusts/${searchController.text}',
+      );
+      if (response.runtimeType != bool) {
+        Map result = response.data;
+        if (response.statusCode == 200) {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) {
+              return PicDetailPage(result['data']);
+            },
+          ));
+          return true;
+        } else if (response.statusCode == 404) {
+          BotToast.showSimpleNotification(title: result['message']);
+          return false;
+        }
+      } else {
         cancelLoading();
-        return false;
-      });
-      cancelLoading();
-      Map result = jsonDecode(response.content());
-      if (response.statusCode == 200) {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) {
-            return PicDetailPage(result['data']);
-          },
-        ));
-        return true;
-      } else if (response.statusCode == 404) {
-        BotToast.showSimpleNotification(title: result['message']);
         return false;
       }
     }
