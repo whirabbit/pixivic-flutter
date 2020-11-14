@@ -77,7 +77,6 @@ class _PicDetailPageState extends State<PicDetailPage> {
         onPageTop: _onTopOfPicpage,
         onPageStart: _onStartOfPicpage,
         isScrollable: true,
-        betweenEdgeOfScroller: _betweenEdgeOfScroller,
         topWidget: picDetailBody(),
       ),
     );
@@ -670,12 +669,6 @@ class _PicDetailPageState extends State<PicDetailPage> {
       await Requests.post(url,
           headers: headers, body: body, bodyEncoding: RequestBodyEncoding.JSON);
     }
-  }
-
-  _betweenEdgeOfScroller(double move) {
-    double position = scrollController.position.extentBefore + move;
-    scrollController.animateTo(position,
-        duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
   }
 
   _onTopOfPicpage() {

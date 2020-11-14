@@ -38,7 +38,6 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
-    this.betweenEdgeOfScroller,
     this.isScrollable = true,
     this.topWidget,
   });
@@ -58,7 +57,6 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
-    this.betweenEdgeOfScroller,
     this.isScrollable = true,
     this.topWidget,
   });
@@ -77,7 +75,6 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     @required this.onPageTop,
     @required this.onPageStart,
-    this.betweenEdgeOfScroller,
     this.isScrollable = true,
     @required this.topWidget,
   });
@@ -96,7 +93,6 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
-    this.betweenEdgeOfScroller,
     this.isScrollable = true,
     this.topWidget,
   });
@@ -115,7 +111,6 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     @required this.onPageTop,
     @required this.onPageStart,
-    this.betweenEdgeOfScroller,
     this.isScrollable = true,
     this.topWidget,
   });
@@ -134,7 +129,6 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
-    this.betweenEdgeOfScroller,
     this.isScrollable = true,
     this.topWidget,
   });
@@ -153,7 +147,6 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
-    this.betweenEdgeOfScroller,
     this.isScrollable = true,
     this.topWidget,
   });
@@ -172,7 +165,6 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
-    this.betweenEdgeOfScroller,
     this.isScrollable = true,
     this.topWidget,
   });
@@ -191,7 +183,6 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
-    this.betweenEdgeOfScroller,
     this.isScrollable = true,
     this.topWidget,
   });
@@ -210,7 +201,6 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
-    this.betweenEdgeOfScroller,
     this.isScrollable = true,
     this.topWidget,
   });
@@ -229,7 +219,6 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
-    this.betweenEdgeOfScroller,
     this.isScrollable = true,
     this.topWidget,
   });
@@ -248,7 +237,6 @@ class PicPage extends StatefulWidget {
     this.onPageScrolling,
     this.onPageTop,
     this.onPageStart,
-    this.betweenEdgeOfScroller,
     this.isScrollable = true,
     @required this.topWidget,
   });
@@ -276,9 +264,6 @@ class PicPage extends StatefulWidget {
   // related page 中，用户开始下滑
   final VoidCallback onPageStart;
 
-  // bad try: 尝试衔接两个 scroller 的方法
-  final ValueChanged<double> betweenEdgeOfScroller;
-
   final Widget topWidget;
 
 // pageModel.picList - 图片的JSON文件列表
@@ -289,7 +274,6 @@ class PicPage extends StatefulWidget {
 
 }
 
-// TODO： 003 画集的引导提示，移除之前的长按
 class _PicPageState extends State<PicPage> {
   PicPageModel picPageModel;
 
@@ -309,7 +293,6 @@ class _PicPageState extends State<PicPage> {
       onPageTop: widget.onPageTop,
       onPageStart: widget.onPageStart,
       onPageScrolling: widget.onPageScrolling,
-      betweenEdgeOfScroller: widget.betweenEdgeOfScroller,
       isManga: widget.isManga,
       isScrollable: widget.isScrollable,
     );
