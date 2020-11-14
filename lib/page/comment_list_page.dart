@@ -189,8 +189,6 @@ class CommentListPage extends StatelessWidget {
                 color: Colors.pink[300],
               ),
               onTap: () {
-                // commentListModel.memeBoxHeight =
-                //     prefs.getDouble('KeyboardHeight');
                 if (commentListModel.replyFocus.hasFocus) {
                   commentListModel.replyFocus.unfocus();
                 }
