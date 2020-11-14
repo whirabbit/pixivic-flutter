@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:bot_toast/bot_toast.dart';
-import 'package:dio/dio.dart';
 
-import 'package:pixivic/data/common.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 class SuggestionBar extends StatefulWidget {
   @override
@@ -103,35 +101,18 @@ class SuggestionBarState extends State<SuggestionBar> {
   _loadSuggestions() async {
     print('reloading suggestions');
     List jsonList;
-    Response response;
-    String auth = prefs.getString('auth');
-    Map<String, String> headers = auth != '' ? {'authorization': auth} : {};
+    var response;
 
-    String urlPixiv =
-        'https://pix.ipv4.host/keywords/$searchKeywords/pixivSuggestions';
+    String urlPixiv = '/keywords/$searchKeywords/pixivSuggestions';
     // String urlPixivic =
     //     'https://pix.ipv4.host/keywords/$searchKeywords/suggestions';
 
-    try {
-      response = await Dio().get(urlPixiv, options: Options(headers: headers));
+    response = await dioPixivic.get(urlPixiv);
+    if (response.runtimeType != bool) {
       jsonList = response.data['data'];
-      // response =
-      //     await Dio().get(urlPixivic, options: Options(headers: headers));
-      // jsonList = jsonList + response.data['data'];
       return jsonList;
-    } on DioError catch (e) {
-      if (e.response != null) {
-        BotToast.showSimpleNotification(title: e.response.data['message']);
-        print(e.response.data);
-        print(e.response.headers);
-        print(e.response.request);
-        return null;
-      } else {
-        BotToast.showSimpleNotification(title: e.message);
-        print(e.request);
-        print(e.message);
-        return null;
-      }
+    } else {
+      return null;
     }
   }
 

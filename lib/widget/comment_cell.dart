@@ -3,11 +3,11 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:dio/dio.dart';
 import 'package:lottie/lottie.dart';
 
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/page/comment_list_page.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 class CommentCell extends StatefulWidget {
   @override
@@ -256,16 +256,18 @@ class _CommentCellState extends State<CommentCell> {
   }
 
   _loadCommentData() async {
-    String url = 'https://pix.ipv4.host/illusts/${widget.id}/comments';
-    var dio = Dio();
-    Response response = await dio.get(url);
-    if (response.data['data'] != null) {
-      // print(response.data);
-      setState(() {
-        commentJsonData = response.data['data'];
-        commentJsonData[0]['content'] =
-            commentJsonData[0]['content'].replaceAll('\n', '');
-      });
+    String url = '/illusts/${widget.id}/comments';
+
+    var response = await dioPixivic.get(url);
+    if (response.runtimeType != bool) {
+      if (response.data['data'] != null) {
+        // print(response.data);
+        setState(() {
+          commentJsonData = response.data['data'];
+          commentJsonData[0]['content'] =
+              commentJsonData[0]['content'].replaceAll('\n', '');
+        });
+      }
     }
   }
 }

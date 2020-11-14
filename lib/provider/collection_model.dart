@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-
-import 'package:dio/dio.dart';
 // import 'package:provider/provider.dart';
-import 'package:bot_toast/bot_toast.dart';
 
 import 'package:pixivic/data/common.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 enum CollectionMode { self, user }
 
@@ -50,28 +48,14 @@ class CollectionUiModel with ChangeNotifier {
     notifyListeners();
 
     String url =
-        'https://pix.ipv4.host/users/${prefs.getInt('id')}/collections?page=$currentViewerPage&pagesize=10';
-    Map<String, String> headers = {'authorization': prefs.getString('auth')};
+        '/users/${prefs.getInt('id')}/collections?page=$currentViewerPage&pagesize=10';
 
-    try {
-      Response response =
-          await Dio().get(url, options: Options(headers: headers));
+    var response = await dioPixivic.get(url);
+    if (response.runtimeType != bool) {
       if (response.data['data'] != null) {
         viewerList = viewerList + response.data['data'];
       } else if (response.data['data'] == null) {
         onViewerBottom = true;
-      }
-    } on DioError catch (e) {
-      if (e.response != null) {
-        BotToast.showSimpleNotification(title: e.response.data['message']);
-        print(e.response.data);
-        print(e.response.headers);
-        print(e.response.request);
-      } else {
-        // Something happened in setting up or sending the request that triggered an Error
-        BotToast.showSimpleNotification(title: e.message);
-        print(e.request);
-        print(e.message);
       }
     }
     onViewerLoad = false;
@@ -130,29 +114,16 @@ class NewCollectionParameterModel with ChangeNotifier {
     ];
     notifyListeners();
     String url = 'https://pix.ipv4.host/collections/tags?keyword=$keywords';
-    Map<String, String> headers = {'authorization': prefs.getString('auth')};
 
-    try {
-      Response response =
-          await Dio().get(url, options: Options(headers: headers));
+    var response =
+        await dioPixivic.get(url);
+    if (response.runtimeType != bool) {
       if (response.data['data'] != null)
         _tagsAdvice = _tagsAdvice + response.data['data'];
       print(_tagsAdvice);
       notifyListeners();
-      // _tagsAdvice = [];
-    } on DioError catch (e) {
-      if (e.response != null) {
-        BotToast.showSimpleNotification(title: e.response.data['message']);
-        print(e.response.data);
-        print(e.response.headers);
-        print(e.response.request);
-      } else {
-        // Something happened in setting up or sending the request that triggered an Error
-        BotToast.showSimpleNotification(title: e.message);
-        print(e.request);
-        print(e.message);
-      }
     }
+    // _tagsAdvice = [];
   }
 
   addTagToTagsList(Map tagData) {
@@ -190,39 +161,24 @@ class CollectionUserDataModel with ChangeNotifier {
     List collectionList;
     int page = 1;
     String url =
-        'https://pix.ipv4.host/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
-    Map<String, String> headers = {'authorization': prefs.getString('auth')};
+        '/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
     bool isEnd = false;
     while (!isEnd) {
-      try {
-        Response response =
-            await Dio().get(url, options: Options(headers: headers));
-        // print(response.data['data']);
+      var response =
+          await dioPixivic.get(url);
+      // print(response.data['data']);
+      if (response.runtimeType != bool) {
         collectionList = response.data['data'] ?? [];
         // print('The user album list:\n$collectionList');
         userCollectionList += collectionList;
         print('collectionList.length: ${collectionList.length}');
         isEnd = collectionList.length == 0 ? true : false;
         page += 1;
-        url =
-            'https://pix.ipv4.host/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
+        url = '/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
         if (isEnd) notifyListeners();
         // print(userCollectionList);
-
-      } on DioError catch (e) {
-        if (e.response != null) {
-          BotToast.showSimpleNotification(title: e.response.data['message']);
-          print(e.response.data);
-          print(e.response.headers);
-          print(e.response.request);
-          return null;
-        } else {
-          // Something happened in setting up or sending the request that triggered an Error
-          BotToast.showSimpleNotification(title: e.message);
-          print(e.request);
-          print(e.message);
-          return null;
-        }
+      } else {
+        return null;
       }
     }
   }

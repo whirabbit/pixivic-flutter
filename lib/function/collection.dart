@@ -474,37 +474,20 @@ showTagSelector(BuildContext context) async {
 addIllustToCollection(BuildContext contextFrom, List illustIdList,
     String collectionId, bool multiSelect) async {
   print('illustIdList: $illustIdList');
-  String url = 'https://pix.ipv4.host/collections/$collectionId/illustrations';
+  String url = '/collections/$collectionId/illustrations';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
 
-  try {
-    Response response = await Dio().post(url,
-        options: Options(
-          headers: headers,
-        ),
-        data: illustIdList);
-    print(response.data);
+  var response = await dioPixivic.post(url, data: illustIdList);
+  if (response.runtimeType != bool) {
     BotToast.showSimpleNotification(title: response.data['message']);
-    // BotToast.showSimpleNotification(title: response.data['data'].toString());
+    print(response.data);
     if (multiSelect)
       Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
     Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
         .getCollectionList();
     return true;
-  } on DioError catch (e) {
-    if (e.response != null) {
-      BotToast.showSimpleNotification(title: e.response.data['message']);
-      print(e.response.data);
-      print(e.response.headers);
-      print(e.response.request);
-      return false;
-    } else {
-      // Something happened in setting up or sending the request that triggered an Error
-      BotToast.showSimpleNotification(title: e.message);
-      print(e.request);
-      print(e.message);
-      return false;
-    }
+  } else {
+    return false;
   }
 }
 
@@ -535,34 +518,22 @@ removeIllustFromCollection(
 }
 
 postNewCollection(Map<String, dynamic> payload) async {
-  String url = 'https://pix.ipv4.host/collections';
+  String url = '/collections';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
 
-  try {
-    if (payload['tagList'] != null) {
-      Response response = await Dio()
-          .post(url, data: payload, options: Options(headers: headers));
+  if (payload['tagList'] != null) {
+    var response = await dioPixivic.post(url,
+        data: payload, options: Options(headers: headers));
+    if (response.runtimeType != bool) {
       print(response.data);
       BotToast.showSimpleNotification(title: response.data['message']);
       return true;
     } else {
-      BotToast.showSimpleNotification(title: TextZhCollection().needForTag);
       return false;
     }
-  } on DioError catch (e) {
-    if (e.response != null) {
-      BotToast.showSimpleNotification(title: e.response.data['message']);
-      print(e.response.data);
-      print(e.response.headers);
-      print(e.response.request);
-      return false;
-    } else {
-      // Something happened in setting up or sending the request that triggered an Error
-      BotToast.showSimpleNotification(title: e.message);
-      print(e.request);
-      print(e.message);
-      return false;
-    }
+  } else {
+    BotToast.showSimpleNotification(title: TextZhCollection().needForTag);
+    return false;
   }
 }
 

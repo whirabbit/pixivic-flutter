@@ -1,16 +1,15 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'package:requests/requests.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:provider/provider.dart';
 // import 'package:flutter_screenutil/screenutil.dart';
 
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:pixivic/data/common.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 class PicPageModel with ChangeNotifier {
   String picDate;
@@ -251,89 +250,70 @@ class PicPageModel with ChangeNotifier {
   getJsonList({int currentPage = 1}) async {
     // 获取所有的图片数据
     if (jsonMode == 'home') {
-      url =
-          'https://pix.ipv4.host/ranks?page=$currentPage&date=$picDate&mode=$picMode&pageSize=10';
+      url = '/ranks?page=$currentPage&date=$picDate&mode=$picMode&pageSize=10';
     } else if (jsonMode == 'search') {
       if (!isManga)
         url =
-            'https://pix.ipv4.host/illustrations?page=$currentPage&keyword=$searchKeywords&pageSize=10';
+            '/illustrations?page=$currentPage&keyword=$searchKeywords&pageSize=10';
       else
         url =
-            'https://pix.ipv4.host/illustrations?page=$currentPage&keyword=$searchKeywords&pageSize=10';
+            '/illustrations?page=$currentPage&keyword=$searchKeywords&pageSize=10';
     } else if (jsonMode == 'related') {
-      url =
-          'https://pix.ipv4.host/illusts/$relatedId/related?page=$currentPage&pageSize=15';
+      url = '/illusts/$relatedId/related?page=$currentPage&pageSize=15';
     } else if (jsonMode == 'artist') {
       if (!isManga) {
         url =
-            'https://pix.ipv4.host/artists/$artistId/illusts/illust?page=$currentPage&pageSize=15&maxSanityLevel=10';
+            '/artists/$artistId/illusts/illust?page=$currentPage&pageSize=15&maxSanityLevel=10';
       } else {
         url =
-            'https://pix.ipv4.host/artists/$artistId/illusts/manga?page=$currentPage&pageSize=15&maxSanityLevel=10';
+            '/artists/$artistId/illusts/manga?page=$currentPage&pageSize=15&maxSanityLevel=10';
       }
     } else if (jsonMode == 'followed') {
       this.loadMoreAble = false;
       if (!isManga) {
         url =
-            'https://pix.ipv4.host/users/$userId/followed/latest/illust?page=$currentPage&pageSize=10';
+            '/users/$userId/followed/latest/illust?page=$currentPage&pageSize=10';
       } else {
         url =
-            'https://pix.ipv4.host/users/$userId/followed/latest/manga?page=$currentPage&pageSize=10';
+            '/users/$userId/followed/latest/manga?page=$currentPage&pageSize=10';
       }
     } else if (jsonMode == 'bookmark') {
       if (!isManga) {
-        url =
-            'https://pix.ipv4.host/users/$userId/bookmarked/illust?page=$currentPage&pageSize=10';
+        url = '/users/$userId/bookmarked/illust?page=$currentPage&pageSize=10';
       } else {
-        url =
-            'https://pix.ipv4.host/users/$userId/bookmarked/manga?page=$currentPage&pageSize=10';
+        url = '/users/$userId/bookmarked/manga?page=$currentPage&pageSize=10';
       }
     } else if (jsonMode == 'spotlight') {
       this.loadMoreAble = false;
-      url = 'https://pix.ipv4.host/spotlights/$spotlightId/illustrations';
+      url = '/spotlights/$spotlightId/illustrations';
     } else if (jsonMode == 'history') {
       url =
-          'https://pix.ipv4.host/users/${prefs.getInt('id').toString()}/illustHistory?page=$currentPage&pageSize=10';
+          '/users/${prefs.getInt('id').toString()}/illustHistory?page=$currentPage&pageSize=10';
     } else if (jsonMode == 'oldhistory') {
       url =
-          'https://pix.ipv4.host/users/${prefs.getInt('id').toString()}/oldIllustHistory?page=$currentPage&pageSize=10';
+          '/users/${prefs.getInt('id').toString()}/oldIllustHistory?page=$currentPage&pageSize=10';
     } else if (jsonMode == 'userdetail') {
       if (!isManga) {
-        url =
-            'https://pix.ipv4.host/users/$userId/bookmarked/illust?page=$currentPage&pageSize=10';
+        url = '/users/$userId/bookmarked/illust?page=$currentPage&pageSize=10';
       } else {
-        url =
-            'https://pix.ipv4.host/users/$userId/manga?page=$currentPage&pageSize=10';
+        url = '/users/$userId/manga?page=$currentPage&pageSize=10';
       }
     } else if (jsonMode == 'collection') {
       url =
-          'https://pix.ipv4.host/collections/$collectionId/illustrations?page=$currentPage&pageSize=10';
+          '/collections/$collectionId/illustrations?page=$currentPage&pageSize=10';
     }
 
-    // TODO: Dio 重做后更换为Dio
-    try {
-      if (prefs.getString('auth') == '') {
-        var requests = await Requests.get(url);
-        jsonList = jsonDecode(requests.content())['data'];
-        print(requests.statusCode);
-        if (requests.statusCode == 400)
-          BotToast.showSimpleNotification(title: '请登录后再重新加载画作');
-      } else {
-        Map<String, String> headers = {
-          'authorization': prefs.getString('auth')
-        };
-        var requests = await Requests.get(url, headers: headers);
-        // print(requests.content());
-        // requests.raiseForStatus();
-        jsonList = jsonDecode(requests.content())['data'];
-      }
-      return jsonList;
-    } catch (error) {
-      print('=========getJsonList==========');
-      print(error);
-      print('==============================');
-      if (error.toString().contains('SocketException'))
-        BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+    List list;
+    var response = await dioPixivic.get(url);
+    if (response.runtimeType != bool) {
+      // print(response.data['data']);
+      list = response.data['data'];
+      if (response.statusCode == 400)
+        BotToast.showSimpleNotification(title: '请登录后再重新加载画作');
+    } else {
+      BotToast.showSimpleNotification(title: '获取画作信息失败，请检查网络');
     }
+
+    return list;
   }
 }

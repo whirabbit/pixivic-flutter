@@ -6,7 +6,7 @@ import 'dart:typed_data';
 import 'package:image_downloader/image_downloader.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:bot_toast/bot_toast.dart';
-import 'package:requests/requests.dart';
+import 'package:dio/dio.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class DownloadImage {
@@ -43,12 +43,17 @@ class DownloadImage {
   _iOSDownload() async {
     BotToast.showSimpleNotification(title: '开始下载,请勿退出应用');
     try {
-      var response = await Requests.get(url,
-          headers: {'Referer': 'https://app-api.pixiv.net'},
-          timeoutSeconds: 180);
+      var response = await Dio().get(
+        url,
+        options: Options(
+            headers: {'Referer': 'https://app-api.pixiv.net'},
+            receiveTimeout: 280000,
+            responseType: ResponseType.bytes),
+      );
       // response.raiseForStatus();
       final result = await ImageGallerySaver.saveImage(
-          Uint8List.fromList(response.bytes()));
+          Uint8List.fromList(response.data),
+          quality: 100);
       print(result);
       BotToast.showSimpleNotification(title: '下载完成');
     } catch (e) {
@@ -105,13 +110,13 @@ class DownloadImage {
 
   _androidDownloadWithFlutterDownloader() async {
     BotToast.showSimpleNotification(title: '开始下载');
-    
+
     // final Directory directory = await getExternalStorageDirectory();
-    
+
     // final Directory picDirFolder =
     //     Directory('${directory.path}${Platform.pathSeparator}pixivic_images');
-    final Directory picDirFolder =
-        Directory('${Platform.pathSeparator}storage${Platform.pathSeparator}emulated${Platform.pathSeparator}0${Platform.pathSeparator}pixivic');
+    final Directory picDirFolder = Directory(
+        '${Platform.pathSeparator}storage${Platform.pathSeparator}emulated${Platform.pathSeparator}0${Platform.pathSeparator}pixivic');
     // print(picDirFolder.path);
     if (!await picDirFolder.exists()) {
       print('creating folder');

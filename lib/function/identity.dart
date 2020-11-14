@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:bot_toast/bot_toast.dart';
-import 'package:requests/requests.dart';
 import 'package:provider/provider.dart';
 
 import '../data/common.dart';
@@ -133,17 +132,17 @@ register(String userName, String pwd, String pwdRepeat, String verificationCode,
     'email': emailInput,
     'password': pwd,
   };
-  print(body);
-  var response = await Requests.post(url,
-      body: body, bodyEncoding: RequestBodyEncoding.JSON);
-  if (response.statusCode == 200) {
-    // 切换至login界面，并给出提示
-    BotToast.showSimpleNotification(title: TextZhLoginPage().registerSucceed);
-  } else {
-    // isLogin = false;
-    print(response.content());
-    BotToast.showSimpleNotification(
-        title: jsonDecode(response.content())['message']);
+
+  var response = await dioPixivic.post(url, data: body);
+  if (response.runtimeType != bool) {
+    if (response.statusCode == 200) {
+      // 切换至login界面，并给出提示
+      BotToast.showSimpleNotification(title: TextZhLoginPage().registerSucceed);
+    } else {
+      // isLogin = false;
+      print(response.data['message']);
+      BotToast.showSimpleNotification(title: response.data['message']);
+    }
   }
   tempVerificationCode = null;
   tempVerificationImage = null;
@@ -167,15 +166,16 @@ checkRegisterInfo(
     return TextZhLoginPage().errorNameLength;
   }
 
-  String url = 'https://pix.ipv4.host/users/usernames/$userName';
-  try {
-    var r = await Requests.get(url);
-    if (r.statusCode == 409) {
+  String url = '/users/usernames/$userName';
+
+  var response = await dioPixivic.get(url);
+  if (response.runtimeType != bool) {
+    if (response.statusCode == 409) {
       return TextZhLoginPage().errorNameUsed;
     } else {
       return true;
     }
-  } catch (e) {
+  } else {
     return TextZhLoginPage().registerFailed;
   }
 }
