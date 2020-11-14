@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pixivic/data/common.dart';
 import 'package:provider/provider.dart';
 
 import 'package:pixivic/provider/comment_list_model.dart';
@@ -45,8 +47,8 @@ class CommentListPage extends StatelessWidget {
     //     CommentListModel(illustId, replyToId, replyToName, replyParentId);
 
     return ChangeNotifierProvider<CommentListModel>(
-      create: (_) =>
-          CommentListModel(illustId, replyToId, replyToName, replyParentId),
+      create: (_) => CommentListModel(
+          illustId, replyToId, replyToName, replyParentId, context),
       child: Selector<CommentListModel, CommentListModel>(
           shouldRebuild: (pre, next) => false,
           selector: (context, provider) => provider,
@@ -67,6 +69,7 @@ class CommentListPage extends StatelessWidget {
                     commentListModel.flipMemeMode();
                 },
                 child: Scaffold(
+                    resizeToAvoidBottomPadding: false,
                     appBar: PappBar(
                       title: texts.comment,
                     ),
@@ -103,20 +106,32 @@ class CommentListPage extends StatelessWidget {
                                     : Container();
                               }),
                           Selector<CommentListModel, bool>(
+                              shouldRebuild: (pre, next) => true,
                               selector: (context, provider) =>
                                   provider.isMemeMode,
                               builder: (context, isMemeMode, _) {
                                 return AnimatedPositioned(
-                                  duration: Duration(milliseconds: 100),
-                                  bottom: isMemeMode
-                                      ? 0.0
-                                      : -ScreenUtil().setHeight(256),
-                                  left: 0.0,
-                                  right: 0.0,
+                                  duration: Duration(milliseconds: 1000),
+                                  // bottom: 0.0,
+                                  // left: 0.0,
+                                  // right: 0.0,
                                   child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      bottomCommentBar(commentListModel),
-                                      MemeBox()
+                                      Container(
+                                        child:
+                                            bottomCommentBar(commentListModel),
+                                      ),
+                                      Container(
+                                        width: double.infinity,
+                                        height: commentListModel.curKeyboardH,
+                                      ),
+                                      Container(
+                                        height: !isMemeMode
+                                            ? 0.0
+                                            : commentListModel.faceH,
+                                        child: MemeBox(),
+                                      )
                                     ],
                                   ),
                                 );
@@ -149,8 +164,14 @@ class CommentListPage extends StatelessWidget {
                 color: Colors.pink[300],
               ),
               onTap: () {
-                if (commentListModel.replyFocus.hasFocus)
+                commentListModel.faceH = prefs.getDouble('KeyboardH');
+                print("storge" + commentListModel.storeKeyboardH.toString());
+
+                if (commentListModel.replyFocus.hasFocus) {
                   commentListModel.replyFocus.unfocus();
+                }
+                if (commentListModel.curKeyboardH != 0)
+                  commentListModel.curKeyboardH = 0.0;
                 commentListModel.flipMemeMode();
               },
             ),
@@ -172,7 +193,7 @@ class CommentListPage extends StatelessWidget {
                   return TextField(
                     focusNode: commentListModel.replyFocus,
                     controller: commentListModel.textEditingController,
-                    autofocus: isReply ? true : false,
+                    // autofocus: isReply ? true : false,
                     decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: hintString,
