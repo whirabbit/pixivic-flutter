@@ -205,6 +205,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   }
 
   likeComment(int parentIndex, {int subIndex}) async {
+    print('========likeComment===========');
     String url = '/user/likedComments';
     Map<String, dynamic> payload = {
       'commentAppId': commentList[0]['appId'],
@@ -218,7 +219,9 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
       url,
       data: payload,
     );
+    print('${result.runtimeType}');
     if (result.runtimeType != bool) {
+      print(commentList[parentIndex]['isLike']);
       if (subIndex == null) {
         commentList[parentIndex]['isLike'] = true;
         commentList[parentIndex]['likedCount'] += 1;
@@ -234,11 +237,12 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   }
 
   unlikeComment(int parentIndex, {int subIndex}) async {
-    String commentId = subIndex == null
+    print('========unlikeComment===========');
+    int commentId = subIndex == null
         ? commentList[parentIndex]['id']
         : commentList[parentIndex]['subCommentList'][subIndex]['id'];
     String url =
-        'ikedComments/${commentList[0]['appType']}/${commentList[0]['appId']}/$commentId';
+        '/user/likedComments/${commentList[0]['appType']}/${commentList[0]['appId']}/$commentId';
     print(url);
     var result = await dioPixivic.delete(
       url,
@@ -285,8 +289,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
 
 //请求数据
   loadComments(int illustId, {int page = 1}) async {
-    String url =
-        '/illusts/$illustId/comments?page=$page&pageSize=10';
+    String url = '/illusts/$illustId/comments?page=$page&pageSize=10';
     Response response = await dioPixivic.get(url);
     if (response.statusCode == 200 && response.data['data'] != null) {
       // print(response.data);
@@ -294,7 +297,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
       return jsonList;
     } else if (response.statusCode == 200 && response.data['data'] == null) {
       print('comments: no comments but code 200');
-      return jsonList = [];
+      return [];
     } else {
       BotToast.showSimpleNotification(title: response.data['message']);
     }

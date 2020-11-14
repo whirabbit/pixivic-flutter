@@ -302,7 +302,6 @@ class CommentListPage extends StatelessWidget {
     String avaterUrl =
         'https://static.pixivic.net/avatar/299x299/${data['replyFrom']}.jpg';
 
-    print('commentBaseCell: ${data['isLike']}');
     return Container(
         child: Column(children: <Widget>[
       Material(
