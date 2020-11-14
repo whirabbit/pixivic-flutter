@@ -223,9 +223,9 @@ class _ArtistPageState extends State<ArtistPage> {
   }
 
   _loadArtistData() async {
-    String urlId = 'https://api.pixivic.com/artists/${widget.artistId}';
+    String urlId = 'https://pix.ipv4.host/artists/${widget.artistId}';
     String urlSummary =
-        'https://api.pixivic.com/artists/${widget.artistId}/summary';
+        'https://pix.ipv4.host/artists/${widget.artistId}/summary';
 
     try {
       var requests = await Requests.get(urlId,
@@ -334,7 +334,7 @@ class _ArtistPageState extends State<ArtistPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
       color: Colors.blueAccent[200],
       onPressed: () async {
-        String url = 'https://api.pixivic.com/users/followed';
+        String url = 'https://pix.ipv4.host/users/followed';
         Map<String, String> body = {
           'artistId': widget.artistId,
           'userId': prefs.getInt('id').toString(),

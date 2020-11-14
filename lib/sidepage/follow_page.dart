@@ -133,8 +133,7 @@ class _FollowPageState extends State<FollowPage> {
           color: Colors.grey[200],
           child: GestureDetector(
             onTap: () {
-              _routeToPicDetailPage(
-                  picData['recentlyIllustrations'][item]);
+              _routeToPicDetailPage(picData['recentlyIllustrations'][item]);
             },
             child: Image.network(
               picData['recentlyIllustrations'][item]['imageUrls'][0]
@@ -157,7 +156,7 @@ class _FollowPageState extends State<FollowPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
       color: Colors.blueAccent[200],
       onPressed: () async {
-        String url = 'https://api.pixivic.com/users/followed';
+        String url = 'https://pix.ipv4.host/users/followed';
         Map<String, String> body = {
           'artistId': data['id'].toString(),
           'userId': prefs.getInt('id').toString(),
@@ -199,14 +198,13 @@ class _FollowPageState extends State<FollowPage> {
 
   _getJsonList() async {
     String url =
-        'https://api.pixivic.com/users/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
+        'https://pix.ipv4.host/users/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
     try {
       Map<String, String> headers = {'authorization': prefs.getString('auth')};
       var r = await Requests.get(url, headers: headers);
       r.raiseForStatus();
       List jsonList = jsonDecode(r.content())['data'];
-      if(jsonList.length < 30) 
-        loadMoreAble = false;
+      if (jsonList.length < 30) loadMoreAble = false;
       return (jsonList);
     } catch (e) {
       print('followPage error: $e');
@@ -218,28 +216,26 @@ class _FollowPageState extends State<FollowPage> {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return ArtistPage(
-            data['avatar'],
-            data['name'],
-            data['id'].toString(),
-            isFollowed: data['isFollowed'],
-            followedRefresh: (bool result) {
-              setState(() {
-                data['isFollowed'] = result;
-              });
-            },
-            );
+          data['avatar'],
+          data['name'],
+          data['id'].toString(),
+          isFollowed: data['isFollowed'],
+          followedRefresh: (bool result) {
+            setState(() {
+              data['isFollowed'] = result;
+            });
+          },
+        );
       },
     ));
   }
 
   _routeToPicDetailPage(Map picData) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => PicDetailPage(picData)));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => PicDetailPage(picData)));
   }
 
-  _autoLoadMore() { 
+  _autoLoadMore() {
     if ((scrollController.position.extentAfter < 350) &&
         (currentPage < 30) &&
         loadMoreAble) {

@@ -6,7 +6,7 @@ Dio dioPixivic;
 
 initDioClient() {
   dioPixivic = Dio(BaseOptions(
-      baseUrl: 'https://api.pixivic.com',
+      baseUrl: 'https://pix.ipv4.host',
       connectTimeout: 150000,
       receiveTimeout: 150000,
       headers: prefs.getString('auth') == ''
@@ -32,13 +32,13 @@ initDioClient() {
       print(e.response.data);
       print(e.response.headers);
       print(e.response.request);
-      return e.response;
+      return false;
     } else {
       // Something happened in setting up or sending the request that triggered an Error
       BotToast.showSimpleNotification(title: e.message);
       print(e.request);
       print(e.message);
-      return e;
+      return false;
     }
   }));
 }

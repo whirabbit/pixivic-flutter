@@ -98,13 +98,17 @@ class CommentListPage extends StatelessWidget {
                                             itemBuilder: (BuildContext context,
                                                 int index) {
                                               return commentParentCell(
-                                                  commentList[index],
                                                   context,
+                                                  commentList[index],
+                                                  index,
                                                   commentListModel);
                                             }),
                                       ))
                                     : Container();
                               }),
+                          //TODO: selector 细化至单个显示组建中，这里改为只有 length 修改后才 build
+                          // parentCell 组件中需要判断 subList 改变才重构
+                          // baseCell 组件中需要判断 like 状态重构
                           Selector<CommentListModel, bool>(
                               shouldRebuild: (pre, next) => true,
                               selector: (context, provider) =>
@@ -219,8 +223,8 @@ class CommentListPage extends StatelessWidget {
   }
 
   // 单条回复
-  Widget commentParentCell(
-      Map commentAllData, BuildContext context, commentListModel) {
+  Widget commentParentCell(BuildContext context, Map commentAllData,
+      int parentIndex, CommentListModel commentListModel) {
     bool hasSub = commentAllData['subCommentList'] == null ? false : true;
 
     return Container(
@@ -233,7 +237,8 @@ class CommentListPage extends StatelessWidget {
           alignment: Alignment.topLeft,
           child: Column(
             children: <Widget>[
-              commentBaseCell(commentAllData, context, commentListModel),
+              commentBaseCell(
+                  context, commentAllData, parentIndex, commentListModel),
               hasSub
                   ? ListView.builder(
                       shrinkWrap: true,
@@ -241,8 +246,10 @@ class CommentListPage extends StatelessWidget {
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (BuildContext context, int index) {
                         return commentSubCell(
-                            commentAllData['subCommentList'][index],
                             context,
+                            commentAllData['subCommentList'][index],
+                            parentIndex,
+                            index,
                             commentListModel);
                       })
                   : Container(),
@@ -253,18 +260,21 @@ class CommentListPage extends StatelessWidget {
   }
 
   // 楼中楼
-  Widget commentSubCell(
-      Map commentEachSubData, BuildContext context, commentListModel) {
+  Widget commentSubCell(BuildContext context, Map commentEachSubData,
+      int parentIndex, int subIndex, CommentListModel commentListModel) {
     return Container(
       padding:
           EdgeInsets.only(left: screen.setWidth(15), top: screen.setHeight(7)),
-      child: commentBaseCell(commentEachSubData, context, commentListModel),
+      child: commentBaseCell(
+          context, commentEachSubData, parentIndex, commentListModel,
+          subIndex: subIndex),
     );
   }
 
   // 基础的展示条
-  Widget commentBaseCell(
-      Map data, BuildContext context, CommentListModel commentListModel) {
+  Widget commentBaseCell(BuildContext context, Map data, int parentIndex,
+      CommentListModel commentListModel,
+      {int subIndex}) {
     String avaterUrl =
         'https://static.pixivic.net/avatar/299x299/${data['replyFrom']}.jpg';
 
@@ -313,19 +323,27 @@ class CommentListPage extends StatelessWidget {
                         top: ScreenUtil().setHeight(4),
                       ),
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        // mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
                             DateFormat("yyyy-MM-dd")
                                 .format(DateTime.parse(data['createDate'])),
                             strutStyle: StrutStyle(
-                              fontSize: 12,
+                              fontSize: ScreenUtil().setSp(11),
                               height: ScreenUtil().setWidth(1.3),
                             ),
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: ScreenUtil().setSp(9)),
                           ),
                           SizedBox(
                             width: ScreenUtil().setWidth(5),
                           ),
+                          commentPlatform(data['platform']),
+                          commentLikeButton(data['isLike'], data['likedCount'],
+                              parentIndex, commentListModel,
+                              subIndex: subIndex),
                           GestureDetector(
                             child: Text(
                               texts.reply,
@@ -401,6 +419,77 @@ class CommentListPage extends StatelessWidget {
     }
   }
 
+  Widget commentLikeButton(bool isLike, int likeCount, int parentIndex,
+      CommentListModel commentListModel,
+      {int subIndex}) {
+    bool lock = false;
+    return Container(
+      // width: ScreenUtil().setWidth(30),
+      alignment: Alignment.bottomCenter,
+      // height: ScreenUtil().setHeight(8),
+      margin: EdgeInsets.only(
+        right: ScreenUtil().setWidth(7),
+      ),
+      child: GestureDetector(
+          onTap: () async {
+            if (lock) return false;
+            if (!isLike) {
+              lock = true;
+              await commentListModel.likeComment(parentIndex,
+                  subIndex: subIndex);
+              lock = false;
+            } else {
+              lock = true;
+              await commentListModel.unlikeComment(parentIndex,
+                  subIndex: subIndex);
+              lock = false;
+            }
+          },
+          child: Row(
+            children: [
+              Container(
+                alignment: Alignment.bottomCenter,
+                // color: Colors.red,
+                child: Icon(
+                  Icons.thumb_up_alt_outlined,
+                  color: isLike ? Colors.pinkAccent : Colors.grey,
+                  size: ScreenUtil().setWidth(11),
+                ),
+              ),
+              likeCount == 0
+                  ? Container()
+                  : Container(
+                      padding: EdgeInsets.only(left: ScreenUtil().setWidth(3)),
+                      child: Text(likeCount.toString(),
+                          strutStyle: StrutStyle(
+                            fontSize: ScreenUtil().setSp(11),
+                            height: ScreenUtil().setWidth(1.3),
+                          ),
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: ScreenUtil().setSp(9))),
+                    )
+            ],
+          )),
+    );
+  }
+
+  Widget commentPlatform(String platform) {
+    return platform == null
+        ? Container()
+        : Container(
+            padding: EdgeInsets.only(right: ScreenUtil().setWidth(5)),
+            child: Text(
+              platform,
+              strutStyle: StrutStyle(
+                fontSize: ScreenUtil().setSp(11),
+                height: ScreenUtil().setWidth(1.3),
+              ),
+              style: TextStyle(
+                  color: Colors.grey, fontSize: ScreenUtil().setSp(9)),
+            ));
+  }
+
 //  _altLoading() {
 //    if ((scrollController.position.extentAfter < 500) && loadMoreAble) {
 //      print(" Load Comment");
@@ -456,7 +545,7 @@ class CommentListPage extends StatelessWidget {
 //      return false;
 //    }
 //
-//    String url = 'https://api.pixivic.com/illusts/${widget.illustId}/comments';
+//    String url = 'https://pix.ipv4.host/illusts/${widget.illustId}/comments';
 //    CancelFunc cancelLoading;
 //    var dio = Dio();
 //    Map<String, dynamic> payload = {
@@ -491,7 +580,7 @@ class CommentListPage extends StatelessWidget {
 //  }
 
 //  _loadComments() async {
-//    String url = 'https://api.pixivic.com/illusts/${widget.illustId}/comments';
+//    String url = 'https://pix.ipv4.host/illusts/${widget.illustId}/comments';
 //    var dio = Dio();
 //    Response response = await dio.get(url);
 //    if (response.statusCode == 200 && response.data['data'] != null) {

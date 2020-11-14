@@ -43,7 +43,7 @@ class MarkHeart extends StatelessWidget {
             onPressed: () async {
               //点击动画
               favProvider.clickFunc();
-              String url = 'https://api.pixivic.com/users/bookmarked';
+              String url = 'https://pix.ipv4.host/users/bookmarked';
               Map<String, String> body = {
                 'userId': prefs.getInt('id').toString(),
                 'illustId': picId.toString(),

@@ -67,9 +67,7 @@ class SuggestionBarState extends State<SuggestionBar> {
 
               return GestureDetector(
                 onTap: () {
-
-                    widget.onCellTap(suggestions[index]['keyword']);
-
+                  widget.onCellTap(suggestions[index]['keyword']);
                 },
                 child: Container(
                   margin: EdgeInsets.all(ScreenUtil().setWidth(2)),
@@ -110,9 +108,9 @@ class SuggestionBarState extends State<SuggestionBar> {
     Map<String, String> headers = auth != '' ? {'authorization': auth} : {};
 
     String urlPixiv =
-        'https://api.pixivic.com/keywords/$searchKeywords/pixivSuggestions';
+        'https://pix.ipv4.host/keywords/$searchKeywords/pixivSuggestions';
     // String urlPixivic =
-    //     'https://api.pixivic.com/keywords/$searchKeywords/suggestions';
+    //     'https://pix.ipv4.host/keywords/$searchKeywords/suggestions';
 
     try {
       response = await Dio().get(urlPixiv, options: Options(headers: headers));

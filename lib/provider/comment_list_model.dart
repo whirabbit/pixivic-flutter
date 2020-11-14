@@ -197,6 +197,56 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
     }
   }
 
+  likeComment(int parentIndex, {int subIndex}) async {
+    String url = '/user/likedComments';
+    Map<String, dynamic> payload = {
+      'commentAppId': commentList[0]['id'],
+      'commentAppType': commentList[0]['appType'],
+      'commentId': subIndex == null
+          ? commentList[parentIndex]['id']
+          : commentList[parentIndex]['subCommentList'][subIndex]['id'],
+    };
+    var result = await dioPixivic.post(
+      url,
+      data: payload,
+    );
+    if (result.runtimeType != bool) {
+      if (subIndex == null) {
+        commentList[parentIndex]['isLike'] = true;
+        commentList[parentIndex]['likedCount'] += 1;
+      } else {
+        commentList[parentIndex]['subCommentList'][subIndex]['isLike'] = true;
+        commentList[parentIndex]['subCommentList'][subIndex]['likedCount'] += 1;
+      }
+
+      notifyListeners();
+      return true;
+    } else
+      return false;
+  }
+
+  unlikeComment(int parentIndex, {int subIndex}) async {
+    String commentId = subIndex == null
+        ? commentList[parentIndex]['id']
+        : commentList[parentIndex]['subCommentList'][subIndex]['id'];
+    String url = 'ikedComments/${commentList[0]['appType']}/${commentList[0]['appId']}/$commentId';
+    var result = await dioPixivic.delete(
+      url,
+    );
+    if (result.runtimeType != bool) {
+      if (subIndex == null) {
+        commentList[parentIndex]['isLike'] = false;
+        commentList[parentIndex]['likedCount'] -= 1;
+      } else {
+        commentList[parentIndex]['subCommentList'][subIndex]['isLike'] = false;
+        commentList[parentIndex]['subCommentList'][subIndex]['likedCount'] -= 1;
+      }
+      notifyListeners();
+      return true;
+    } else
+      return false;
+  }
+
   //自动加载数据
   _autoLoading() {
     if ((scrollController.position.extentAfter < 500) && loadMoreAble) {
@@ -226,7 +276,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
 //请求数据
   loadComments(int illustId, {int page = 1}) async {
     String url =
-        'https://api.pixivic.com/illusts/$illustId/comments?page=$page&pageSize=10';
+        'https://pix.ipv4.host/illusts/$illustId/comments?page=$page&pageSize=10';
     var dio = Dio();
     Response response = await dio.get(url);
     if (response.statusCode == 200 && response.data['data'] != null) {

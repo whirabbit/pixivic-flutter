@@ -80,7 +80,7 @@ class BookmarkUsersState extends State<BookmarkUsers> {
 
   void getBookmarkData() async {
     String url =
-        'https://api.pixivic.com/illusts/${widget.illustId}/bookmarkedUsers?page=1&pageSize=3';
+        'https://pix.ipv4.host/illusts/${widget.illustId}/bookmarkedUsers?page=1&pageSize=3';
     var requests = await Requests.get(url);
     data = jsonDecode(requests.content())['data'];
 
