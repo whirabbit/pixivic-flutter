@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
+import 'dart:ui';
 
+import '../data/common.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/function/dio_client.dart';
 import 'package:pixivic/provider/meme_model.dart';
 
-class CommentListModel with ChangeNotifier {
+class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   int illustId;
   int replyToId;
   int currentPage = 1;
@@ -26,13 +28,20 @@ class CommentListModel with ChangeNotifier {
   FocusNode replyFocus;
   TextZhCommentCell texts = TextZhCommentCell();
 
-  CommentListModel(
-      this.illustId, this.replyToId, this.replyToName, this.replyParentId) {
+  BuildContext context;
+  double curKeyboardH = 0;
+  double storeKeyboardH = 250;
+  double faceH = 0;
+
+  CommentListModel(this.illustId, this.replyToId, this.replyToName,
+      this.replyParentId, this.context) {
     scrollController = ScrollController()..addListener(_autoLoading);
     textEditingController = TextEditingController();
     replyFocus = FocusNode()..addListener(replyFocusListener);
 
     this.hintText = texts.addCommentHint;
+
+    WidgetsBinding.instance.addObserver(this);
 
     //初始化Model时拉取评论数据
     loadComments(this.illustId).then((value) {
@@ -41,9 +50,35 @@ class CommentListModel with ChangeNotifier {
     });
   }
 
+  @override
+  void didChangeMetrics() {
+    final renderObject = context.findRenderObject();
+    final renderBox = renderObject as RenderBox;
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final widgetRect = Rect.fromLTWH(
+      offset.dx,
+      offset.dy,
+      renderBox.size.width,
+      renderBox.size.height,
+    );
+    final keyboardTopPixels =
+        window.physicalSize.height - window.viewInsets.bottom;
+    final keyboardTopPoints = keyboardTopPixels / window.devicePixelRatio;
+    double keyH = widgetRect.bottom - keyboardTopPoints;
+    curKeyboardH = keyH >= 0 ? keyH : -keyH;
+    notifyListeners();
+    storeKeyboardH = keyH;
+    if (prefs.getDouble('KeyboardH') == null) {
+      prefs.setDouble('KeyboardH', storeKeyboardH);
+    }
+    super.didChangeMetrics();
+  }
+
   // 根据回复框的焦点做判断
   replyFocusListener() {
     if (replyFocus.hasFocus) {
+      curKeyboardH = prefs.getDouble('KeyboardH');
+      notifyListeners();
       print('replyFocus on focus');
       if (isMemeMode) flipMemeMode();
       if (replyToName != '') {
@@ -216,6 +251,7 @@ class CommentListModel with ChangeNotifier {
     commentList = null;
     textEditingController.dispose();
     replyFocus.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 }
