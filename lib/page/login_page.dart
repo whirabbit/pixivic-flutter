@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'dart:convert';
-import 'package:provider/provider.dart';
 import 'package:requests/requests.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bot_toast/bot_toast.dart';
-import 'package:pixivic/provider/user_state.dart';
 
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/data/common.dart';
