@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:provider/provider.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/data/common.dart';
@@ -296,6 +297,7 @@ class _PicPageState extends State<PicPage> {
       isManga: widget.isManga,
       isScrollable: widget.isScrollable,
     );
+    _showUserTips();
     super.initState();
   }
 
@@ -636,5 +638,46 @@ class _PicPageState extends State<PicPage> {
             ),
           )
         : Container();
+  }
+
+  _showUserTips() {
+    if (!prefs.getBool('isLongPressCollectionKnown') && widget.jsonMode == 'home')
+      BotToast.showAttachedWidget(
+          attachedBuilder: (CancelFunc cancel) => Card(
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: FaIcon(
+                        FontAwesomeIcons.lightbulb,
+                        color: Colors.orange[300],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('长按瀑布流中的图片\n体验画集功能'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Material(
+                        color: Colors.white,
+                        child: InkWell(
+                            child: Text(
+                              '不再提醒',
+                              style: TextStyle(color: Colors.red[200]),
+                            ),
+                            onTap: () {
+                              prefs.setBool('isLongPressCollectionKnown', true);
+                              cancel();
+                            }),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          duration: Duration(seconds: 8),
+          target:
+              Offset(ScreenUtil().setWidth(180), ScreenUtil().setHeight(150)));
   }
 }

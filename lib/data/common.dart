@@ -40,7 +40,7 @@ List<String> keywordsBool = [
   'isBindQQ',
   'isCheckEmail',
   'isBackTipsKnown',
-  'isPicTipsKnown'
+  'isLongPressCollectionKnown'
 ];
 List<String> keywordsDouble = ['keyboardHeight'];
 
