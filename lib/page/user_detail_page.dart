@@ -5,7 +5,7 @@ import 'package:flutter_advanced_networkimage/provider.dart';
 
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/widget/papp_bar.dart';
-import 'package:pixivic/page//artist_list_page.dart';
+import 'package:pixivic/page/artist_list_page.dart';
 import 'package:pixivic/page/pic_page.dart';
 
 class UserDetailPage extends StatefulWidget {

@@ -18,12 +18,15 @@ class ArtistListPage extends StatefulWidget {
 
   ArtistListPage(this.mode, {this.searchKeyWords, this.userId});
 
+  //搜索画师
   ArtistListPage.search(this.searchKeyWords,
       {this.mode = 'search', this.userId});
 
+  //用户自己关注的画师
   ArtistListPage.follow(
       {this.searchKeyWords, this.mode = 'follow', this.userId});
 
+  //别的用户关注的画师
   ArtistListPage.userFollow(
       {this.searchKeyWords, this.mode = 'userfollow', @required this.userId});
 
@@ -280,10 +283,10 @@ class _ArtistListPageState extends State<ArtistListPage> {
           '/artists?page=$currentPage&artistName=${widget.searchKeyWords}&pageSize=30';
     } else if (widget.mode == 'follow') {
       url =
-          '/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
+          '/users/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
     } else if (widget.mode == 'userfollow') {
       url =
-          '/${widget.userId}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
+          '/users/${widget.userId}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
     }
 
     response = await dioPixivic.get(url);
@@ -330,7 +333,7 @@ class _ArtistListPageState extends State<ArtistListPage> {
   }
 
   _doWhileScrolling() {
-    print('artistlistpage scrolling');
+    // print('artistlistpage scrolling');
     FocusScope.of(context).unfocus();
     if ((scrollController.position.extentAfter < 290) && loadMoreAble) {
       loadMoreAble = false;

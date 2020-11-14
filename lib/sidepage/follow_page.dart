@@ -190,7 +190,7 @@ class _FollowPageState extends State<FollowPage> {
 
   _getJsonList() async {
     String url =
-        'users/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
+        '/users/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
     var response;
     response = await dioPixivic.get(url);
     if (response.runtimeType != bool) {

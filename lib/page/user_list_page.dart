@@ -125,7 +125,7 @@ class _UserListPageState extends State<UserListPage> {
         style: TextStyle(fontSize: 14),
       ),
       subtitle: Text(
-          DateFormat("dd-MM-yyyy").format(DateTime.parse(data['createDate'])),
+          DateFormat("yyyy-MM-dd").format(DateTime.parse(data['createDate'])),
           style: TextStyle(fontSize: 12, color: Colors.grey)),
       leading: CircleAvatar(
           backgroundColor: Colors.white,
