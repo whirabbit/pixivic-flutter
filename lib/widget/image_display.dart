@@ -179,7 +179,7 @@ class _BookMarkHeartState extends State<BookMarkHeart> {
           : ScreenUtil().setWidth(27),
       child: GestureDetector(
         onTap: () async {
-          String url = 'https://api.pixivic.com/users/bookmarked';
+          String url = 'https://pix.ipv4.host/users/bookmarked';
           Map<String, String> body = {
             'userId': prefs.getInt('id').toString(),
             'illustId': picId.toString(),
@@ -270,9 +270,9 @@ Widget loadingBox({bool isFullScreen = true}) {
         child: Center(
           child: Lottie.asset('image/loading-box.json'),
         ));
-  else 
-   return Center(
-     child: Container(
+  else
+    return Center(
+      child: Container(
           // height: ScreenUtil().setHeight(576),
           // width: ScreenUtil().setWidth(324),
           alignment: Alignment.center,
@@ -280,5 +280,5 @@ Widget loadingBox({bool isFullScreen = true}) {
           child: Center(
             child: Lottie.asset('image/loading-box.json'),
           )),
-   );
+    );
 }

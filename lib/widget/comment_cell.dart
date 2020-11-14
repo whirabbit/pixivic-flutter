@@ -257,7 +257,7 @@ class _CommentCellState extends State<CommentCell> {
   }
 
   _loadCommentData() async {
-    String url = 'https://api.pixivic.com/illusts/${widget.id}/comments';
+    String url = 'https://pix.ipv4.host/illusts/${widget.id}/comments';
     var dio = Dio();
     Response response = await dio.get(url);
     if (response.data['data'] != null) {

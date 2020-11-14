@@ -450,7 +450,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
       color: Colors.blueAccent[200],
       onPressed: () async {
-        String url = 'https://api.pixivic.com/users/followed';
+        String url = 'https://pix.ipv4.host/users/followed';
         Map<String, String> body = {
           'artistId': widget._picData['artistPreView']['id'].toString(),
           'userId': prefs.getInt('id').toString(),
@@ -661,7 +661,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
   _uploadHistory() async {
     if (prefs.getString('auth') != '') {
       String url =
-          'https://api.pixivic.com/users/${widget._picData['id'].toString()}/illustHistory';
+          'https://pix.ipv4.host/users/${widget._picData['id'].toString()}/illustHistory';
       Map<String, String> headers = {'authorization': prefs.getString('auth')};
       Map<String, String> body = {
         'userId': prefs.getInt('id').toString(),

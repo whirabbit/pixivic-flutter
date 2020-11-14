@@ -474,8 +474,7 @@ showTagSelector(BuildContext context) async {
 addIllustToCollection(BuildContext contextFrom, List illustIdList,
     String collectionId, bool multiSelect) async {
   print('illustIdList: $illustIdList');
-  String url =
-      'https://api.pixivic.com/collections/$collectionId/illustrations';
+  String url = 'https://pix.ipv4.host/collections/$collectionId/illustrations';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
 
   try {
@@ -536,7 +535,7 @@ removeIllustFromCollection(
 }
 
 postNewCollection(Map<String, dynamic> payload) async {
-  String url = 'https://api.pixivic.com/collections';
+  String url = 'https://pix.ipv4.host/collections';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
 
   try {
@@ -605,7 +604,7 @@ deleteCollection(BuildContext contextFrom, String collectionId) {
 }
 
 putEditCollection(Map<String, dynamic> payload, String collectionId) async {
-  String url = 'https://api.pixivic.com/collections/$collectionId';
+  String url = 'https://pix.ipv4.host/collections/$collectionId';
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
   // print(payload);
   try {
