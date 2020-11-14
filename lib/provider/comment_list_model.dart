@@ -1,9 +1,9 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
-import 'dart:ui';
 
 import '../data/common.dart';
 import 'package:pixivic/data/common.dart';
@@ -29,9 +29,10 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   TextZhCommentCell texts = TextZhCommentCell();
 
   BuildContext context;
-  double curKeyboardH = 0;
-  double storeKeyboardH = 250;
-  double faceH = 0;
+  double currentKeyboardHeight = 0;
+  double memeBoxHeight = prefs.getDouble('keyboardHeight') != 0
+      ? prefs.getDouble('keyboardHeight')
+      : 250;
 
   CommentListModel(this.illustId, this.replyToId, this.replyToName,
       this.replyParentId, this.context) {
@@ -39,7 +40,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
     textEditingController = TextEditingController();
     replyFocus = FocusNode()..addListener(replyFocusListener);
 
-    this.hintText = texts.addCommentHint;
+    hintText = texts.addCommentHint;
 
     WidgetsBinding.instance.addObserver(this);
 
@@ -50,8 +51,10 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
     });
   }
 
+  // 对键盘高度的监听，同时赋值键盘高度为 memeBox 高度
   @override
   void didChangeMetrics() {
+    print('CommentListModel run didChangeMetrics');
     final renderObject = context.findRenderObject();
     final renderBox = renderObject as RenderBox;
     final offset = renderBox.localToGlobal(Offset.zero);
@@ -64,21 +67,25 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
     final keyboardTopPixels =
         window.physicalSize.height - window.viewInsets.bottom;
     final keyboardTopPoints = keyboardTopPixels / window.devicePixelRatio;
-    double keyH = widgetRect.bottom - keyboardTopPoints;
-    curKeyboardH = keyH >= 0 ? keyH : -keyH;
-    notifyListeners();
-    storeKeyboardH = keyH;
-    if (prefs.getDouble('KeyboardH') == null) {
-      prefs.setDouble('KeyboardH', storeKeyboardH);
+    double keyHeight = widgetRect.bottom - keyboardTopPoints;
+
+    if (keyHeight > 0) {
+      currentKeyboardHeight = keyHeight;
+      memeBoxHeight = keyHeight;
+      prefs.setDouble('keyboardHeight', memeBoxHeight);
+    } else {
+      currentKeyboardHeight = 0;
     }
+
+    notifyListeners();
     super.didChangeMetrics();
   }
 
   // 根据回复框的焦点做判断
   replyFocusListener() {
     if (replyFocus.hasFocus) {
-      curKeyboardH = prefs.getDouble('KeyboardH');
-      notifyListeners();
+      // currentKeyboardHeight = prefs.getDouble('KeyboardHeight');
+      // notifyListeners();
       print('replyFocus on focus');
       if (isMemeMode) flipMemeMode();
       if (replyToName != '') {
@@ -229,7 +236,8 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
     String commentId = subIndex == null
         ? commentList[parentIndex]['id']
         : commentList[parentIndex]['subCommentList'][subIndex]['id'];
-    String url = 'ikedComments/${commentList[0]['appType']}/${commentList[0]['appId']}/$commentId';
+    String url =
+        'ikedComments/${commentList[0]['appType']}/${commentList[0]['appId']}/$commentId';
     var result = await dioPixivic.delete(
       url,
     );

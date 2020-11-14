@@ -44,6 +44,7 @@ List<String> keywordsBool = [
   'isBackTipsKnown',
   'isPicTipsKnown'
 ];
+List<String> keywordsDouble = ['keyboardHeight'];
 
 GlobalKey<NewPageState> newPageKey;
 GlobalKey<UserPageState> userPageKey;
@@ -76,6 +77,11 @@ Future initData(BuildContext context) async {
   }
   for (var item in keywordsBool) {
     if (prefs.getBool(item) == null) prefs.setBool(item, false);
+  }
+  for (var item in keywordsDouble) {
+    if (prefs.getDouble(item) == null) {
+      prefs.setDouble(item, 0.0);
+    }
   }
 
   // 检查是否登录，若登录则检查是否过期

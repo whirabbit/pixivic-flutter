@@ -8,11 +8,15 @@ import 'package:pixivic/widget/image_display.dart';
 import 'package:pixivic/provider/comment_list_model.dart';
 
 class MemeBox extends StatelessWidget {
+  final num widgetHeight;
+
+  MemeBox(this.widgetHeight);
+
   @override
   Widget build(BuildContext context) {
     return Container(
         width: ScreenUtil().setWidth(324),
-        height: ScreenUtil().setHeight(256),
+        height: widgetHeight,
         color: Colors.grey[100],
         child: Consumer<MemeModel>(builder: (context, memeModel, _) {
           if (memeModel.memeMap == null)
@@ -34,7 +38,7 @@ class MemeBox extends StatelessWidget {
                   ),
                   Container(
                     width: ScreenUtil().setWidth(324),
-                    height: ScreenUtil().setHeight(226),
+                    height: widgetHeight - ScreenUtil().setHeight(30),
                     alignment: Alignment.center,
                     child: TabBarView(
                         children: List.generate(memeGroupKeys.length,
@@ -59,8 +63,8 @@ class MemeBox extends StatelessWidget {
               runAlignment: WrapAlignment.start,
               children: List.generate(
                   memeKeys.length,
-                  (index) =>
-                      memeCell(context, memePath[index], memeKeys[index], memeGroup))),
+                  (index) => memeCell(
+                      context, memePath[index], memeKeys[index], memeGroup))),
         );
       }
     });
