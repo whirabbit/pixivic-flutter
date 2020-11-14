@@ -12,11 +12,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
-import 'package:dio/dio.dart';
 import 'package:lottie/lottie.dart';
 
 import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/data/common.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 Widget imageCell(Map picMapData, RandomColor randomColor, int sanityLevel,
     int previewRule, String previewQuality, BuildContext context) {
@@ -179,51 +179,29 @@ class _BookMarkHeartState extends State<BookMarkHeart> {
           : ScreenUtil().setWidth(27),
       child: GestureDetector(
         onTap: () async {
-          String url = 'https://pix.ipv4.host/users/bookmarked';
+          String url = '/users/bookmarked';
           Map<String, String> body = {
             'userId': prefs.getInt('id').toString(),
             'illustId': picId.toString(),
             'username': prefs.getString('name')
           };
-          Map<String, String> headers = {
-            'authorization': prefs.getString('auth')
-          };
-          try {
-            if (isLikedLocalState) {
-              await Dio().delete(
-                url,
-                options: Options(
-                  headers: headers,
-                ),
-                data: body,
-              );
-              setState(() {
-                picMapData['isLiked'] = false;
-              });
-            } else {
-              await Dio().post(
-                url,
-                data: body,
-                options: Options(
-                  headers: headers,
-                ),
-              );
-              setState(() {
-                picMapData['isLiked'] = true;
-              });
-            }
-          } on DioError catch (e) {
-            if (e.response != null) {
-              BotToast.showSimpleNotification(
-                  title: e.response.data['message']);
-              print(e.response.data);
-              print(e.response.headers);
-              print(e.response.request);
-            } else {
-              BotToast.showSimpleNotification(title: e.message);
-              print(e.request);
-              print(e.message);
-            }
+
+          if (isLikedLocalState) {
+            await dioPixivic.delete(
+              url,
+              data: body,
+            );
+            setState(() {
+              picMapData['isLiked'] = false;
+            });
+          } else {
+            await dioPixivic.post(
+              url,
+              data: body,
+            );
+            setState(() {
+              picMapData['isLiked'] = true;
+            });
           }
         },
         child: LayoutBuilder(builder: (context, constraint) {

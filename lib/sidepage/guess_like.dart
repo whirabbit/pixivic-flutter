@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:dio/dio.dart';
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:random_color/random_color.dart';
 import 'package:lottie/lottie.dart';
@@ -12,6 +10,7 @@ import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/widget/image_display.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 class GuessLikePage extends StatefulWidget {
   @override
@@ -105,31 +104,16 @@ class _GuessLikePageState extends State<GuessLikePage> {
   }
 
   _getJsonList() async {
-    String url =
-        'https://pix.ipv4.host/users/${prefs.getInt('id')}/recommendBookmarkIllusts';
-    Map<String, String> headers = {'authorization': prefs.getString('auth')};
-    try {
-      Response response =
-          await Dio().get(url, options: Options(headers: headers));
+    String url = '/users/${prefs.getInt('id')}/recommendBookmarkIllusts';
+
+    var response = await dioPixivic.get(url);
+    if (response.runtimeType != bool) {
       picList = response.data['data'];
       if (picList != null) picTotalNum = picList.length;
       setState(() {
         hasConnected = true;
         print(picList);
       });
-    } on DioError catch (e) {
-      hasConnected = false;
-      if (e.response != null) {
-        BotToast.showSimpleNotification(title: e.response.data['message']);
-        print(e.response.data);
-        print(e.response.headers);
-        print(e.response.request);
-      } else {
-        // Something happened in setting up or sending the request that triggered an Error
-        BotToast.showSimpleNotification(title: e.message);
-        print(e.request);
-        print(e.message);
-      }
     }
   }
 }
