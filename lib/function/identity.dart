@@ -46,6 +46,8 @@ login(BuildContext context, String userName, String pwd,
     BotToast.showSimpleNotification(title: TextZhLoginPage().loginSucceed);
     print(newPageKey);
     print(userPageKey);
+    // 为 dio 单例添加 auth
+    initDioClient();
     if (widgetFrom != null) {
       switch (widgetFrom) {
         case 'newPage':
@@ -58,13 +60,13 @@ login(BuildContext context, String userName, String pwd,
           break;
       }
     }
+    initDioClient();
     // 清除 picpage 页面缓存以便重新加载
     homeScrollerPosition = 0;
     homePicList = [];
     homeCurrentPage = 1;
     // 加载用户的画集列表
     Provider.of<CollectionUserDataModel>(context, listen: false);
-    initDioClient();
   } else {
     // isLogin = false;
     BotToast.showSimpleNotification(

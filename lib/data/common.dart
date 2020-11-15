@@ -82,6 +82,9 @@ Future initData(BuildContext context) async {
     }
   }
 
+  // Dio 单例初始化
+  initDioClient();
+
   // 检查是否登录，若登录则检查是否过期
   if (prefs.getString('auth') != '') {
     isLogin = true;
@@ -102,7 +105,4 @@ Future initData(BuildContext context) async {
 
   if (prefs.getString('previewQuality') == '')
     prefs.setString('previewQuality', 'medium');
-
-  // Dio 单例初始化
-  initDioClient();
 }
