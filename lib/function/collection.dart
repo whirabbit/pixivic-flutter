@@ -400,70 +400,89 @@ showTagSelector(BuildContext context) async {
                     NewCollectionParameterModel newCollectionParameterModel,
                     child) =>
                 AlertDialog(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                  contentPadding: EdgeInsets.all(0),
-                  content: Container(
-                      width: ScreenUtil().setWidth(270),
-                      height: ScreenUtil().setWidth(500),
-                      padding: EdgeInsets.zero,
-                      child: Column(
-                        children: [
-                          Container(
-                            width: ScreenUtil().setWidth(270),
-                            height: ScreenUtil().setHeight(30),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20.0),
-                                  topRight: Radius.circular(20.0)),
-                              color: Colors.orange[300],
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                    contentPadding: EdgeInsets.all(0),
+                    content: Container(
+                        width: ScreenUtil().setWidth(270),
+                        height: ScreenUtil().setWidth(500),
+                        padding: EdgeInsets.zero,
+                        child: Stack(
+                          alignment: Alignment.topCenter,
+                          children: [
+                            Positioned(
+                              top: 0,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width: ScreenUtil().setWidth(270),
+                                    height: ScreenUtil().setHeight(30),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.rectangle,
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(20.0),
+                                          topRight: Radius.circular(20.0)),
+                                      color: Colors.orange[300],
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      texts.addTag,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: ScreenUtil().setWidth(250),
+                                    child: Wrap(
+                                      alignment: WrapAlignment.center,
+                                      children: newCollectionParameterModel.tags
+                                          .map((item) =>
+                                              singleTag(context, item, false))
+                                          .toList(),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: ScreenUtil().setWidth(200),
+                                    child: TextField(
+                                        controller: tagInput,
+                                        decoration: InputDecoration(
+                                          hintText: '输入你想要添加的标签',
+                                          isDense: true,
+                                          focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.grey)),
+                                        ),
+                                        onEditingComplete: () {
+                                          newCollectionParameterModel
+                                              .getTagAdvice(tagInput.text);
+                                        }),
+                                  ),
+                                  Wrap(
+                                    alignment: WrapAlignment.center,
+                                    children: newCollectionParameterModel
+                                        .tagsAdvice
+                                        .map((item) =>
+                                            singleTag(context, item, true))
+                                        .toList(),
+                                  ),
+                                ],
+                              ),
                             ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              texts.addTag,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white),
-                            ),
-                          ),
-                          Container(
-                            width: ScreenUtil().setWidth(250),
-                            child: Wrap(
-                              alignment: WrapAlignment.center,
-                              children: newCollectionParameterModel.tags
-                                  .map(
-                                      (item) => singleTag(context, item, false))
-                                  .toList(),
-                            ),
-                          ),
-                          Container(
-                            width: ScreenUtil().setWidth(200),
-                            child: TextField(
-                                controller: tagInput,
-                                decoration: InputDecoration(
-                                  hintText: '输入你想要添加的标签',
-                                  isDense: true,
-                                  focusedBorder: UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.grey)),
-                                ),
-                                onEditingComplete: () {
-                                  newCollectionParameterModel
-                                      .getTagAdvice(tagInput.text);
-                                }),
-                          ),
-                          Wrap(
-                            alignment: WrapAlignment.center,
-                            children: newCollectionParameterModel.tagsAdvice
-                                .map((item) => singleTag(context, item, true))
-                                .toList(),
-                          )
-                        ],
-                      )),
-                ));
+                            Positioned(
+                                bottom: 0,
+                                child: Container(
+                                  child: FlatButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Icon(Icons.arrow_back)
+                                  ),
+                                ))
+                          ],
+                        ))));
       }).then((value) {
     Provider.of<NewCollectionParameterModel>(context, listen: false)
         .clearTagAdvice();

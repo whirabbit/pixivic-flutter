@@ -139,7 +139,7 @@ class CollectionDetailPage extends StatelessWidget {
   }
 
   collectionSetting(BuildContext context) {
-    print('collectionSetting 竟然在执行');
+    print('collectionSetting run');
     showCollectionInfoEditDialog(context, isCreate: false, index: index);
   }
 }
