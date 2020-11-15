@@ -269,7 +269,7 @@ class PicPageModel with ChangeNotifier {
             '/artists/$artistId/illusts/manga?page=$currentPage&pageSize=15&maxSanityLevel=10';
       }
     } else if (jsonMode == 'followed') {
-      this.loadMoreAble = false;
+      // this.loadMoreAble = false;
       if (!isManga) {
         url =
             '/users/$userId/followed/latest/illust?page=$currentPage&pageSize=10';
@@ -284,7 +284,7 @@ class PicPageModel with ChangeNotifier {
         url = '/users/$userId/bookmarked/manga?page=$currentPage&pageSize=10';
       }
     } else if (jsonMode == 'spotlight') {
-      this.loadMoreAble = false;
+      // this.loadMoreAble = false;
       url = '/spotlights/$spotlightId/illustrations';
     } else if (jsonMode == 'history') {
       url =
