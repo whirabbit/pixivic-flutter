@@ -53,7 +53,9 @@ class CommentListPage extends StatelessWidget {
           selector: (context, provider) => provider,
           builder: (context, commentListModel, _) {
             if (isReply) {
-              commentListModel.replyFocus.requestFocus();
+              Future.delayed(Duration(milliseconds: 200), () {
+                commentListModel.replyFocus.requestFocus();
+              });
             }
             return GestureDetector(
                 onTap: () {
@@ -145,6 +147,7 @@ class CommentListPage extends StatelessWidget {
                                           ? MemeBox(
                                               commentListModel.memeBoxHeight)
                                           : Container(
+                                        color: Colors.white,
                                               height: commentListModel
                                                   .memeBoxHeight,
                                             )

@@ -53,7 +53,6 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   // 对键盘高度的监听，同时赋值键盘高度为 memeBox 高度
   @override
   void didChangeMetrics() {
-    Future.delayed(Duration(milliseconds: 200), () {
       print('CommentListModel run didChangeMetrics');
       final renderObject = context.findRenderObject();
       final renderBox = renderObject as RenderBox;
@@ -80,7 +79,6 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
 
       notifyListeners();
       super.didChangeMetrics();
-    });
   }
 
   // 根据回复框的焦点做判断
