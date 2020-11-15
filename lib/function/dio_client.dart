@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+// import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:pixivic/data/common.dart';
 
@@ -15,7 +16,15 @@ initDioClient() {
               'authorization': prefs.getString('auth'),
               'Content-Type': 'application/json'
             }));
+  // dioPixivic.httpClientAdapter = Http2Adapter(
+  //   ConnectionManager(
+  //     idleTimeout: 10000,
 
+  //     /// Ignore bad certificate
+  //     onClientCreate: (_, clientSetting) =>
+  //         clientSetting.onBadCertificate = (_) => true,
+  //   ),
+  // );
   dioPixivic.interceptors
       .add(InterceptorsWrapper(onRequest: (RequestOptions options) async {
     print(options.uri);
