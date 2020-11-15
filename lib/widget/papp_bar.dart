@@ -682,6 +682,7 @@ class PappBarState extends State<PappBar> {
         '/illusts/${searchController.text}',
       );
       if (response.runtimeType != bool) {
+        cancelLoading();
         Map result = response.data;
         if (response.statusCode == 200) {
           Navigator.of(context).push(MaterialPageRoute(
