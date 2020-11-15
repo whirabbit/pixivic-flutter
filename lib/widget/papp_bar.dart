@@ -637,8 +637,8 @@ class PappBarState extends State<PappBar> {
       var response = await dioPixivic.get(
         '/artists/${searchController.text}',
       );
+      cancelLoading();
       if (response.runtimeType != bool) {
-        cancelLoading();
         Map result = response.data;
         if (response.statusCode == 200) {
           Navigator.of(context).push(MaterialPageRoute(
@@ -663,7 +663,6 @@ class PappBarState extends State<PappBar> {
           return false;
         }
       } else {
-        cancelLoading();
         return false;
       }
     }
@@ -681,8 +680,8 @@ class PappBarState extends State<PappBar> {
       var response = await dioPixivic.get(
         '/illusts/${searchController.text}',
       );
+      cancelLoading();
       if (response.runtimeType != bool) {
-        cancelLoading();
         Map result = response.data;
         if (response.statusCode == 200) {
           Navigator.of(context).push(MaterialPageRoute(
@@ -696,7 +695,6 @@ class PappBarState extends State<PappBar> {
           return false;
         }
       } else {
-        cancelLoading();
         return false;
       }
     }
