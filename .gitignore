@@ -12,7 +12,7 @@ pubspec.lock
 doc/api/
 android/key.properties
 android/app/google-services.json
-
+ios/Runner/GoogleService-info.plist
 .idea/
 .flutter-plugins
 .flutter-plugins-dependencies
