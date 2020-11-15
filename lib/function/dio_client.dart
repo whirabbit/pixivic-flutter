@@ -24,6 +24,11 @@ initDioClient() {
   }, onResponse: (Response response) async {
     // print(response.data);
     // BotToast.showSimpleNotification(title: response.data['message']);
+    if (response.statusCode == 200 &&
+        response.headers.map['authorization'] != null &&
+        prefs.getString('auth') != response.headers.map['authorization'][0]) {
+      prefs.setString('auth', response.headers.map['authorization'][0]);
+    }
     return response;
   }, onError: (DioError e) async {
     if (e.response != null) {
@@ -32,18 +37,18 @@ initDioClient() {
       print(e.response.data);
       print(e.response.headers);
       print(e.response.request);
-      if(e.response.statusCode == 400)
+      if (e.response.statusCode == 400)
         BotToast.showSimpleNotification(title: '请登陆后重新加载页面');
-      if(e.response.statusCode == 403) {
-        
-      }
-      else if(e.response.data['message'] != '')
+      else if (e.response.statusCode == 500) {
+        print('500 error');
+      } else if (e.response.statusCode == 401 || e.response.statusCode == 403) {
+        BotToast.showSimpleNotification(title: '登陆已失效，请重新登陆');
+      } else if (e.response.data['message'] != '')
         BotToast.showSimpleNotification(title: e.response.data['message']);
       return false;
     } else {
       // Something happened in setting up or sending the request that triggered an Error
-      if(e.message!= '')
-        BotToast.showSimpleNotification(title: e.message);
+      if (e.message != '') BotToast.showSimpleNotification(title: e.message);
       print(e.request);
       print(e.message);
       return false;
