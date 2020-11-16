@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:dio/dio.dart';
 
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/data/common.dart';
@@ -610,18 +611,16 @@ class PappBarState extends State<PappBar> {
   }
 
   onTranslateThenSearch() async {
-    var response =
-        await dioPixivic.get('/keywords/${searchController.text}/translations');
-    if (response.runtimeType != bool) {
-      if (response.statusCode == 200) {
-        widget.searchFucntion(response.data['data']['keyword']);
-      } else if (response.statusCode == 400) {
-        BotToast.showSimpleNotification(title: response.data['message']);
+    try {
+      Response response = await dioPixivic
+          .get('/keywords/${searchController.text}/translations');
+      widget.searchFucntion(response.data['data']['keyword']);
+    } catch (e) {
+      if (e.response.statusCode == 400) {
+        BotToast.showSimpleNotification(title: e.response.data['message']);
       } else {
         BotToast.showSimpleNotification(title: texts.translateError);
       }
-    } else {
-      BotToast.showSimpleNotification(title: texts.translateError);
     }
   }
 
@@ -633,37 +632,39 @@ class PappBarState extends State<PappBar> {
       BotToast.showSimpleNotification(title: texts.inputIsNotNum);
       return false;
     } else {
-      CancelFunc cancelLoading = BotToast.showLoading();
-      var response = await dioPixivic.get(
-        '/artists/${searchController.text}',
-      );
-      cancelLoading();
-      if (response.runtimeType != bool) {
+      CancelFunc cancelLoading;
+      try {
+        Response response = await dioPixivic
+            .get('/artists/${searchController.text}',
+                onReceiveProgress: (count, total) {
+          cancelLoading = BotToast.showLoading();
+        });
+        cancelLoading();
         Map result = response.data;
-        if (response.statusCode == 200) {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) {
-              return ArtistPage(
-                result['data']['avatar'],
-                result['data']['name'],
-                result['data']['id'].toString(),
-                isFollowed: prefs.getString('auth') != ''
-                    ? result['data']['isFollowed']
-                    : false,
-              );
-            },
-          ));
-          return true;
-        } else if (response.statusCode == 400) {
+
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) {
+            return ArtistPage(
+              result['data']['avatar'],
+              result['data']['name'],
+              result['data']['id'].toString(),
+              isFollowed: prefs.getString('auth') != ''
+                  ? result['data']['isFollowed']
+                  : false,
+            );
+          },
+        ));
+        return true;
+      } catch (e) {
+        cancelLoading();
+        if (e.response.statusCode == 400) {
           print('search artist 400');
-          BotToast.showSimpleNotification(title: result['message']);
+          BotToast.showSimpleNotification(title: e.response.data['message']);
           return false;
         } else {
-          BotToast.showSimpleNotification(title: result['message']);
+          BotToast.showSimpleNotification(title: e.response.data['message']);
           return false;
         }
-      } else {
-        return false;
       }
     }
   }
@@ -676,25 +677,28 @@ class PappBarState extends State<PappBar> {
       BotToast.showSimpleNotification(title: texts.inputIsNotNum);
       return false;
     } else {
-      CancelFunc cancelLoading = BotToast.showLoading();
-      var response = await dioPixivic.get(
-        '/illusts/${searchController.text}',
-      );
-      cancelLoading();
-      if (response.runtimeType != bool) {
+      CancelFunc cancelLoading;
+
+      try {
+        Response response = await dioPixivic
+            .get('/illusts/${searchController.text}',
+                onReceiveProgress: (count, total) {
+          cancelLoading = BotToast.showLoading();
+        });
+        cancelLoading();
         Map result = response.data;
-        if (response.statusCode == 200) {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) {
-              return PicDetailPage(result['data']);
-            },
-          ));
-          return true;
-        } else if (response.statusCode == 404) {
-          BotToast.showSimpleNotification(title: result['message']);
-          return false;
+
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) {
+            return PicDetailPage(result['data']);
+          },
+        ));
+        return true;
+      } catch (e) {
+        cancelLoading();
+        if (e.response.statusCode == 404) {
+          BotToast.showSimpleNotification(title: e.response.data['message']);
         }
-      } else {
         return false;
       }
     }

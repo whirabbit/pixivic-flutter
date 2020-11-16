@@ -7,6 +7,7 @@ import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
+import 'package:dio/dio.dart';
 
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/widget/suggestion_bar.dart';
@@ -204,18 +205,15 @@ class _SearchPageState extends State<SearchPage> {
     String _picDateStr = DateFormat('yyyy-MM-dd')
         .format(DateTime.now().subtract(Duration(days: 3)));
 
-    var response = await dioPixivic.get(
-      '/trendingTags?date=$_picDateStr',
-    );
-    if (response.runtimeType != bool) {
-      if (response.statusCode == 200) {
-        currentTags = response.data['data'];
-        return false;
-      } else {
-        BotToast.showSimpleNotification(title: text.getCurrentError);
-        return true;
-      }
-    } else {
+    try {
+      Response response = await dioPixivic.get(
+        '/trendingTags?date=$_picDateStr',
+      );
+
+      currentTags = response.data['data'];
+      return false;
+    } catch (e) {
+      BotToast.showSimpleNotification(title: text.getCurrentError);
       return false;
     }
 

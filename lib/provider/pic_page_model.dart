@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:provider/provider.dart';
 // import 'package:flutter_screenutil/screenutil.dart';
+import 'package:dio/dio.dart';
 
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:pixivic/data/common.dart';
@@ -304,13 +305,14 @@ class PicPageModel with ChangeNotifier {
     }
 
     List list;
-    var response = await dioPixivic.get(url);
-    if (response.runtimeType != bool) {
+
+    try {
+      Response response = await dioPixivic.get(url);
       // print(response.data['data']);
       list = response.data['data'];
-      if (response.statusCode == 400)
+    } catch (e) {
+      if (e.response.statusCode == 400)
         BotToast.showSimpleNotification(title: '请登录后再重新加载画作');
-    } else {
       BotToast.showSimpleNotification(title: '获取画作信息失败，请检查网络');
     }
 

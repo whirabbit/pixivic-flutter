@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:dio/dio.dart';
 
 import 'package:pixivic/page/user_list_page.dart';
 import 'package:pixivic/function/dio_client.dart';
@@ -77,17 +78,18 @@ class BookmarkUsersState extends State<BookmarkUsers> {
   }
 
   void getBookmarkData() async {
-    String url = '/illusts/${widget.illustId}/bookmarkedUsers?page=1&pageSize=3';
-    var response = await dioPixivic.get(url);
-    if (response.runtimeType != bool) {
-      data = response.data['data'];
-    }
+    String url =
+        '/illusts/${widget.illustId}/bookmarkedUsers?page=1&pageSize=3';
 
-    if (data != null) {
-      numOfData = data.length;
-      changeVisible(true);
-    } else {
-      changeVisible(false);
-    }
+    try {
+      Response response = await dioPixivic.get(url);
+      data = response.data['data'];
+      if (data != null) {
+        numOfData = data.length;
+        changeVisible(true);
+      } else {
+        changeVisible(false);
+      }
+    } catch (e) {}
   }
 }

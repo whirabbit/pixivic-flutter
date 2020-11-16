@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:lottie/lottie.dart';
+import 'package:dio/dio.dart';
 
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/page/pic_page.dart';
@@ -150,13 +151,15 @@ class _SpotlightPageState extends State<SpotlightPage> {
 
   _getJsonList() async {
     String url = '/spotlights?page=$currentPage&pageSize=30';
-    var response = await dioPixivic.get(url);
-    if (response.runtimeType != bool) {
+
+    try {
+      Response response = await dioPixivic.get(url);
       List jsonList = response.data['data'];
       if (jsonList.length < 30) loadMoreAble = false;
       return (jsonList);
-    } else {
+    } catch (e) {
       BotToast.showSimpleNotification(title: text.httpLoadError);
+      return [];
     }
   }
 

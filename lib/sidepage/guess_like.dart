@@ -5,6 +5,7 @@ import 'package:random_color/random_color.dart';
 import 'package:lottie/lottie.dart';
 // import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
+import 'package:dio/dio.dart';
 
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
@@ -106,14 +107,14 @@ class _GuessLikePageState extends State<GuessLikePage> {
   _getJsonList() async {
     String url = '/users/${prefs.getInt('id')}/recommendBookmarkIllusts';
 
-    var response = await dioPixivic.get(url);
-    if (response.runtimeType != bool) {
+    try {
+      Response response = await dioPixivic.get(url);
       picList = response.data['data'];
       if (picList != null) picTotalNum = picList.length;
       setState(() {
         hasConnected = true;
         print(picList);
       });
-    }
+    } catch (e) {}
   }
 }

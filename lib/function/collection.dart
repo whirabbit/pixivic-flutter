@@ -494,9 +494,10 @@ addIllustToCollection(BuildContext contextFrom, List illustIdList,
     String collectionId, bool multiSelect) async {
   print('illustIdList: $illustIdList');
   String url = '/collections/$collectionId/illustrations';
-
-  var response = await dioPixivic.post(url, data: illustIdList);
-  if (response.runtimeType != bool) {
+  
+  
+  try {
+    Response response = await dioPixivic.post(url, data: illustIdList);
     BotToast.showSimpleNotification(title: response.data['message']);
     print(response.data);
     if (multiSelect)
@@ -504,7 +505,7 @@ addIllustToCollection(BuildContext contextFrom, List illustIdList,
     Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
         .getCollectionList();
     return true;
-  } else {
+  } catch(e) {
     return false;
   }
 }
@@ -540,13 +541,13 @@ postNewCollection(Map<String, dynamic> payload) async {
   Map<String, String> headers = {'authorization': prefs.getString('auth')};
 
   if (payload['tagList'] != null) {
-    var response = await dioPixivic.post(url,
+    try {
+      Response response = await dioPixivic.post(url,
         data: payload, options: Options(headers: headers));
-    if (response.runtimeType != bool) {
       print(response.data);
       BotToast.showSimpleNotification(title: response.data['message']);
       return true;
-    } else {
+    } catch(e) {
       return false;
     }
   } else {
@@ -596,11 +597,12 @@ putEditCollection(Map<String, dynamic> payload, String collectionId) async {
   String url = 'https://pix.ipv4.host/collections/$collectionId';
   // print(payload);
   if (payload['tagList'] != null) {
-    var response = await dioPixivic.put(url, data: payload);
-    if (response.runtimeType != bool) {
+    
+    try {
+      Response response = await dioPixivic.put(url, data: payload);
       BotToast.showSimpleNotification(title: response.data['message']);
       return true;
-    } else {
+    } catch(e) {
       return false;
     }
   } else {

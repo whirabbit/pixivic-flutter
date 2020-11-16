@@ -8,6 +8,7 @@ import 'package:lottie/lottie.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pixivic/function/dio_client.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:dio/dio.dart';
 
 import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/data/common.dart';
@@ -224,32 +225,33 @@ class _ArtistPageState extends State<ArtistPage> {
   _loadArtistData() async {
     String urlId = '/artists/${widget.artistId}';
     String urlSummary = '/artists/${widget.artistId}/summary';
-
-    var response = await dioPixivic.get(
-      urlId,
-    );
-    if (response.runtimeType != bool) {
-      if (response.statusCode == 401) {
-        BotToast.showSimpleNotification(title: texts.needLogin);
-        isDataLoaded = false;
-        return false;
-      }
+    Response response;
+    try {
+      response = await dioPixivic.get(
+        urlId,
+      );
       var jsonList = response.data['data'];
       this.comment = jsonList['comment'].replaceAll("\n", "");
       this.urlTwitter = jsonList['twitterUrl'];
       this.urlWebPage = jsonList['webPage'];
       this.numOfBookmarksPublic = jsonList['totalIllustnumOfBookmarksPublic'];
       this.numOfFollower = jsonList['totalFollowUsers'];
-    } else {
-      BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
-      isDataLoaded = false;
-      return ('finished');
+    } catch (e) {
+      if (e.response.statusCode == 401) {
+        BotToast.showSimpleNotification(title: texts.needLogin);
+        isDataLoaded = false;
+        return false;
+      } else {
+        BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+        isDataLoaded = false;
+        return ('finished');
+      }
     }
 
-    response = await dioPixivic.get(
-      urlSummary,
-    );
-    if (response.runtimeType != bool) {
+    try {
+      response = await dioPixivic.get(
+        urlSummary,
+      );
       var jsonList = response.data['data'];
       this.numOfIllust = jsonList['illustSum'].toString();
       this.numOfManga = jsonList['mangaSum'].toString();
@@ -262,7 +264,7 @@ class _ArtistPageState extends State<ArtistPage> {
         ),
       ];
       isDataLoaded = true;
-    } else {
+    } catch (e) {
       BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
       isDataLoaded = false;
       return ('finished');
@@ -332,31 +334,30 @@ class _ArtistPageState extends State<ArtistPage> {
       color: Colors.blueAccent[200],
       onPressed: () async {
         String url = '/users/followed';
-        var response;
         Map<String, String> body = {
           'artistId': widget.artistId,
           'userId': prefs.getInt('id').toString(),
           'username': prefs.getString('name'),
         };
 
-        if (currentFollowedState) {
-          response = await dioPixivic.delete(
-            url,
-            data: body,
-          );
-        } else {
-          response = await dioPixivic.post(
-            url,
-            data: body,
-          );
-        }
-        if (response.runtimeType != bool) {
+        try {
+          if (currentFollowedState) {
+            await dioPixivic.delete(
+              url,
+              data: body,
+            );
+          } else {
+            await dioPixivic.post(
+              url,
+              data: body,
+            );
+          }
           setState(() {
             isFollowed = !isFollowed;
           });
           if (widget.followedRefresh != null)
             widget.followedRefresh(isFollowed);
-        } else {
+        } catch (e) {
           BotToast.showSimpleNotification(title: texts.followError);
         }
       },

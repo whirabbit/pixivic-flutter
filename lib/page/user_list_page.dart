@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:dio/dio.dart';
 
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/widget/papp_bar.dart';
@@ -144,21 +145,21 @@ class _UserListPageState extends State<UserListPage> {
   _getJsonList() async {
     String url;
     List jsonList;
-    var response;
+    Response response;
 
     if (widget.mode == 'bookmark') {
       url =
           '/illusts/${widget.illustId}/bookmarkedUsers?page=$currentPage&pageSize=30';
     }
-    response = await dioPixivic.get(url);
-    if (response.runtimeType != bool) {
+    try {
+      response = await dioPixivic.get(url);
       jsonList = response.data['data'];
       if (jsonList == null)
         loadMoreAble = false;
       else
         loadMoreAble = true;
       return jsonList;
-    } else {
+    } catch(e) {
       return null;
     }
   }

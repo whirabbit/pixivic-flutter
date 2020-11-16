@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:bot_toast/bot_toast.dart';
 import 'package:provider/provider.dart';
+import 'package:dio/dio.dart';
 
 import '../data/common.dart';
 import '../data/texts.dart';
@@ -135,8 +136,9 @@ register(String userName, String pwd, String pwdRepeat, String verificationCode,
     'password': pwd,
   };
 
-  var response = await dioPixivic.post(url, data: body);
-  if (response.runtimeType != bool) {
+  Response response;
+  try {
+    response = await dioPixivic.post(url, data: body);
     if (response.statusCode == 200) {
       // 切换至login界面，并给出提示
       BotToast.showSimpleNotification(title: TextZhLoginPage().registerSucceed);
@@ -145,7 +147,7 @@ register(String userName, String pwd, String pwdRepeat, String verificationCode,
       print(response.data['message']);
       BotToast.showSimpleNotification(title: response.data['message']);
     }
-  }
+  } catch (e) {}
   tempVerificationCode = null;
   tempVerificationImage = null;
   return response.statusCode;
@@ -170,14 +172,19 @@ checkRegisterInfo(
 
   String url = '/users/usernames/$userName';
 
-  var response = await dioPixivic.get(url);
-  if (response.runtimeType != bool) {
+  try {
+    Response response = await dioPixivic.get(url);
     if (response.statusCode == 409) {
       return TextZhLoginPage().errorNameUsed;
     } else {
       return true;
     }
-  } else {
+  } catch (e) {
+    if (e.response.statusCode == 409) {
+      return TextZhLoginPage().errorNameUsed;
+    } else {
+      return true;
+    }
     return TextZhLoginPage().registerFailed;
   }
 }

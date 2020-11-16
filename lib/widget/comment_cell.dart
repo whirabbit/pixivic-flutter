@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
+import 'package:dio/dio.dart';
 
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/page/comment_list_page.dart';
@@ -258,8 +259,8 @@ class _CommentCellState extends State<CommentCell> {
   _loadCommentData() async {
     String url = '/illusts/${widget.id}/comments';
 
-    var response = await dioPixivic.get(url);
-    if (response.runtimeType != bool) {
+    try {
+      Response response = await dioPixivic.get(url);
       if (response.data['data'] != null) {
         // print(response.data);
         setState(() {
@@ -268,6 +269,8 @@ class _CommentCellState extends State<CommentCell> {
               commentJsonData[0]['content'].replaceAll('\n', '');
         });
       }
+    } catch(e) {
+      
     }
   }
 }
