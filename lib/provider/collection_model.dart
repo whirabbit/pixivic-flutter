@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 // import 'package:provider/provider.dart';
+import 'package:dio/dio.dart';
 
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/function/dio_client.dart';
@@ -50,14 +51,14 @@ class CollectionUiModel with ChangeNotifier {
     String url =
         '/users/${prefs.getInt('id')}/collections?page=$currentViewerPage&pagesize=10';
 
-    var response = await dioPixivic.get(url);
-    if (response.runtimeType != bool) {
+    try {
+      Response response = await dioPixivic.get(url);
       if (response.data['data'] != null) {
         viewerList = viewerList + response.data['data'];
       } else if (response.data['data'] == null) {
         onViewerBottom = true;
       }
-    }
+    } catch (e) {}
     onViewerLoad = false;
     notifyListeners();
   }
@@ -115,14 +116,13 @@ class NewCollectionParameterModel with ChangeNotifier {
     notifyListeners();
     String url = '/collections/tags?keyword=$keywords';
 
-    var response =
-        await dioPixivic.get(url);
-    if (response.runtimeType != bool) {
+    try {
+      Response response = await dioPixivic.get(url);
       if (response.data['data'] != null)
         _tagsAdvice = _tagsAdvice + response.data['data'];
       print(_tagsAdvice);
       notifyListeners();
-    }
+    } catch (e) {}
     // _tagsAdvice = [];
   }
 
@@ -164,10 +164,9 @@ class CollectionUserDataModel with ChangeNotifier {
         '/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
     bool isEnd = false;
     while (!isEnd) {
-      var response =
-          await dioPixivic.get(url);
       // print(response.data['data']);
-      if (response.runtimeType != bool) {
+      try {
+        Response response = await dioPixivic.get(url);
         collectionList = response.data['data'] ?? [];
         // print('The user album list:\n$collectionList');
         userCollectionList += collectionList;
@@ -177,7 +176,8 @@ class CollectionUserDataModel with ChangeNotifier {
         url = '/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
         if (isEnd) notifyListeners();
         // print(userCollectionList);
-      } else {
+      } catch (e) {
+        isEnd = true;
         return null;
       }
     }

@@ -8,7 +8,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../page/pic_detail_page.dart';
 import '../data/texts.dart';
-import '../data/common.dart';
 
 uploadImageToSaucenao(File file, BuildContext context) async {
   TextZhUploadImage texts = TextZhUploadImage();
@@ -24,13 +23,12 @@ uploadImageToSaucenao(File file, BuildContext context) async {
   });
   Map<String, dynamic> queryParameters = {'output_type': '2'};
 
-  CancelFunc loading = BotToast.showLoading();
-  Dio dio = Dio();
-  response = await dio.post("https://saucenao.com/search.php",
-      data: data, queryParameters: queryParameters);
-  loading();
-
   try {
+    CancelFunc loading = BotToast.showLoading();
+    Dio dio = Dio();
+    response = await dio.post("https://saucenao.com/search.php",
+        data: data, queryParameters: queryParameters);
+    loading();
     if (response.data['results'] == null) {
       print('no result found');
       BotToast.showSimpleNotification(title: texts.similarityLow);
@@ -54,23 +52,21 @@ uploadImageToSaucenao(File file, BuildContext context) async {
           BotToast.showSimpleNotification(title: texts.similarityLow);
           return false;
         } else if (id != 'null') {
-          illustResponse = await dioPixivic.get(
-            '/illusts/$id',
-          );
-          if (response.runtimeType != bool) {
+          try {
+            illustResponse = await dioPixivic.get(
+              '/illusts/$id',
+            );
             if (illustResponse.statusCode == 200) {
               Navigator.of(context).push(MaterialPageRoute(builder: (context) {
                 return PicDetailPage(illustResponse.data['data']);
               }));
               return true;
-            } else {
-              print(illustResponse.statusCode);
-              print('on low error');
-              BotToast.showSimpleNotification(
-                  title: illustResponse.data['meesage']);
-              return false;
             }
-          } else {
+          } catch (e) {
+            print(e.response.statusCode);
+            print('on low error');
+            BotToast.showSimpleNotification(
+                title: illustResponse.data['meesage']);
             return false;
           }
         } else if (id == 'null' && extUrl != null) {
@@ -84,25 +80,24 @@ uploadImageToSaucenao(File file, BuildContext context) async {
           BotToast.showSimpleNotification(title: texts.similarityLow);
           return false;
         }
-      } else if (response.statusCode == 403) {
-        BotToast.showSimpleNotification(title: texts.invalidKey);
-        return false;
-      } else if (response.statusCode == 413) {
-        BotToast.showSimpleNotification(title: texts.fileTooLarge);
-        return false;
-      } else if (response.statusCode == 429) {
-        if (response.data['header']['message'].contains('Daily'))
-          BotToast.showSimpleNotification(title: texts.dailyLimit);
-        else
-          BotToast.showSimpleNotification(title: texts.shortLimit);
-        return false;
       }
     }
   } catch (e) {
-    print(e);
     if (e is DioError)
       BotToast.showSimpleNotification(title: e.response.data['message']);
-    else
+    if (e.response.statusCode == 403) {
+      BotToast.showSimpleNotification(title: texts.invalidKey);
+      return false;
+    } else if (e.response.statusCode == 413) {
+      BotToast.showSimpleNotification(title: texts.fileTooLarge);
+      return false;
+    } else if (e.response.statusCode == 429) {
+      if (response.data['header']['message'].contains('Daily'))
+        BotToast.showSimpleNotification(title: texts.dailyLimit);
+      else
+        BotToast.showSimpleNotification(title: texts.shortLimit);
+      return false;
+    } else
       BotToast.showSimpleNotification(title: e.toString());
     return false;
   }

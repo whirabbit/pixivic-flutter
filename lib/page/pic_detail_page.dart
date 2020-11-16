@@ -11,6 +11,7 @@ import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_advanced_networkimage/zoomable.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:dio/dio.dart';
 
 import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/page/artist_page.dart';
@@ -450,30 +451,29 @@ class _PicDetailPageState extends State<PicDetailPage> {
       color: Colors.blueAccent[200],
       onPressed: () async {
         String url = '/users/followed';
-        var response;
         Map<String, String> body = {
           'artistId': widget._picData['artistPreView']['id'].toString(),
           'userId': prefs.getInt('id').toString(),
           'username': prefs.getString('name'),
         };
 
-        if (currentFollowedState) {
-          response = await dioPixivic.delete(
-            url,
-            data: body,
-          );
-        } else {
-          response = await dioPixivic.post(
-            url,
-            data: body,
-          );
-        }
-        if (response.runtimeType != bool) {
+        try {
+          if (currentFollowedState) {
+            await dioPixivic.delete(
+              url,
+              data: body,
+            );
+          } else {
+            await dioPixivic.post(
+              url,
+              data: body,
+            );
+          }
           setState(() {
             widget._picData['artistPreView']['isFollowed'] =
                 !widget._picData['artistPreView']['isFollowed'];
           });
-        } else {
+        } catch (e) {
           // print(homePicList[widget.index]['artistPreView']['isFollowed']);
           BotToast.showSimpleNotification(title: texts.followError);
         }

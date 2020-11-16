@@ -215,12 +215,13 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
           : commentList[parentIndex]['subCommentList'][subIndex]['id'],
     };
     print(payload);
-    var result = await dioPixivic.post(
+    
+    
+    try {
+      dioPixivic.post(
       url,
       data: payload,
     );
-    print('${result.runtimeType}');
-    if (result.runtimeType != bool) {
       print(commentList[parentIndex]['isLike']);
       if (subIndex == null) {
         commentList[parentIndex]['isLike'] = true;
@@ -232,8 +233,10 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
 
       notifyListeners();
       return true;
-    } else
+    } catch(e) {
       return false;
+    }
+      
   }
 
   unlikeComment(int parentIndex, {int subIndex}) async {
@@ -243,11 +246,11 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
         : commentList[parentIndex]['subCommentList'][subIndex]['id'];
     String url =
         '/user/likedComments/${commentList[0]['appType']}/${commentList[0]['appId']}/$commentId';
-    print(url);
-    var result = await dioPixivic.delete(
+    // print(url);
+    try {
+      await dioPixivic.delete(
       url,
     );
-    if (result.runtimeType != bool) {
       if (subIndex == null) {
         commentList[parentIndex]['isLike'] = false;
         commentList[parentIndex]['likedCount'] -= 1;
@@ -257,8 +260,10 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
       }
       notifyListeners();
       return true;
-    } else
+    } catch(e) {
       return false;
+    }
+      
   }
 
   //自动加载数据

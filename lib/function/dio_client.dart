@@ -41,8 +41,9 @@ initDioClient() {
     return response;
   }, onError: (DioError e) async {
     if (e.response != null) {
-      print(e.response);
-      print(e.response.statusCode.toString());
+      print('==== DioPixivic Catch ====');
+      // print(e.response);
+      print(e.response.statusCode);
       print(e.response.data);
       print(e.response.headers);
       print(e.response.request);
@@ -54,13 +55,12 @@ initDioClient() {
         BotToast.showSimpleNotification(title: '登陆已失效，请重新登陆');
       } else if (e.response.data['message'] != '')
         BotToast.showSimpleNotification(title: e.response.data['message']);
-      return false;
     } else {
       // Something happened in setting up or sending the request that triggered an Error
       if (e.message != '') BotToast.showSimpleNotification(title: e.message);
       print(e.request);
       print(e.message);
-      return false;
     }
+    return e;
   }));
 }

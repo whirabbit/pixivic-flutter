@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:dio/dio.dart';
 
 import 'package:pixivic/function/dio_client.dart';
 
@@ -101,17 +102,17 @@ class SuggestionBarState extends State<SuggestionBar> {
   _loadSuggestions() async {
     print('reloading suggestions');
     List jsonList;
-    var response;
+    Response response;
 
     String urlPixiv = '/keywords/$searchKeywords/pixivSuggestions';
     // String urlPixivic =
     //     'https://pix.ipv4.host/keywords/$searchKeywords/suggestions';
-
-    response = await dioPixivic.get(urlPixiv);
-    if (response.runtimeType != bool) {
+    
+    try {
+      response = await dioPixivic.get(urlPixiv);
       jsonList = response.data['data'];
       return jsonList;
-    } else {
+    } catch(e) {
       return null;
     }
   }

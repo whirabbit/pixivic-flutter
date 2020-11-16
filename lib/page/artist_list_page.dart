@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:lottie/lottie.dart';
+import 'package:dio/dio.dart';
 
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
@@ -237,7 +238,6 @@ class _ArtistListPageState extends State<ArtistListPage> {
       color: Colors.blueAccent[200],
       onPressed: () async {
         String url = '/users/followed';
-        var response;
 
         Map<String, String> body = {
           'artistId': data['id'].toString(),
@@ -245,22 +245,22 @@ class _ArtistListPageState extends State<ArtistListPage> {
           'username': prefs.getString('name'),
         };
 
-        if (currentFollowedState) {
-          response = await dioPixivic.delete(
-            url,
-            data: body,
-          );
-        } else {
-          response = await dioPixivic.post(
-            url,
-            data: body,
-          );
-        }
-        if (response.runtimeType != bool) {
+        try {
+          if (currentFollowedState) {
+            await dioPixivic.delete(
+              url,
+              data: body,
+            );
+          } else {
+            await dioPixivic.post(
+              url,
+              data: body,
+            );
+          }
           setState(() {
             data['isFollowed'] = !data['isFollowed'];
           });
-        } else {
+        } catch (e) {
           // print(homePicList[widget.index]['artistPreView']['isFollowed']);
           BotToast.showSimpleNotification(title: text.followError);
         }
@@ -276,7 +276,7 @@ class _ArtistListPageState extends State<ArtistListPage> {
   _getJsonList() async {
     String url;
     List jsonList;
-    var response;
+    Response response;
 
     if (widget.mode == 'search') {
       url =
@@ -289,15 +289,15 @@ class _ArtistListPageState extends State<ArtistListPage> {
           '/users/${widget.userId}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
     }
 
-    response = await dioPixivic.get(url);
-    if (response.runtimeType != bool) {
+    try {
+      response = await dioPixivic.get(url);
       jsonList = response.data['data'];
       if (jsonList == null)
         loadMoreAble = false;
       else
         loadMoreAble = true;
       return (jsonList);
-    } else {
+    } catch (e) {
       BotToast.showSimpleNotification(title: '数据获取失败，请检查网络');
     }
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:dio/dio.dart';
 
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/data/common.dart';
@@ -362,9 +363,8 @@ class LoginPageState extends State<LoginPage> {
   }
 
   _getVerificationCode() async {
-    var response = await dioPixivic.get("/verificationCode");
-
-    if (response.runtimeType != bool) {
+    try {
+      Response response = await dioPixivic.get("/verificationCode");
       if (response.statusCode == 200) {
         setState(() {
           verificationCode = response.data['data']['vid'];
@@ -377,7 +377,7 @@ class LoginPageState extends State<LoginPage> {
         BotToast.showSimpleNotification(title: texts.errorGetVerificationCode);
         return false;
       }
-    } else {
+    } catch (e) {
       BotToast.showSimpleNotification(title: texts.errorGetVerificationCode);
       return false;
     }
@@ -420,8 +420,9 @@ class LoginPageState extends State<LoginPage> {
 
   _submitMailForForget(String mail) async {
     String url = '/users/emails/$mail/resetPasswordEmail';
-    var response = await dioPixivic.get(url);
-    if (response.runtimeType != bool) {
+
+    try {
+      Response response = await dioPixivic.get(url);
       showDialog(
           context: context,
           builder: (_) => AlertDialog(
@@ -437,6 +438,8 @@ class LoginPageState extends State<LoginPage> {
                   )
                 ],
               ));
+    } catch (e) {
+      return false;
     }
   }
 }

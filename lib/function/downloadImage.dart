@@ -43,7 +43,7 @@ class DownloadImage {
   _iOSDownload() async {
     BotToast.showSimpleNotification(title: '开始下载,请勿退出应用');
     try {
-      var response = await Dio().get(
+      Response response = await Dio().get(
         url,
         options: Options(
             headers: {'Referer': 'https://app-api.pixiv.net'},
@@ -65,7 +65,7 @@ class DownloadImage {
   // _androidDownload() async {
   //   BotToast.showSimpleNotification(title: '开始下载,请勿退出应用');
   //   try {
-  //     var response = await Requests.get(url,
+  //     Response response = await Requests.get(url,
   //         headers: {'Referer': 'https://app-api.pixiv.net'},
   //         timeoutSeconds: 180);
   //     // response.raiseForStatus();

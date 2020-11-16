@@ -3,6 +3,7 @@ import 'package:pixivic/data/common.dart';
 
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/screenutil.dart';
+import 'package:dio/dio.dart';
 
 import 'package:pixivic/provider/favorite_animation_model.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
@@ -44,24 +45,23 @@ class MarkHeart extends StatelessWidget {
               //点击动画
               favProvider.clickFunc();
               String url = '/users/bookmarked';
-              var response;
               Map<String, String> body = {
                 'userId': prefs.getInt('id').toString(),
                 'illustId': picId.toString(),
                 'username': prefs.getString('name')
               };
-              if (isLikedLocalState) {
-                response = await dioPixivic.delete(
-                  url,
-                  data: body,
-                );
-              } else {
-                response = await dioPixivic.post(
-                  url,
-                  data: body,
-                );
-              }
-              if (response.runtimeType != bool) {
+              try {
+                if (isLikedLocalState) {
+                  await dioPixivic.delete(
+                    url,
+                    data: body,
+                  );
+                } else {
+                  await dioPixivic.post(
+                    url,
+                    data: body,
+                  );
+                }
                 Future.delayed(Duration(milliseconds: 400), () {
                   getPageProvider != null
                       ? getPageProvider.flipLikeState(index)
@@ -70,7 +70,7 @@ class MarkHeart extends StatelessWidget {
                   color =
                       isLikedLocalState ? Colors.redAccent : Colors.grey[300];
                 });
-              }
+              } catch (e) {}
             },
           );
         },
