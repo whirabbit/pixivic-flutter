@@ -474,13 +474,16 @@ showTagSelector(BuildContext context) async {
                                               .getTagAdvice(tagInput.text);
                                         }),
                                   ),
-                                  Wrap(
-                                    alignment: WrapAlignment.center,
-                                    children: newCollectionParameterModel
-                                        .tagsAdvice
-                                        .map((item) =>
-                                            singleTag(context, item, true))
-                                        .toList(),
+                                  Container(
+                                    width: ScreenUtil().setWidth(250),
+                                    child: Wrap(
+                                      alignment: WrapAlignment.center,
+                                      children: newCollectionParameterModel
+                                          .tagsAdvice
+                                          .map((item) =>
+                                              singleTag(context, item, true))
+                                          .toList(),
+                                    ),
                                   ),
                                 ],
                               ),
