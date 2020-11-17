@@ -53,32 +53,32 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   // 对键盘高度的监听，同时赋值键盘高度为 memeBox 高度
   @override
   void didChangeMetrics() {
-      print('CommentListModel run didChangeMetrics');
-      final renderObject = context.findRenderObject();
-      final renderBox = renderObject as RenderBox;
-      final offset = renderBox.localToGlobal(Offset.zero);
-      final widgetRect = Rect.fromLTWH(
-        offset.dx,
-        offset.dy,
-        renderBox.size.width,
-        renderBox.size.height,
-      );
-      final keyboardTopPixels =
-          window.physicalSize.height - window.viewInsets.bottom;
-      final keyboardTopPoints = keyboardTopPixels / window.devicePixelRatio;
-      double keyHeight = widgetRect.bottom - keyboardTopPoints;
+    print('CommentListModel run didChangeMetrics');
+    final renderObject = context.findRenderObject();
+    final renderBox = renderObject as RenderBox;
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final widgetRect = Rect.fromLTWH(
+      offset.dx,
+      offset.dy,
+      renderBox.size.width,
+      renderBox.size.height,
+    );
+    final keyboardTopPixels =
+        window.physicalSize.height - window.viewInsets.bottom;
+    final keyboardTopPoints = keyboardTopPixels / window.devicePixelRatio;
+    double keyHeight = widgetRect.bottom - keyboardTopPoints;
 
-      if (keyHeight > 0) {
-        currentKeyboardHeight = keyHeight;
-        memeBoxHeight = keyHeight;
-        prefs.setDouble('keyboardHeight', memeBoxHeight);
-        print('didChangeMetrics memeBoxHeight: $keyHeight');
-      } else {
-        currentKeyboardHeight = 0;
-      }
+    if (keyHeight > 0) {
+      currentKeyboardHeight = keyHeight;
+      memeBoxHeight = keyHeight;
+      prefs.setDouble('keyboardHeight', memeBoxHeight);
+      print('didChangeMetrics memeBoxHeight: $keyHeight');
+    } else {
+      currentKeyboardHeight = 0;
+    }
 
-      notifyListeners();
-      super.didChangeMetrics();
+    notifyListeners();
+    super.didChangeMetrics();
   }
 
   // 根据回复框的焦点做判断
@@ -132,28 +132,35 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
         'platform': 'Mobile 客户端'
       };
 
-      await dioPixivic.post(
-        url,
-        data: payload,
-        onReceiveProgress: (count, total) {
-          cancelLoading = BotToast.showLoading();
-        },
-      );
-      cancelLoading();
+      try {
+        await dioPixivic.post(
+          url,
+          data: payload,
+          onReceiveProgress: (count, total) {
+            cancelLoading = BotToast.showLoading();
+          },
+        );
+        cancelLoading();
 
-      textEditingController.text = '';
-      replyToId = 0;
-      replyToName = '';
-      replyParentId = 0;
-      hintText = texts.addCommentHint;
+        textEditingController.text = '';
+        replyToId = 0;
+        replyToName = '';
+        replyParentId = 0;
+        hintText = texts.addCommentHint;
 
-      loadComments(illustId).then((value) {
-        commentList = value;
-        notifyListeners();
-      });
-      isReplyAble = true;
-      return true;
+        loadComments(illustId).then((value) {
+          commentList = value;
+          notifyListeners();
+        });
+        isReplyAble = true;
+        return true;
+      } catch (e) {
+        isReplyAble = true;
+        cancelLoading();
+        return false;
+      }
     } else {
+      isReplyAble = true;
       return false;
     }
   }
@@ -178,28 +185,35 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
         'replyToName': replyToName,
         'platform': 'Mobile 客户端'
       };
-      await dioPixivic.post(
-        url,
-        data: payload,
-        onReceiveProgress: (count, total) {
-          cancelLoading = BotToast.showLoading();
-        },
-      );
-      cancelLoading();
+      try {
+        await dioPixivic.post(
+          url,
+          data: payload,
+          onReceiveProgress: (count, total) {
+            cancelLoading = BotToast.showLoading();
+          },
+        );
+        cancelLoading();
 
-      replyToId = 0;
-      replyToName = '';
-      replyParentId = 0;
-      hintText = texts.addCommentHint;
+        replyToId = 0;
+        replyToName = '';
+        replyParentId = 0;
+        hintText = texts.addCommentHint;
 
-      loadComments(illustId).then((value) {
-        commentList = value;
-        notifyListeners();
-      });
-      flipMemeMode();
-      isReplyAble = true;
-      return true;
+        loadComments(illustId).then((value) {
+          commentList = value;
+          notifyListeners();
+        });
+        flipMemeMode();
+        isReplyAble = true;
+        return true;
+      } catch (e) {
+        isReplyAble = true;
+        cancelLoading();
+        return false;
+      }
     } else {
+      isReplyAble = true;
       return false;
     }
   }
@@ -215,13 +229,12 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
           : commentList[parentIndex]['subCommentList'][subIndex]['id'],
     };
     print(payload);
-    
-    
+
     try {
       dioPixivic.post(
-      url,
-      data: payload,
-    );
+        url,
+        data: payload,
+      );
       print(commentList[parentIndex]['isLike']);
       if (subIndex == null) {
         commentList[parentIndex]['isLike'] = true;
@@ -233,10 +246,9 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
 
       notifyListeners();
       return true;
-    } catch(e) {
+    } catch (e) {
       return false;
     }
-      
   }
 
   unlikeComment(int parentIndex, {int subIndex}) async {
@@ -249,8 +261,8 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
     // print(url);
     try {
       await dioPixivic.delete(
-      url,
-    );
+        url,
+      );
       if (subIndex == null) {
         commentList[parentIndex]['isLike'] = false;
         commentList[parentIndex]['likedCount'] -= 1;
@@ -260,10 +272,9 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
       }
       notifyListeners();
       return true;
-    } catch(e) {
+    } catch (e) {
       return false;
     }
-      
   }
 
   //自动加载数据
