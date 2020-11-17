@@ -13,6 +13,7 @@ uploadImageToSaucenao(File file, BuildContext context) async {
   TextZhUploadImage texts = TextZhUploadImage();
   Response response;
   Response illustResponse;
+  CancelFunc cancelLoading;
 
   String fileName = file.path.split('/').last;
   FormData data = FormData.fromMap({
@@ -24,11 +25,11 @@ uploadImageToSaucenao(File file, BuildContext context) async {
   Map<String, dynamic> queryParameters = {'output_type': '2'};
 
   try {
-    CancelFunc loading = BotToast.showLoading();
+    cancelLoading = BotToast.showLoading();
     Dio dio = Dio();
     response = await dio.post("https://saucenao.com/search.php",
         data: data, queryParameters: queryParameters);
-    loading();
+    cancelLoading();
     if (response.data['results'] == null) {
       print('no result found');
       BotToast.showSimpleNotification(title: texts.similarityLow);
@@ -83,6 +84,7 @@ uploadImageToSaucenao(File file, BuildContext context) async {
       }
     }
   } catch (e) {
+    cancelLoading();
     if (e is DioError)
       BotToast.showSimpleNotification(title: e.response.data['message']);
     if (e.response.statusCode == 403) {

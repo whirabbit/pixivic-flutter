@@ -244,8 +244,10 @@ class _ArtistListPageState extends State<ArtistListPage> {
           'userId': prefs.getInt('id').toString(),
           'username': prefs.getString('name'),
         };
+        // CancelFunc cancelLoading;
 
         try {
+          // cancelLoading = BotToast.showLoading();
           if (currentFollowedState) {
             await dioPixivic.delete(
               url,
@@ -257,10 +259,12 @@ class _ArtistListPageState extends State<ArtistListPage> {
               data: body,
             );
           }
+          // cancelLoading();
           setState(() {
             data['isFollowed'] = !data['isFollowed'];
           });
         } catch (e) {
+          // cancelLoading();
           // print(homePicList[widget.index]['artistPreView']['isFollowed']);
           BotToast.showSimpleNotification(title: text.followError);
         }

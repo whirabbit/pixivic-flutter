@@ -135,10 +135,12 @@ register(String userName, String pwd, String pwdRepeat, String verificationCode,
     'email': emailInput,
     'password': pwd,
   };
-
+  CancelFunc cancelLoading;
   Response response;
   try {
+    cancelLoading = BotToast.showLoading();
     response = await dioPixivic.post(url, data: body);
+    cancelLoading();
     if (response.statusCode == 200) {
       // 切换至login界面，并给出提示
       BotToast.showSimpleNotification(title: TextZhLoginPage().registerSucceed);
@@ -147,7 +149,10 @@ register(String userName, String pwd, String pwdRepeat, String verificationCode,
       print(response.data['message']);
       BotToast.showSimpleNotification(title: response.data['message']);
     }
-  } catch (e) {}
+  } catch (e) {
+    cancelLoading();
+    return e.response.statusCode;
+  }
   tempVerificationCode = null;
   tempVerificationImage = null;
   return response.statusCode;
