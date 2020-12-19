@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'package:pixivic/widget/image_display.dart';
 import 'package:pixivic/provider/comment_list_model.dart';
+import 'package:waterfall_flow/waterfall_flow.dart';
 
 class MemeBox extends StatelessWidget {
   final num widgetHeight;
@@ -56,16 +57,28 @@ class MemeBox extends StatelessWidget {
       else {
         List memeKeys = memeModel.memeMap[memeGroup].keys.toList();
         List memePath = memeModel.memeMap[memeGroup].values.toList();
-        return SingleChildScrollView(
-          child: Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              alignment: WrapAlignment.center,
-              runAlignment: WrapAlignment.start,
-              children: List.generate(
-                  memeKeys.length,
-                  (index) => memeCell(
-                      context, memePath[index], memeKeys[index], memeGroup))),
-        );
+        // return SingleChildScrollView(
+        //   child: Wrap(
+        //       crossAxisAlignment: WrapCrossAlignment.center,
+        //       alignment: WrapAlignment.center,
+        //       runAlignment: WrapAlignment.start,
+        //       children: List.generate(
+        //           memeKeys.length,
+        // (index) => memeCell(
+        //     context, memePath[index], memeKeys[index], memeGroup))),
+        // );
+        return WaterfallFlow.builder(
+            itemCount: memeKeys.length,
+            itemBuilder: (BuildContext context, int index) {
+              return memeCell(
+                  context, memePath[index], memeKeys[index], memeGroup);
+            },
+            gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 5,
+              viewportBuilder: (int firstIndex, int lastIndex) {
+                print("memebox viewport : [$firstIndex,$lastIndex]");
+              },
+            ));
       }
     });
   }
