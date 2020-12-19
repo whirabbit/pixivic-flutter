@@ -84,6 +84,7 @@ class MemeBox extends StatelessWidget {
         width: ScreenUtil().setWidth(55),
         height: ScreenUtil().setWidth(55),
         child: Image(
+          isAntiAlias: true,
           image: (AssetImage(path)),
         ),
       ),
