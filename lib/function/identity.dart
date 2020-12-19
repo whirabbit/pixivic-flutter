@@ -67,7 +67,7 @@ login(BuildContext context, String userName, String pwd,
     homePicList = [];
     homeCurrentPage = 1;
     // 加载用户的画集列表
-    Provider.of<CollectionUserDataModel>(context, listen: false);
+    Provider.of<CollectionUserDataModel>(context, listen: false).getCollectionList();
   } else {
     // isLogin = false;
     BotToast.showSimpleNotification(
