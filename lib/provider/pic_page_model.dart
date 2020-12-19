@@ -297,7 +297,7 @@ class PicPageModel with ChangeNotifier {
       if (!isManga) {
         url = '/users/$userId/bookmarked/illust?page=$currentPage&pageSize=10';
       } else {
-        url = '/users/$userId/manga?page=$currentPage&pageSize=10';
+        url = '/users/$userId/bookmarked/manga?page=$currentPage&pageSize=10';
       }
     } else if (jsonMode == 'collection') {
       url =
