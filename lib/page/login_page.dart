@@ -155,13 +155,13 @@ class LoginPageState extends State<LoginPage> {
         controller: controller,
         obscureText: isPassword,
         onTap: () async {
-          Future.delayed(Duration(milliseconds: 250), () {
-            double location = mainController.position.extentBefore +
-                ScreenUtil().setHeight(100);
-            mainController.position.animateTo(location,
-                duration: Duration(milliseconds: 100),
-                curve: Curves.easeInCirc);
-          });
+          // Future.delayed(Duration(milliseconds: 250), () {
+          //   double location = mainController.position.extentBefore +
+          //       ScreenUtil().setHeight(100);
+          //   mainController.position.animateTo(location,
+          //       duration: Duration(milliseconds: 100),
+          //       curve: Curves.easeInCirc);
+          // });
         },
       ),
     );
