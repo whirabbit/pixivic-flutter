@@ -25,7 +25,8 @@ class TextZhLoginPage {
   String welcomeRegister = '加入我们';
   String tipLogin = '登录来进行收藏和关注';
   String tipRegister = '注册来解锁更多姿势';
-  String userName = '用户名/邮箱';
+  String userNameAndEmail = '用户名/邮箱';
+  String userName = '用户名';
   String password = '密码';
   String passwordRepeat = '重复密码';
   String email = '邮箱';

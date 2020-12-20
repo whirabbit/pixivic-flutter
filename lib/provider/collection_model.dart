@@ -139,13 +139,15 @@ class NewCollectionParameterModel with ChangeNotifier {
 
 class CollectionUserDataModel with ChangeNotifier {
   List userCollectionList;
+  bool lock;
 
   CollectionUserDataModel() {
     userCollectionList = [];
-    // if (prefs.getString('auth') != '') {
-    //   print('get collection list from user');
-    //   getCollectionList();
-    // }
+    lock = false;
+    if (prefs.getString('auth') != '') {
+      print('get collection list from user');
+      getCollectionList();
+    }
   }
 
   bool isUserCollectionListEmpty() {
@@ -157,28 +159,34 @@ class CollectionUserDataModel with ChangeNotifier {
   }
 
   getCollectionList() async {
-    userCollectionList = [];
-    List collectionList;
-    int page = 1;
-    String url =
-        '/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
-    bool isEnd = false;
-    while (!isEnd) {
-      // print(response.data['data']);
-      try {
-        Response response = await dioPixivic.get(url);
-        collectionList = response.data['data'] ?? [];
-        // print('The user album list:\n$collectionList');
-        userCollectionList += collectionList;
-        print('collectionList.length: ${collectionList.length}');
-        isEnd = collectionList.length == 0 ? true : false;
-        page += 1;
-        url = '/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
-        if (isEnd) notifyListeners();
-        // print(userCollectionList);
-      } catch (e) {
-        isEnd = true;
-        return null;
+    if (!lock) {
+      lock = true;
+      userCollectionList = [];
+      List collectionList;
+      int page = 1;
+      String url =
+          '/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
+      bool isEnd = false;
+      while (!isEnd) {
+        // print(response.data['data']);
+        try {
+          Response response = await dioPixivic.get(url);
+          collectionList = response.data['data'] ?? [];
+          // print('The user album list:\n$collectionList');
+          userCollectionList += collectionList;
+          print('collectionList.length: ${collectionList.length}');
+          isEnd = collectionList.length == 0 ? true : false;
+          page += 1;
+          url =
+              '/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
+          if (isEnd) notifyListeners();
+          lock = false;
+          // print(userCollectionList);
+        } catch (e) {
+          isEnd = true;
+          lock = false;
+          return null;
+        }
       }
     }
   }

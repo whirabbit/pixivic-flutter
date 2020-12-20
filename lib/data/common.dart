@@ -93,6 +93,7 @@ Future initData(BuildContext context) async {
       if (result)
         isLogin = true;
       else {
+        // TODO: botToast
         logout(context, isInit: true);
       }
     });
