@@ -142,10 +142,10 @@ class CollectionUserDataModel with ChangeNotifier {
 
   CollectionUserDataModel() {
     userCollectionList = [];
-    if (prefs.getString('auth') != '') {
-      print('get collection list from user');
-      getCollectionList();
-    }
+    // if (prefs.getString('auth') != '') {
+    //   print('get collection list from user');
+    //   getCollectionList();
+    // }
   }
 
   bool isUserCollectionListEmpty() {
