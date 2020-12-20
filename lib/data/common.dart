@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:provider/provider.dart';
+import 'package:bot_toast/bot_toast.dart';
 
 import '../page/new_page.dart';
 import '../page/user_page.dart';
 import '../function/identity.dart';
 import 'package:pixivic/provider/collection_model.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/data/texts.dart';
 
 // 用于 PicPage 的临时变量
 double homeScrollerPosition = 0;
@@ -88,12 +90,12 @@ Future initData(BuildContext context) async {
   // 检查是否登录，若登录则检查是否过期
   if (prefs.getString('auth') != '') {
     isLogin = true;
-    checkAuth().then((result) {
+    reloadUserData().then((result) {
       print('Chek auth result is $result');
       if (result)
         isLogin = true;
       else {
-        // TODO: botToast
+        BotToast.showSimpleNotification(title: TextCommon.logout);
         logout(context, isInit: true);
       }
     });

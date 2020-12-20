@@ -19,6 +19,10 @@ class TextZhForAboutPage {
   String noUpdate = '当前已是最新版本';
 }
 
+class TextCommon {
+  static String logout = '登陆信息已过期，请重新登陆';
+}
+
 class TextZhLoginPage {
   String head = 'Pixivic';
   String welcomeLogin = '欢迎回来';
