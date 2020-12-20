@@ -67,7 +67,8 @@ login(BuildContext context, String userName, String pwd,
     homePicList = [];
     homeCurrentPage = 1;
     // 加载用户的画集列表
-    Provider.of<CollectionUserDataModel>(context, listen: false).getCollectionList();
+    Provider.of<CollectionUserDataModel>(context, listen: false)
+        .getCollectionList();
   } else {
     // isLogin = false;
     BotToast.showSimpleNotification(
@@ -94,36 +95,70 @@ logout(BuildContext context, {bool isInit = false}) {
   }
 }
 
-checkAuth() async {
+reloadUserData() async {
+  print('identity.dart: relaod user data');
   String authStored = prefs.getString('auth');
   if (authStored == null || authStored == '')
     return false;
   else {
-    String url =
-        'https://pix.ipv4.host/users/${prefs.getInt('id').toString()}/isBindQQ';
-    Map<String, String> header = {
-      'Content-Type': 'application/json',
-      'authorization': authStored
-    };
-    var client = http.Client();
-    var response = await client.get(
-      url,
-      headers: header,
-    );
-    // print(response.statusCode);
-    // Map data = jsonDecode(
-    //     utf8.decode(response.bodyBytes, allowMalformed: true));
-    // print(data);
-    // print(response.headers['authorization']);
-    if (response.statusCode == 200) {
-      if (response.headers['authorization'] != null)
-        prefs.setString('auth', response.headers['authorization']);
-      return true;
-    } else if (response.statusCode == 401 || response.statusCode == 500) {
+    String url = '/users/${prefs.getInt('id')}';
+    try {
+      Response response = await dioPixivic.get(url);
+      if (response.statusCode == 200) {
+        Map data = response.data['data'];
+        print(data);
+        prefs.setInt('id', data['id']);
+        prefs.setString('name', data['username']);
+        prefs.setString('email', data['email']);
+        prefs.setString('avatarLink',
+            'https://static.pixivic.net/avatar/299x299/${data['id']}.jpg');
+        if (data['signature'] != null)
+          prefs.setString('signature', data['signature']);
+        if (data['location'] != null)
+          prefs.setString('location', data['location']);
+        prefs.setInt('star', data['star']);
+        prefs.setBool('isBindQQ', data['isBindQQ']);
+        prefs.setBool('isCheckEmail', data['isCheckEmail']);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
       return false;
     }
   }
 }
+
+// checkAuth() async {
+//   String authStored = prefs.getString('auth');
+//   if (authStored == null || authStored == '')
+//     return false;
+//   else {
+//     String url =
+//         'https://pix.ipv4.host/users/${prefs.getInt('id').toString()}/isBindQQ';
+//     Map<String, String> header = {
+//       'Content-Type': 'application/json',
+//       'authorization': authStored
+//     };
+//     var client = http.Client();
+//     var response = await client.get(
+//       url,
+//       headers: header,
+//     );
+//     // print(response.statusCode);
+//     // Map data = jsonDecode(
+//     //     utf8.decode(response.bodyBytes, allowMalformed: true));
+//     // print(data);
+//     // print(response.headers['authorization']);
+//     if (response.statusCode == 200) {
+//       if (response.headers['authorization'] != null)
+//         prefs.setString('auth', response.headers['authorization']);
+//       return true;
+//     } else if (response.statusCode == 401 || response.statusCode == 500) {
+//       return false;
+//     }
+//   }
+// }
 
 register(String userName, String pwd, String pwdRepeat, String verificationCode,
     String verificationInput, String emailInput) async {
