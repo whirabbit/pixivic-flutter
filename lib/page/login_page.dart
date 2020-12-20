@@ -106,7 +106,9 @@ class LoginPageState extends State<LoginPage> {
                     color: Color(0xFF9E9E9E)),
               ),
             ),
-            inputCell(texts.userName, _userNameController, false),
+            modeIsLogin
+                ? inputCell(texts.userNameAndEmail, _userNameController, false)
+                : inputCell(texts.userName, _userNameController, false),
             modeIsLogin
                 ? Container()
                 : inputCell(texts.email, _emailController, false),
