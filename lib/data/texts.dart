@@ -67,6 +67,7 @@ class TextZhUserPage {
   String follow = '我的关注';
   String history = '历史记录';
   String download = '下载列表';
+  String vipSpeed = '图片加速';
   String logout = '退出登录';
   String makerSureLogout = '确定要退出登录吗？';
 }
@@ -217,4 +218,11 @@ class TextZhCollection {
   String needForTag = '请添加至少一个标签';
   String needForTitle = '请输入标题';
   String needForCaption = '请输入介绍';
+}
+
+class TextZhVIP {
+  static String endTime = '加速到期日:';
+  static String code = '兑换码';
+  static String convert = '立即兑换';
+  static String learnMore = '了解如何使用兑换码';
 }
