@@ -144,6 +144,9 @@ class VIPPage extends StatelessWidget {
               width: ScreenUtil().setWidth(293),
               height: ScreenUtil().setHeight(108),
               child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: Stack(
                   children: [
                     Positioned(
