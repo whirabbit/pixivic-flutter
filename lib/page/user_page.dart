@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pixivic/page/login_page.dart';
 import 'package:pixivic/sidepage/bookmark_page.dart';
 import 'package:pixivic/sidepage/history_page.dart';
+import 'package:pixivic/sidepage/vip_page.dart';
 import 'package:pixivic/page/artist_list_page.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
@@ -183,6 +184,13 @@ class UserPageState extends State<UserPage> {
             _routeToFollowPage),
         _optionCell(
             FaIcon(
+              FontAwesomeIcons.rocket,
+              color: Colors.green,
+            ),
+            text.vipSpeed,
+            _routeToVIPPage),
+        _optionCell(
+            FaIcon(
               FontAwesomeIcons.history,
               color: Colors.grey,
             ),
@@ -250,6 +258,10 @@ class UserPageState extends State<UserPage> {
   _routeToFollowPage() {
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => ArtistListPage.follow()));
+  }
+
+  _routeToVIPPage() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => VIPPage()));
   }
 
   _routeToHistoryPage() {
