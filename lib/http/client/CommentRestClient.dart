@@ -14,5 +14,5 @@ abstract class CommentRestClient{
   @factoryMethod
   factory CommentRestClient(Dio dio,{@Named("baseUrl") String baseUrl})=_CommentRestClient;
   @GET("/illusts/{illustId}/comments")
-  Future<Result<CommentList>>queryCommentInfo(@Path("illustId") int illustId,@Query("page") int page,@Query("pageSize") int pageSize);
+  Future<Result<List<Comment>>>queryCommentInfo(@Path("illustId") int illustId,@Query("page") int page,@Query("pageSize") int pageSize);
 }

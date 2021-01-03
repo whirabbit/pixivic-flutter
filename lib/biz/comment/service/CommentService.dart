@@ -10,7 +10,7 @@ class CommentService {
 
   CommentService(this._commentRestClient);
 
-  Future<Result<CommentList>> queryCommentInfo(
+  Future<Result<List<Comment>>> queryCommentInfo(
       int illustId, int page, int pageSize) {
     return _commentRestClient
         .queryCommentInfo(illustId, page, pageSize)
