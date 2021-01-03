@@ -226,3 +226,13 @@ class TextZhVIP {
   static String convert = '立即兑换';
   static String learnMore = '了解如何使用兑换码';
 }
+
+class AppType {
+  static String comments = "comments";
+  static String illusts = "illusts";
+  static String artists = "artists";
+  static String collections = "collections";
+  static String disscusions = "discussions";
+  static String users = "users";
+  static String attendances = "attendances";
+}
