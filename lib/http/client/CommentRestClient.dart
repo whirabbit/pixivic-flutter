@@ -12,7 +12,9 @@ part 'CommentRestClient.g.dart';
 @RestApi(baseUrl: "https://pix.ipv4.host")
 abstract class CommentRestClient{
   @factoryMethod
-  factory CommentRestClient(Dio dio,{@Named("baseUrl") String baseUrl})=_CommentRestClient;
-  @GET("/illusts/{illustId}/comments")
-  Future<Result<List<Comment>>>queryCommentInfo(@Path("illustId") int illustId,@Query("page") int page,@Query("pageSize") int pageSize);
+  factory CommentRestClient(Dio dio, {@Named("baseUrl") String baseUrl}) =
+      _CommentRestClient;
+  @GET("/{commentAppType}/{commentAppId}/comments")
+  Future<Result<List<Comment>>> queryCommentInfo(@Path("commentAppType")@Path("commentAppId") int illustId,
+      @Query("page") int page, @Query("pageSize") int pageSize);
 }
