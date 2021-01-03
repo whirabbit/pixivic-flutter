@@ -17,10 +17,9 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   int replyToId;
   int currentPage = 1;
   int replyParentId;
-  List commentList;
-
+  List <Comment> commentList;
   ///TODO 用作测试 之后修改
-  List<Comment> testList;
+  // List<Comment> commentList;
   List jsonList;
   ScrollController scrollController;
   bool loadMoreAble = true;
@@ -50,7 +49,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
 
     //初始化Model时拉取评论数据
     loadComments(this.illustId).then((value) {
-      testList = value;
+      commentList = value;
       notifyListeners();
     });
     // print('CommentListModel: $memeBoxHeight');
@@ -228,11 +227,11 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
     print('========likeComment===========');
     String url = '/user/likedComments';
     Map<String, dynamic> payload = {
-      'commentAppId': commentList[0]['appId'],
-      'commentAppType': commentList[0]['appType'],
+      'commentAppId': commentList[0].appId,
+      'commentAppType': commentList[0].appType,
       'commentId': subIndex == null
-          ? commentList[parentIndex]['id']
-          : commentList[parentIndex]['subCommentList'][subIndex]['id'],
+          ? commentList[parentIndex].id
+          : commentList[parentIndex].subCommentList[subIndex].id,
     };
     print(payload);
 
@@ -241,13 +240,13 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
         url,
         data: payload,
       );
-      print(commentList[parentIndex]['isLike']);
+      print(commentList[parentIndex].isLike);
       if (subIndex == null) {
-        commentList[parentIndex]['isLike'] = true;
-        commentList[parentIndex]['likedCount'] += 1;
+        commentList[parentIndex].isLike = true;
+        commentList[parentIndex].likedCount += 1;
       } else {
-        commentList[parentIndex]['subCommentList'][subIndex]['isLike'] = true;
-        commentList[parentIndex]['subCommentList'][subIndex]['likedCount'] += 1;
+        commentList[parentIndex].subCommentList[subIndex].isLike = true;
+        commentList[parentIndex].subCommentList[subIndex].likedCount += 1;
       }
 
       notifyListeners();
@@ -260,21 +259,21 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   unlikeComment(int parentIndex, {int subIndex}) async {
     print('========unlikeComment===========');
     int commentId = subIndex == null
-        ? commentList[parentIndex]['id']
-        : commentList[parentIndex]['subCommentList'][subIndex]['id'];
+        ? commentList[parentIndex].id
+        : commentList[parentIndex].subCommentList[subIndex].id;
     String url =
-        '/user/likedComments/${commentList[0]['appType']}/${commentList[0]['appId']}/$commentId';
+        '/user/likedComments/${commentList[0].appType}/${commentList[0].appId}/$commentId';
     // print(url);
     try {
       await dioPixivic.delete(
         url,
       );
       if (subIndex == null) {
-        commentList[parentIndex]['isLike'] = false;
-        commentList[parentIndex]['likedCount'] -= 1;
+        commentList[parentIndex].isLike = false;
+        commentList[parentIndex].likedCount -= 1;
       } else {
-        commentList[parentIndex]['subCommentList'][subIndex]['isLike'] = false;
-        commentList[parentIndex]['subCommentList'][subIndex]['likedCount'] -= 1;
+        commentList[parentIndex].subCommentList[subIndex].isLike = false;
+        commentList[parentIndex].subCommentList[subIndex].likedCount -= 1;
       }
       notifyListeners();
       return true;
@@ -293,7 +292,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
       try {
         loadComments(illustId, page: currentPage).then((value) {
           if (value.length != 0) {
-            testList = testList + value;
+            commentList = commentList + value;
             notifyListeners();
             loadMoreAble = true;
           }
@@ -314,8 +313,6 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
     return getIt<CommentService>()
         .queryCommentInfo(illustId, page, 10)
         .then((value) {
-      // jsonList = ;
-
       return value.data;
     });
     // String url = '/illusts/$illustId/comments?page=$page&pageSize=10';
