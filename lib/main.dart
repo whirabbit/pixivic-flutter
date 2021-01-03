@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'common/config/GetItConfig.dart';
 
 import 'package:pixivic/widget/nav_bar.dart';
 import 'package:pixivic/widget/papp_bar.dart';
@@ -26,12 +27,15 @@ import 'package:pixivic/provider/collection_model.dart';
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:pixivic/provider/meme_model.dart';
 
+
+
 // import 'provider/comment_list_model.dart';
 // import 'provider/pic_page_model.dart';
 // import 'widget/menu_button.dart';
 // import 'widget/menu_list.dart';
 
 void main() {
+  configureDependencies();
   WidgetsFlutterBinding.ensureInitialized();
 
   // 强制竖屏
