@@ -14,6 +14,9 @@ import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/widget/papp_bar.dart';
+import 'package:pixivic/biz/artist/service/ArtistService.dart';
+import 'package:pixivic/common/config/GetItConfig.dart';
+import 'package:pixivic/common/do/Artist.dart';
 
 class ArtistPage extends StatefulWidget {
   @override
@@ -227,15 +230,17 @@ class _ArtistPageState extends State<ArtistPage> {
     String urlSummary = '/artists/${widget.artistId}/summary';
     Response response;
     try {
-      response = await dioPixivic.get(
-        urlId,
-      );
-      var jsonList = response.data['data'];
-      this.comment = jsonList['comment'].replaceAll("\n", "");
-      this.urlTwitter = jsonList['twitterUrl'];
-      this.urlWebPage = jsonList['webPage'];
-      this.numOfBookmarksPublic = jsonList['totalIllustnumOfBookmarksPublic'];
-      this.numOfFollower = jsonList['totalFollowUsers'];
+      getIt<ArtistService>()
+          .queryArtistInfo(int.parse(widget.artistId))
+          .then((result) {
+        Artist artist = result.data;
+        print(artist);
+        this.comment = artist.comment;
+        this.urlTwitter = artist.twitterUrl;
+        this.urlWebPage = artist.webPage;
+        this.numOfBookmarksPublic = artist.totalIllustBookmarksPublic;
+        this.numOfFollower = artist.totalFollowUsers;
+      });
     } catch (e) {
       if (e.response.statusCode == 401) {
         BotToast.showSimpleNotification(title: texts.needLogin);

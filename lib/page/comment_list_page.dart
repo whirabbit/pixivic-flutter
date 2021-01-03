@@ -12,6 +12,7 @@ import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/page/user_detail_page.dart';
 import 'package:pixivic/widget/meme_box.dart';
+import 'package:pixivic/common/do/Comment.dart';
 
 class CommentListPage extends StatelessWidget {
   CommentListPage(
@@ -42,7 +43,7 @@ class CommentListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // CommentListModel commentListModel =
+    // CommentListModel testListModel =
     //     CommentListModel(illustId, replyToId, replyToName, replyParentId);
 
     return ChangeNotifierProvider<CommentListModel>(
@@ -51,17 +52,17 @@ class CommentListPage extends StatelessWidget {
       child: Selector<CommentListModel, CommentListModel>(
           shouldRebuild: (pre, next) => false,
           selector: (context, provider) => provider,
-          builder: (context, commentListModel, _) {
+          builder: (context, testListModel, _) {
             if (isReply) {
               Future.delayed(Duration(milliseconds: 200), () {
-                commentListModel.replyFocus.requestFocus();
+                testListModel.replyFocus.requestFocus();
               });
             }
             return GestureDetector(
                 onTap: () {
                   //键盘移除焦点
                   FocusScope.of(context).requestFocus(FocusNode());
-                  // commentListModel.replyFocus.unfocus();
+                  // testListModel.replyFocus.unfocus();
                   // FocusScopeNode currentFocus = FocusScope.of(context);
 
                   // if (!currentFocus.hasPrimaryFocus) {
@@ -69,8 +70,7 @@ class CommentListPage extends StatelessWidget {
                   // }
 
                   // memeBox 移除焦点
-                  if (commentListModel.isMemeMode)
-                    commentListModel.flipMemeMode();
+                  if (testListModel.isMemeMode) testListModel.flipMemeMode();
                 },
                 child: Scaffold(
                     resizeToAvoidBottomPadding: false,
@@ -83,9 +83,9 @@ class CommentListPage extends StatelessWidget {
                         children: <Widget>[
                           Selector<CommentListModel, List>(
                               selector: (context, provider) =>
-                                  provider.commentList,
-                              builder: (context, commentList, _) {
-                                return commentList != null
+                                  provider.testList,
+                              builder: (context, testList, _) {
+                                return testList != null
                                     ? Positioned(
                                         // top: screen.setHeight(5),
                                         child: Container(
@@ -94,17 +94,17 @@ class CommentListPage extends StatelessWidget {
                                         margin: EdgeInsets.only(
                                             bottom: screen.setHeight(35)),
                                         child: ListView.builder(
-                                            controller: commentListModel
-                                                .scrollController,
+                                            controller:
+                                                testListModel.scrollController,
                                             shrinkWrap: true,
-                                            itemCount: commentList.length,
+                                            itemCount: testList.length,
                                             itemBuilder: (BuildContext context,
                                                 int index) {
                                               return commentParentCell(
                                                   context,
-                                                  commentList[index],
+                                                  testList[index],
                                                   index,
-                                                  commentListModel);
+                                                  testListModel);
                                             }),
                                       ))
                                     : Container();
@@ -116,7 +116,7 @@ class CommentListPage extends StatelessWidget {
                               shouldRebuild: (pre, next) {
                                 if (pre.item1 &&
                                     !next.item1 &&
-                                    commentListModel.replyFocus.hasFocus) {
+                                    testListModel.replyFocus.hasFocus) {
                                   return false;
                                 } else {
                                   if (pre != next)
@@ -133,7 +133,7 @@ class CommentListPage extends StatelessWidget {
                                 if (tuple2.item1 || tuple2.item2 > 0)
                                   bottom = 0.0;
                                 else
-                                  bottom = -commentListModel.memeBoxHeight;
+                                  bottom = -testListModel.memeBoxHeight;
                                 return AnimatedPositioned(
                                   duration: Duration(milliseconds: 100),
                                   bottom: bottom,
@@ -142,14 +142,13 @@ class CommentListPage extends StatelessWidget {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      bottomCommentBar(commentListModel),
+                                      bottomCommentBar(testListModel),
                                       tuple2.item1
-                                          ? MemeBox(
-                                              commentListModel.memeBoxHeight)
+                                          ? MemeBox(testListModel.memeBoxHeight)
                                           : Container(
-                                        color: Colors.white,
-                                              height: commentListModel
-                                                  .memeBoxHeight,
+                                              color: Colors.white,
+                                              height:
+                                                  testListModel.memeBoxHeight,
                                             )
                                       // Container(
                                       //   width: ScreenUtil().setWidth(324),
@@ -159,7 +158,7 @@ class CommentListPage extends StatelessWidget {
                                       // !tuple2.item1
                                       //     ? Container()
                                       //     : MemeBox(
-                                      //         commentListModel.memeBoxHeight),
+                                      //         testListModel.memeBoxHeight),
                                     ],
                                   ),
                                 );
@@ -171,7 +170,7 @@ class CommentListPage extends StatelessWidget {
     );
   }
 
-  Widget bottomCommentBar(CommentListModel commentListModel) {
+  Widget bottomCommentBar(CommentListModel testListModel) {
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
@@ -192,12 +191,12 @@ class CommentListPage extends StatelessWidget {
                 color: Colors.pink[300],
               ),
               onTap: () {
-                if (commentListModel.replyFocus.hasFocus) {
-                  commentListModel.replyFocus.unfocus();
+                if (testListModel.replyFocus.hasFocus) {
+                  testListModel.replyFocus.unfocus();
                 }
-                if (commentListModel.currentKeyboardHeight != 0)
-                  commentListModel.currentKeyboardHeight = 0.0;
-                commentListModel.flipMemeMode();
+                if (testListModel.currentKeyboardHeight != 0)
+                  testListModel.currentKeyboardHeight = 0.0;
+                testListModel.flipMemeMode();
               },
             ),
           ),
@@ -216,8 +215,8 @@ class CommentListPage extends StatelessWidget {
                 selector: (context, provider) => provider.hintText,
                 builder: (context, hintString, _) {
                   return TextField(
-                    focusNode: commentListModel.replyFocus,
-                    controller: commentListModel.textEditingController,
+                    focusNode: testListModel.replyFocus,
+                    controller: testListModel.textEditingController,
                     // autofocus: isReply ? true : false,
                     decoration: InputDecoration(
                         border: InputBorder.none,
@@ -234,7 +233,7 @@ class CommentListPage extends StatelessWidget {
             child: InkWell(
               child: FaIcon(FontAwesomeIcons.paperPlane),
               onTap: () {
-                commentListModel.reply();
+                testListModel.reply();
               },
             ),
           ),
@@ -244,9 +243,9 @@ class CommentListPage extends StatelessWidget {
   }
 
   // 单条回复
-  Widget commentParentCell(BuildContext context, Map commentAllData,
-      int parentIndex, CommentListModel commentListModel) {
-    bool hasSub = commentAllData['subCommentList'] == null ? false : true;
+  Widget commentParentCell(BuildContext context, Comment commentAllData,
+      int parentIndex, CommentListModel testListModel) {
+    bool hasSub = commentAllData.subCommentList == null ? false : true;
 
     return Container(
         width: screen.setWidth(324),
@@ -259,19 +258,19 @@ class CommentListPage extends StatelessWidget {
           child: Column(
             children: <Widget>[
               commentBaseCell(
-                  context, commentAllData, parentIndex, commentListModel),
+                  context, commentAllData, parentIndex, testListModel),
               hasSub
                   ? ListView.builder(
                       shrinkWrap: true,
-                      itemCount: commentAllData['subCommentList'].length,
+                      itemCount: commentAllData.subCommentList.length,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (BuildContext context, int index) {
                         return commentSubCell(
                             context,
-                            commentAllData['subCommentList'][index],
+                            commentAllData.subCommentList[index],
                             parentIndex,
                             index,
-                            commentListModel);
+                            testListModel);
                       })
                   : Container(),
               SizedBox(width: screen.setWidth(300), child: Divider())
@@ -281,23 +280,23 @@ class CommentListPage extends StatelessWidget {
   }
 
   // 楼中楼
-  Widget commentSubCell(BuildContext context, Map commentEachSubData,
-      int parentIndex, int subIndex, CommentListModel commentListModel) {
+  Widget commentSubCell(BuildContext context, Comment commentEachSubData,
+      int parentIndex, int subIndex, CommentListModel testListModel) {
     return Container(
       padding:
           EdgeInsets.only(left: screen.setWidth(15), top: screen.setHeight(7)),
       child: commentBaseCell(
-          context, commentEachSubData, parentIndex, commentListModel,
+          context, commentEachSubData, parentIndex, testListModel,
           subIndex: subIndex),
     );
   }
 
   // 基础的展示条
-  Widget commentBaseCell(BuildContext context, Map data, int parentIndex,
-      CommentListModel commentListModel,
+  Widget commentBaseCell(BuildContext context, Comment data, int parentIndex,
+      CommentListModel testListModel,
       {int subIndex}) {
     String avaterUrl =
-        'https://static.pixivic.net/avatar/299x299/${data['replyFrom']}.jpg';
+        'https://static.pixivic.net/avatar/299x299/${data.replyFrom}.jpg';
 
     return Container(
         child: Column(children: <Widget>[
@@ -321,7 +320,7 @@ class CommentListPage extends StatelessWidget {
                       Navigator.of(context)
                           .push(MaterialPageRoute(builder: (context) {
                         return UserDetailPage(
-                            data['replyFrom'], data['replyFromName']);
+                            data.replyFrom, data.replyFromName);
                       }));
                     },
                   ),
@@ -331,7 +330,7 @@ class CommentListPage extends StatelessWidget {
                   children: <Widget>[
                     SizedBox(height: ScreenUtil().setHeight(5)),
                     Text(
-                      data['replyFromName'],
+                      data.replyFromName,
                       style: TextStyle(fontSize: 12),
                     ),
                     Container(
@@ -349,7 +348,7 @@ class CommentListPage extends StatelessWidget {
                         children: <Widget>[
                           Text(
                             DateFormat("yyyy-MM-dd")
-                                .format(DateTime.parse(data['createDate'])),
+                                .format(DateTime.parse(data.createDate)),
                             strutStyle: StrutStyle(
                               fontSize: ScreenUtil().setSp(11),
                               height: ScreenUtil().setWidth(1.3),
@@ -361,10 +360,10 @@ class CommentListPage extends StatelessWidget {
                           SizedBox(
                             width: ScreenUtil().setWidth(5),
                           ),
-                          commentPlatform(data['platform']),
-                          commentLikeButton(context,
-                              parentIndex, commentListModel,
-                              subIndex: subIndex),
+                          commentPlatform(data.platform),
+                          // commentLikeButton(context,
+                          //     parentIndex, testListModel,
+                          //     subIndex: subIndex),
                           GestureDetector(
                             child: Text(
                               texts.reply,
@@ -376,17 +375,15 @@ class CommentListPage extends StatelessWidget {
                                   color: Colors.blue[600], fontSize: 12),
                             ),
                             onTap: () {
-                              commentListModel.replyToId = data['replyFrom'];
-                              commentListModel.replyToName =
-                                  data['replyFromName'];
-                              data['parentId'] == 0
-                                  ? commentListModel.replyParentId = data['id']
-                                  : commentListModel.replyParentId =
-                                      data['parentId'];
-                              if (commentListModel.replyFocus.hasFocus)
-                                commentListModel.replyFocusListener();
+                              testListModel.replyToId = data.replyFrom;
+                              testListModel.replyToName = data.replyFromName;
+                              data.parentId == 0
+                                  ? testListModel.replyParentId = data.id
+                                  : testListModel.replyParentId = data.parentId;
+                              if (testListModel.replyFocus.hasFocus)
+                                testListModel.replyFocusListener();
                               else
-                                commentListModel.replyFocus.requestFocus();
+                                testListModel.replyFocus.requestFocus();
                             },
                           )
                         ],
@@ -398,8 +395,8 @@ class CommentListPage extends StatelessWidget {
     ]));
   }
 
-  Widget commentContentDisplay(BuildContext context, Map data) {
-    String content = data['content'];
+  Widget commentContentDisplay(BuildContext context, Comment data) {
+    String content = data.content;
 
     if (content[0] == '[' &&
         content[content.length - 1] == ']' &&
@@ -414,12 +411,12 @@ class CommentListPage extends StatelessWidget {
         height: ScreenUtil().setWidth(50),
         child: Image(image: AssetImage('image/meme/$memeHead/$memeId.webp')),
       );
-      return data['replyToName'] == ''
+      return data.replyToName == ''
           ? image
           : Row(
               children: [
                 Text(
-                  '@${data['replyToName']}',
+                  '@${data.replyToName}',
                   softWrap: true,
                   style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 ),
@@ -431,82 +428,82 @@ class CommentListPage extends StatelessWidget {
             );
     } else {
       return Text(
-        data['replyToName'] == ''
-            ? data['content']
-            : '@${data['replyToName']}: ${data['content']}',
+        data.replyToName == ''
+            ? data.content
+            : '@${data.replyToName}: ${data.content}',
         softWrap: true,
         style: TextStyle(color: Colors.grey[600], fontSize: 12),
       );
     }
   }
 
-  Widget commentLikeButton(BuildContext context,
-      int parentIndex, CommentListModel commentListModel,
-      {int subIndex}) {
-    return Selector<CommentListModel, Tuple2>(
-      selector: (context, provider) {
-        if (subIndex == null)
-          return Tuple2(provider.commentList[parentIndex]['isLike'], provider.commentList[parentIndex]['likedCount']);
-        else
-          return Tuple2(provider.commentList[parentIndex]['subCommentList'][subIndex]
-              ['isLike'], provider.commentList[parentIndex]['subCommentList'][subIndex]
-              ['likedCount']);
-      },
-      builder: (context, tuple2, _) {
-        bool lock = false;
-        return Container(
-          // width: ScreenUtil().setWidth(30),
-          alignment: Alignment.bottomCenter,
-          // height: ScreenUtil().setHeight(8),
-          margin: EdgeInsets.only(
-            right: ScreenUtil().setWidth(7),
-          ),
-          child: GestureDetector(
-              onTap: () async {
-                if (lock) return false;
-                if (!tuple2.item1) {
-                  lock = true;
-                  await commentListModel.likeComment(parentIndex,
-                      subIndex: subIndex);
-                  lock = false;
-                } else {
-                  lock = true;
-                  await commentListModel.unlikeComment(parentIndex,
-                      subIndex: subIndex);
-                  lock = false;
-                }
-              },
-              child: Row(
-                children: [
-                  Container(
-                    alignment: Alignment.bottomCenter,
-                    // color: Colors.red,
-                    child: Icon(
-                      Icons.thumb_up_alt_outlined,
-                      color: tuple2.item1 ? Colors.pinkAccent : Colors.grey,
-                      size: ScreenUtil().setWidth(13),
-                    ),
-                  ),
-                  tuple2.item2 == 0
-                      ? Container()
-                      : Container(
-                          padding:
-                              EdgeInsets.only(left: ScreenUtil().setWidth(3)),
-                          child: Text(tuple2.item2.toString(),
-                              strutStyle: StrutStyle(
-                                fontSize: ScreenUtil().setSp(11),
-                                height: ScreenUtil().setWidth(1.3),
-                              ),
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: ScreenUtil().setSp(10))),
-                        )
-                ],
-              )),
-        );
-      },
-    );
-  }
+  // Widget commentLikeButton(BuildContext context,
+  //     int parentIndex, CommentListModel testListModel,
+  //     {int subIndex}) {
+  //   return Selector<CommentListModel, Tuple2>(
+  //     selector: (context, provider) {
+  //       if (subIndex == null)
+  //         return Tuple2(provider.testList[parentIndex]['isLike'], provider.testList[parentIndex]['likedCount']);
+  //       else
+  //         return Tuple2(provider.testList[parentIndex]['subCommentList'][subIndex]
+  //             ['isLike'], provider.testList[parentIndex]['subCommentList'][subIndex]
+  //             ['likedCount']);
+  //     },
+  //     builder: (context, tuple2, _) {
+  //       bool lock = false;
+  //       return Container(
+  //         // width: ScreenUtil().setWidth(30),
+  //         alignment: Alignment.bottomCenter,
+  //         // height: ScreenUtil().setHeight(8),
+  //         margin: EdgeInsets.only(
+  //           right: ScreenUtil().setWidth(7),
+  //         ),
+  //         child: GestureDetector(
+  //             onTap: () async {
+  //               if (lock) return false;
+  //               if (!tuple2.item1) {
+  //                 lock = true;
+  //                 await testListModel.likeComment(parentIndex,
+  //                     subIndex: subIndex);
+  //                 lock = false;
+  //               } else {
+  //                 lock = true;
+  //                 await testListModel.unlikeComment(parentIndex,
+  //                     subIndex: subIndex);
+  //                 lock = false;
+  //               }
+  //             },
+  //             child: Row(
+  //               children: [
+  //                 Container(
+  //                   alignment: Alignment.bottomCenter,
+  //                   // color: Colors.red,
+  //                   child: Icon(
+  //                     Icons.thumb_up_alt_outlined,
+  //                     color: tuple2.item1 ? Colors.pinkAccent : Colors.grey,
+  //                     size: ScreenUtil().setWidth(13),
+  //                   ),
+  //                 ),
+  //                 tuple2.item2 == 0
+  //                     ? Container()
+  //                     : Container(
+  //                         padding:
+  //                             EdgeInsets.only(left: ScreenUtil().setWidth(3)),
+  //                         child: Text(tuple2.item2.toString(),
+  //                             strutStyle: StrutStyle(
+  //                               fontSize: ScreenUtil().setSp(11),
+  //                               height: ScreenUtil().setWidth(1.3),
+  //                             ),
+  //                             style: TextStyle(
+  //                                 color: Colors.grey,
+  //                                 fontSize: ScreenUtil().setSp(10))),
+  //                       )
+  //               ],
+  //             )),
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget commentPlatform(String platform) {
     return platform == null
@@ -531,7 +528,7 @@ class CommentListPage extends StatelessWidget {
 //      currentPage++;
 //      print('current page is $currentPage');
 //      try {
-//        commentListModel
+//        testListModel
 //            .loadComments(widget.illustId, page: currentPage)
 //            .then((value) {
 //          if (value.length != 0) {
@@ -574,7 +571,7 @@ class CommentListPage extends StatelessWidget {
 //      return false;
 //    }
 //
-//    if (commentListModel.textEditingController.text == '') {
+//    if (testListModel.textEditingController.text == '') {
 //      BotToast.showSimpleNotification(title: texts.commentCannotBeBlank);
 //      return false;
 //    }
@@ -583,11 +580,11 @@ class CommentListPage extends StatelessWidget {
 //    CancelFunc cancelLoading;
 //    var dio = Dio();
 //    Map<String, dynamic> payload = {
-//      'content': commentListModel.textEditingController.text,
-//      'parentId': commentListModel.replyParentId.toString(),
+//      'content': testListModel.textEditingController.text,
+//      'parentId': testListModel.replyParentId.toString(),
 //      'replyFromName': prefs.getString('name'),
-//      'replyTo': commentListModel.replyToId.toString(),
-//      'replyToName': commentListModel.replyToName
+//      'replyTo': testListModel.replyToId.toString(),
+//      'replyToName': testListModel.replyToName
 //    };
 //    Map<String, dynamic> headers = {'authorization': prefs.getString('auth')};
 //    Response response = await dio.post(
@@ -601,11 +598,11 @@ class CommentListPage extends StatelessWidget {
 //    cancelLoading();
 //    BotToast.showSimpleNotification(title: response.data['message']);
 //    if (response.statusCode == 200) {
-//      commentListModel.textEditingController.text = '';
-//      commentListModel.replyToId = 0;
-//      commentListModel.replyToName = '';
-//      commentListModel.replyParentId = 0;
-//      commentListModel.loadComments(widget.illustId);
+//      testListModel.textEditingController.text = '';
+//      testListModel.replyToId = 0;
+//      testListModel.replyToName = '';
+//      testListModel.replyParentId = 0;
+//      testListModel.loadComments(widget.illustId);
 ////      await _loadComments();
 //      return true;
 //    } else {

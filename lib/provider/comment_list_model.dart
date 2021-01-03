@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
+import 'package:pixivic/biz/comment/service/CommentService.dart';
+import 'package:pixivic/common/config/GetItConfig.dart';
+import 'package:pixivic/common/do/Comment.dart';
 
 import '../data/common.dart';
 import 'package:pixivic/data/common.dart';
@@ -15,6 +18,9 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   int currentPage = 1;
   int replyParentId;
   List commentList;
+
+  ///TODO 用作测试 之后修改
+  List<Comment> testList;
   List jsonList;
   ScrollController scrollController;
   bool loadMoreAble = true;
@@ -44,7 +50,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
 
     //初始化Model时拉取评论数据
     loadComments(this.illustId).then((value) {
-      commentList = value;
+      testList = value;
       notifyListeners();
     });
     // print('CommentListModel: $memeBoxHeight');
@@ -287,7 +293,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
       try {
         loadComments(illustId, page: currentPage).then((value) {
           if (value.length != 0) {
-            commentList = commentList + value;
+            testList = testList + value;
             notifyListeners();
             loadMoreAble = true;
           }
@@ -305,18 +311,25 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
 
 //请求数据
   loadComments(int illustId, {int page = 1}) async {
-    String url = '/illusts/$illustId/comments?page=$page&pageSize=10';
-    Response response = await dioPixivic.get(url);
-    if (response.statusCode == 200 && response.data['data'] != null) {
-      // print(response.data);
-      jsonList = response.data['data'];
-      return jsonList;
-    } else if (response.statusCode == 200 && response.data['data'] == null) {
-      print('comments: no comments but code 200');
-      return [];
-    } else {
-      BotToast.showSimpleNotification(title: response.data['message']);
-    }
+    return getIt<CommentService>()
+        .queryCommentInfo(illustId, page, 10)
+        .then((value) {
+      // jsonList = ;
+
+      return value.data;
+    });
+    // String url = '/illusts/$illustId/comments?page=$page&pageSize=10';
+    // Response response = await dioPixivic.get(url);
+    // if (response.statusCode == 200 && response.data['data'] != null) {
+    //   // print(response.data);
+    //   jsonList = response.data['data'];
+    //   return jsonList;
+    // } else if (response.statusCode == 200 && response.data['data'] == null) {
+    //   print('comments: no comments but code 200');
+    //   return [];
+    // } else {
+    //   BotToast.showSimpleNotification(title: response.data['message']);
+    // }
   }
 
   flipMemeMode() {
