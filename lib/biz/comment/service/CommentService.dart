@@ -16,6 +16,7 @@ class CommentService {
         .queryCommentInfo(illustId, page, pageSize)
         .then((value) {
       List<Comment> commentList = [];
+      if(value.data!=null)
       value.data.map((s) => Comment.fromJson(s)).toList().forEach((e) {
         commentList.add(e);
       });
