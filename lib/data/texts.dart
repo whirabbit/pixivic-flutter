@@ -230,9 +230,11 @@ class TextZhVIP {
 class AppType {
   static String comments = "comments";
   static String illusts = "illusts";
+  static String illust = "illust";
+  static String manga = "manga";
   static String artists = "artists";
   static String collections = "collections";
-  static String disscusions = "discussions";
+  static String discussion = "discussions";
   static String users = "users";
   static String attendances = "attendances";
 }
