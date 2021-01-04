@@ -19,6 +19,7 @@ import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/widget/markheart_icon.dart';
 import 'package:pixivic/widget/select_mode_bar.dart';
 import 'package:pixivic/widget/image_display.dart';
+import 'package:pixivic/common/do/Illust.dart';
 
 // 可以作为页面中单个组件或者单独页面使用的pic瀑布流组件,因可以作为页面，故不归为widget
 class PicPage extends StatefulWidget {
@@ -449,23 +450,25 @@ class _PicPageState extends State<PicPage> {
         : SelectModeBar();
   }
 
-  List _picMainParameter(Map picItem) {
+  List _picMainParameter(Illust picItem) {
     // 预览图片的地址、数目、以及长宽比
     // String url = pageModel.picList[index]['imageUrls'][0]['squareMedium'];
     String previewQuality = prefs.getString('previewQuality');
-    String url = picItem['imageUrls'][0][previewQuality]; //medium large
-    int number = picItem['pageCount'];
-    double width = picItem['width'].toDouble();
-    double height = picItem['height'].toDouble();
+
+    ///TODO 这里测试写死图片质量
+    String url = picItem.imageUrls[0].medium; //medium large
+    int number = picItem.pageCount;
+    double width = picItem.width.toDouble();
+    double height = picItem.height.toDouble();
     return [url, number, width, height];
   }
 
   Widget imageCell(
-      Map picItem, int index, BuildContext context, PicPageModel pageModel) {
+      Illust picItem, int index, BuildContext context, PicPageModel pageModel) {
     final Color color = RandomColor().randomColor();
-    Map picMapData = Map.from(picItem);
-    if (picMapData['xrestict'] == 1 ||
-        picMapData['sanityLevel'] > prefs.getInt('sanityLevel'))
+    // Map picMapData = Map.from(picItem);
+    if (picItem.xrestrict == 1 ||
+        picItem.sanityLevel > prefs.getInt('sanityLevel'))
       return Container();
     else
       return Selector<PicPageModel, Tuple2<bool, bool>>(
@@ -500,20 +503,20 @@ class _PicPageState extends State<PicPage> {
                             // 如果不是在多选模式，则正常进行跳转
                             if (!tuple.item2) {
                               // 对广告图片做区分判断
-                              if (picMapData['type'] == 'ad_image') {
-                                if (await canLaunch(picMapData['link'])) {
-                                  await launch(picMapData['link']);
+                              if (picItem.type == 'ad_image') {
+                                if (await canLaunch(picItem.link)) {
+                                  await launch(picItem.link);
                                 } else {
                                   BotToast.showSimpleNotification(
                                       title: '唤起网页失败');
-                                  throw 'Could not launch ${picMapData['link']}';
+                                  throw 'Could not launch ${picItem.link}';
                                 }
                               } else
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => PicDetailPage(
-                                            picMapData,
+                                            picItem,
                                             index: index,
                                             getPageProvider: pageModel)));
                             } else {
@@ -589,7 +592,7 @@ class _PicPageState extends State<PicPage> {
                         top: ScreenUtil().setHeight(5),
                       ),
                       prefs.getString('auth') != '' &&
-                              picMapData['type'] != 'ad_image'
+                              picItem.type != 'ad_image'
                           ? Positioned(
                               bottom: ScreenUtil().setHeight(5),
                               right: ScreenUtil().setWidth(5),
@@ -599,7 +602,7 @@ class _PicPageState extends State<PicPage> {
                                   width: ScreenUtil().setWidth(33),
                                   child: Selector<PicPageModel, bool>(
                                     selector: (context, provider) =>
-                                        provider.picList[index]['isLiked'],
+                                        provider.picList[index].isLiked,
                                     builder: (context, isLike, _) {
                                       return MarkHeart(
                                           picItem: picItem,
@@ -641,7 +644,8 @@ class _PicPageState extends State<PicPage> {
   }
 
   _showUserTips() {
-    if (!prefs.getBool('isLongPressCollectionKnown') && widget.jsonMode == 'home')
+    if (!prefs.getBool('isLongPressCollectionKnown') &&
+        widget.jsonMode == 'home')
       BotToast.showAttachedWidget(
           attachedBuilder: (CancelFunc cancel) => Card(
                 child: Wrap(

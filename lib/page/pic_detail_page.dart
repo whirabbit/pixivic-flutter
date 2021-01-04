@@ -26,6 +26,7 @@ import 'package:pixivic/function/collection.dart';
 import 'package:pixivic/function/dio_client.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/widget/markheart_icon.dart';
+import 'package:pixivic/common/do/Illust.dart';
 
 class PicDetailPage extends StatefulWidget {
   @override
@@ -33,7 +34,7 @@ class PicDetailPage extends StatefulWidget {
 
   PicDetailPage(this._picData, {this.index, this.getPageProvider});
 
-  final Map _picData;
+  final Illust _picData;
   final int index;
 
   final PicPageModel getPageProvider;
@@ -61,7 +62,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
   void initState() {
     print('picDetail Created');
     // print(widget._picData['artistPreView']['isFollowed']);
-    picTotalNum = widget._picData['pageCount'];
+    picTotalNum = widget._picData.pageCount;
     _uploadHistory();
     _initPappbar();
     // _showUseTips();
@@ -74,7 +75,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
     return Scaffold(
       appBar: pappBar,
       body: PicPage.related(
-        relatedId: widget._picData['id'],
+        relatedId: widget._picData.id,
         onPageTop: _onTopOfPicpage,
         onPageStart: _onStartOfPicpage,
         isScrollable: true,
@@ -97,8 +98,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
                       color: Colors.white,
                       width: ScreenUtil().setWidth(324),
                       height: ScreenUtil().setWidth(324) /
-                          widget._picData['width'] *
-                          widget._picData['height'],
+                          widget._picData.width *
+                          widget._picData.height,
                       child: _picBanner(),
                     ),
                   ),
@@ -133,7 +134,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                               width: ScreenUtil().setWidth(280),
                               alignment: Alignment.centerLeft,
                               child: SelectableText(
-                                widget._picData['title'],
+                                widget._picData.title,
                                 style: normalTextStyle,
                               ),
                             ),
@@ -156,7 +157,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                         height: ScreenUtil().setHeight(6),
                       ),
                       Html(
-                        data: widget._picData['caption'],
+                        data: widget._picData.caption,
                         linkStyle: smallTextStyle,
                         defaultTextStyle: smallTextStyle,
                         onLinkTap: (url) async {
@@ -198,7 +199,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                             width: ScreenUtil().setWidth(3),
                           ),
                           Text(
-                            widget._picData['totalView'].toString(),
+                            widget._picData.totalView.toString(),
                             style: smallTextStyle,
                           ),
                           SizedBox(
@@ -212,14 +213,14 @@ class _PicDetailPageState extends State<PicDetailPage> {
                             width: ScreenUtil().setWidth(3),
                           ),
                           Text(
-                            widget._picData['totalBookmarks'].toString(),
+                            widget._picData.totalBookmarks.toString(),
                             style: smallTextStyle,
                           ),
                           SizedBox(
                             width: ScreenUtil().setWidth(12),
                           ),
                           Text(
-                            widget._picData['createDate'].toString(),
+                            widget._picData.createDate.toString(),
                             style: smallTextStyle,
                           ),
                         ],
@@ -227,7 +228,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                     ),
                     Positioned(
                         right: ScreenUtil().setWidth(10),
-                        child: BookmarkUsers(widget._picData['id']))
+                        child: BookmarkUsers(widget._picData.id))
                   ],
                 ),
               ),
@@ -252,24 +253,23 @@ class _PicDetailPageState extends State<PicDetailPage> {
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) {
                                   return ArtistPage(
-                                      widget._picData['artistPreView']
-                                          ['avatar'],
-                                      widget._picData['artistPreView']['name'],
-                                      widget._picData['artistPreView']['id']
+                                      widget._picData.artistPreView.avatar,
+                                      widget._picData.artistPreView.name,
+                                      widget._picData.artistPreView.id
                                           .toString(),
                                       isFollowed: loginState
-                                          ? widget._picData['artistPreView']
-                                              ['isFollowed']
+                                          ? widget
+                                              ._picData.artistPreView.isFollowed
                                           : false,
                                       followedRefresh: _followedRefresh);
                                 },
                               ));
                             },
                             child: Hero(
-                              tag: widget._picData['artistPreView']['avatar'],
+                              tag: widget._picData.artistPreView.avatar,
                               child: CircleAvatar(
                                 backgroundImage: AdvancedNetworkImage(
-                                  widget._picData['artistPreView']['avatar'],
+                                  widget._picData.artistPreView.avatar,
                                   header: {
                                     'Referer': 'https://app-api.pixiv.net'
                                   },
@@ -285,7 +285,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                             width: ScreenUtil().setWidth(10),
                           ),
                           Text(
-                            widget._picData['artistPreView']['name'],
+                            widget._picData.artistPreView.name,
                             style: smallTextStyle,
                           ),
                         ],
@@ -302,7 +302,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
               // 评论模块
               Container(
                 child: CommentCell(
-                  widget._picData['id'],
+                  widget._picData.id,
                 ),
               ),
               // 相关作品
@@ -328,10 +328,12 @@ class _PicDetailPageState extends State<PicDetailPage> {
     if (picTotalNum == 1) {
       return GestureDetector(
         onLongPress: () {
-          _longPressPic(widget._picData['imageUrls'][0]['original']);
+          _longPressPic(widget._picData.imageUrls[0].original);
         },
         child: Hero(
-            tag: 'imageHero' + widget._picData['imageUrls'][0][previewQuality],
+
+            ///TODO 这里暂时写死测试
+            tag: 'imageHero' + widget._picData.imageUrls[0].medium,
             //medium large, set tag as medium for hero switch,
             child: ZoomableWidget(
               panLimit: 1.0,
@@ -339,7 +341,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
               minScale: 0.7,
               child: TransitionToImage(
                 image: AdvancedNetworkImage(
-                  widget._picData['imageUrls'][0][previewQuality],
+                  //TODO 暂时写死
+                  widget._picData.imageUrls[0].medium,
                   header: {'Referer': 'https://app-api.pixiv.net'},
                   useDiskCache: true,
                   cacheRule: CacheRule(
@@ -347,8 +350,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
                 ),
                 width: ScreenUtil().setWidth(324),
                 height: ScreenUtil().setWidth(324) /
-                    widget._picData['width'] *
-                    widget._picData['height'],
+                    widget._picData.width *
+                    widget._picData.height,
                 placeholder: CircularProgressIndicator(),
               ),
             )),
@@ -361,19 +364,19 @@ class _PicDetailPageState extends State<PicDetailPage> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onLongPress: () {
-              _longPressPic(widget._picData['imageUrls'][index]['original']);
+              _longPressPic(widget._picData.imageUrls[index].original);
             },
             child: Hero(
                 tag: 'imageHero' +
-                    widget._picData['imageUrls'][index]
-                        ['medium'], //medium large
+                    widget._picData.imageUrls[index].medium, //medium large
                 child: ZoomableWidget(
                   panLimit: 1.0,
                   maxScale: 3.0,
                   minScale: 0.7,
                   child: TransitionToImage(
                     image: AdvancedNetworkImage(
-                      widget._picData['imageUrls'][index][previewQuality],
+                      //TODO 暂时写死
+                      widget._picData.imageUrls[index].medium,
                       header: {'Referer': 'https://app-api.pixiv.net'},
                       useDiskCache: true,
                       cacheRule: CacheRule(
@@ -381,8 +384,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
                     ),
                     width: ScreenUtil().setWidth(324),
                     height: ScreenUtil().setWidth(324) /
-                        widget._picData['width'] *
-                        widget._picData['height'],
+                        widget._picData.width *
+                        widget._picData.height,
                     placeholder: CircularProgressIndicator(),
                   ),
                 )),
@@ -407,27 +410,26 @@ class _PicDetailPageState extends State<PicDetailPage> {
       fontSize: ScreenUtil().setWidth(8),
       height: ScreenUtil().setWidth(1.3),
     );
-    List tags = widget._picData['tags'];
+    List<Tags> tags = widget._picData.tags;
     List<Widget> tagsRow = [];
 
     for (var item in tags) {
       tagsRow.add(GestureDetector(
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    SearchPage(searchKeywordsIn: item['name'])));
+                builder: (context) => SearchPage(searchKeywordsIn: item.name)));
           },
           child: Text(
-            '#${item['name']}',
+            '#${item.name}',
             style: tagTextStyle,
             strutStyle: strutStyle,
           )));
       tagsRow.add(SizedBox(
         width: ScreenUtil().setWidth(4),
       ));
-      if (item['translatedName'] != '') {
+      if (item.translatedName != '') {
         tagsRow.add(Text(
-          item['translatedName'],
+          item.translatedName,
           style: translateTextStyle,
           strutStyle: strutStyle,
         ));
@@ -443,7 +445,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
   }
 
   Widget _subscribeButton() {
-    bool currentFollowedState = widget._picData['artistPreView']['isFollowed'];
+    bool currentFollowedState = widget._picData.artistPreView.isFollowed;
     String buttonText = currentFollowedState ? texts.followed : texts.follow;
 
     return FlatButton(
@@ -452,7 +454,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
       onPressed: () async {
         String url = '/users/followed';
         Map<String, String> body = {
-          'artistId': widget._picData['artistPreView']['id'].toString(),
+          'artistId': widget._picData.artistPreView.id.toString(),
           'userId': prefs.getInt('id').toString(),
           'username': prefs.getString('name'),
         };
@@ -470,8 +472,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
             );
           }
           setState(() {
-            widget._picData['artistPreView']['isFollowed'] =
-                !widget._picData['artistPreView']['isFollowed'];
+            widget._picData.artistPreView.isFollowed =
+                !widget._picData.artistPreView.isFollowed;
           });
         } catch (e) {
           // print(homePicList[widget.index]['artistPreView']['isFollowed']);
@@ -517,7 +519,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
             color: Colors.blueGrey,
           ),
           onTap: () {
-            showAddToCollection(context, [widget._picData['id']],
+            showAddToCollection(context, [widget._picData.id],
                 multiSelect: false);
           },
         ),
@@ -563,7 +565,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                   leading: Icon(Icons.image, color: Colors.purple),
                   onTap: () async {
                     String url =
-                        'https://pixiv.net/artworks/${widget._picData['id']}';
+                        'https://pixiv.net/artworks/${widget._picData.id}';
                     if (await canLaunch(url)) {
                       await launch(url);
                     } else {
@@ -580,7 +582,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                   ),
                   onTap: () async {
                     String url =
-                        'https://pixiv.net/users/${widget._picData['artistId']}';
+                        'https://pixiv.net/users/${widget._picData.id}';
                     if (await canLaunch(url)) {
                       await launch(url);
                     } else {
@@ -597,8 +599,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
                     color: Colors.red[300],
                   ),
                   onTap: () async {
-                    Clipboard.setData(ClipboardData(
-                        text: widget._picData['artistId'].toString()));
+                    Clipboard.setData(
+                        ClipboardData(text: widget._picData.id.toString()));
                     BotToast.showSimpleNotification(title: texts.alreadyCopied);
                     Navigator.of(context).pop();
                     // Navigator.of(context).pop();
@@ -612,7 +614,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                   ),
                   onTap: () async {
                     Clipboard.setData(
-                        ClipboardData(text: widget._picData['id'].toString()));
+                        ClipboardData(text: widget._picData.id.toString()));
                     BotToast.showSimpleNotification(title: texts.alreadyCopied);
                     Navigator.of(context).pop();
                   },
@@ -648,17 +650,17 @@ class _PicDetailPageState extends State<PicDetailPage> {
   // 同步关注状态
   _followedRefresh(bool result) {
     setState(() {
-      widget._picData['artistPreView']['isFollowed'] = result;
+      widget._picData.artistPreView.isFollowed = result;
     });
   }
 
   // 留下查看图片的痕迹
   _uploadHistory() async {
     if (prefs.getString('auth') != '') {
-      String url = '/users/${widget._picData['id'].toString()}/illustHistory';
+      String url = '/users/${widget._picData.id.toString()}/illustHistory';
       Map<String, String> body = {
         'userId': prefs.getInt('id').toString(),
-        'illustId': widget._picData['id'].toString()
+        'illustId': widget._picData.id.toString()
       };
       await dioPixivic.post(url, data: body);
     }
@@ -679,7 +681,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
   }
 
   _initPappbar() {
-    String tempTitle = widget._picData['title'];
+    String tempTitle = widget._picData.title;
     tempTitle.length > 20
         ? tempTitle = tempTitle.substring(0, 20) + '...'
         : tempTitle = tempTitle;

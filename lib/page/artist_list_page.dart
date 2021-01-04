@@ -12,6 +12,7 @@ import 'package:pixivic/page/artist_page.dart';
 import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/common/do/Illust.dart';
 
 class ArtistListPage extends StatefulWidget {
   @override
@@ -331,7 +332,7 @@ class _ArtistListPageState extends State<ArtistListPage> {
     ));
   }
 
-  _routeToPicDetailPage(Map picData) {
+  _routeToPicDetailPage(Illust picData) {
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => PicDetailPage(picData)));
   }

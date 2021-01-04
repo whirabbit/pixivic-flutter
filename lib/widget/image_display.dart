@@ -17,15 +17,17 @@ import 'package:lottie/lottie.dart';
 import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/common/do/Illust.dart';
 
-Widget imageCell(Map picMapData, RandomColor randomColor, int sanityLevel,
+Widget imageCell(Illust picItem, RandomColor randomColor, int sanityLevel,
     int previewRule, String previewQuality, BuildContext context) {
   final Color color = randomColor.randomColor();
-  String url = picMapData['imageUrls'][0][previewQuality]; //medium large
-  int number = picMapData['pageCount'];
-  double width = picMapData['width'].toDouble();
-  double height = picMapData['height'].toDouble();
-  if (picMapData['xrestict'] == 1 || picMapData['sanityLevel'] > sanityLevel)
+  //TODO 测试  暂时图片质量写死
+  String url = picItem.imageUrls[0].medium; //medium large
+  int number = picItem.pageCount;
+  double width = picItem.width.toDouble();
+  double height = picItem.height.toDouble();
+  if (picItem.xrestrict == 1 || picItem.sanityLevel > sanityLevel)
     return Container();
   else
     return Container(
@@ -43,19 +45,19 @@ Widget imageCell(Map picMapData, RandomColor randomColor, int sanityLevel,
               child: GestureDetector(
                 onTap: () async {
                   // 对广告图片做区分判断
-                  if (picMapData['type'] == 'ad_image') {
-                    if (await canLaunch(picMapData['link'])) {
-                      await launch(picMapData['link']);
+                  if (picItem.type == 'ad_image') {
+                    if (await canLaunch(picItem.link)) {
+                      await launch(picItem.link);
                     } else {
                       BotToast.showSimpleNotification(title: '唤起网页失败');
-                      throw 'Could not launch ${picMapData['link']}';
+                      throw 'Could not launch ${picItem.link}';
                     }
                   } else
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => PicDetailPage(
-                                  picMapData,
+                                  picItem,
                                 )));
                 },
                 child: Container(
@@ -105,11 +107,11 @@ Widget imageCell(Map picMapData, RandomColor randomColor, int sanityLevel,
             right: ScreenUtil().setWidth(10),
             top: ScreenUtil().setHeight(5),
           ),
-          prefs.getString('auth') != '' && picMapData['type'] != 'ad_image'
+          prefs.getString('auth') != '' && picItem.type != 'ad_image'
               ? Positioned(
                   bottom: ScreenUtil().setHeight(5),
                   right: ScreenUtil().setWidth(5),
-                  child: BookMarkHeart(picMapData))
+                  child: BookMarkHeart(picItem))
               : Container(),
         ],
       ),
@@ -146,25 +148,25 @@ class BookMarkHeart extends StatefulWidget {
   @override
   _BookMarkHeartState createState() => _BookMarkHeartState();
 
-  final Map picMapData;
+  final Illust picItem;
 
-  BookMarkHeart(this.picMapData);
+  BookMarkHeart(this.picItem);
 }
 
 class _BookMarkHeartState extends State<BookMarkHeart> {
-  Map picMapData;
+  Illust picItem;
 
   @override
   void initState() {
-    picMapData = widget.picMapData;
+    picItem = widget.picItem;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isLikedLocalState = picMapData['isLiked'];
+    bool isLikedLocalState = picItem.isLiked;
     var color = isLikedLocalState ? Colors.redAccent : Colors.grey[300];
-    String picId = picMapData['id'].toString();
+    String picId = picItem.id.toString();
 
     return AnimatedContainer(
       duration: Duration(milliseconds: 500),
@@ -192,7 +194,7 @@ class _BookMarkHeartState extends State<BookMarkHeart> {
               data: body,
             );
             setState(() {
-              picMapData['isLiked'] = false;
+              picItem.isLiked = false;
             });
           } else {
             await dioPixivic.post(
@@ -200,7 +202,7 @@ class _BookMarkHeartState extends State<BookMarkHeart> {
               data: body,
             );
             setState(() {
-              picMapData['isLiked'] = true;
+              picItem.isLiked = true;
             });
           }
         },

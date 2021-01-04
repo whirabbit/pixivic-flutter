@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pixivic/data/common.dart';
 
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/screenutil.dart';
@@ -8,6 +7,8 @@ import 'package:dio/dio.dart';
 import 'package:pixivic/provider/favorite_animation_model.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/common/do/Illust.dart';
+import 'package:pixivic/data/common.dart';
 
 class MarkHeart extends StatelessWidget {
   MarkHeart(
@@ -15,7 +16,7 @@ class MarkHeart extends StatelessWidget {
       @required this.index,
       @required this.getPageProvider});
 
-  final Map picItem;
+  final Illust picItem;
   final int index;
 
   final PicPageModel getPageProvider;
@@ -24,10 +25,10 @@ class MarkHeart extends StatelessWidget {
   Widget build(BuildContext context) {
     // print('Build MarkHeart $index');
     bool isLikedLocalState = getPageProvider != null
-        ? getPageProvider.picList[index]['isLiked']
-        : picItem['isLiked'];
+        ? getPageProvider.picList[index].isLiked
+        : picItem.isLiked;
     Color color = isLikedLocalState ? Colors.redAccent : Colors.grey[300];
-    String picId = picItem['id'].toString();
+    String picId = picItem.id.toString();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<FavoriteAnimationModel>(
@@ -65,7 +66,7 @@ class MarkHeart extends StatelessWidget {
                 Future.delayed(Duration(milliseconds: 400), () {
                   getPageProvider != null
                       ? getPageProvider.flipLikeState(index)
-                      : picItem['isLiked'] = !picItem['isLiked'];
+                      : picItem.isLiked = !picItem.isLiked;
                   isLikedLocalState = !isLikedLocalState;
                   color =
                       isLikedLocalState ? Colors.redAccent : Colors.grey[300];
