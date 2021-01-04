@@ -11,11 +11,11 @@ class CommentService {
   CommentService(this._commentRestClient);
 
   processData(List data) {
-    List<Comment> illustList = [];
+    List<Comment> commentList = [];
     data.map((s) => Comment.fromJson(s)).forEach((e) {
-      illustList.add(e);
+      commentList.add(e);
     });
-    return illustList;
+    return commentList;
   }
 
   Future<Result<List<Comment>>> queryCommentInfo(
