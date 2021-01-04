@@ -18,9 +18,6 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   int currentPage = 1;
   int replyParentId;
   List <Comment> commentList;
-  ///TODO 用作测试 之后修改
-  // List<Comment> commentList;
-  List jsonList;
   ScrollController scrollController;
   bool loadMoreAble = true;
   bool isMemeMode = false;
@@ -311,7 +308,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
 //请求数据
   loadComments(int illustId, {int page = 1}) async {
     return getIt<CommentService>()
-        .queryCommentInfo(illustId, page, 10)
+        .queryCommentInfo(AppType.illusts,illustId, page, 10)
         .then((value) {
       return value.data;
     });

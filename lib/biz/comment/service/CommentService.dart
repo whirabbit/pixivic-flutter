@@ -10,10 +10,10 @@ class CommentService {
 
   CommentService(this._commentRestClient);
 
-  Future<Result<List<Comment>>> queryCommentInfo(
+  Future<Result<List<Comment>>> queryCommentInfo(String illusts,
       int illustId, int page, int pageSize) {
     return _commentRestClient
-        .queryCommentInfo(illustId, page, pageSize)
+        .queryCommentInfo(illusts,illustId, page, pageSize)
         .then((value) {
       List<Comment> commentList = [];
       if(value.data!=null)
