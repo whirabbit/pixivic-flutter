@@ -1,10 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
-part 'Illust.g.dart';
 
+part 'Illust.g.dart';
 
 @JsonSerializable()
 class Illust {
-  double id;
+  int id;
   double artistId;
   String title;
   String type;
@@ -14,14 +14,17 @@ class Illust {
   List<ImageUrls> imageUrls;
   List<String> tools;
   DateTime createDate;
-  double pageCount;
+  int pageCount;
   double width;
   double height;
   double sanityLevel;
   double restrict;
   double totalView;
   double totalBookmarks;
+  bool isLiked;
   double xrestrict;
+  String link;
+  int adId;
 
   @override
   String toString() {
@@ -30,23 +33,27 @@ class Illust {
 
   Illust(
       {this.id,
-        this.artistId,
-        this.title,
-        this.type,
-        this.caption,
-        this.artistPreView,
-        this.tags,
-        this.imageUrls,
-        this.tools,
-        this.createDate,
-        this.pageCount,
-        this.width,
-        this.height,
-        this.sanityLevel,
-        this.restrict,
-        this.totalView,
-        this.totalBookmarks,
-        this.xrestrict});
+      this.artistId,
+      this.title,
+      this.type,
+      this.caption,
+      this.artistPreView,
+      this.tags,
+      this.imageUrls,
+      this.tools,
+      this.createDate,
+      this.pageCount,
+      this.width,
+      this.height,
+      this.sanityLevel,
+      this.restrict,
+      this.totalView,
+      this.totalBookmarks,
+      this.isLiked,
+      this.xrestrict,
+      this.adId,
+      this.link});
+
   factory Illust.fromJson(Map<String, dynamic> json) => _$IllustFromJson(json);
 
   Map<String, dynamic> toJson() => _$IllustToJson(this);
@@ -54,17 +61,21 @@ class Illust {
 
 @JsonSerializable()
 class ArtistPreView {
-  double id;
+  int id;
   String name;
   String account;
   String avatar;
+  bool isFollowed;
 
-  ArtistPreView({this.id, this.name, this.account, this.avatar});
+  ArtistPreView(
+      {this.id, this.name, this.account, this.avatar, this.isFollowed});
 
-  factory ArtistPreView.fromJson(Map<String, dynamic> json) => _$ArtistPreViewFromJson(json);
+  factory ArtistPreView.fromJson(Map<String, dynamic> json) =>
+      _$ArtistPreViewFromJson(json);
 
   Map<String, dynamic> toJson() => _$ArtistPreViewToJson(this);
 }
+
 @JsonSerializable()
 class Tags {
   int id;
@@ -72,10 +83,12 @@ class Tags {
   String translatedName;
 
   Tags({this.id, this.name, this.translatedName});
+
   factory Tags.fromJson(Map<String, dynamic> json) => _$TagsFromJson(json);
 
   Map<String, dynamic> toJson() => _$TagsToJson(this);
 }
+
 @JsonSerializable()
 class ImageUrls {
   String squareMedium;
@@ -85,8 +98,8 @@ class ImageUrls {
 
   ImageUrls({this.squareMedium, this.medium, this.large, this.original});
 
-
-  factory ImageUrls.fromJson(Map<String, dynamic> json) => _$ImageUrlsFromJson(json);
+  factory ImageUrls.fromJson(Map<String, dynamic> json) =>
+      _$ImageUrlsFromJson(json);
 
   Map<String, dynamic> toJson() => _$ImageUrlsToJson(this);
 }
