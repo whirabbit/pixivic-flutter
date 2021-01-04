@@ -17,7 +17,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   int replyToId;
   int currentPage = 1;
   int replyParentId;
-  List <Comment> commentList;
+  List<Comment> commentList;
   ScrollController scrollController;
   bool loadMoreAble = true;
   bool isMemeMode = false;
