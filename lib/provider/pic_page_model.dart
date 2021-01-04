@@ -5,11 +5,15 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:provider/provider.dart';
-// import 'package:flutter_screenutil/screenutil.dart';
 import 'package:dio/dio.dart';
+// import 'package:flutter_screenutil/screenutil.dart';
 
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:pixivic/data/common.dart';
+import 'package:pixivic/biz/illust/service/IllustService.dart';
+import 'package:pixivic/common/config/GetItConfig.dart';
+import 'package:pixivic/common/do/Illust.dart';
+import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/function/dio_client.dart';
 
 class PicPageModel with ChangeNotifier {
@@ -34,11 +38,13 @@ class PicPageModel with ChangeNotifier {
   bool loadMoreAble = true;
   bool isScrolling = false;
   int currentPage = 1;
-  List picList;
-  List jsonList;
+  List<Illust> picList;
+
+  // List jsonList;
   List<int> onSelectedList;
   ScrollController scrollController;
   PageSwitchProvider indexProvider;
+
   //用于共享 context 给 indexProvider
   BuildContext context;
 
@@ -76,7 +82,7 @@ class PicPageModel with ChangeNotifier {
             ..addListener(_doWhileScrolling);
       picList = homePicList;
       currentPage = homeCurrentPage;
-      jsonList = [];
+      // jsonList = [];
     } else {
       scrollController = ScrollController(initialScrollOffset: 0.0)
         ..addListener(_doWhileScrolling);
@@ -103,7 +109,7 @@ class PicPageModel with ChangeNotifier {
   }
 
   flipLikeState(int index) {
-    picList[index]['isLiked'] = !picList[index]['isLiked'];
+    picList[index].isLiked = !picList[index].isLiked;
     notifyListeners();
   }
 
@@ -127,8 +133,8 @@ class PicPageModel with ChangeNotifier {
   List outputPicIdList() {
     print('onSelectedList: $onSelectedList');
     if (onSelectedList.length > 0)
-      return List.generate(onSelectedList.length,
-          (index) => picList[onSelectedList[index]]['id']);
+      return List.generate(
+          onSelectedList.length, (index) => picList[onSelectedList[index]].id);
     else
       return [];
   }
@@ -251,71 +257,118 @@ class PicPageModel with ChangeNotifier {
   getJsonList({int currentPage = 1}) async {
     // 获取所有的图片数据
     if (jsonMode == 'home') {
-      url = '/ranks?page=$currentPage&date=$picDate&mode=$picMode&pageSize=10';
+      return getIt<IllustService>()
+          .queryIllustRank(picDate, picMode, currentPage, 10)
+          .then((value) {
+        return value.data;
+      });
     } else if (jsonMode == 'search') {
-      if (!isManga)
-        url =
-            '/illustrations?page=$currentPage&keyword=$searchKeywords&pageSize=10';
-      else
-        url =
-            '/illustrations?page=$currentPage&keyword=$searchKeywords&pageSize=10';
+      return getIt<IllustService>()
+          .queryIllustSearch(searchKeywords, currentPage, 10)
+          .then((value) {
+        return value.data;
+      });
     } else if (jsonMode == 'related') {
-      url = '/illusts/$relatedId/related?page=$currentPage&pageSize=15';
+      return getIt<IllustService>()
+          .queryIllustRelated(relatedId, currentPage, 10)
+          .then((value) {
+        return value.data;
+      });
     } else if (jsonMode == 'artist') {
       if (!isManga) {
-        url =
-            '/artists/$artistId/illusts/illust?page=$currentPage&pageSize=15&maxSanityLevel=10';
+        return getIt<IllustService>()
+            .queryIllustArtist(artistId, AppType.illust, currentPage, 10, 15)
+            .then((value) {
+          return value.data;
+        });
       } else {
-        url =
-            '/artists/$artistId/illusts/manga?page=$currentPage&pageSize=15&maxSanityLevel=10';
+        return getIt<IllustService>()
+            .queryIllustArtist(artistId, AppType.manga, currentPage, 10, 15)
+            .then((value) {
+          return value.data;
+        });
       }
     } else if (jsonMode == 'followed') {
-      // this.loadMoreAble = false;
       if (!isManga) {
-        url =
-            '/users/$userId/followed/latest/illust?page=$currentPage&pageSize=10';
+        return getIt<IllustService>()
+            .queryIllustFollowed(userId, AppType.illust, currentPage, 10)
+            .then((value) {
+          return value.data;
+        });
       } else {
-        url =
-            '/users/$userId/followed/latest/manga?page=$currentPage&pageSize=10';
+        return getIt<IllustService>()
+            .queryIllustFollowed(userId, AppType.manga, currentPage, 10)
+            .then((value) {
+          return value.data;
+        });
       }
     } else if (jsonMode == 'bookmark') {
       if (!isManga) {
-        url = '/users/$userId/bookmarked/illust?page=$currentPage&pageSize=10';
+        return getIt<IllustService>()
+            .queryIllustBookmark(userId, AppType.illust, currentPage, 10)
+            .then((value) {
+          return value.data;
+        });
       } else {
-        url = '/users/$userId/bookmarked/manga?page=$currentPage&pageSize=10';
+        return getIt<IllustService>()
+            .queryIllustBookmark(userId, AppType.manga, currentPage, 10)
+            .then((value) {
+          return value.data;
+        });
       }
     } else if (jsonMode == 'spotlight') {
-      // this.loadMoreAble = false;
-      url = '/spotlights/$spotlightId/illustrations';
+      return getIt<IllustService>()
+          .queryIllustSpotlight(spotlightId)
+          .then((value) {
+        return value.data;
+      });
     } else if (jsonMode == 'history') {
-      url =
-          '/users/${prefs.getInt('id').toString()}/illustHistory?page=$currentPage&pageSize=10';
+      return getIt<IllustService>()
+          .queryIllustHistory(prefs.getInt('id').toString(), currentPage, 10)
+          .then((value) {
+        return value.data;
+      });
     } else if (jsonMode == 'oldhistory') {
-      url =
-          '/users/${prefs.getInt('id').toString()}/oldIllustHistory?page=$currentPage&pageSize=10';
+      return getIt<IllustService>()
+          .queryIllustOldHistory(prefs.getInt('id').toString(), currentPage, 10)
+          .then((value) {
+        return value.data;
+      });
     } else if (jsonMode == 'userdetail') {
       if (!isManga) {
-        url = '/users/$userId/bookmarked/illust?page=$currentPage&pageSize=10';
+        return getIt<IllustService>()
+            .queryIllustBookmark(userId, AppType.illust, currentPage, 10)
+            .then((value) {
+          return value.data;
+        });
       } else {
         url = '/users/$userId/bookmarked/manga?page=$currentPage&pageSize=10';
+        return getIt<IllustService>()
+            .queryIllustBookmark(userId, AppType.manga, currentPage, 10)
+            .then((value) {
+          return value.data;
+        });
       }
     } else if (jsonMode == 'collection') {
-      url =
-          '/collections/$collectionId/illustrations?page=$currentPage&pageSize=10';
+      return getIt<IllustService>()
+          .queryIllustCollection(collectionId, currentPage, 10)
+          .then((value) {
+        return value.data;
+      });
     }
 
-    List list;
+    // List list;
+    //
+    // try {
+    //   Response response = await dioPixivic.get(url);
+    //   // print(response.data['data']);
+    //   list = response.data['data'];
+    // } catch (e) {
+    //   if (e.response.statusCode == 400)
+    //     BotToast.showSimpleNotification(title: '请登录后再重新加载画作');
+    //   BotToast.showSimpleNotification(title: '获取画作信息失败，请检查网络');
+    // }
 
-    try {
-      Response response = await dioPixivic.get(url);
-      // print(response.data['data']);
-      list = response.data['data'];
-    } catch (e) {
-      if (e.response.statusCode == 400)
-        BotToast.showSimpleNotification(title: '请登录后再重新加载画作');
-      BotToast.showSimpleNotification(title: '获取画作信息失败，请检查网络');
-    }
-
-    return list;
+    // return list;
   }
 }
