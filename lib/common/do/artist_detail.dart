@@ -1,8 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
-part 'artist.g.dart';
+part 'artist_detail.g.dart';
 
 @JsonSerializable()
-class Artist {
+class ArtistDetail {
   double id;
   String name;
   String account;
@@ -17,7 +17,7 @@ class Artist {
   String totalFollowUsers;
   String totalIllustBookmarksPublic;
 
-  Artist(
+  ArtistDetail(
       {this.id,
       this.name,
       this.account,
@@ -35,10 +35,10 @@ class Artist {
 
   @override
   String toString() {
-    return 'Artist{id: $id, name: $name, account: $account, avatar: $avatar, comment: $comment, gender: $gender, birthDay: $birthDay, region: $region, webPage: $webPage, twitterAccount: $twitterAccount, twitterUrl: $twitterUrl, totalFollowUsers: $totalFollowUsers, totalIllustBookmarksPublic: $totalIllustBookmarksPublic}';
+    return 'ArtistDetail{id: $id, name: $name, account: $account, avatar: $avatar, comment: $comment, gender: $gender, birthDay: $birthDay, region: $region, webPage: $webPage, twitterAccount: $twitterAccount, twitterUrl: $twitterUrl, totalFollowUsers: $totalFollowUsers, totalIllustBookmarksPublic: $totalIllustBookmarksPublic}';
   }
 
-  factory Artist.fromJson(Map<String, dynamic> json) => _$ArtistFromJson(json);
+  factory ArtistDetail.fromJson(Map<String, dynamic> json) => _$ArtistDetailFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ArtistToJson(this);
+  Map<String, dynamic> toJson() => _$ArtistDetailToJson(this);
 }
