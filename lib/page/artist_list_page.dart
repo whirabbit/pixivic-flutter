@@ -5,6 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:dio/dio.dart';
+import 'package:pixivic/biz/artist/service/artist_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/artist.dart';
 
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
@@ -41,7 +44,7 @@ class _ArtistListPageState extends State<ArtistListPage> {
   TextZhFollowPage text = TextZhFollowPage();
   ScrollController scrollController;
   int currentPage;
-  List jsonList;
+  List<Artist> jsonList;
   int totalNum;
   bool loadMoreAble;
   bool haveConnected;
@@ -128,7 +131,7 @@ class _ArtistListPageState extends State<ArtistListPage> {
     );
   }
 
-  Widget artistCell(Map cellData) {
+  Widget artistCell(Artist cellData) {
     return Container(
       padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(10)),
       child: Column(
@@ -146,13 +149,13 @@ class _ArtistListPageState extends State<ArtistListPage> {
                       Container(
                         padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
                         child: CircleAvatar(
-                          backgroundImage: NetworkImage(cellData['avatar'],
+                          backgroundImage: NetworkImage(cellData.avatar,
                               headers: {
                                 'Referer': 'https://app-api.pixiv.net'
                               }),
                         ),
                       ),
-                      Text(cellData['name'],
+                      Text(cellData.name,
                           style: TextStyle(
                               fontSize: ScreenUtil().setWidth(10),
                               color: Colors.black,
@@ -177,8 +180,8 @@ class _ArtistListPageState extends State<ArtistListPage> {
     );
   }
 
-  Widget picsCell(Map picData) {
-    int itemNum = picData['recentlyIllustrations'].length;
+  Widget picsCell(Artist picData) {
+    int itemNum = picData.recentlyIllustrations.length;
     // TODO: 优化 generate 使用方法
     List<int> allIndex = List<int>.generate(itemNum, (int index) => index);
     return Row(
@@ -187,16 +190,16 @@ class _ArtistListPageState extends State<ArtistListPage> {
           width: ScreenUtil().setWidth(108),
           height: ScreenUtil().setWidth(108),
           color: Colors.grey[200],
-          child: picData['recentlyIllustrations'][item]['sanityLevel'] <=
+          child: picData.recentlyIllustrations[item].sanityLevel <=
                   prefs.getInt('sanityLevel')
               ? GestureDetector(
                   onTap: () {
                     _routeToPicDetailPage(
-                        picData['recentlyIllustrations'][item]);
+                        picData.recentlyIllustrations[item] as Illust);
                   },
                   child: Image.network(
-                    picData['recentlyIllustrations'][item]['imageUrls'][0]
-                        ['squareMedium'],
+                    picData
+                        .recentlyIllustrations[item].imageUrls[0].squareMedium,
                     headers: {'Referer': 'https://app-api.pixiv.net'},
                     width: ScreenUtil().setWidth(108),
                     height: ScreenUtil().setWidth(108),
@@ -205,8 +208,8 @@ class _ArtistListPageState extends State<ArtistListPage> {
               : Stack(
                   children: <Widget>[
                     Image.network(
-                      picData['recentlyIllustrations'][item]['imageUrls'][0]
-                          ['squareMedium'],
+                      picData.recentlyIllustrations[item].imageUrls[0]
+                          .squareMedium,
                       headers: {'Referer': 'https://app-api.pixiv.net'},
                       width: ScreenUtil().setWidth(108),
                       height: ScreenUtil().setWidth(108),
@@ -229,9 +232,9 @@ class _ArtistListPageState extends State<ArtistListPage> {
     );
   }
 
-  Widget _subscribeButton(Map data) {
+  Widget _subscribeButton(Artist data) {
     bool currentFollowedState =
-        data['isFollowed'] != null ? data['isFollowed'] : false;
+        data.isFollowed != null ? data.isFollowed : false;
     String buttonText = currentFollowedState ? text.followed : text.follow;
 
     return FlatButton(
@@ -241,7 +244,7 @@ class _ArtistListPageState extends State<ArtistListPage> {
         String url = '/users/followed';
 
         Map<String, String> body = {
-          'artistId': data['id'].toString(),
+          'artistId': data.id.toString(),
           'userId': prefs.getInt('id').toString(),
           'username': prefs.getString('name'),
         };
@@ -262,7 +265,7 @@ class _ArtistListPageState extends State<ArtistListPage> {
           }
           // cancelLoading();
           setState(() {
-            data['isFollowed'] = !data['isFollowed'];
+            data.isFollowed = !data.isFollowed;
           });
         } catch (e) {
           // cancelLoading();
@@ -286,45 +289,56 @@ class _ArtistListPageState extends State<ArtistListPage> {
     if (widget.mode == 'search') {
       url =
           '/artists?page=$currentPage&artistName=${widget.searchKeyWords}&pageSize=30';
+      return getIt<ArtistService>()
+          .queryArtistSearch(widget.searchKeyWords, currentPage, 30)
+          .then((value) => value.data);
     } else if (widget.mode == 'follow') {
       url =
           '/users/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
+      return getIt<ArtistService>()
+          .queryArtistFollowedWithRecentlyIllusts(
+              prefs.getInt('id'), currentPage, 30)
+          .then((value) => value.data);
     } else if (widget.mode == 'userfollow') {
       url =
           '/users/${widget.userId}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
+      return getIt<ArtistService>()
+          .queryArtistFollowedWithRecentlyIllusts(
+              widget.userId, currentPage, 30)
+          .then((value) => value.data);
     }
 
-    try {
-      response = await dioPixivic.get(url);
-      jsonList = response.data['data'];
-      if (jsonList == null)
-        loadMoreAble = false;
-      else
-        loadMoreAble = true;
-      return (jsonList);
-    } catch (e) {
-      BotToast.showSimpleNotification(title: '数据获取失败，请检查网络');
-    }
+    // try {
+    //   response = await dioPixivic.get(url);
+    //   jsonList = response.data['data'];
+    //   if (jsonList == null)
+    //     loadMoreAble = false;
+    //   else
+    //     loadMoreAble = true;
+    //   return (jsonList);
+    // } catch (e) {
+    //   BotToast.showSimpleNotification(title: '数据获取失败，请检查网络');
+    // }
   }
 
-  _routeToArtistPage(Map data) {
+  _routeToArtistPage(Artist data) {
     bool isFollowed;
     // 后端数据错误时，默认用 false 替换
-    if (data['isFollowed'] == null) {
+    if (data.isFollowed == null) {
       isFollowed = false;
     } else {
-      isFollowed = data['isFollowed'];
+      isFollowed = data.isFollowed;
     }
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return ArtistPage(
-          data['avatar'],
-          data['name'],
-          data['id'].toString(),
+          data.avatar,
+          data.name,
+          data.id.toString(),
           isFollowed: isFollowed,
           followedRefresh: (bool result) {
             setState(() {
-              data['isFollowed'] = result;
+              data.isFollowed = result;
             });
           },
         );
