@@ -11,11 +11,11 @@ class PixivSuggestionsService {
   PixivSuggestionsService(this._pixivSuggestionsRestClient);
 
   processData(List data) {
-    List<PixivSuggestions> PixivSuggestionsList = [];
+    List<PixivSuggestions> pixivSuggestionsList = [];
     data.map((s) => PixivSuggestions.fromJson(s)).forEach((e) {
-      PixivSuggestionsList.add(e);
+      pixivSuggestionsList.add(e);
     });
-    return PixivSuggestionsList;
+    return pixivSuggestionsList;
   }
 
   Future<Result<List<PixivSuggestions>>> queryPixivSuggestions(String keyword) {
