@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dio/dio.dart';
 
+import 'package:pixivic/biz/PixivSuggestions/service/PixivSuggestionsService.dart';
+import 'package:pixivic/common/config/GetItConfig.dart';
+import 'package:pixivic/common/do/PixivSuggestions.dart';
+
 import 'package:pixivic/function/dio_client.dart';
 
 class SuggestionBar extends StatefulWidget {
@@ -18,7 +22,7 @@ class SuggestionBar extends StatefulWidget {
 
 class SuggestionBarState extends State<SuggestionBar> {
   String searchKeywords;
-  List suggestions;
+  List<PixivSuggestions> suggestions;
 
   @override
   void initState() {
@@ -51,22 +55,22 @@ class SuggestionBarState extends State<SuggestionBar> {
             itemCount: suggestions.length,
             itemBuilder: (context, index) {
               var keywordsColumn;
-              if (suggestions[index]['keywordTranslated'] != '') {
+              if (suggestions[index].keywordTranslated != '') {
                 keywordsColumn = Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      suggestionsKeywordsText(suggestions[index]['keyword']),
+                      suggestionsKeywordsText(suggestions[index].keyword),
                       suggestionsKeywordsText(
-                          suggestions[index]['keywordTranslated']),
+                          suggestions[index].keywordTranslated),
                     ]);
               } else {
                 keywordsColumn =
-                    suggestionsKeywordsText(suggestions[index]['keyword']);
+                    suggestionsKeywordsText(suggestions[index].keyword);
               }
 
               return GestureDetector(
                 onTap: () {
-                  widget.onCellTap(suggestions[index]['keyword']);
+                  widget.onCellTap(suggestions[index].keyword);
                 },
                 child: Container(
                   margin: EdgeInsets.all(ScreenUtil().setWidth(2)),
@@ -107,13 +111,13 @@ class SuggestionBarState extends State<SuggestionBar> {
     String urlPixiv = '/keywords/$searchKeywords/pixivSuggestions';
     // String urlPixivic =
     //     'https://pix.ipv4.host/keywords/$searchKeywords/suggestions';
-    
+
     try {
-      response = await dioPixivic.get(urlPixiv);
-      jsonList = response.data['data'];
-      return jsonList;
-    } catch(e) {
-      return null;
+      return getIt<PixivSuggestionsService>()
+          .queryPixivSuggestions(searchKeywords)
+          .then((value) => value.data);
+    } catch (e) {
+      print(e);
     }
   }
 
