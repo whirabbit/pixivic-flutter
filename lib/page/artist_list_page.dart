@@ -12,7 +12,7 @@ import 'package:pixivic/page/artist_page.dart';
 import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/function/dio_client.dart';
-import 'package:pixivic/common/do/Illust.dart';
+import 'package:pixivic/common/do/illust.dart';
 
 class ArtistListPage extends StatefulWidget {
   @override

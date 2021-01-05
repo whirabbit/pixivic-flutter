@@ -1,8 +1,8 @@
 import 'package:injectable/injectable.dart';
 
-import 'package:pixivic/common/do/Artist.dart';
-import 'package:pixivic/common/do/Result.dart';
-import 'package:pixivic/http/client/ArtistRestClient.dart';
+import 'package:pixivic/common/do/artist.dart';
+import 'package:pixivic/common/do/result.dart';
+import 'package:pixivic/http/client/artist_rest_client.dart';
 
 @lazySingleton
 class ArtistService {

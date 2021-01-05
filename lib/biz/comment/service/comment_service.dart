@@ -1,8 +1,8 @@
 import 'package:injectable/injectable.dart';
-import 'package:pixivic/http/client/CommentRestClient.dart';
+import 'package:pixivic/http/client/comment_rest_client.dart';
 
-import 'package:pixivic/common/do/Result.dart';
-import 'package:pixivic/common/do/Comment.dart';
+import 'package:pixivic/common/do/result.dart';
+import 'package:pixivic/common/do/comment.dart';
 
 @lazySingleton
 class CommentService {

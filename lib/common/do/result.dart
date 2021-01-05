@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-part 'Result.g.dart';
+part 'result.g.dart';
 
 @JsonSerializable()
 class Result<T> {

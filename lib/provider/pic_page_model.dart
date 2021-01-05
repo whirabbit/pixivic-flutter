@@ -10,9 +10,9 @@ import 'package:dio/dio.dart';
 
 import 'package:pixivic/provider/page_switch.dart';
 import 'package:pixivic/data/common.dart';
-import 'package:pixivic/biz/illust/service/IllustService.dart';
-import 'package:pixivic/common/config/GetItConfig.dart';
-import 'package:pixivic/common/do/Illust.dart';
+import 'package:pixivic/biz/illust/service/illust_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/illust.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/function/dio_client.dart';
 

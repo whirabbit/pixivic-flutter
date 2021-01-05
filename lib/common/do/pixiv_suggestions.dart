@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'PixivSuggestions.g.dart';
+part 'pixiv_suggestions.g.dart';
 
 @JsonSerializable()
 class PixivSuggestions {

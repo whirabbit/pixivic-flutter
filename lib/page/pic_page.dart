@@ -19,7 +19,7 @@ import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/widget/markheart_icon.dart';
 import 'package:pixivic/widget/select_mode_bar.dart';
 import 'package:pixivic/widget/image_display.dart';
-import 'package:pixivic/common/do/Illust.dart';
+import 'package:pixivic/common/do/illust.dart';
 
 // 可以作为页面中单个组件或者单独页面使用的pic瀑布流组件,因可以作为页面，故不归为widget
 class PicPage extends StatefulWidget {

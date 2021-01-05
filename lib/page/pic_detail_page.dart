@@ -26,7 +26,7 @@ import 'package:pixivic/function/collection.dart';
 import 'package:pixivic/function/dio_client.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/widget/markheart_icon.dart';
-import 'package:pixivic/common/do/Illust.dart';
+import 'package:pixivic/common/do/illust.dart';
 
 class PicDetailPage extends StatefulWidget {
   @override

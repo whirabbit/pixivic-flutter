@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
-import 'package:pixivic/biz/comment/service/CommentService.dart';
-import 'package:pixivic/common/config/GetItConfig.dart';
-import 'package:pixivic/common/do/Comment.dart';
+import 'package:pixivic/biz/comment/service/comment_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/comment.dart';
 
 import '../data/common.dart';
 import 'package:pixivic/data/common.dart';

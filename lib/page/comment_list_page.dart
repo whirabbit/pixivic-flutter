@@ -12,7 +12,7 @@ import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/page/user_detail_page.dart';
 import 'package:pixivic/widget/meme_box.dart';
-import 'package:pixivic/common/do/Comment.dart';
+import 'package:pixivic/common/do/comment.dart';
 
 class CommentListPage extends StatelessWidget {
   CommentListPage(

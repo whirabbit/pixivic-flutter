@@ -1,8 +1,8 @@
 import 'package:injectable/injectable.dart';
 
-import 'package:pixivic/common/do/PixivSuggestions.dart';
-import 'package:pixivic/common/do/Result.dart';
-import 'package:pixivic/http/client/PixivSuggestionsRestClient.dart';
+import 'package:pixivic/common/do/pixiv_suggestions.dart';
+import 'package:pixivic/common/do/result.dart';
+import 'package:pixivic/http/client/pixiv_suggestions_rest_client.dart';
 
 @lazySingleton
 class PixivSuggestionsService {

@@ -14,9 +14,9 @@ import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/widget/papp_bar.dart';
-import 'package:pixivic/biz/artist/service/ArtistService.dart';
-import 'package:pixivic/common/config/GetItConfig.dart';
-import 'package:pixivic/common/do/Artist.dart';
+import 'package:pixivic/biz/artist/service/artist_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/artist.dart';
 
 class ArtistPage extends StatefulWidget {
   @override

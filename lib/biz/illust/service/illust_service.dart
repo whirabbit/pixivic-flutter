@@ -1,8 +1,8 @@
 import 'package:injectable/injectable.dart';
-import 'package:pixivic/http/client/IllustRestClient.dart';
+import 'package:pixivic/http/client/illust_rest_client.dart';
 
-import 'package:pixivic/common/do/Illust.dart';
-import 'package:pixivic/common/do/Result.dart';
+import 'package:pixivic/common/do/illust.dart';
+import 'package:pixivic/common/do/result.dart';
 
 @lazySingleton
 class IllustService {

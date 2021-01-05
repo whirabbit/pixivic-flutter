@@ -7,7 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:pixivic/provider/favorite_animation_model.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/function/dio_client.dart';
-import 'package:pixivic/common/do/Illust.dart';
+import 'package:pixivic/common/do/illust.dart';
 import 'package:pixivic/data/common.dart';
 
 class MarkHeart extends StatelessWidget {

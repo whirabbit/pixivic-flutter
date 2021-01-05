@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dio/dio.dart';
 
-import 'package:pixivic/biz/PixivSuggestions/service/PixivSuggestionsService.dart';
-import 'package:pixivic/common/config/GetItConfig.dart';
-import 'package:pixivic/common/do/PixivSuggestions.dart';
+import 'package:pixivic/biz/PixivSuggestions/service/pixiv_suggestions_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/pixiv_suggestions.dart';
 
 import 'package:pixivic/function/dio_client.dart';
 

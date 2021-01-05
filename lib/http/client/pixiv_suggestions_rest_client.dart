@@ -2,10 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:retrofit/http.dart';
 
-import 'package:pixivic/common/do/PixivSuggestions.dart';
-import 'package:pixivic/common/do/Result.dart';
+import 'package:pixivic/common/do/pixiv_suggestions.dart';
+import 'package:pixivic/common/do/result.dart';
 
-part 'PixivSuggestionsRestClient.g.dart';
+part 'pixiv_suggestions_rest_client.g.dart';
 
 @lazySingleton
 @RestApi(baseUrl: "https://pix.ipv4.host")

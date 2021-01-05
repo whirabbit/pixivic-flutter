@@ -2,10 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:retrofit/http.dart';
 
-import 'package:pixivic/common/do/Artist.dart';
-import 'package:pixivic/common/do/Result.dart';
+import 'package:pixivic/common/do/artist.dart';
+import 'package:pixivic/common/do/result.dart';
 
-part 'ArtistRestClient.g.dart';
+part 'artist_rest_client.g.dart';
 
 @lazySingleton
 @RestApi(baseUrl: "https://pix.ipv4.host")

@@ -17,7 +17,7 @@ import 'package:lottie/lottie.dart';
 import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/function/dio_client.dart';
-import 'package:pixivic/common/do/Illust.dart';
+import 'package:pixivic/common/do/illust.dart';
 
 Widget imageCell(Illust picItem, RandomColor randomColor, int sanityLevel,
     int previewRule, String previewQuality, BuildContext context) {
