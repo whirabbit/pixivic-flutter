@@ -63,9 +63,7 @@ class _ArtistPageState extends State<ArtistPage> {
     isDataLoaded = false;
     isFollowed = widget.isFollowed;
     _initPappbar();
-    _loadArtistData().then((value) {
-      setState(() {});
-    });
+    _loadArtistData();
     super.initState();
   }
 
@@ -225,21 +223,37 @@ class _ArtistPageState extends State<ArtistPage> {
           );
   }
 
-  _loadArtistData() async {
-    String urlId = '/artists/${widget.artistId}';
-    String urlSummary = '/artists/${widget.artistId}/summary';
-    Response response;
+  _loadArtistData() {
     try {
       getIt<ArtistDetailService>()
           .queryArtistDetail(int.parse(widget.artistId))
           .then((result) {
         ArtistDetail artistDetail = result.data;
-        print(artistDetail);
+        // print(artistDetail);
         this.comment = artistDetail.comment;
         this.urlTwitter = artistDetail.twitterUrl;
         this.urlWebPage = artistDetail.webPage;
         this.numOfBookmarksPublic = artistDetail.totalIllustBookmarksPublic;
         this.numOfFollower = artistDetail.totalFollowUsers;
+      });
+
+      getIt<ArtistDetailService>()
+          .queryArtistSummary(int.parse(widget.artistId))
+          .then((value) {
+        ArtistSummary artistSummary = value.data;
+        this.numOfIllust = artistSummary.illustSum.toString();
+        this.numOfManga = artistSummary.mangaSum.toString();
+        this.tabs = <Tab>[
+          Tab(
+            text: '插画(${this.numOfIllust})',
+          ),
+          Tab(
+            text: '漫画(${this.numOfManga})',
+          ),
+        ];
+        setState(() {
+          isDataLoaded = true;
+        });
       });
     } catch (e) {
       if (e.response.statusCode == 401) {
@@ -252,28 +266,46 @@ class _ArtistPageState extends State<ArtistPage> {
         return ('finished');
       }
     }
-
-    try {
-      response = await dioPixivic.get(
-        urlSummary,
-      );
-      var jsonList = response.data['data'];
-      this.numOfIllust = jsonList['illustSum'].toString();
-      this.numOfManga = jsonList['mangaSum'].toString();
-      this.tabs = <Tab>[
-        Tab(
-          text: '插画(${this.numOfIllust})',
-        ),
-        Tab(
-          text: '漫画(${this.numOfManga})',
-        ),
-      ];
-      isDataLoaded = true;
-    } catch (e) {
-      BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
-      isDataLoaded = false;
-      return ('finished');
-    }
+    // String urlId = '/artists/${widget.artistId}';
+    // String urlSummary = '/artists/${widget.artistId}/summary';
+    // Response response;
+    // try {
+    //   getIt<ArtistDetailService>()
+    //       .queryArtistSummary(int.parse(widget.artistId))
+    //       .then((value) {
+    //     ArtistSummary artistSummary = value.data;
+    //     this.numOfIllust = artistSummary.illustSum.toString();
+    //     this.numOfManga = artistSummary.mangaSum.toString();
+    //     this.tabs = <Tab>[
+    //       Tab(
+    //         text: '插画(${this.numOfIllust})',
+    //       ),
+    //       Tab(
+    //         text: '漫画(${this.numOfManga})',
+    //       ),
+    //     ];
+    //   });
+    //     isDataLoaded = true;
+    //   // response = await dioPixivic.get(
+    //   //   urlSummary,
+    //   // );
+    //   // var jsonList = response.data['data'];
+    //   // this.numOfIllust = jsonList['illustSum'].toString();
+    //   // this.numOfManga = jsonList['mangaSum'].toString();
+    //   // this.tabs = <Tab>[
+    //   //   Tab(
+    //   //     text: '插画(${this.numOfIllust})',
+    //   //   ),
+    //   //   Tab(
+    //   //     text: '漫画(${this.numOfManga})',
+    //   //   ),
+    //   // ];
+    //   // isDataLoaded = true;
+    // } catch (e) {
+    //   BotToast.showSimpleNotification(title: '网络异常，请检查网络(´·_·`)');
+    //   isDataLoaded = false;
+    //   return ('finished');
+    // }
   }
 
   _onTopOfPicpage() {
