@@ -18,4 +18,12 @@ class ArtistDetailService {
       return value;
     });
   }
+  Future<Result<ArtistSummary>> queryArtistSummary(int artistId) {
+    return _artistDetailRestClient
+        .queryArtistSummaryInfo(artistId)
+        .then((value) {
+      value.data = ArtistSummary.fromJson(value.data);
+      return value;
+    });
+  }
 }

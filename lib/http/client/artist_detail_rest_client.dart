@@ -16,4 +16,6 @@ abstract class ArtistDetailRestClient {
 
   @GET("/artists/{artistId}")
   Future<Result<ArtistDetail>> queryArtistDetailInfo(@Path() int artistId);
+  @GET("/artists/{artistId}/summary")
+  Future<Result<ArtistSummary>> queryArtistSummaryInfo(@Path() int artistId);
 }

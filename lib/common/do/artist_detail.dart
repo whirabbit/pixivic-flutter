@@ -42,3 +42,15 @@ class ArtistDetail {
 
   Map<String, dynamic> toJson() => _$ArtistDetailToJson(this);
 }
+
+@JsonSerializable()
+class ArtistSummary {
+  int illustSum;
+  int mangaSum;
+
+  ArtistSummary({this.illustSum, this.mangaSum});
+
+ factory ArtistSummary.fromJson(Map<String, dynamic> json)=>_$ArtistSummaryFromJson(json);
+
+  Map<String, dynamic> toJson()=>_$ArtistSummaryToJson(this);
+}
