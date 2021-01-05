@@ -259,102 +259,72 @@ class PicPageModel with ChangeNotifier {
     if (jsonMode == 'home') {
       return getIt<IllustService>()
           .queryIllustRank(picDate, picMode, currentPage, 10)
-          .then((value) {
-        return value.data;
-      });
+          .then((value) => value.data);
     } else if (jsonMode == 'search') {
       return getIt<IllustService>()
           .queryIllustSearch(searchKeywords, currentPage, 10)
-          .then((value) {
-        return value.data;
-      });
+          .then((value) => value.data);
     } else if (jsonMode == 'related') {
       return getIt<IllustService>()
           .queryIllustRelated(relatedId, currentPage, 10)
-          .then((value) {
-        return value.data;
-      });
+          .then((value) => value.data);
     } else if (jsonMode == 'artist') {
       if (!isManga) {
         return getIt<IllustService>()
             .queryIllustArtist(artistId, AppType.illust, currentPage, 10, 15)
-            .then((value) {
-          return value.data;
-        });
+            .then((value) => value.data);
       } else {
         return getIt<IllustService>()
             .queryIllustArtist(artistId, AppType.manga, currentPage, 10, 15)
-            .then((value) {
-          return value.data;
-        });
+            .then((value) => value.data);
       }
     } else if (jsonMode == 'followed') {
       if (!isManga) {
         return getIt<IllustService>()
             .queryIllustFollowed(userId, AppType.illust, currentPage, 10)
-            .then((value) {
-          return value.data;
-        });
+            .then((value) => value.data);
       } else {
         return getIt<IllustService>()
             .queryIllustFollowed(userId, AppType.manga, currentPage, 10)
-            .then((value) {
-          return value.data;
-        });
+            .then((value) => value.data);
       }
     } else if (jsonMode == 'bookmark') {
       if (!isManga) {
         return getIt<IllustService>()
             .queryIllustBookmark(userId, AppType.illust, currentPage, 10)
-            .then((value) {
-          return value.data;
-        });
+            .then((value) => value.data);
       } else {
         return getIt<IllustService>()
             .queryIllustBookmark(userId, AppType.manga, currentPage, 10)
-            .then((value) {
-          return value.data;
-        });
+            .then((value) => value.data);
       }
     } else if (jsonMode == 'spotlight') {
       return getIt<IllustService>()
           .queryIllustSpotlight(spotlightId)
-          .then((value) {
-        return value.data;
-      });
+          .then((value) => value.data);
     } else if (jsonMode == 'history') {
       return getIt<IllustService>()
           .queryIllustHistory(prefs.getInt('id').toString(), currentPage, 10)
-          .then((value) {
-        return value.data;
-      });
+          .then((value) => value.data);
     } else if (jsonMode == 'oldhistory') {
       return getIt<IllustService>()
           .queryIllustOldHistory(prefs.getInt('id').toString(), currentPage, 10)
-          .then((value) {
-        return value.data;
-      });
+          .then((value) => value.data);
     } else if (jsonMode == 'userdetail') {
       if (!isManga) {
         return getIt<IllustService>()
             .queryIllustBookmark(userId, AppType.illust, currentPage, 10)
-            .then((value) {
-          return value.data;
-        });
+            .then((value) => value.data);
       } else {
         url = '/users/$userId/bookmarked/manga?page=$currentPage&pageSize=10';
         return getIt<IllustService>()
             .queryIllustBookmark(userId, AppType.manga, currentPage, 10)
-            .then((value) {
-          return value.data;
-        });
+            .then((value) => value.data);
       }
     } else if (jsonMode == 'collection') {
       return getIt<IllustService>()
           .queryIllustCollection(collectionId, currentPage, 10)
-          .then((value) {
-        return value.data;
-      });
+          .then((value) => value.data);
     }
 
     // List list;
