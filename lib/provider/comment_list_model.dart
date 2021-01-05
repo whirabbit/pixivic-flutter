@@ -288,7 +288,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
       print('current page is $currentPage');
       try {
         loadComments(illustId, page: currentPage).then((value) {
-          if (value.length != 0) {
+          if (value != null) {
             commentList = commentList + value;
             notifyListeners();
             loadMoreAble = true;
@@ -306,9 +306,9 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   }
 
 //请求数据
-  loadComments(int illustId, {int page = 1}) async {
+  loadComments(int illustId, {int page = 1}) {
     return getIt<CommentService>()
-        .queryCommentInfo(AppType.illusts,illustId, page, 10)
+        .queryCommentInfo(AppType.illusts, illustId, page, 10)
         .then((value) {
       return value.data;
     });
