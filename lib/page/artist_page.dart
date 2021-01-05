@@ -6,7 +6,6 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:pixivic/function/dio_client.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:dio/dio.dart';
 
@@ -14,9 +13,10 @@ import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/widget/papp_bar.dart';
-import 'package:pixivic/biz/artist/service/artist_detail_service.dart';
+import 'package:pixivic/biz/artist_detail/service/artist_detail_service.dart';
 import 'package:pixivic/common/config/get_it_config.dart';
 import 'package:pixivic/common/do/artist_detail.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 class ArtistPage extends StatefulWidget {
   @override
@@ -231,7 +231,7 @@ class _ArtistPageState extends State<ArtistPage> {
     Response response;
     try {
       getIt<ArtistDetailService>()
-          .queryArtistInfo(int.parse(widget.artistId))
+          .queryArtistDetail(int.parse(widget.artistId))
           .then((result) {
         ArtistDetail artistDetail = result.data;
         print(artistDetail);

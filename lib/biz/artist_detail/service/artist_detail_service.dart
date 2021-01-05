@@ -10,8 +10,10 @@ class ArtistDetailService {
 
   ArtistDetailService(this._artistDetailRestClient);
 
-  Future<Result<ArtistDetail>> queryArtistInfo(int artistId) {
-    return _artistDetailRestClient.queryArtistDetailInfo(artistId).then((value) {
+  Future<Result<ArtistDetail>> queryArtistDetail(int artistId) {
+    return _artistDetailRestClient
+        .queryArtistDetailInfo(artistId)
+        .then((value) {
       value.data = ArtistDetail.fromJson(value.data);
       return value;
     });
