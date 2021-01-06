@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dio/dio.dart';
 
-import 'package:pixivic/biz/PixivSuggestions/service/pixiv_suggestions_service.dart';
+import 'package:pixivic/biz/PixivSuggestions/service/search_keywords_service.dart';
 import 'package:pixivic/common/config/get_it_config.dart';
-import 'package:pixivic/common/do/pixiv_suggestions.dart';
+import 'package:pixivic/common/do/search_keywords.dart';
 
 import 'package:pixivic/function/dio_client.dart';
 
@@ -22,7 +22,7 @@ class SuggestionBar extends StatefulWidget {
 
 class SuggestionBarState extends State<SuggestionBar> {
   String searchKeywords;
-  List<PixivSuggestions> suggestions;
+  List<SearchKeywords> suggestions;
 
   @override
   void initState() {
@@ -113,8 +113,8 @@ class SuggestionBarState extends State<SuggestionBar> {
     //     'https://pix.ipv4.host/keywords/$searchKeywords/suggestions';
 
     try {
-      return getIt<PixivSuggestionsService>()
-          .queryPixivSuggestions(searchKeywords)
+      return getIt<SearchKeywordsService>()
+          .querySearchKeywords(searchKeywords)
           .then((value) => value.data);
     } catch (e) {
       print(e);

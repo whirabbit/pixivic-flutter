@@ -5,6 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:pixivic/biz/PixivSuggestions/service/search_keywords_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/search_keywords.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
 
@@ -612,9 +615,14 @@ class PappBarState extends State<PappBar> {
 
   onTranslateThenSearch() async {
     try {
-      Response response = await dioPixivic
-          .get('/keywords/${searchController.text}/translations');
-      widget.searchFucntion(response.data['data']['keyword']);
+      getIt<SearchKeywordsService>()
+          .queryKeyWordsToTranslated(searchController.text)
+          .then((value) {
+        widget.searchFucntion(value.data.keyword);
+      });
+      // Response response = await dioPixivic
+      //     .get('/keywords/${searchController.text}/translations');
+      // widget.searchFucntion(response.data['data']['keyword']);
     } catch (e) {
       if (e.response.statusCode == 400) {
         BotToast.showSimpleNotification(title: e.response.data['message']);
