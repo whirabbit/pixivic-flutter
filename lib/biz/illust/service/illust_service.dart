@@ -24,79 +24,75 @@ class IllustService {
       this._wallpaperRestClient);
 
   processData(List data) {
-    List<Illust> illustList = [];
-    data.map((s) => Illust.fromJson(s)).forEach((e) {
-      illustList.add(e);
-    });
+    List<Illust> illustList = data.map((s) => Illust.fromJson(s)).toList();
     return illustList;
   }
 
-  Future<Result<List<Illust>>> queryIllustRank(
+  Future<List<Illust>> queryIllustRank(
       String date, String mode, int page, int pageSize) {
     return _rankRestClient
         .queryIllustRankInfo(date, mode, page, pageSize)
         .then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value;
+      return value.data;
     });
   }
 
-  Future<Result<List<Illust>>> querySearch(
-      String keyword, int page, int pageSize) {
+  Future<List<Illust>> querySearch(String keyword, int page, int pageSize) {
     return _searchRestClient
         .querySearchListInfo(keyword, page, pageSize)
         .then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value;
+      return value.data;
     });
   }
 
 //以图搜图
-  Future<Result<List<Illust>>> querySearchForPictures(String imageUrl) {
+  Future<List<Illust>> querySearchForPictures(String imageUrl) {
     return _searchRestClient.querySearchForPicturesInfo(imageUrl).then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value;
+      return value.data;
     });
   }
 
   //推荐收藏画作
-  Future<Result<List<Illust>>> queryRecommendCollectIllust(int userId) {
+  Future<List<Illust>> queryRecommendCollectIllust(int userId) {
     return _recommendedRestClient
         .queryRecommendCollectIllustInfo(userId)
         .then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value;
+      return value.data;
     });
   }
 
   //Id查画作
-  Future<Result<Illust>> querySearchIllustById(int illustId) {
+  Future<Illust> querySearchIllustById(int illustId) {
     return _illustRestClient.querySearchIllustByIdInfo(illustId).then((value) {
       if (value.data != null) value.data = Illust.fromJson(value.data);
-      return value;
+      return value.data;
     });
   }
 
 //关联画作
-  Future<Result<List<Illust>>> queryRelatedIllustList(
+  Future<List<Illust>> queryRelatedIllustList(
       num relatedId, int page, int pageSize) {
     return _illustRestClient
         .queryRelatedIllustListInfo(relatedId, page, pageSize)
         .then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value;
+      return value.data;
     });
   }
 
 //标签下画作列表
 
-  Future<Result<List<Illust>>> queryIllustUnderTagList(
+  Future<List<Illust>> queryIllustUnderTagList(
       int categotyId, int tagId, String type, double offset, int pageSize) {
     return _wallpaperRestClient
         .queryIllustUnderTagListInfo(categotyId, tagId, type, offset, pageSize)
         .then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value;
+      return value.data;
     });
   }
 }

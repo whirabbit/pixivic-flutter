@@ -115,7 +115,7 @@ class SuggestionBarState extends State<SuggestionBar> {
     try {
       return getIt<SearchService>()
           .queryPixivSearchSuggestions(searchKeywords)
-          .then((value) => value.data);
+          .then((value) => value);
     } catch (e) {
       print(e);
     }

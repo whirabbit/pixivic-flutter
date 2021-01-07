@@ -617,7 +617,7 @@ class PappBarState extends State<PappBar> {
       getIt<SearchService>()
           .queryKeyWordsToTranslatedResult(searchController.text)
           .then((value) {
-        widget.searchFucntion(value.data.keyword);
+        widget.searchFucntion(value.keyword);
       });
       // Response response = await dioPixivic
       //     .get('/keywords/${searchController.text}/translations');

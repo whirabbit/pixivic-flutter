@@ -228,7 +228,7 @@ class _ArtistPageState extends State<ArtistPage> {
       getIt<ArtistService>()
           .querySearchArtistById(int.parse(widget.artistId))
           .then((result) {
-        Artist artist = result.data;
+        Artist artist = result;
         // print(artistDetail);
         this.comment = artist.comment;
         this.urlTwitter = artist.twitterUrl;
@@ -240,7 +240,7 @@ class _ArtistPageState extends State<ArtistPage> {
       getIt<ArtistService>()
           .queryArtistIllustSummary(int.parse(widget.artistId))
           .then((value) {
-        ArtistSummary artistSummary = value.data;
+        ArtistSummary artistSummary = value;
         this.numOfIllust = artistSummary.illustSum.toString();
         this.numOfManga = artistSummary.mangaSum.toString();
         this.tabs = <Tab>[

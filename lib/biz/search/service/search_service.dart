@@ -11,52 +11,50 @@ class SearchService {
   SearchService(this._searchRestClient);
 
   processData(List data) {
-    List<SearchKeywords> searchKeywordsList = [];
-    data.map((s) => SearchKeywords.fromJson(s)).forEach((e) {
-      searchKeywordsList.add(e);
-    });
+    List<SearchKeywords> searchKeywordsList =
+        data.map((s) => SearchKeywords.fromJson(s)).toList();
     return searchKeywordsList;
   }
 
 //搜索建议
-  Future<Result<List<SearchKeywords>>> querySearchSuggestions(
+  Future<List<SearchKeywords>> querySearchSuggestions(
     String keyword,
   ) {
     return _searchRestClient.querySearchSuggestionsInfo(keyword).then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value;
+      return value.data;
     });
   }
 
-  Future<Result<List<SearchKeywords>>> queryPixivSearchSuggestions(
+  Future<List<SearchKeywords>> queryPixivSearchSuggestions(
     String keyword,
   ) {
     return _searchRestClient
         .queryPixivSearchSuggestionsInfo(keyword)
         .then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value;
+      return value.data;
     });
   }
 
-  Future<Result<SearchKeywords>> queryKeyWordsToTranslatedResult(
+  Future<SearchKeywords> queryKeyWordsToTranslatedResult(
     String keyword,
   ) {
     return _searchRestClient
         .queryKeyWordsToTranslatedResultInfo(keyword)
         .then((value) {
       if (value.data != null) value.data = SearchKeywords.fromJson(value.data);
-      return value;
+      return value.data;
     });
   }
 
 //类型不定 不可用
-  Future<Result<List<SearchKeywords>>> queryHotSearchTags(
+  Future<List<SearchKeywords>> queryHotSearchTags(
     String date,
   ) {
     return _searchRestClient.queryHotSearchTagsInfo(date).then((value) {
       if (value.data != null) value.data = SearchKeywords.fromJson(value.data);
-      return value;
+      return value.data;
     });
   }
 }

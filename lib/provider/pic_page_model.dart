@@ -262,88 +262,88 @@ class PicPageModel with ChangeNotifier {
     if (jsonMode == 'home') {
       return getIt<IllustService>()
           .queryIllustRank(picDate, picMode, currentPage, 10)
-          .then((value) => value.data);
+          .then((value) => value);
     } else if (jsonMode == 'search') {
       return getIt<IllustService>()
           .querySearch(searchKeywords, currentPage, 10)
-          .then((value) => value.data);
+          .then((value) => value);
     } else if (jsonMode == 'related') {
       return getIt<IllustService>()
           .queryRelatedIllustList(relatedId, currentPage, 10)
-          .then((value) => value.data);
+          .then((value) => value);
     } else if (jsonMode == 'artist') {
       if (!isManga) {
         return getIt<ArtistService>()
             .queryArtistIllustList(
                 int.parse(artistId), AppType.illust, currentPage, 10, 15)
-            .then((value) => value.data);
+            .then((value) => value);
       } else {
         return getIt<ArtistService>()
             .queryArtistIllustList(
                 int.parse(artistId), AppType.manga, currentPage, 10, 15)
-            .then((value) => value.data);
+            .then((value) => value);
       }
     } else if (jsonMode == 'followed') {
       if (!isManga) {
         return getIt<UserService>()
             .queryUserFollowedLatestIllustList(
                 int.parse(userId), AppType.illust, currentPage, 10)
-            .then((value) => value.data);
+            .then((value) => value);
       } else {
         return getIt<UserService>()
             .queryUserFollowedLatestIllustList(
                 int.parse(userId), AppType.manga, currentPage, 10)
-            .then((value) => value.data);
+            .then((value) => value);
       }
     } else if (jsonMode == 'bookmark') {
       if (!isManga) {
         return getIt<UserService>()
             .queryUserCollectIllustList(
                 int.parse(userId), AppType.illust, currentPage, 10)
-            .then((value) => value.data);
+            .then((value) => value);
       } else {
         return getIt<UserService>()
             .queryUserCollectIllustList(
                 int.parse(userId), AppType.manga, currentPage, 10)
-            .then((value) => value.data);
+            .then((value) => value);
       }
     } else if (jsonMode == 'spotlight') {
       return getIt<SpotlightService>()
           .querySpotlightIllustList(int.parse(spotlightId))
-          .then((value) => value.data);
+          .then((value) => value);
     } else if (jsonMode == 'history') {
       return getIt<UserService>()
           .queryHistoryList(prefs.getInt('id').toString(), currentPage, 10)
-          .then((value) => value.data);
+          .then((value) => value);
     } else if (jsonMode == 'oldhistory') {
       return getIt<UserService>()
           .queryOldHistoryList(prefs.getInt('id').toString(), currentPage, 10)
-          .then((value) => value.data);
+          .then((value) => value);
     } else if (jsonMode == 'userdetail') {
       if (!isManga) {
         return getIt<UserService>()
             .queryUserCollectIllustList(
                 int.parse(userId), AppType.illust, currentPage, 10)
-            .then((value) => value.data);
+            .then((value) => value);
       } else {
         url = '/users/$userId/bookmarked/manga?page=$currentPage&pageSize=10';
         return getIt<UserService>()
             .queryUserCollectIllustList(
                 int.parse(userId), AppType.manga, currentPage, 10)
-            .then((value) => value.data);
+            .then((value) => value);
       }
     } else if (jsonMode == 'collection') {
       return getIt<UserService>()
           .queryCollectionList(int.parse(collectionId), currentPage, 10)
-          .then((value) => value.data);
+          .then((value) => value);
     }
 
     // List list;
     //
     // try {
     //   Response response = await dioPixivic.get(url);
-    //   // print(response.data['data']);
-    //   list = response.data['data'];
+    //   // print(response['data']);
+    //   list = response['data'];
     // } catch (e) {
     //   if (e.response.statusCode == 400)
     //     BotToast.showSimpleNotification(title: '请登录后再重新加载画作');

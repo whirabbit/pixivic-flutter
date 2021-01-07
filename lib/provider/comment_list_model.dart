@@ -309,9 +309,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   loadComments(int illustId, {int page = 1}) {
     return getIt<CommentService>()
         .queryGetComment(AppType.illusts, illustId, page, 10)
-        .then((value) {
-      return value.data;
-    });
+        .then((value) => value);
     // String url = '/illusts/$illustId/comments?page=$page&pageSize=10';
     // Response response = await dioPixivic.get(url);
     // if (response.statusCode == 200 && response.data['data'] != null) {

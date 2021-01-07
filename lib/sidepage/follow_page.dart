@@ -202,8 +202,8 @@ class _FollowPageState extends State<FollowPage> {
       return getIt<UserService>()
           .queryFollowedWithRecentlyIllusts(prefs.getInt('id'), currentPage, 30)
           .then((value) {
-        if (value.data.length < 30) loadMoreAble = false;
-        return value.data;
+        if (value.length < 30) loadMoreAble = false;
+        return value;
       });
 
       // Response response = await dioPixivic.get(url);

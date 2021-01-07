@@ -195,8 +195,7 @@ class _ArtistListPageState extends State<ArtistListPage> {
                   prefs.getInt('sanityLevel')
               ? GestureDetector(
                   onTap: () {
-                    _routeToPicDetailPage(
-                        picData.recentlyIllustrations[item] as Illust);
+                    _routeToPicDetailPage(picData.recentlyIllustrations[item]);
                   },
                   child: Image.network(
                     picData
@@ -292,19 +291,19 @@ class _ArtistListPageState extends State<ArtistListPage> {
           '/artists?page=$currentPage&artistName=${widget.searchKeyWords}&pageSize=30';
       return getIt<ArtistService>()
           .querySearchArtist(widget.searchKeyWords, currentPage, 30)
-          .then((value) => value.data);
+          .then((value) => value);
     } else if (widget.mode == 'follow') {
       url =
           '/users/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
       return getIt<UserService>()
           .queryFollowedWithRecentlyIllusts(prefs.getInt('id'), currentPage, 30)
-          .then((value) => value.data);
+          .then((value) => value);
     } else if (widget.mode == 'userfollow') {
       url =
           '/users/${widget.userId}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
       return getIt<UserService>()
           .queryFollowedWithRecentlyIllusts(widget.userId, currentPage, 30)
-          .then((value) => value.data);
+          .then((value) => value);
     }
 
     // try {

@@ -11,20 +11,18 @@ class CommentService {
   CommentService(this._commentRestClient);
 
   processData(List data) {
-    List<Comment> commentList = [];
-    data.map((s) => Comment.fromJson(s)).forEach((e) {
-      commentList.add(e);
-    });
+    List<Comment> commentList = data.map((s) => Comment.fromJson(s)).toList();
+
     return commentList;
   }
 
-  Future<Result<List<Comment>>> queryGetComment(
+  Future<List<Comment>> queryGetComment(
       String commentAppType, int illustId, int page, int pageSize) {
     return _commentRestClient
         .queryGetCommentInfo(commentAppType, illustId, page, pageSize)
         .then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value;
+      return value.data;
     });
   }
 }
