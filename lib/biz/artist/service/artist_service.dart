@@ -29,14 +29,14 @@ class ArtistService {
             artistId, type, page, pageSize, maxSanityLevel)
         .then((value) {
       if (value.data != null) value.data = processIllustData(value.data);
-      return value.data;
+      return value.data as List<Illust>;
     });
   }
 
   Future<Artist> querySearchArtistById(int artistId) {
     return _artistRestClient.querySearchArtistByIdInfo(artistId).then((value) {
       if (value.data != null) value.data = Artist.fromJson(value.data);
-      return value.data;
+      return value.data as Artist;
     });
   }
 
@@ -45,7 +45,7 @@ class ArtistService {
         .queryArtistIllustSummaryInfo(artistId)
         .then((value) {
       if (value.data != null) value.data = ArtistSummary.fromJson(value.data);
-      return value.data;
+      return value.data as ArtistSummary;
     });
   }
 
@@ -55,7 +55,7 @@ class ArtistService {
         .querySearchArtistInfo(artistName, page, pageSize)
         .then((value) {
       if (value.data != null) value.data = processArtistData(value.data);
-      return value.data;
+      return value.data as List<Artist>;
     });
   }
 }

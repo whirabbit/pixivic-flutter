@@ -257,7 +257,7 @@ class PicPageModel with ChangeNotifier {
     }
   }
 
-  getJsonList({int currentPage = 1}) async {
+  getJsonList({int currentPage = 1}) {
     // 获取所有的图片数据
     if (jsonMode == 'home') {
       return getIt<IllustService>()

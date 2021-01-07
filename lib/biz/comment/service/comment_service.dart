@@ -22,7 +22,7 @@ class CommentService {
         .queryGetCommentInfo(commentAppType, illustId, page, pageSize)
         .then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value.data;
+      return value.data as List<Comment>;
     });
   }
 }

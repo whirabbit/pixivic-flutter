@@ -22,7 +22,7 @@ class UserBaseService {
         .queryUserLoginInfo(vid, code, body)
         .then((value) {
       if (value.data != null) value.data = UserInfo.fromJson(value.data);
-      return value.data;
+      return value.data as UserInfo;
     });
   }
 
@@ -32,7 +32,7 @@ class UserBaseService {
         .then((value) {
       if (value.data != null) value.data = UserInfo.fromJson(value.data);
       BotToast.showSimpleNotification(title: TextZhLoginPage().registerSucceed);
-      return value.data;
+      return value.data as String;
     }).catchError((Object obj) {
       switch (obj.runtimeType) {
         case DioError:

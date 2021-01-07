@@ -43,7 +43,7 @@ class IllustService {
         .querySearchListInfo(keyword, page, pageSize)
         .then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value.data;
+      return value.data as List<Illust>;
     });
   }
 
@@ -51,7 +51,7 @@ class IllustService {
   Future<List<Illust>> querySearchForPictures(String imageUrl) {
     return _searchRestClient.querySearchForPicturesInfo(imageUrl).then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value.data;
+      return value.data as List<Illust>;
     });
   }
 
@@ -61,7 +61,7 @@ class IllustService {
         .queryRecommendCollectIllustInfo(userId)
         .then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value.data;
+      return value.data as List<Illust>;
     });
   }
 
@@ -69,7 +69,7 @@ class IllustService {
   Future<Illust> querySearchIllustById(int illustId) {
     return _illustRestClient.querySearchIllustByIdInfo(illustId).then((value) {
       if (value.data != null) value.data = Illust.fromJson(value.data);
-      return value.data;
+      return value.data as Illust;
     });
   }
 
@@ -80,7 +80,7 @@ class IllustService {
         .queryRelatedIllustListInfo(relatedId, page, pageSize)
         .then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value.data;
+      return value.data as List<Illust>;
     });
   }
 
@@ -92,7 +92,7 @@ class IllustService {
         .queryIllustUnderTagListInfo(categotyId, tagId, type, offset, pageSize)
         .then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value.data;
+      return value.data as List<Illust>;
     });
   }
 }

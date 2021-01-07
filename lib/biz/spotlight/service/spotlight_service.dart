@@ -27,7 +27,7 @@ class SpotlightService {
         .querySpotlightListInfo(page, pageSize)
         .then((value) {
       if (value.data != null) value.data = processSpotlightData(value.data);
-      return value.data;
+      return value.data as List<Spotlight>;
     });
   }
 
@@ -36,7 +36,7 @@ class SpotlightService {
         .querySpotlightIllustListInfo(spotlightId)
         .then((value) {
       if (value.data != null) value.data = processIllustData(value.data);
-      return value.data;
+      return value.data as List<Illust>;
     });
   }
 }

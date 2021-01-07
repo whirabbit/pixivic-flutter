@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 
 import 'package:pixivic/common/do/artist.dart';
 import 'package:pixivic/common/do/illust.dart';
+import 'package:pixivic/common/do/result.dart';
 import 'package:pixivic/http/client/user_rest_client.dart';
 import 'package:bot_toast/bot_toast.dart';
 
@@ -35,7 +36,7 @@ class UserService {
         .queryFollowedWithRecentlyIllustsInfo(illustId, page, pageSize)
         .then((value) {
       if (value.data != null) value.data = processArtistData(value.data);
-      return value.data;
+      return value.data as List<Artist>;
     });
   }
 
@@ -47,7 +48,7 @@ class UserService {
         .then((value) {
       if (value.data != null)
         value.data = processIllustData(
-          value.data,
+          value.data as List<Illust>,
         );
       return value.data;
     }).catchError((Object obj) {
@@ -57,6 +58,7 @@ class UserService {
           break;
         default:
       }
+      return;
     });
   }
 
@@ -67,7 +69,7 @@ class UserService {
         .queryUserCollectIllustListInfo(userId, type, page, pageSize)
         .then((value) {
       if (value.data != null) value.data = processIllustData(value.data);
-      return value.data;
+      return value.data as List<Illust>;
     }).catchError((Object obj) {
       switch (obj.runtimeType) {
         case DioError:
@@ -83,7 +85,7 @@ class UserService {
         .queryHistoryListInfo(userId, page, pageSize)
         .then((value) {
       if (value.data != null) value.data = processIllustData(value.data);
-      return value.data;
+      return value.data as List<Illust>;
     }).catchError((Object obj) {
       switch (obj.runtimeType) {
         case DioError:
@@ -100,7 +102,7 @@ class UserService {
         .queryOldHistoryListInfo(userId, page, pageSize)
         .then((value) {
       if (value.data != null) value.data = processIllustData(value.data);
-      return value.data;
+      return value.data as List<Illust>;
     }).catchError((Object obj) {
       switch (obj.runtimeType) {
         case DioError:
@@ -117,7 +119,7 @@ class UserService {
         .queryCollectionListInfo(collectionId, page, pageSize)
         .then((value) {
       if (value.data != null) value.data = processIllustData(value.data);
-      return value.data;
+      return value.data as List<Illust>;
     });
   }
 }

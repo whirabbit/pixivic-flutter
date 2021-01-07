@@ -22,7 +22,7 @@ class SearchService {
   ) {
     return _searchRestClient.querySearchSuggestionsInfo(keyword).then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value.data;
+      return value.data as List<SearchKeywords>;
     });
   }
 
@@ -33,7 +33,7 @@ class SearchService {
         .queryPixivSearchSuggestionsInfo(keyword)
         .then((value) {
       if (value.data != null) value.data = processData(value.data);
-      return value.data;
+      return value.data as List<SearchKeywords>;
     });
   }
 
@@ -44,7 +44,7 @@ class SearchService {
         .queryKeyWordsToTranslatedResultInfo(keyword)
         .then((value) {
       if (value.data != null) value.data = SearchKeywords.fromJson(value.data);
-      return value.data;
+      return value.data as SearchKeywords;
     });
   }
 
@@ -54,7 +54,7 @@ class SearchService {
   ) {
     return _searchRestClient.queryHotSearchTagsInfo(date).then((value) {
       if (value.data != null) value.data = SearchKeywords.fromJson(value.data);
-      return value.data;
+      return value.data as List<SearchKeywords>;
     });
   }
 }
