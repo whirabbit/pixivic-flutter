@@ -11,9 +11,9 @@ pubspec.lock
 # If you don't generate documentation locally you can remove this line.
 doc/api/
 android/key.properties
-android/app/google-services.json
-ios/Runner/GoogleService-Info.plist
-lib/data/bugly.dart
+
+
+
 
 .idea/
 .flutter-plugins
