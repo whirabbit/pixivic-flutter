@@ -1,9 +1,10 @@
 import 'package:injectable/injectable.dart';
+import 'package:dio/dio.dart';
 
 import 'package:pixivic/common/do/artist.dart';
 import 'package:pixivic/common/do/illust.dart';
-import 'package:pixivic/common/do/result.dart';
 import 'package:pixivic/http/client/user_rest_client.dart';
+import 'package:bot_toast/bot_toast.dart';
 
 @lazySingleton
 class UserService {
@@ -19,6 +20,13 @@ class UserService {
   processArtistData(List data) {
     List<Artist> artistList = data.map((s) => Artist.fromJson(s)).toList();
     return artistList;
+  }
+
+  processDioError(obj) {
+    final res = (obj as DioError).response;
+    if (res.statusCode == 400)
+      BotToast.showSimpleNotification(title: '请登录后再重新加载画作');
+    BotToast.showSimpleNotification(title: '获取画作信息失败，请检查网络');
   }
 
   Future<List<Artist>> queryFollowedWithRecentlyIllusts(
@@ -42,6 +50,13 @@ class UserService {
           value.data,
         );
       return value.data;
+    }).catchError((Object obj) {
+      switch (obj.runtimeType) {
+        case DioError:
+          processDioError(obj);
+          break;
+        default:
+      }
     });
   }
 
@@ -53,6 +68,13 @@ class UserService {
         .then((value) {
       if (value.data != null) value.data = processIllustData(value.data);
       return value.data;
+    }).catchError((Object obj) {
+      switch (obj.runtimeType) {
+        case DioError:
+          processDioError(obj);
+          break;
+        default:
+      }
     });
   }
 
@@ -62,6 +84,13 @@ class UserService {
         .then((value) {
       if (value.data != null) value.data = processIllustData(value.data);
       return value.data;
+    }).catchError((Object obj) {
+      switch (obj.runtimeType) {
+        case DioError:
+          processDioError(obj);
+          break;
+        default:
+      }
     });
   }
 
@@ -72,6 +101,13 @@ class UserService {
         .then((value) {
       if (value.data != null) value.data = processIllustData(value.data);
       return value.data;
+    }).catchError((Object obj) {
+      switch (obj.runtimeType) {
+        case DioError:
+          processDioError(obj);
+          break;
+        default:
+      }
     });
   }
 
