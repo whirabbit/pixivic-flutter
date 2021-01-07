@@ -1,9 +1,9 @@
-
-
 import 'package:json_annotation/json_annotation.dart';
 
 import 'illust.dart';
+
 part 'artist.g.dart';
+
 @JsonSerializable()
 //带有三张图片的画师
 class Artist {
@@ -25,74 +25,26 @@ class Artist {
 
   Artist(
       {this.id,
-        this.name,
-        this.account,
-        this.avatar,
-        this.comment,
-        this.gender,
-        this.birthDay,
-        this.region,
-        this.webPage,
-        this.twitterAccount,
-        this.twitterUrl,
-        this.totalFollowUsers,
-        this.totalIllustBookmarksPublic,
-        this.isFollowed,
-        this.recentlyIllustrations});
+      this.name,
+      this.account,
+      this.avatar,
+      this.comment,
+      this.gender,
+      this.birthDay,
+      this.region,
+      this.webPage,
+      this.twitterAccount,
+      this.twitterUrl,
+      this.totalFollowUsers,
+      this.totalIllustBookmarksPublic,
+      this.isFollowed,
+      this.recentlyIllustrations});
 
- factory Artist.fromJson(Map<String, dynamic> json)=>_$ArtistFromJson(json);
-  Map<String, dynamic> toJson()=>_$ArtistToJson(this);
+  factory Artist.fromJson(Map<String, dynamic> json) => _$ArtistFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ArtistToJson(this);
 }
-// @JsonSerializable()
-// class Illust {
-//   int id;
-//   double artistId;
-//   String title;
-//   String type;
-//   String caption;
-//   ArtistPreView artistPreView;
-//   List<Tags> tags;
-//   List<ImageUrls> imageUrls;
-//   List<String> tools;
-//   DateTime createDate;
-//   int pageCount;
-//   double width;
-//   double height;
-//   double sanityLevel;
-//   double restrict;
-//   double totalView;
-//   double totalBookmarks;
-//   bool isLiked;
-//   double xrestrict;
-//   String link;
-//   int adId;
-//
-//   Illust(
-//       {this.id,
-//         this.artistId,
-//         this.title,
-//         this.type,
-//         this.caption,
-//         this.artistPreView,
-//         this.tags,
-//         this.imageUrls,
-//         this.tools,
-//         this.createDate,
-//         this.pageCount,
-//         this.width,
-//         this.height,
-//         this.sanityLevel,
-//         this.restrict,
-//         this.totalView,
-//         this.totalBookmarks,
-//         this.xrestrict,
-//         this.isLiked,this.link,this.adId});
-//
-//   factory Illust.fromJson(Map<String, dynamic> json)=>_$RecentlyIllustrationsFromJson(json);
-//
-//
-//   Map<String, dynamic> toJson()=>_$RecentlyIllustrationsToJson(this);
-// }
+
 @JsonSerializable()
 class ArtistPreView {
   int id;
@@ -104,11 +56,12 @@ class ArtistPreView {
   ArtistPreView(
       {this.id, this.name, this.account, this.avatar, this.isFollowed});
 
-  factory ArtistPreView.fromJson(Map<String, dynamic> json)=>_$ArtistPreViewFromJson(json);
+  factory ArtistPreView.fromJson(Map<String, dynamic> json) =>
+      _$ArtistPreViewFromJson(json);
 
-
-  Map<String, dynamic> toJson()=>_$ArtistPreViewToJson(this);
+  Map<String, dynamic> toJson() => _$ArtistPreViewToJson(this);
 }
+
 @JsonSerializable()
 class Tags {
   String name;
@@ -117,10 +70,11 @@ class Tags {
 
   Tags({this.name, this.translatedName, this.id});
 
-  factory Tags.fromJson(Map<String, dynamic> json)=>_$TagsFromJson(json);
+  factory Tags.fromJson(Map<String, dynamic> json) => _$TagsFromJson(json);
 
-  Map<String, dynamic> toJson()=>_$TagsToJson(this);
+  Map<String, dynamic> toJson() => _$TagsToJson(this);
 }
+
 @JsonSerializable()
 class ImageUrls {
   String squareMedium;
@@ -130,8 +84,21 @@ class ImageUrls {
 
   ImageUrls({this.squareMedium, this.medium, this.large, this.original});
 
-  factory ImageUrls.fromJson(Map<String, dynamic> json)=>_$ImageUrlsFromJson(json);
+  factory ImageUrls.fromJson(Map<String, dynamic> json) =>
+      _$ImageUrlsFromJson(json);
 
+  Map<String, dynamic> toJson() => _$ImageUrlsToJson(this);
+}
 
-  Map<String, dynamic> toJson()=>_$ImageUrlsToJson(this);
+@JsonSerializable()
+class ArtistSummary {
+  int illustSum;
+  int mangaSum;
+
+  ArtistSummary({this.illustSum, this.mangaSum});
+
+  factory ArtistSummary.fromJson(Map<String, dynamic> json) =>
+      _$ArtistSummaryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ArtistSummaryToJson(this);
 }

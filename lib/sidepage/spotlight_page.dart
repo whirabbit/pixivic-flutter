@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:lottie/lottie.dart';
-import 'package:dio/dio.dart';
 
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/data/texts.dart';
-import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/common/do/spotlight.dart';
+import 'package:pixivic/biz/spotlight/service/spotlight_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
 
 class SpotlightPage extends StatefulWidget {
   @override
@@ -19,7 +20,7 @@ class _SpotlightPageState extends State<SpotlightPage> {
   int currentPage;
   bool loadMoreAble;
   TextZhSpotlightPage text = TextZhSpotlightPage();
-  List spotlightList;
+  List<Spotlight> spotlightList;
   ScrollController scrollController;
   int spotlightTotalNum;
 
@@ -61,7 +62,7 @@ class _SpotlightPageState extends State<SpotlightPage> {
   }
 
   Widget cardCell(int index) {
-    Map data = spotlightList[index];
+    Spotlight data = spotlightList[index];
     return Container(
       padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
       child: Card(
@@ -77,7 +78,7 @@ class _SpotlightPageState extends State<SpotlightPage> {
                   Stack(
                     children: <Widget>[
                       Image.network(
-                        data['thumbnail'],
+                        data.thumbnail,
                         headers: {'Referer': 'https://app-api.pixiv.net'},
                         fit: BoxFit.fitWidth,
                         width: ScreenUtil().setWidth(300),
@@ -92,7 +93,7 @@ class _SpotlightPageState extends State<SpotlightPage> {
                           color: Colors.black45,
                           padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
                           child: Text(
-                            data['title'],
+                            data.title,
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
@@ -115,7 +116,7 @@ class _SpotlightPageState extends State<SpotlightPage> {
                               width: ScreenUtil().setWidth(50),
                               height: ScreenUtil().setHeight(25),
                               child: Text(
-                                data['subcategoryLabel'],
+                                data.subcategoryLabel,
                                 style: TextStyle(color: Colors.white),
                               ),
                             )),
@@ -123,7 +124,7 @@ class _SpotlightPageState extends State<SpotlightPage> {
                           right: ScreenUtil().setWidth(5),
                           top: ScreenUtil().setHeight(13),
                           child: Text(
-                            data['publishDate'],
+                            data.publishDate,
                             style:
                                 TextStyle(fontSize: ScreenUtil().setHeight(12)),
                           ),
@@ -139,7 +140,7 @@ class _SpotlightPageState extends State<SpotlightPage> {
               color: Colors.transparent,
               child: InkWell(
                 onTap: () {
-                  _openPicPage(data['id'].toString(), data['title']);
+                  _openPicPage(data.id.toString(), data.title);
                 },
               ),
             ))
@@ -153,10 +154,16 @@ class _SpotlightPageState extends State<SpotlightPage> {
     String url = '/spotlights?page=$currentPage&pageSize=30';
 
     try {
-      Response response = await dioPixivic.get(url);
-      List jsonList = response.data['data'];
-      if (jsonList.length < 30) loadMoreAble = false;
-      return (jsonList);
+      return getIt<SpotlightService>()
+          .querySpotlightList(currentPage, 30)
+          .then((value) {
+        if (value.data.length < 30) loadMoreAble = false;
+        return value.data;
+      });
+      // Response response = await dioPixivic.get(url);
+      // List jsonList = response.data['data'];
+      // if (jsonList.length < 30) loadMoreAble = false;
+      // return (jsonList);
     } catch (e) {
       BotToast.showSimpleNotification(title: text.httpLoadError);
       return [];

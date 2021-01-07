@@ -14,6 +14,9 @@ import 'package:pixivic/biz/illust/service/illust_service.dart';
 import 'package:pixivic/common/config/get_it_config.dart';
 import 'package:pixivic/common/do/illust.dart';
 import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/biz/artist/service/artist_service.dart';
+import 'package:pixivic/biz/spotlight/service/spotlight_service.dart';
+import 'package:pixivic/biz/user/service/user_service.dart';
 import 'package:pixivic/function/dio_client.dart';
 
 class PicPageModel with ChangeNotifier {
@@ -262,68 +265,76 @@ class PicPageModel with ChangeNotifier {
           .then((value) => value.data);
     } else if (jsonMode == 'search') {
       return getIt<IllustService>()
-          .queryIllustSearch(searchKeywords, currentPage, 10)
+          .querySearch(searchKeywords, currentPage, 10)
           .then((value) => value.data);
     } else if (jsonMode == 'related') {
       return getIt<IllustService>()
-          .queryIllustRelated(relatedId, currentPage, 10)
+          .queryRelatedIllustList(relatedId, currentPage, 10)
           .then((value) => value.data);
     } else if (jsonMode == 'artist') {
       if (!isManga) {
-        return getIt<IllustService>()
-            .queryIllustArtist(artistId, AppType.illust, currentPage, 10, 15)
+        return getIt<ArtistService>()
+            .queryArtistIllustList(
+                int.parse(artistId), AppType.illust, currentPage, 10, 15)
             .then((value) => value.data);
       } else {
-        return getIt<IllustService>()
-            .queryIllustArtist(artistId, AppType.manga, currentPage, 10, 15)
+        return getIt<ArtistService>()
+            .queryArtistIllustList(
+                int.parse(artistId), AppType.manga, currentPage, 10, 15)
             .then((value) => value.data);
       }
     } else if (jsonMode == 'followed') {
       if (!isManga) {
-        return getIt<IllustService>()
-            .queryIllustFollowed(userId, AppType.illust, currentPage, 10)
+        return getIt<UserService>()
+            .queryUserFollowedLatestIllustList(
+                int.parse(userId), AppType.illust, currentPage, 10)
             .then((value) => value.data);
       } else {
-        return getIt<IllustService>()
-            .queryIllustFollowed(userId, AppType.manga, currentPage, 10)
+        return getIt<UserService>()
+            .queryUserFollowedLatestIllustList(
+                int.parse(userId), AppType.manga, currentPage, 10)
             .then((value) => value.data);
       }
     } else if (jsonMode == 'bookmark') {
       if (!isManga) {
-        return getIt<IllustService>()
-            .queryIllustBookmark(userId, AppType.illust, currentPage, 10)
+        return getIt<UserService>()
+            .queryUserCollectIllustList(
+                int.parse(userId), AppType.illust, currentPage, 10)
             .then((value) => value.data);
       } else {
-        return getIt<IllustService>()
-            .queryIllustBookmark(userId, AppType.manga, currentPage, 10)
+        return getIt<UserService>()
+            .queryUserCollectIllustList(
+                int.parse(userId), AppType.manga, currentPage, 10)
             .then((value) => value.data);
       }
     } else if (jsonMode == 'spotlight') {
-      return getIt<IllustService>()
-          .queryIllustSpotlight(spotlightId)
+      return getIt<SpotlightService>()
+          .querySpotlightIllustList(int.parse(spotlightId))
           .then((value) => value.data);
     } else if (jsonMode == 'history') {
-      return getIt<IllustService>()
-          .queryIllustHistory(prefs.getInt('id').toString(), currentPage, 10)
+      return getIt<UserService>()
+          .queryHistoryList(prefs.getInt('id').toString(), currentPage, 10)
           .then((value) => value.data);
     } else if (jsonMode == 'oldhistory') {
-      return getIt<IllustService>()
-          .queryIllustOldHistory(prefs.getInt('id').toString(), currentPage, 10)
+      return getIt<UserService>()
+          .queryOldHistoryList(prefs.getInt('id').toString(), currentPage, 10)
           .then((value) => value.data);
     } else if (jsonMode == 'userdetail') {
       if (!isManga) {
-        return getIt<IllustService>()
-            .queryIllustBookmark(userId, AppType.illust, currentPage, 10)
+        return getIt<UserService>()
+            .queryUserCollectIllustList(
+                int.parse(userId), AppType.illust, currentPage, 10)
             .then((value) => value.data);
       } else {
         url = '/users/$userId/bookmarked/manga?page=$currentPage&pageSize=10';
-        return getIt<IllustService>()
-            .queryIllustBookmark(userId, AppType.manga, currentPage, 10)
+        return getIt<UserService>()
+            .queryUserCollectIllustList(
+                int.parse(userId), AppType.manga, currentPage, 10)
             .then((value) => value.data);
       }
     } else if (jsonMode == 'collection') {
-      return getIt<IllustService>()
-          .queryIllustCollection(collectionId, currentPage, 10)
+      return getIt<UserService>()
+          .queryCollectionList(int.parse(collectionId), currentPage, 10)
           .then((value) => value.data);
     }
 

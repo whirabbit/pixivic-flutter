@@ -18,10 +18,10 @@ class CommentService {
     return commentList;
   }
 
-  Future<Result<List<Comment>>> queryCommentInfo(
-      String illusts, int illustId, int page, int pageSize) {
+  Future<Result<List<Comment>>> queryGetComment(
+      String commentAppType, int illustId, int page, int pageSize) {
     return _commentRestClient
-        .queryCommentInfo(illusts, illustId, page, pageSize)
+        .queryGetCommentInfo(commentAppType, illustId, page, pageSize)
         .then((value) {
       if (value.data != null) value.data = processData(value.data);
       return value;

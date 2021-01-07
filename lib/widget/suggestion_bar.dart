@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dio/dio.dart';
 
-import 'package:pixivic/biz/PixivSuggestions/service/search_keywords_service.dart';
+import 'package:pixivic/biz/search/service/search_service.dart';
 import 'package:pixivic/common/config/get_it_config.dart';
 import 'package:pixivic/common/do/search_keywords.dart';
 
@@ -113,8 +113,8 @@ class SuggestionBarState extends State<SuggestionBar> {
     //     'https://pix.ipv4.host/keywords/$searchKeywords/suggestions';
 
     try {
-      return getIt<SearchKeywordsService>()
-          .querySearchKeywords(searchKeywords)
+      return getIt<SearchService>()
+          .queryPixivSearchSuggestions(searchKeywords)
           .then((value) => value.data);
     } catch (e) {
       print(e);

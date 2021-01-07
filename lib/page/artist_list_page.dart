@@ -5,9 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:dio/dio.dart';
-import 'package:pixivic/biz/artist/service/artist_service.dart';
-import 'package:pixivic/common/config/get_it_config.dart';
-import 'package:pixivic/common/do/artist.dart';
 
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
@@ -16,6 +13,10 @@ import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/function/dio_client.dart';
 import 'package:pixivic/common/do/illust.dart';
+import 'package:pixivic/biz/artist/service/artist_service.dart';
+import 'package:pixivic/biz/user/service/user_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/artist.dart';
 
 class ArtistListPage extends StatefulWidget {
   @override
@@ -290,21 +291,19 @@ class _ArtistListPageState extends State<ArtistListPage> {
       url =
           '/artists?page=$currentPage&artistName=${widget.searchKeyWords}&pageSize=30';
       return getIt<ArtistService>()
-          .queryArtistSearch(widget.searchKeyWords, currentPage, 30)
+          .querySearchArtist(widget.searchKeyWords, currentPage, 30)
           .then((value) => value.data);
     } else if (widget.mode == 'follow') {
       url =
           '/users/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
-      return getIt<ArtistService>()
-          .queryArtistFollowedWithRecentlyIllusts(
-              prefs.getInt('id'), currentPage, 30)
+      return getIt<UserService>()
+          .queryFollowedWithRecentlyIllusts(prefs.getInt('id'), currentPage, 30)
           .then((value) => value.data);
     } else if (widget.mode == 'userfollow') {
       url =
           '/users/${widget.userId}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
-      return getIt<ArtistService>()
-          .queryArtistFollowedWithRecentlyIllusts(
-              widget.userId, currentPage, 30)
+      return getIt<UserService>()
+          .queryFollowedWithRecentlyIllusts(widget.userId, currentPage, 30)
           .then((value) => value.data);
     }
 

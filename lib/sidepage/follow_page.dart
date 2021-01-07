@@ -12,6 +12,10 @@ import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/function/dio_client.dart';
 import 'package:pixivic/common/do/illust.dart';
+import 'package:pixivic/biz/user/service/user_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+
+//TODO 页面没有使用
 
 class FollowPage extends StatefulWidget {
   @override
@@ -195,10 +199,17 @@ class _FollowPageState extends State<FollowPage> {
         '/users/${prefs.getInt('id').toString()}/followedWithRecentlyIllusts?page=$currentPage&pageSize=30';
 
     try {
-      Response response = await dioPixivic.get(url);
-      List jsonList = response.data['data'];
-      if (jsonList.length < 30) loadMoreAble = false;
-      return (jsonList);
+      return getIt<UserService>()
+          .queryFollowedWithRecentlyIllusts(prefs.getInt('id'), currentPage, 30)
+          .then((value) {
+        if (value.data.length < 30) loadMoreAble = false;
+        return value.data;
+      });
+
+      // Response response = await dioPixivic.get(url);
+      // List jsonList = response.data['data'];
+      // if (jsonList.length < 30) loadMoreAble = false;
+      // return (jsonList);
     } catch (e) {
       BotToast.showSimpleNotification(title: texts.httpLoadError);
     }

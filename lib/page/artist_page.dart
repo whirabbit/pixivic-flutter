@@ -13,10 +13,10 @@ import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/widget/papp_bar.dart';
-import 'package:pixivic/biz/artist_detail/service/artist_detail_service.dart';
 import 'package:pixivic/common/config/get_it_config.dart';
-import 'package:pixivic/common/do/artist_detail.dart';
+import 'package:pixivic/common/do/artist.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/biz/artist/service/artist_service.dart';
 
 class ArtistPage extends StatefulWidget {
   @override
@@ -225,20 +225,20 @@ class _ArtistPageState extends State<ArtistPage> {
 
   _loadArtistData() {
     try {
-      getIt<ArtistDetailService>()
-          .queryArtistDetail(int.parse(widget.artistId))
+      getIt<ArtistService>()
+          .querySearchArtistById(int.parse(widget.artistId))
           .then((result) {
-        ArtistDetail artistDetail = result.data;
+        Artist artist = result.data;
         // print(artistDetail);
-        this.comment = artistDetail.comment;
-        this.urlTwitter = artistDetail.twitterUrl;
-        this.urlWebPage = artistDetail.webPage;
-        this.numOfBookmarksPublic = artistDetail.totalIllustBookmarksPublic;
-        this.numOfFollower = artistDetail.totalFollowUsers;
+        this.comment = artist.comment;
+        this.urlTwitter = artist.twitterUrl;
+        this.urlWebPage = artist.webPage;
+        this.numOfBookmarksPublic = artist.totalIllustBookmarksPublic;
+        this.numOfFollower = artist.totalFollowUsers;
       });
 
-      getIt<ArtistDetailService>()
-          .queryArtistSummary(int.parse(widget.artistId))
+      getIt<ArtistService>()
+          .queryArtistIllustSummary(int.parse(widget.artistId))
           .then((value) {
         ArtistSummary artistSummary = value.data;
         this.numOfIllust = artistSummary.illustSum.toString();

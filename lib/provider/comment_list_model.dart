@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
-import 'package:pixivic/biz/comment/service/comment_service.dart';
-import 'package:pixivic/common/config/get_it_config.dart';
-import 'package:pixivic/common/do/comment.dart';
 
 import '../data/common.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/biz/comment/service/comment_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/comment.dart';
 
 class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   int illustId;
@@ -308,7 +308,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
 //请求数据
   loadComments(int illustId, {int page = 1}) {
     return getIt<CommentService>()
-        .queryCommentInfo(AppType.illusts, illustId, page, 10)
+        .queryGetComment(AppType.illusts, illustId, page, 10)
         .then((value) {
       return value.data;
     });

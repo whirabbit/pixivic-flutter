@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
-import 'package:dio/dio.dart';
 
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/page/comment_list_page.dart';
+import 'package:pixivic/biz/comment/service/comment_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/comment.dart';
 import 'package:pixivic/function/dio_client.dart';
 
 class CommentCell extends StatefulWidget {
@@ -21,7 +23,7 @@ class CommentCell extends StatefulWidget {
 
 class _CommentCellState extends State<CommentCell> {
   TextZhCommentCell texts = TextZhCommentCell();
-  List commentJsonData;
+  List<Comment> commentJsonData;
   CommentListPage commentListPage;
 
   @override
@@ -93,7 +95,7 @@ class _CommentCellState extends State<CommentCell> {
 
   Widget showFirstComment() {
     String avaterUrl =
-        'https://static.pixivic.net/avatar/299x299/${commentJsonData[0]['replyFrom']}.jpg';
+        'https://static.pixivic.net/avatar/299x299/${commentJsonData[0].replyFrom}.jpg';
     print(avaterUrl);
 
     return Container(
@@ -135,7 +137,7 @@ class _CommentCellState extends State<CommentCell> {
                     children: <Widget>[
                       SizedBox(height: ScreenUtil().setHeight(5)),
                       Text(
-                        commentJsonData[0]['replyFromName'],
+                        commentJsonData[0].replyFromName,
                         style: TextStyle(fontSize: 12),
                       ),
                       Container(
@@ -143,7 +145,7 @@ class _CommentCellState extends State<CommentCell> {
                           alignment: Alignment.centerLeft,
                           child: commentContentDisplay(
                             context,
-                            commentJsonData[0]['content'],
+                            commentJsonData[0].content,
                           )),
                       Container(
                         padding: EdgeInsets.only(
@@ -153,7 +155,7 @@ class _CommentCellState extends State<CommentCell> {
                           children: <Widget>[
                             Text(
                               DateFormat("yyyy-MM-dd").format(DateTime.parse(
-                                  commentJsonData[0]['createDate'])),
+                                  commentJsonData[0].createDate)),
                               strutStyle: StrutStyle(
                                 fontSize: 12,
                                 height: ScreenUtil().setWidth(1.3),
@@ -183,12 +185,12 @@ class _CommentCellState extends State<CommentCell> {
                                             comments: commentJsonData,
                                             illustId: widget.id,
                                             isReply: true,
-                                            replyParentId: commentJsonData[0]
-                                                ['id'],
+                                            replyParentId:
+                                                commentJsonData[0].id,
                                             replyToName: commentJsonData[0]
-                                                ['replyFromName'],
-                                            replyToId: commentJsonData[0]
-                                                ['replyFrom'],
+                                                .replyFromName,
+                                            replyToId:
+                                                commentJsonData[0].replyFrom,
                                           )),
                                 );
                               },
@@ -260,17 +262,27 @@ class _CommentCellState extends State<CommentCell> {
     String url = '/illusts/${widget.id}/comments';
 
     try {
-      Response response = await dioPixivic.get(url);
-      if (response.data['data'] != null) {
-        // print(response.data);
-        setState(() {
-          commentJsonData = response.data['data'];
-          commentJsonData[0]['content'] =
-              commentJsonData[0]['content'].replaceAll('\n', '');
-        });
-      }
-    } catch(e) {
-      
-    }
+      // Response response = await dioPixivic.get(url);
+      getIt<CommentService>()
+          .queryGetComment(AppType.illusts, widget.id, 1, 10)
+          .then((value) {
+        if (value.data != null)
+          setState(() {
+            commentJsonData = value.data;
+            commentJsonData[0].content =
+                commentJsonData[0].content.replaceAll('\n', '');
+          });
+        // return value.data;
+      });
+
+      // if (response.data['data'] != null) {
+      //   // print(response.data);
+      //   setState(() {
+      //     commentJsonData = response.data['data'];
+      //     commentJsonData[0]['content'] =
+      //         commentJsonData[0]['content'].replaceAll('\n', '');
+      //   });
+      // }
+    } catch (e) {}
   }
 }

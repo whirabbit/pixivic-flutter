@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:random_color/random_color.dart';
 import 'package:lottie/lottie.dart';
+
 // import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 import 'package:dio/dio.dart';
@@ -11,6 +12,9 @@ import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/widget/image_display.dart';
+import 'package:pixivic/biz/illust/service/illust_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/illust.dart';
 import 'package:pixivic/function/dio_client.dart';
 
 class GuessLikePage extends StatefulWidget {
@@ -20,7 +24,7 @@ class GuessLikePage extends StatefulWidget {
 
 class _GuessLikePageState extends State<GuessLikePage> {
   bool hasConnected = false;
-  List picList;
+  List<Illust> picList;
   int picTotalNum;
 
   int sanityLevel = prefs.getInt('sanityLevel');
@@ -108,13 +112,23 @@ class _GuessLikePageState extends State<GuessLikePage> {
     String url = '/users/${prefs.getInt('id')}/recommendBookmarkIllusts';
 
     try {
-      Response response = await dioPixivic.get(url);
-      picList = response.data['data'];
-      if (picList != null) picTotalNum = picList.length;
-      setState(() {
-        hasConnected = true;
-        print(picList);
+      getIt<IllustService>()
+          .queryRecommendCollectIllust(prefs.getInt('id'))
+          .then((value) {
+        picList = value.data;
+        if (picList != null) picTotalNum = picList.length;
+        setState(() {
+          hasConnected = true;
+          print(picList);
+        });
       });
+      // Response response = await dioPixivic.get(url);
+      // picList = response.data['data'];
+      // if (picList != null) picTotalNum = picList.length;
+      // setState(() {
+      //   hasConnected = true;
+      //   print(picList);
+      // });
     } catch (e) {}
   }
 }
