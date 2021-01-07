@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:bot_toast/bot_toast.dart';
+import 'package:pixivic/biz/user_base/service/user_base_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/http/client/user_rest_client.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
 
@@ -23,6 +26,7 @@ login(BuildContext context, String userName, String pwd,
   Map<String, String> body = {'username': userName, 'password': pwd};
   Map<String, String> header = {'Content-Type': 'application/json'};
   var encoder = JsonEncoder.withIndent("     ");
+
   var client = http.Client();
   var response =
       await client.post(url, headers: header, body: encoder.convert(body));
@@ -172,22 +176,24 @@ register(String userName, String pwd, String pwdRepeat, String verificationCode,
   };
   CancelFunc cancelLoading;
   Response response;
-  try {
-    cancelLoading = BotToast.showLoading();
-    response = await dioPixivic.post(url, data: body);
-    cancelLoading();
-    if (response.statusCode == 200) {
-      // 切换至login界面，并给出提示
-      BotToast.showSimpleNotification(title: TextZhLoginPage().registerSucceed);
-    } else {
-      // isLogin = false;
-      print(response.data['message']);
-      BotToast.showSimpleNotification(title: response.data['message']);
-    }
-  } catch (e) {
-    cancelLoading();
-    return e.response.statusCode;
-  }
+  // try {
+  //   cancelLoading = BotToast.showLoading();
+  getIt<UserBaseService>()
+      .queryUserRegisters(verificationCode, verificationInput, body);
+  // response = await dioPixivic.post(url, data: body);
+  //   cancelLoading();
+  //   if (response.statusCode == 200) {
+  //     // 切换至login界面，并给出提示
+  //     BotToast.showSimpleNotification(title: TextZhLoginPage().registerSucceed);
+  //   } else {
+  //     // isLogin = false;
+  //     print(response.data['message']);
+  //     BotToast.showSimpleNotification(title: response.data['message']);
+  //   }
+  // } catch (e) {
+  //   cancelLoading();
+  //   return e.response.statusCode;
+  // }
   tempVerificationCode = null;
   tempVerificationImage = null;
   return response.statusCode;
