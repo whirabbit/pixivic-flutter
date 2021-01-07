@@ -19,6 +19,7 @@ import 'package:pixivic/provider/common_model.dart';
 import 'package:pixivic/function/dio_client.dart';
 import 'package:pixivic/biz/search/service/search_service.dart';
 import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/illust.dart';
 // import 'package:pixivic/provider/pic_page_model.dart';
 
 class PappBar extends StatefulWidget implements PreferredSizeWidget {
@@ -693,11 +694,10 @@ class PappBarState extends State<PappBar> {
           cancelLoading = BotToast.showLoading();
         });
         cancelLoading();
-        Map result = response.data;
-
+        Illust result = Illust.fromJson(response.data['data']);
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) {
-            return PicDetailPage(result['data']);
+            return PicDetailPage(result);
           },
         ));
         return true;
