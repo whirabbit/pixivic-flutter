@@ -1,11 +1,10 @@
 import 'package:injectable/injectable.dart';
-import 'package:pixivic/common/do/illust.dart';
-
 import 'package:retrofit/http.dart';
 import 'package:dio/dio.dart';
 
 import 'package:pixivic/common/do/result.dart';
 import 'package:pixivic/common/do/collection.dart';
+import 'package:pixivic/common/do/illust.dart';
 
 part 'collection_rest_client.g.dart';
 
@@ -52,7 +51,7 @@ abstract class CollectionRestClient {
     @Path("userId") int userId,
     @Query("page") int page,
     @Query("pageSize") int pageSize,
-    @Query("isPublic") bool isPublic,
+    // @Query("isPublic") bool isPublic,
   );
 
   //查看画集下画作列表
@@ -95,7 +94,7 @@ abstract class CollectionRestClient {
 //修改画集封面 返回类型暂定
   @PUT("/collections/{collectionId}/cover")
   Future queryModifyCollectionCoverInfo(
-      @Path("collectionId	") int collectionId,@Body() List<int> body);
+      @Path("collectionId	") int collectionId, @Body() List<int> body);
 
 //批量删除画作 返回类型不定
   @DELETE("/collections/{collectionId}/illustrations")

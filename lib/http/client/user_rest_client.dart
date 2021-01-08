@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
 import 'package:retrofit/http.dart';
 
@@ -72,7 +71,7 @@ abstract class UserRestClient {
 
 //新增用户查看画作历史记录
   @POST("/users/{userId}/illustHistory")
-  Future<String> queryNewUserViewIllustInfo(
+  Future<String> queryNewUserViewIllustHistoryInfo(
     @Path("userId") int userId,
     @Body() Map body,
   );

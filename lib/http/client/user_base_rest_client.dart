@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:retrofit/http.dart';
+
 import 'package:pixivic/common/do/result.dart';
 import 'package:pixivic/common/do/user_info.dart';
 import 'package:pixivic/common/do/verification_code.dart';
-import 'package:retrofit/http.dart';
 
 part 'user_base_rest_client.g.dart';
 
@@ -14,6 +15,7 @@ abstract class UserBaseRestClient {
   factory UserBaseRestClient(Dio dio, {@Named("baseUrl") String baseUrl}) =
       _UserBaseRestClient;
 
+//获取图形验证码
   @GET("/verificationCode")
   Future<Result<VerificationCode>> queryVerificationCodeInfo();
 
