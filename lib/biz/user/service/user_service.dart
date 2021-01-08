@@ -48,9 +48,9 @@ class UserService {
         .then((value) {
       if (value.data != null)
         value.data = processIllustData(
-          value.data as List<Illust>,
+          value.data ,
         );
-      return value.data;
+      return value.data as List<Illust>;
     }).catchError((Object obj) {
       switch (obj.runtimeType) {
         case DioError:
