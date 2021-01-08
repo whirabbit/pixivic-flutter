@@ -8,6 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pixivic/biz/collection/service/collection_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/result.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tuple/tuple.dart';
@@ -514,10 +517,12 @@ addIllustToCollection(BuildContext contextFrom, List illustIdList,
 
   try {
     cancelLoading = BotToast.showLoading();
-    Response response = await dioPixivic.post(url, data: illustIdList);
+    // Response response = await dioPixivic.post(url, data: illustIdList);
+    Result result = await getIt<CollectionService>()
+        .queryAddIllustToCollection(int.parse(collectionId), illustIdList);
     cancelLoading();
-    BotToast.showSimpleNotification(title: response.data['message']);
-    print(response.data);
+    BotToast.showSimpleNotification(title: result.message);
+    print(result.data);
     if (multiSelect)
       Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
     Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
@@ -529,13 +534,15 @@ addIllustToCollection(BuildContext contextFrom, List illustIdList,
   }
 }
 
-setCollectionCover(
-    BuildContext contextFrom, String collectionId, List illustIdList) async {
+setCollectionCover(BuildContext contextFrom, String collectionId,
+    List<int> illustIdList) async {
   try {
     print(illustIdList);
     await dioPixivic.put('/collections/$collectionId/cover',
         data: illustIdList);
-
+    //TODO 调试不通 400错误
+    // await getIt<CollectionService>().queryModifyCollectionCover(
+    //     int.parse(collectionId), illustIdList);
     Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
     Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
         .getCollectionList();
@@ -545,9 +552,10 @@ setCollectionCover(
 removeIllustFromCollection(
     BuildContext contextFrom, String collectionId, List illustIdList) async {
   try {
-    await dioPixivic.delete('/collections/$collectionId/illustrations',
-        data: illustIdList);
-
+    // await dioPixivic.delete('/collections/$collectionId/illustrations',
+    //     data: illustIdList);
+    await getIt<CollectionService>()
+        .queryBulkDeleteCollection(int.parse(collectionId), illustIdList);
     Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
     Provider.of<PicPageModel>(contextFrom, listen: false).initAndLoadData();
     Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
@@ -563,11 +571,13 @@ postNewCollection(Map<String, dynamic> payload) async {
   if (payload['tagList'] != null) {
     try {
       cancelLoading = BotToast.showLoading();
-      Response response = await dioPixivic.post(url,
-          data: payload, options: Options(headers: headers));
+      Result result = await getIt<CollectionService>()
+          .queryCreateCollection(payload, prefs.getString('auth'));
+      // Response response = await dioPixivic.post(url,
+      //     data: payload, options: Options(headers: headers));
       cancelLoading();
-      print(response.data);
-      BotToast.showSimpleNotification(title: response.data['message']);
+      print(result.data);
+      BotToast.showSimpleNotification(title: result.message);
       return true;
     } catch (e) {
       cancelLoading();
@@ -597,7 +607,9 @@ deleteCollection(BuildContext contextFrom, String collectionId) {
             FlatButton(
               onPressed: () async {
                 try {
-                  await dioPixivic.delete('/collections/$collectionId');
+                  // await dioPixivic.delete('/collections/$collectionId');
+                  getIt<CollectionService>()
+                      .queryDeleteCollection(int.parse(collectionId));
                   Provider.of<CollectionUserDataModel>(contextFrom,
                           listen: false)
                       .getCollectionList();
@@ -621,8 +633,10 @@ putEditCollection(Map<String, dynamic> payload, String collectionId) async {
   // print(payload);
   if (payload['tagList'] != null) {
     try {
-      Response response = await dioPixivic.put(url, data: payload);
-      BotToast.showSimpleNotification(title: response.data['message']);
+      // Response response = await dioPixivic.put(url, data: payload);
+      Result result = await getIt<CollectionService>()
+          .queryUpdateCollection(int.parse(collectionId), payload);
+      BotToast.showSimpleNotification(title: result.message);
       return true;
     } catch (e) {
       return false;
@@ -657,8 +671,8 @@ Widget singleTag(context, Map data, bool advice) {
         right: ScreenUtil().setWidth(1.5),
         top: ScreenUtil().setWidth(4)),
     child: ButtonTheme(
-      materialTapTargetSize:
-          MaterialTapTargetSize.shrinkWrap, //set _InputPadding to zero
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      //set _InputPadding to zero
       height: ScreenUtil().setHeight(20),
       minWidth: ScreenUtil().setWidth(1),
       buttonColor: Colors.grey[100],
