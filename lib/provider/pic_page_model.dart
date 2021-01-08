@@ -334,7 +334,7 @@ class PicPageModel with ChangeNotifier {
       }
     } else if (jsonMode == 'collection') {
       return getIt<UserService>()
-          .queryCollectionList(int.parse(collectionId), currentPage, 10)
+          .queryGetCollectionList(int.parse(collectionId), currentPage, 10)
           .then((value) => value);
     }
 

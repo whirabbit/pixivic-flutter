@@ -48,7 +48,7 @@ class UserService {
         .then((value) {
       if (value.data != null)
         value.data = processIllustData(
-          value.data ,
+          value.data,
         );
       return value.data as List<Illust>;
     }).catchError((Object obj) {
@@ -113,10 +113,10 @@ class UserService {
     });
   }
 
-  Future<List<Illust>> queryCollectionList(
+  Future<List<Illust>> queryGetCollectionList(
       int collectionId, int page, int pageSize) {
     return _userRestClient
-        .queryCollectionListInfo(collectionId, page, pageSize)
+        .queryGetCollectionListInfo(collectionId, page, pageSize)
         .then((value) {
       if (value.data != null) value.data = processIllustData(value.data);
       return value.data as List<Illust>;
