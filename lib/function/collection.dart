@@ -20,6 +20,7 @@ import '../data/texts.dart';
 import 'package:pixivic/provider/collection_model.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/common/do/collection.dart';
 
 showAddToCollection(BuildContext contextFrom, List selectedPicIdList,
     {bool multiSelect = true}) {
@@ -134,20 +135,20 @@ showCollectionInfoEditDialog(
   TextEditingController title;
   TextEditingController caption;
   TextZhCollection texts = TextZhCollection();
-  Map inputData;
+  Collection inputData;
   if (!isCreate && index != null) {
     inputData = Provider.of<CollectionUserDataModel>(context, listen: false)
         .userCollectionList[index];
-    title = TextEditingController(text: inputData['title']);
-    caption = TextEditingController(text: inputData['caption']);
+    title = TextEditingController(text: inputData.title);
+    caption = TextEditingController(text: inputData.caption);
     Provider.of<NewCollectionParameterModel>(context, listen: false)
-        .passTags(inputData['tagList']);
+        .passTags(inputData.tagList);
     Provider.of<NewCollectionParameterModel>(context, listen: false)
-        .public(inputData['isPublic'] == 1 ? true : false);
+        .public(inputData.isPublic == 1 ? true : false);
     Provider.of<NewCollectionParameterModel>(context, listen: false)
-        .sexy(inputData['pornWarning'] == 1 ? true : false);
+        .sexy(inputData.pornWarning == 1 ? true : false);
     Provider.of<NewCollectionParameterModel>(context, listen: false)
-        .comment(inputData['forbidComment'] == 1 ? true : false);
+        .comment(inputData.forbidComment == 1 ? true : false);
   } else {
     title = TextEditingController();
     caption = TextEditingController();
@@ -308,7 +309,8 @@ showCollectionInfoEditDialog(
                                       Provider.of<CollectionUserDataModel>(
                                               context,
                                               listen: false)
-                                          .userCollectionList[index]['id']
+                                          .userCollectionList[index]
+                                          .id
                                           .toString());
                                 },
                                 child: Text(
@@ -378,9 +380,9 @@ showCollectionInfoEditDialog(
                                   }
                                 });
                               else {
-                                payload['id'] = inputData['id'];
+                                payload['id'] = inputData.id;
                                 putEditCollection(
-                                        payload, inputData['id'].toString())
+                                        payload, inputData.id.toString())
                                     .then((value) {
                                   if (value) {
                                     onPostCollection = false;
@@ -388,6 +390,7 @@ showCollectionInfoEditDialog(
                                             context,
                                             listen: false)
                                         .getCollectionList();
+                                    //TODO 点击提交没有刷新
                                     Navigator.of(context).pop();
                                   }
                                 });
@@ -664,7 +667,7 @@ checkBeforePost(
   }
 }
 
-Widget singleTag(context, Map data, bool advice) {
+Widget singleTag(context, TagList data, bool advice) {
   return Container(
     padding: EdgeInsets.only(
         left: ScreenUtil().setWidth(1.5),
@@ -697,7 +700,7 @@ Widget singleTag(context, Map data, bool advice) {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             Text(
-              data['tagName'],
+              data.tagName,
               style: TextStyle(color: Colors.grey),
             ),
             !advice

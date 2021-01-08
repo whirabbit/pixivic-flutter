@@ -9,6 +9,7 @@ import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/function/collection.dart';
 import 'package:pixivic/provider/collection_model.dart';
+import 'package:pixivic/common/do/collection.dart';
 
 class CollectionDetailPage extends StatelessWidget {
   final int index;
@@ -17,26 +18,26 @@ class CollectionDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<CollectionUserDataModel, Map>(
+    return Selector<CollectionUserDataModel, Collection>(
         selector: (context, collectionUserDataModel) =>
             collectionUserDataModel.userCollectionList[index],
         builder: (context, basicData, _) {
           return Scaffold(
               appBar: PappBar.collection(
-                title: basicData['title'],
+                title: basicData.title,
                 collectionSetting: collectionSetting,
               ),
               body: Container(
                 color: Colors.white,
                 child: PicPage.collection(
-                  collectionId: basicData['id'].toString(),
+                  collectionId: basicData.id.toString(),
                   topWidget: collectionDetailBody(basicData),
                 ),
               ));
         });
   }
 
-  Widget collectionDetailBody(Map basicData) {
+  Widget collectionDetailBody(Collection basicData) {
     final screen = ScreenUtil();
 
     return Container(
@@ -84,7 +85,7 @@ class CollectionDetailPage extends StatelessWidget {
                 Container(
                   constraints: BoxConstraints(maxWidth: screen.setWidth(231)),
                   child: Text(
-                    basicData['title'],
+                    basicData.title,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         fontWeight: FontWeight.w700,
@@ -101,7 +102,7 @@ class CollectionDetailPage extends StatelessWidget {
                 right: screen.setWidth(18),
                 bottom: screen.setHeight(12)),
             child: Text(
-              basicData['caption'],
+              basicData.caption,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                   fontWeight: FontWeight.w400, fontSize: screen.setSp(12)),
@@ -114,8 +115,8 @@ class CollectionDetailPage extends StatelessWidget {
                   right: screen.setWidth(18),
                   bottom: screen.setHeight(12)),
               child: Wrap(
-                children: List.generate(basicData['tagList'].length,
-                    (index) => tagLink(basicData['tagList'][index]['tagName'])),
+                children: List.generate(basicData.tagList.length,
+                    (index) => tagLink(basicData.tagList[index].tagName)),
               )),
           // Flexible(
           //   // constraints: BoxConstraints(maxHeight: screen.setHeight(360),),

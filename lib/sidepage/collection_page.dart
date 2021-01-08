@@ -11,6 +11,7 @@ import 'package:pixivic/provider/collection_model.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/widget/image_display.dart';
 import 'package:pixivic/page/collection_detail_page.dart';
+import 'package:pixivic/common/do/collection.dart';
 
 class CollectionPage extends StatefulWidget {
   @override
@@ -73,7 +74,7 @@ class _CollectionPageState extends State<CollectionPage> {
   Widget collectionCardCell(int index) {
 
     return Center(
-        child: Selector<CollectionUserDataModel, Map>(
+        child: Selector<CollectionUserDataModel, Collection>(
             selector: (context, collectionUserDataModel) =>
                 collectionUserDataModel.userCollectionList[index],
             builder: (context, data, _) {
@@ -112,7 +113,7 @@ class _CollectionPageState extends State<CollectionPage> {
                             clipBehavior: Clip.antiAlias,
                             borderRadius: BorderRadius.all(
                                 Radius.circular(ScreenUtil().setWidth(8))),
-                            child: collectionIllustCoverViewer(data['cover'])),
+                            child: collectionIllustCoverViewer(data.cover)),
                       ),
                       Container(
                         width: ScreenUtil().setWidth(269),
@@ -134,7 +135,7 @@ class _CollectionPageState extends State<CollectionPage> {
                               // width: ScreenUtil().setWidth(107),
                               // height: ScreenUtil().setHeight(28),
                               child: Text(
-                                data['title'],
+                                data.title,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     fontWeight: FontWeight.w700,
@@ -147,7 +148,7 @@ class _CollectionPageState extends State<CollectionPage> {
                                   maxWidth: ScreenUtil().setWidth(131)),
                               // width: ScreenUtil().setWidth(101),
                               // height: ScreenUtil().setHeight(18),
-                              child: collectionTagViewer(data['tagList']),
+                              child: collectionTagViewer(data.tagList),
                             ),
                             Container(
                                 decoration: BoxDecoration(
@@ -190,15 +191,15 @@ class _CollectionPageState extends State<CollectionPage> {
             }));
   }
 
-  Widget collectionTagViewer(List tagList) {
+  Widget collectionTagViewer(List<TagList> tagList) {
     String show = '';
     if (tagList.length <= 3) {
       for (int index = 0; index < tagList.length; index++) {
-        show += '#${tagList[index]['tagName']}';
+        show += '#${tagList[index].tagName}';
       }
     } else if (tagList.length > 3) {
       for (int index = 0; index < 3; index++) {
-        show += '#${tagList[index]['tagName']}';
+        show += '#${tagList[index].tagName}';
       }
     } else {
       show += ' ';
@@ -213,7 +214,7 @@ class _CollectionPageState extends State<CollectionPage> {
     );
   }
 
-  Widget collectionIllustCoverViewer(List coverList) {
+  Widget collectionIllustCoverViewer(List<Cover> coverList) {
     if (coverList == null) {
       return Lottie.asset('image/empty-status.json',
           repeat: true, height: ScreenUtil().setHeight(100));
@@ -221,7 +222,7 @@ class _CollectionPageState extends State<CollectionPage> {
       return Image(
           fit: BoxFit.cover,
           image: AdvancedNetworkImage(
-            coverList[0]['medium'],
+            coverList[0].medium,
             useDiskCache: true,
             timeoutDuration: const Duration(seconds: 35),
             cacheRule: CacheRule(maxAge: const Duration(days: 7)),
@@ -238,7 +239,7 @@ class _CollectionPageState extends State<CollectionPage> {
               child: Image(
                   fit: BoxFit.cover,
                   image: AdvancedNetworkImage(
-                    coverList[0]['medium'],
+                    coverList[0].medium,
                     useDiskCache: true,
                     timeoutDuration: const Duration(seconds: 35),
                     cacheRule: CacheRule(maxAge: const Duration(days: 7)),
@@ -252,7 +253,7 @@ class _CollectionPageState extends State<CollectionPage> {
               child: Image(
                   fit: BoxFit.cover,
                   image: AdvancedNetworkImage(
-                    coverList[1]['medium'],
+                    coverList[1].medium,
                     useDiskCache: true,
                     timeoutDuration: const Duration(seconds: 35),
                     cacheRule: CacheRule(maxAge: const Duration(days: 7)),
@@ -266,7 +267,7 @@ class _CollectionPageState extends State<CollectionPage> {
               child: Image(
                   fit: BoxFit.cover,
                   image: AdvancedNetworkImage(
-                    coverList[2]['medium'],
+                    coverList[2].medium,
                     useDiskCache: true,
                     timeoutDuration: const Duration(seconds: 35),
                     cacheRule: CacheRule(maxAge: const Duration(days: 7)),
@@ -285,7 +286,7 @@ class _CollectionPageState extends State<CollectionPage> {
               child: Image(
                   fit: BoxFit.cover,
                   image: AdvancedNetworkImage(
-                    coverList[0]['medium'],
+                    coverList[0].medium,
                     useDiskCache: true,
                     timeoutDuration: const Duration(seconds: 35),
                     cacheRule: CacheRule(maxAge: const Duration(days: 7)),
@@ -299,7 +300,7 @@ class _CollectionPageState extends State<CollectionPage> {
               child: Image(
                   fit: BoxFit.cover,
                   image: AdvancedNetworkImage(
-                    coverList[1]['medium'],
+                    coverList[1].medium,
                     useDiskCache: true,
                     timeoutDuration: const Duration(seconds: 35),
                     cacheRule: CacheRule(maxAge: const Duration(days: 7)),
@@ -313,7 +314,7 @@ class _CollectionPageState extends State<CollectionPage> {
               child: Image(
                   fit: BoxFit.cover,
                   image: AdvancedNetworkImage(
-                    coverList[2]['medium'],
+                    coverList[2].medium,
                     useDiskCache: true,
                     timeoutDuration: const Duration(seconds: 35),
                     cacheRule: CacheRule(maxAge: const Duration(days: 7)),
@@ -327,7 +328,7 @@ class _CollectionPageState extends State<CollectionPage> {
               child: Image(
                   fit: BoxFit.cover,
                   image: AdvancedNetworkImage(
-                    coverList[3]['medium'],
+                    coverList[3].medium,
                     useDiskCache: true,
                     timeoutDuration: const Duration(seconds: 35),
                     cacheRule: CacheRule(maxAge: const Duration(days: 7)),
@@ -341,7 +342,7 @@ class _CollectionPageState extends State<CollectionPage> {
               child: Image(
                   fit: BoxFit.cover,
                   image: AdvancedNetworkImage(
-                    coverList[4]['medium'],
+                    coverList[4].medium,
                     useDiskCache: true,
                     timeoutDuration: const Duration(seconds: 35),
                     cacheRule: CacheRule(maxAge: const Duration(days: 7)),

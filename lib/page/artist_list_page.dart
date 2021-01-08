@@ -253,16 +253,19 @@ class _ArtistListPageState extends State<ArtistListPage> {
         try {
           // cancelLoading = BotToast.showLoading();
           if (currentFollowedState) {
-            await dioPixivic.delete(
-              url,
-              data: body,
-            );
+            // await dioPixivic.delete(
+            //   url,
+            //   data: body,
+            // );
+            await getIt<UserService>().queryUserCancelMarkArtist(body);
           } else {
-            await dioPixivic.post(
-              url,
-              data: body,
-            );
+            // await dioPixivic.post(
+            //   url,
+            //   data: body,
+            // );
+            await getIt<UserService>().queryUserMarkArtist(body);
           }
+
           // cancelLoading();
           setState(() {
             data.isFollowed = !data.isFollowed;

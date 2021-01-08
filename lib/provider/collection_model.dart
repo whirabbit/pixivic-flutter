@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+
 // import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
 
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/common/do/collection.dart';
+import 'package:pixivic/biz/collection/service/collection_service.dart';
+import 'package:pixivic/biz/user/service/user_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
 
 enum CollectionMode { self, user }
 
@@ -70,13 +75,17 @@ class NewCollectionParameterModel with ChangeNotifier {
   bool _isPublic = true;
   bool _isSexy = false;
   bool _allowComment = true;
-  List _tags = [];
-  List _tagsAdvice = [];
+  List<TagList> _tags = [];
+  List<TagList> _tagsAdvice = [];
 
   bool get isPublic => _isPublic;
+
   bool get isSexy => _isSexy;
+
   bool get allowComment => _allowComment;
-  List get tags => _tags;
+
+  List<TagList> get tags => _tags;
+
   List get tagsAdvice => _tagsAdvice;
 
   public(bool result) {
@@ -94,7 +103,7 @@ class NewCollectionParameterModel with ChangeNotifier {
     notifyListeners();
   }
 
-  passTags(List tags) {
+  passTags(List<TagList> tags) {
     _tags = tags;
     notifyListeners();
   }
@@ -111,34 +120,39 @@ class NewCollectionParameterModel with ChangeNotifier {
 
   getTagAdvice(String keywords) async {
     _tagsAdvice = [
-      {'tagName': keywords}
+      // {'tagName': keywords}
+      TagList(id: null, tagName: keywords)
     ];
     notifyListeners();
     String url = '/collections/tags?keyword=$keywords';
 
     try {
-      Response response = await dioPixivic.get(url);
-      if (response.data['data'] != null)
-        _tagsAdvice = _tagsAdvice + response.data['data'];
+      // Response response = await dioPixivic.get(url);
+      List<TagList> tagList =
+          await getIt<CollectionService>().queryTagComplement(keywords);
+      if (tagList != null) _tagsAdvice = _tagsAdvice + tagList;
+
+      // if (response.data['data'] != null)
+      //   _tagsAdvice = _tagsAdvice + response.data['data'];
       print(_tagsAdvice);
       notifyListeners();
     } catch (e) {}
     // _tagsAdvice = [];
   }
 
-  addTagToTagsList(Map tagData) {
+  addTagToTagsList(TagList tagData) {
     if (!_tags.contains(tagData)) _tags.add(tagData);
     notifyListeners();
   }
 
-  removeTagFromTagsList(Map tagData) {
-    _tags.removeWhere((element) => element['tagName'] == tagData['tagName']);
+  removeTagFromTagsList(TagList tagData) {
+    _tags.removeWhere((element) => element.tagName == tagData.tagName);
     notifyListeners();
   }
 }
 
 class CollectionUserDataModel with ChangeNotifier {
-  List userCollectionList;
+  List<Collection> userCollectionList;
   bool lock;
 
   CollectionUserDataModel() {
@@ -162,7 +176,7 @@ class CollectionUserDataModel with ChangeNotifier {
     if (!lock) {
       lock = true;
       userCollectionList = [];
-      List collectionList;
+      List<Collection> collectionList;
       int page = 1;
       String url =
           '/users/${prefs.getInt('id')}/collections?page=$page&pagesize=10';
@@ -170,10 +184,12 @@ class CollectionUserDataModel with ChangeNotifier {
       while (!isEnd) {
         // print(response.data['data']);
         try {
-          Response response = await dioPixivic.get(url);
-          collectionList = response.data['data'] ?? [];
+          List<Collection> result = await getIt<UserService>()
+              .queryViewUserCollection(prefs.getInt('id'), page, 10);
+          // Response response = await dioPixivic.get(url);
+          collectionList = result ?? [];
           // print('The user album list:\n$collectionList');
-          userCollectionList += collectionList;
+          userCollectionList = userCollectionList + collectionList;
           print('collectionList.length: ${collectionList.length}');
           isEnd = collectionList.length == 0 ? true : false;
           page += 1;

@@ -9,6 +9,8 @@ import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/function/identity.dart' as identity;
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/biz/user_base/service/user_base_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -366,19 +368,28 @@ class LoginPageState extends State<LoginPage> {
 
   _getVerificationCode() async {
     try {
-      Response response = await dioPixivic.get("/verificationCode");
-      if (response.statusCode == 200) {
+      return getIt<UserBaseService>().queryVerificationCode().then((value) {
         setState(() {
-          verificationCode = response.data['data']['vid'];
-          verificationImage = response.data['data']['imageBase64'];
+          verificationCode = value.vid;
+          verificationImage = value.imageBase64;
           tempVerificationImage = verificationImage;
           tempVerificationCode = verificationCode;
         });
         return true;
-      } else {
-        BotToast.showSimpleNotification(title: texts.errorGetVerificationCode);
-        return false;
-      }
+      });
+      // Response response = await dioPixivic.get("/verificationCode");
+      // if (response.statusCode == 200) {
+      //   setState(() {
+      //     verificationCode = response.data['data']['vid'];
+      //     verificationImage = response.data['data']['imageBase64'];
+      //     tempVerificationImage = verificationImage;
+      //     tempVerificationCode = verificationCode;
+      //   });
+      //   return true;
+      // } else {
+      //   BotToast.showSimpleNotification(title: texts.errorGetVerificationCode);
+      //   return false;
+      // }
     } catch (e) {
       BotToast.showSimpleNotification(title: texts.errorGetVerificationCode);
       return false;
