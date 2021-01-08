@@ -133,7 +133,7 @@ class PicPageModel with ChangeNotifier {
     notifyListeners();
   }
 
-  List outputPicIdList() {
+  List<int> outputPicIdList() {
     print('onSelectedList: $onSelectedList');
     if (onSelectedList.length > 0)
       return List.generate(
