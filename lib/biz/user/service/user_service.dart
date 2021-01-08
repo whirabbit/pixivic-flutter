@@ -1,17 +1,20 @@
 import 'package:injectable/injectable.dart';
 import 'package:dio/dio.dart';
+import 'package:bot_toast/bot_toast.dart';
 
 import 'package:pixivic/common/do/artist.dart';
 import 'package:pixivic/common/do/illust.dart';
-import 'package:pixivic/common/do/result.dart';
+import 'package:pixivic/common/do/collection.dart';
 import 'package:pixivic/http/client/user_rest_client.dart';
-import 'package:bot_toast/bot_toast.dart';
+import 'package:pixivic/http/client/collection_rest_client.dart';
+
 
 @lazySingleton
 class UserService {
   final UserRestClient _userRestClient;
+  final CollectionRestClient _collectionRestClient;
 
-  UserService(this._userRestClient);
+  UserService(this._userRestClient, this._collectionRestClient);
 
   processIllustData(List data) {
     List<Illust> illusList = data.map((s) => Illust.fromJson(s)).toList();
@@ -21,6 +24,12 @@ class UserService {
   processArtistData(List data) {
     List<Artist> artistList = data.map((s) => Artist.fromJson(s)).toList();
     return artistList;
+  }
+
+  processCollectionData(List data) {
+    List<Collection> collectionList =
+        data.map((s) => Collection.fromJson(s)).toList();
+    return collectionList;
   }
 
   processDioError(obj) {
@@ -120,6 +129,36 @@ class UserService {
         .then((value) {
       if (value.data != null) value.data = processIllustData(value.data);
       return value.data as List<Illust>;
+    });
+  }
+
+  Future<String> queryUserCancelMarkArtist(Map body) {
+    return _userRestClient.queryUserCancelMarkArtistInfo(body).then((value) {
+      return value;
+    });
+  }
+
+  Future<String> queryUserMarkArtist(Map body) {
+    return _userRestClient.queryUserMarkArtistInfo(body).then((value) {
+      return value;
+    });
+  }
+
+  Future<String> queryNewUserViewIllustHistory(int userId, Map body) {
+    return _userRestClient
+        .queryNewUserViewIllustHistoryInfo(userId, body)
+        .then((value) {
+      return value;
+    });
+  }
+
+  Future<List<Collection>> queryViewUserCollection(
+      int userId, int page, int pageSize) {
+    return _collectionRestClient
+        .queryViewUserCollectionInfo(userId, page, pageSize)
+        .then((value) {
+          value.data=processCollectionData(value.data);
+      return value.data as List<Collection>;
     });
   }
 }

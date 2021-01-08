@@ -1,9 +1,11 @@
 import 'package:injectable/injectable.dart';
+import 'package:pixivic/common/do/verification_code.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/http/client/user_base_rest_client.dart';
 import 'package:dio/dio.dart';
 
 import 'package:pixivic/common/do/user_info.dart';
+import 'package:pixivic/data/texts.dart';
 import 'package:bot_toast/bot_toast.dart';
 
 @lazySingleton
@@ -37,6 +39,22 @@ class UserBaseService {
       switch (obj.runtimeType) {
         case DioError:
           processDioError(obj);
+          break;
+        default:
+      }
+    });
+  }
+
+  Future<VerificationCode> queryVerificationCode() {
+    return _userBaseRestClient.queryVerificationCodeInfo().then((value) {
+      if (value.data != null)
+        value.data = VerificationCode.fromJson(value.data);
+      return value.data as VerificationCode;
+    }).catchError((Object obj) {
+      switch (obj.runtimeType) {
+        case DioError:
+          BotToast.showSimpleNotification(
+              title: TextZhLoginPage().errorGetVerificationCode);
           break;
         default:
       }

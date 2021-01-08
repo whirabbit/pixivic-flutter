@@ -1,5 +1,7 @@
 import 'package:injectable/injectable.dart';
+
 import 'package:pixivic/common/do/result.dart';
+import 'package:pixivic/common/do/collection.dart';
 import 'package:pixivic/http/client/collection_rest_client.dart';
 
 @lazySingleton
@@ -7,6 +9,11 @@ class CollectionService {
   final CollectionRestClient _collectionRestClient;
 
   CollectionService(this._collectionRestClient);
+
+  processTagListData(List data) {
+    List<TagList> tagList = data.map((s) => TagList.fromJson(s)).toList();
+    return tagList;
+  }
 
   Future<Result> queryCreateCollection(Map body, String authorization) {
     return _collectionRestClient
@@ -54,6 +61,13 @@ class CollectionService {
         .queryModifyCollectionCoverInfo(collectionId, illustIds)
         .then((value) {
       return value;
+    });
+  }
+
+  Future<List<TagList>> queryTagComplement(String keyword) {
+    return _collectionRestClient.queryTagComplementInfo(keyword).then((value) {
+      value.data = processTagListData(value.data);
+      return value.data as List<TagList>;
     });
   }
 }
