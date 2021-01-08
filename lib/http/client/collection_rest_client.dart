@@ -18,12 +18,12 @@ abstract class CollectionRestClient {
 
 //兴建画集
   @POST("/collections")
-  Future<Result<int>> queryCreateCollectionInfo(
+  Future<Result> queryCreateCollectionInfo(
       @Body() Map body, @Header("authorization") String authorization);
 
 //更新画集
   @PUT("/collections/{collectionId}")
-  Future<Result<int>> queryUpdateCollectionInfo(
+  Future<Result> queryUpdateCollectionInfo(
       @Path("collectionId") int collectionId, @Body() Map body);
 
 //删除画集
@@ -33,13 +33,13 @@ abstract class CollectionRestClient {
 
   //添加画作到画集中
   @POST("/collections/{collectionId}/illustrations")
-  Future<Result<List<int>>> queryAddIllustToCollectionInfo(
-      @Path("collectionId") int collectionId, @Body() List body);
+  Future<Result> queryAddIllustToCollectionInfo(
+      @Path("collectionId") int collectionId, @Body() List<int> body);
 
   //从画集中删除画作 返回类型不定
-  @DELETE("/127.0.0.1:8080/collections/{collectionId}/illustrations/{illustId}")
+  @DELETE("/collections/{collectionId}/illustrations/{illustId}")
   Future queryDeleteIllustToCollectionInfo(
-      @Path("collectionId") int collectionId, @Body() List body);
+      @Path("collectionId") int collectionId, @Path("illustId") List<int> body);
 
   //排序画集画作(全量)
   @PUT("/collections/{collectionId}/illustrations/order")
@@ -95,12 +95,12 @@ abstract class CollectionRestClient {
 //修改画集封面 返回类型暂定
   @PUT("/collections/{collectionId}/cover")
   Future queryModifyCollectionCoverInfo(
-      @Path("collectionId	") int collectionId, @Body() List body);
+      @Path("collectionId	") int collectionId,@Body() List<int> body);
 
 //批量删除画作 返回类型不定
   @DELETE("/collections/{collectionId}/illustrations")
   Future queryBulkDeleteCollectionInfo(
-      @Path("collectionId") int collectionId, @Body() List body);
+      @Path("collectionId") int collectionId, @Body() List<int> body);
 
   //搜索画集
   @GET("/collections")
