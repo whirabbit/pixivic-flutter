@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:bot_toast/bot_toast.dart';
 import 'package:pixivic/biz/user_base/service/user_base_service.dart';
 import 'package:pixivic/common/config/get_it_config.dart';
-import 'package:pixivic/http/client/user_rest_client.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
 
@@ -105,28 +104,45 @@ reloadUserData() async {
   if (authStored == null || authStored == '')
     return false;
   else {
-    String url = '/users/${prefs.getInt('id')}';
+    // String url = '/users/${prefs.getInt('id')}';
     try {
-      Response response = await dioPixivic.get(url);
-      if (response.statusCode == 200) {
-        Map data = response.data['data'];
+      getIt<UserBaseService>()
+          .querySearchUserInfo(prefs.getInt('id'))
+          .then((data) {
         print(data);
-        prefs.setInt('id', data['id']);
-        prefs.setString('name', data['username']);
-        prefs.setString('email', data['email']);
+        prefs.setInt('id', data.id);
+        prefs.setString('name', data.username);
+        prefs.setString('email', data.email);
         prefs.setString('avatarLink',
-            'https://static.pixivic.net/avatar/299x299/${data['id']}.jpg');
-        if (data['signature'] != null)
-          prefs.setString('signature', data['signature']);
-        if (data['location'] != null)
-          prefs.setString('location', data['location']);
-        prefs.setInt('star', data['star']);
-        prefs.setBool('isBindQQ', data['isBindQQ']);
-        prefs.setBool('isCheckEmail', data['isCheckEmail']);
+            'https://static.pixivic.net/avatar/299x299/${data.id}.jpg');
+        if (data.signature != null)
+          prefs.setString('signature', data.signature);
+        if (data.location != null) prefs.setString('location', data.location);
+        prefs.setInt('star', data.star);
+        prefs.setBool('isBindQQ', data.isBindQQ);
+        prefs.setBool('isCheckEmail', data.isCheckEmail);
         return true;
-      } else {
-        return false;
-      }
+      });
+      // Response response = await dioPixivic.get(url);
+      // if (response.statusCode == 200) {
+      //   Map data = response.data['data'];
+      //   print(data);
+      //   prefs.setInt('id', data['id']);
+      //   prefs.setString('name', data['username']);
+      //   prefs.setString('email', data['email']);
+      //   prefs.setString('avatarLink',
+      //       'https://static.pixivic.net/avatar/299x299/${data['id']}.jpg');
+      //   if (data['signature'] != null)
+      //     prefs.setString('signature', data['signature']);
+      //   if (data['location'] != null)
+      //     prefs.setString('location', data['location']);
+      //   prefs.setInt('star', data['star']);
+      //   prefs.setBool('isBindQQ', data['isBindQQ']);
+      //   prefs.setBool('isCheckEmail', data['isCheckEmail']);
+      //   return true;
+      // } else {
+      //   return false;
+      // }
     } catch (e) {
       return false;
     }
@@ -216,23 +232,25 @@ checkRegisterInfo(
     return TextZhLoginPage().errorNameLength;
   }
 
-  String url = '/users/usernames/$userName';
+  // String url = '/users/usernames/$userName';
 
-  try {
-    Response response = await dioPixivic.get(url);
-    if (response.statusCode == 409) {
-      return TextZhLoginPage().errorNameUsed;
-    } else {
-      return true;
-    }
-  } catch (e) {
-    if (e.response.statusCode == 409) {
-      return TextZhLoginPage().errorNameUsed;
-    } else {
-      return true;
-    }
-    return TextZhLoginPage().registerFailed;
-  }
+  // try {
+  //   Response response = await dioPixivic.get(url);
+  return await getIt<UserBaseService>()
+      .queryVerifyUserNameIsAvailable(userName);
+  //   if (response.statusCode == 409) {
+  //     return TextZhLoginPage().errorNameUsed;
+  //   } else {
+  //     return true;
+  //   }
+  // } catch (e) {
+  //   if (e.response.statusCode == 409) {
+  //     return TextZhLoginPage().errorNameUsed;
+  //   } else {
+  //     return true;
+  //   }
+  return TextZhLoginPage().registerFailed;
+  // }
 }
 
 hasLogin() {

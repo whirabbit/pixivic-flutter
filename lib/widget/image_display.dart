@@ -18,6 +18,8 @@ import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/function/dio_client.dart';
 import 'package:pixivic/common/do/illust.dart';
+import 'package:pixivic/biz/user/service/user_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
 
 Widget imageCell(Illust picItem, RandomColor randomColor, int sanityLevel,
     int previewRule, String previewQuality, BuildContext context) {
@@ -189,18 +191,20 @@ class _BookMarkHeartState extends State<BookMarkHeart> {
           };
 
           if (isLikedLocalState) {
-            await dioPixivic.delete(
-              url,
-              data: body,
-            );
+            // await dioPixivic.delete(
+            //   url,
+            //   data: body,
+            // );
+            await getIt<UserService>().queryUserCancelMarkIllust(body);
             setState(() {
               picItem.isLiked = false;
             });
           } else {
-            await dioPixivic.post(
-              url,
-              data: body,
-            );
+            // await dioPixivic.post(
+            //   url,
+            //   data: body,
+            // );
+            await getIt<UserService>().queryUserMarkIllust(body);
             setState(() {
               picItem.isLiked = true;
             });

@@ -3,9 +3,11 @@ import 'package:intl/intl.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
+
 // import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:lottie/lottie.dart';
 import 'package:bot_toast/bot_toast.dart';
+
 import 'package:waterfall_flow/waterfall_flow.dart';
 import 'package:dio/dio.dart';
 
@@ -15,6 +17,9 @@ import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/page/artist_list_page.dart';
 import 'package:pixivic/data/common.dart';
+import 'package:pixivic/biz/search/service/search_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/search_keywords.dart';
 import 'package:pixivic/function/dio_client.dart';
 
 class SearchPage extends StatefulWidget {
@@ -40,7 +45,7 @@ class _SearchPageState extends State<SearchPage> {
 
   bool currentOnLoading = true; //搜索趋势
   int currentNum = 60;
-  List currentTags;
+  List<HotSearch> currentTags;
 
   GlobalKey<SuggestionBarState> _suggestionBarKey = GlobalKey();
 
@@ -160,12 +165,15 @@ class _SearchPageState extends State<SearchPage> {
                                 right: ScreenUtil().setWidth(1)),
                             itemBuilder: (BuildContext context, int index) =>
                                 _currentCell(
-                                    currentTags[index]['name'],
-                                    currentTags[index]['translatedName'],
-                                    currentTags[index]['illustration']
-                                        ['imageUrls'][0]['medium'],
-                                    currentTags[index]['illustration']
-                                        ['sanityLevel']),
+                                    currentTags[index].name,
+                                    currentTags[index].translatedName,
+                                    currentTags[index]
+                                        .illustration
+                                        .imageUrls[0]
+                                        .medium,
+                                    currentTags[index]
+                                        .illustration
+                                        .sanityLevel),
                             // staggeredTileBuilder: (index) =>
                             //     StaggeredTile.fit(1),
                             // mainAxisSpacing: 4.0,
@@ -206,11 +214,13 @@ class _SearchPageState extends State<SearchPage> {
         .format(DateTime.now().subtract(Duration(days: 3)));
 
     try {
-      Response response = await dioPixivic.get(
-        '/trendingTags?date=$_picDateStr',
-      );
+      List<HotSearch> searchKeywordsList =
+          await getIt<SearchService>().queryHotSearchTags(_picDateStr);
+      // Response response = await dioPixivic.get(
+      //   '/trendingTags?date=$_picDateStr',
+      // );
 
-      currentTags = response.data['data'];
+      currentTags = searchKeywordsList;
       return false;
     } catch (e) {
       BotToast.showSimpleNotification(title: text.getCurrentError);

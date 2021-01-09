@@ -53,14 +53,16 @@ class CollectionUiModel with ChangeNotifier {
     onViewerLoad = true;
     notifyListeners();
 
-    String url =
-        '/users/${prefs.getInt('id')}/collections?page=$currentViewerPage&pagesize=10';
+    // String url =
+    //     '/users/${prefs.getInt('id')}/collections?page=$currentViewerPage&pagesize=10';
 
     try {
-      Response response = await dioPixivic.get(url);
-      if (response.data['data'] != null) {
-        viewerList = viewerList + response.data['data'];
-      } else if (response.data['data'] == null) {
+      List<Collection> result = await getIt<UserService>()
+          .queryViewUserCollection(prefs.getInt('id'), currentViewerPage, 10);
+      // Response response = await dioPixivic.get(url);
+      if (result != null) {
+        viewerList = viewerList + result;
+      } else if (result == null) {
         onViewerBottom = true;
       }
     } catch (e) {}

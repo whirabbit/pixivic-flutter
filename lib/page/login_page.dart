@@ -11,6 +11,7 @@ import 'package:pixivic/function/identity.dart' as identity;
 import 'package:pixivic/function/dio_client.dart';
 import 'package:pixivic/biz/user_base/service/user_base_service.dart';
 import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/result.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -435,18 +436,24 @@ class LoginPageState extends State<LoginPage> {
     String url = '/users/emails/$mail/resetPasswordEmail';
 
     try {
-      Response response = await dioPixivic.get(url);
+      Result result = await getIt<UserBaseService>()
+          .queryResetPasswordByEmail(mail)
+          .then((value) {
+        Navigator.of(context).pop();
+        return value;
+      });
+      // Response response = await dioPixivic.get(url);
       showDialog(
           context: context,
           builder: (_) => AlertDialog(
-                content: Text(response.data['message']),
+                content: Text(result.message),
                 actions: <Widget>[
                   FlatButton(
                     child: Text(texts.sure),
                     onPressed: () {
                       Navigator.of(context).pop();
-                      if (response.statusCode == 200)
-                        Navigator.of(context).pop();
+                      // if (response.statusCode == 200)
+                      //   Navigator.of(context).pop();
                     },
                   )
                 ],

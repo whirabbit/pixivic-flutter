@@ -72,7 +72,6 @@ class _CollectionPageState extends State<CollectionPage> {
   }
 
   Widget collectionCardCell(int index) {
-
     return Center(
         child: Selector<CollectionUserDataModel, Collection>(
             selector: (context, collectionUserDataModel) =>

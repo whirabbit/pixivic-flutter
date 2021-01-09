@@ -135,13 +135,21 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
       };
 
       try {
-        await dioPixivic.post(
-          url,
-          data: payload,
-          onReceiveProgress: (count, total) {
-            cancelLoading = BotToast.showLoading();
-          },
-        );
+        // await dioPixivic.post(
+        //   url,
+        //   data: payload,
+        //   onReceiveProgress: (count, total) {
+        //     cancelLoading = BotToast.showLoading();
+        //   },
+        // );
+        onReceiveProgress(int count, int total) {
+          cancelLoading = BotToast.showLoading();
+        }
+
+        await getIt<CommentService>().querySubmitComment(
+            AppType.illusts, illustId, payload,
+            onReceiveProgress: onReceiveProgress);
+
         cancelLoading();
 
         textEditingController.text = '';
@@ -188,13 +196,20 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
         'platform': 'Mobile 客户端'
       };
       try {
-        await dioPixivic.post(
-          url,
-          data: payload,
-          onReceiveProgress: (count, total) {
-            cancelLoading = BotToast.showLoading();
-          },
-        );
+        onReceiveProgress(int count, int total) {
+          cancelLoading = BotToast.showLoading();
+        }
+
+        await getIt<CommentService>().querySubmitComment(
+            AppType.illusts, illustId, payload,
+            onReceiveProgress: onReceiveProgress);
+        // await dioPixivic.post(
+        //   url,
+        //   data: payload,
+        //   onReceiveProgress: (count, total) {
+        //     cancelLoading = BotToast.showLoading();
+        //   },
+        // );
         cancelLoading();
 
         replyToId = 0;
@@ -233,10 +248,11 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
     print(payload);
 
     try {
-      dioPixivic.post(
-        url,
-        data: payload,
-      );
+      await getIt<CommentService>().queryLikedComment(payload);
+      // dioPixivic.post(
+      //   url,
+      //   data: payload,
+      // );
       print(commentList[parentIndex].isLike);
       if (subIndex == null) {
         commentList[parentIndex].isLike = true;
@@ -262,9 +278,11 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
         '/user/likedComments/${commentList[0].appType}/${commentList[0].appId}/$commentId';
     // print(url);
     try {
-      await dioPixivic.delete(
-        url,
-      );
+      await getIt<CommentService>().queryCancelLikedComment(
+          commentList[0].appType, commentList[0].appId, commentId);
+      // await dioPixivic.delete(
+      //   url,
+      // );
       if (subIndex == null) {
         commentList[parentIndex].isLike = false;
         commentList[parentIndex].likedCount -= 1;

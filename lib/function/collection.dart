@@ -549,6 +549,7 @@ setCollectionCover(BuildContext contextFrom, String collectionId,
     Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
     Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
         .getCollectionList();
+    //TODO 没有刷新
   } finally {}
 }
 
