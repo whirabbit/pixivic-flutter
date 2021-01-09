@@ -31,7 +31,6 @@ login(BuildContext context, String userName, String pwd,
       await client.post(url, headers: header, body: encoder.convert(body));
   if (response.statusCode == 200) {
     prefs.setString('auth', response.headers['authorization']);
-    print(prefs.getString('auth'));
     Map data = jsonDecode(
         utf8.decode(response.bodyBytes, allowMalformed: true))['data'];
     print(data);
@@ -51,7 +50,8 @@ login(BuildContext context, String userName, String pwd,
     print(newPageKey);
     print(userPageKey);
     // 为 dio 单例添加 auth
-    initDioClient();
+    //dioPixivic.options.headers["Authorization"] =prefs.getString('auth');
+    //initDioClient();
     if (widgetFrom != null) {
       switch (widgetFrom) {
         case 'newPage':
@@ -64,7 +64,8 @@ login(BuildContext context, String userName, String pwd,
           break;
       }
     }
-    initDioClient();
+    //initDioClient();
+    print(prefs.getString('auth')+"------------------------------------------" );
     // 清除 picpage 页面缓存以便重新加载
     homeScrollerPosition = 0;
     homePicList = [];

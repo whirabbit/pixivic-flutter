@@ -1,6 +1,6 @@
-import 'package:dio/dio.dart';
 // import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:dio/dio.dart';
 import 'package:pixivic/data/common.dart';
 
 Dio dioPixivic;
@@ -27,6 +27,10 @@ initDioClient() {
   // );
   dioPixivic.interceptors
       .add(InterceptorsWrapper(onRequest: (RequestOptions options) async {
+    String token = prefs.getString('auth');
+    if (token != null && token != '') {
+      options.headers["Authorization"] = token;
+    }
     print(options.uri);
     print(options.headers);
     return options;
