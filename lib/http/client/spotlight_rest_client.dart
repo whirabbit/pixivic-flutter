@@ -17,7 +17,7 @@ abstract class SpotlightRestClient {
 
   @GET("/spotlights")
   Future<Result<List<Spotlight>>> querySpotlightListInfo(
-      @Query("page") int page, @Query("pageSize") int pageSize);
+      @Query("page") int page, @Query("pageSize") int pageSize,);
 
   @GET("/spotlights/{spotlightId}/illustrations")
   Future<Result<List<Illust>>> querySpotlightIllustListInfo(

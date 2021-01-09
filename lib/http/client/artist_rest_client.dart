@@ -5,6 +5,7 @@ import 'package:retrofit/http.dart';
 import 'package:pixivic/common/do/artist.dart';
 import 'package:pixivic/common/do/illust.dart';
 import 'package:pixivic/common/do/result.dart';
+import 'package:retrofit/retrofit.dart';
 
 part 'artist_rest_client.g.dart';
 
@@ -24,7 +25,8 @@ abstract class ArtistRestClient {
       @Query("maxSanityLevel") int maxSanityLevel);
 
   @GET("/artists/{artistId}")
-  Future<Result<Artist>> querySearchArtistByIdInfo(@Path() int artistId);
+  Future<Result<Artist>> querySearchArtistByIdInfo(@Path() int artistId,
+  @ReceiveProgress() ProgressCallback onReceiveProgress );
 
   @GET("/artists/{artistId}/summary")
   Future<Result<ArtistSummary>> queryArtistIllustSummaryInfo(

@@ -25,7 +25,7 @@ abstract class UserBaseRestClient {
       @Path("emialAddr") String emialAddr);
 
   @GET("/users/usernames/{username}")
-  Future<void> queryVerifyUserNameIsAvailableInfo(
+  Future queryVerifyUserNameIsAvailableInfo(
       @Path("username") String username);
 
 //用户注册
@@ -53,7 +53,7 @@ abstract class UserBaseRestClient {
 
   //发送密码重置邮件
   @GET("/users/emails/{emailAddr}/resetPasswordEmail")
-  Future<String> queryResetPasswordByEmailInfo(
+  Future<Result> queryResetPasswordByEmailInfo(
     @Path("emailAddr") String emailAddr,
   );
 

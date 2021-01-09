@@ -1,4 +1,5 @@
 import 'package:injectable/injectable.dart';
+import 'package:retrofit/dio.dart';
 import 'package:retrofit/http.dart';
 import 'package:dio/dio.dart';
 
@@ -17,6 +18,7 @@ abstract class IllustRestClient {
   @GET("/illusts/{illustId}")
   Future<Result<Illust>> querySearchIllustByIdInfo(
     @Path("illustId") int illustId,
+      @ReceiveProgress()  ProgressCallback onReceiveProgress
   );
 
   @GET("/illusts/{illustId}/related")
