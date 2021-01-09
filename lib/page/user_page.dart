@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_advanced_networkimage/provider.dart';
 
 import 'package:pixivic/page/login_page.dart';
 import 'package:pixivic/sidepage/bookmark_page.dart';
@@ -96,12 +97,16 @@ class UserPageState extends State<UserPage> {
           ),
           Positioned(
               left: ScreenUtil().setWidth(27),
-              child: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  radius: ScreenUtil().setHeight(25),
-                  // 更换为 AdvancedNI
-                  backgroundImage: NetworkImage(prefs.getString('avatarLink'),
-                      headers: {'referer': 'https://pixivic.com'}))),
+              child: Hero(
+                tag: 'userAvater',
+                child: CircleAvatar(
+                    backgroundColor: Colors.white,
+                    radius: ScreenUtil().setHeight(25),
+                    // 更换为 AdvancedNI
+                    backgroundImage: AdvancedNetworkImage(
+                        prefs.getString('avatarLink'),
+                        header: {'referer': 'https://pixivic.com'})),
+              )),
           Positioned(
             top: ScreenUtil().setHeight(33),
             left: ScreenUtil().setWidth(90),

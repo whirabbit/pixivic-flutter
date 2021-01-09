@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/widget/papp_bar.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 class VIPPage extends StatelessWidget {
   @override
@@ -33,12 +34,15 @@ class VIPPage extends StatelessWidget {
                         left: ScreenUtil().setWidth(15),
                         top: ScreenUtil().setHeight(25),
                         bottom: ScreenUtil().setHeight(25),
-                        child: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: ScreenUtil().setHeight(25),
-                            backgroundImage: AdvancedNetworkImage(
-                                prefs.getString('avatarLink'),
-                                header: {'referer': 'https://pixivic.com'}))),
+                        child: Hero(
+                          tag: 'userAvater',
+                          child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: ScreenUtil().setHeight(25),
+                              backgroundImage: AdvancedNetworkImage(
+                                  prefs.getString('avatarLink'),
+                                  header: {'referer': 'https://pixivic.com'})),
+                        )),
                     Positioned(
                         left: ScreenUtil().setWidth(88),
                         top: ScreenUtil().setHeight(38),
@@ -47,7 +51,7 @@ class VIPPage extends StatelessWidget {
                           prefs.getString('name'),
                           style: TextStyle(
                               color: Colors.black,
-                              fontWeight: FontWeight.w300,
+                              fontWeight: FontWeight.w400,
                               fontSize: ScreenUtil().setSp(14)),
                         )),
                     Positioned(
@@ -92,7 +96,7 @@ class VIPPage extends StatelessWidget {
                         child: Text(TextZhVIP.code,
                             style: TextStyle(
                                 color: Colors.grey,
-                                fontWeight: FontWeight.w300,
+                                fontWeight: FontWeight.w400,
                                 fontSize: ScreenUtil().setSp(14))),
                       ),
                     ),
