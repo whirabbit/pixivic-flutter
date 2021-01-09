@@ -156,7 +156,7 @@ class UserService {
     return _collectionRestClient
         .queryViewUserCollectionInfo(userId, page, pageSize)
         .then((value) {
-      value.data = processCollectionData(value.data);
+     if(value.data!=null) value.data = processCollectionData(value.data);
       return value.data as List<Collection>;
     });
   }
