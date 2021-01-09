@@ -390,7 +390,6 @@ showCollectionInfoEditDialog(
                                             context,
                                             listen: false)
                                         .getCollectionList();
-                                    //TODO 点击提交没有刷新
                                     Navigator.of(context).pop();
                                   }
                                 });
@@ -549,7 +548,6 @@ setCollectionCover(BuildContext contextFrom, String collectionId,
     Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
     Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
         .getCollectionList();
-    //TODO 没有刷新
   } finally {}
 }
 
