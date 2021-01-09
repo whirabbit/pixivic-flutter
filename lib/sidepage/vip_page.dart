@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
@@ -122,7 +123,18 @@ class VIPPage extends StatelessWidget {
                             color: Colors.blue,
                             size: ScreenUtil().setWidth(26),
                           ),
-                          onTap: () {},
+                          onTap: () async {
+                            const url = 'https://mall.pixivic.net/product/';
+                            if (await canLaunch(url)) {
+                              await launch(
+                                url,
+                                forceSafariVC: false,
+                                forceWebView: false,
+                              );
+                            } else {
+                              throw 'Could not launch $url';
+                            }
+                          },
                         )),
                     Positioned(
                         left: ScreenUtil().setWidth(156),
@@ -134,7 +146,19 @@ class VIPPage extends StatelessWidget {
                             color: Colors.green,
                             size: ScreenUtil().setWidth(26),
                           ),
-                          onTap: () {},
+                          onTap: () async {
+                            const url =
+                                'https://weidian.com/?userid=1676062924';
+                            if (await canLaunch(url)) {
+                              await launch(
+                                url,
+                                forceSafariVC: false,
+                                forceWebView: false,
+                              );
+                            } else {
+                              throw 'Could not launch $url';
+                            }
+                          },
                         )),
                   ],
                 ),
