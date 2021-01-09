@@ -6,11 +6,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:dio/dio.dart';
+import 'package:bot_toast/bot_toast.dart';
 
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/function/identity.dart';
 
 class VIPPage extends StatelessWidget {
   @override
@@ -61,9 +64,9 @@ class VIPPage extends StatelessWidget {
                         // bottom: ScreenUtil().setHeight(32),
                         child: FaIcon(
                           FontAwesomeIcons.gem,
-                          color:  prefs.getInt('permissionLevel') == 3 ? 
-                          Colors.orange
-                          : Colors.grey,
+                          color: prefs.getInt('permissionLevel') == 3
+                              ? Colors.orange
+                              : Colors.grey,
                           size: ScreenUtil().setWidth(13),
                         )),
                     Positioned(
@@ -220,5 +223,23 @@ class VIPPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  submitCode(String code) async {
+    CancelFunc cancelLoading;
+    try {
+      cancelLoading = BotToast.showLoading();
+      String url = '/users/${prefs.getInt('id')}/permissionLevel';
+      Map<String, dynamic> payload = {'exchangeCode': code};
+      Response response = await dioPixivic.post(url, data: payload);
+      cancelLoading();
+      BotToast.showSimpleNotification(title: response.data['message']);
+      if (response.data['data'] == true) {
+        reloadUserData();
+        // getx refresh
+      } else {}
+    } catch (e) {
+      cancelLoading();
+    }
   }
 }
