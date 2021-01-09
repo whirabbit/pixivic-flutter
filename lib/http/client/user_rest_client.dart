@@ -16,7 +16,7 @@ abstract class UserRestClient {
       _UserRestClient;
 
 //用户收藏画作
-  @GET("/users/bookmarked")
+  @POST("/users/bookmarked")
   Future<String> queryUserMarkIllustInfo(@Body() Map body);
 
 //用户获取收藏画作列表
