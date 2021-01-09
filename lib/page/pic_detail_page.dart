@@ -27,6 +27,8 @@ import 'package:pixivic/function/dio_client.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/widget/markheart_icon.dart';
 import 'package:pixivic/common/do/illust.dart';
+import 'package:pixivic/biz/user/service/user_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
 
 class PicDetailPage extends StatefulWidget {
   @override
@@ -461,15 +463,17 @@ class _PicDetailPageState extends State<PicDetailPage> {
 
         try {
           if (currentFollowedState) {
-            await dioPixivic.delete(
-              url,
-              data: body,
-            );
+            // await dioPixivic.delete(
+            //   url,
+            //   data: body,
+            // );
+            await getIt<UserService>().queryUserCancelMarkArtist(body);
           } else {
-            await dioPixivic.post(
-              url,
-              data: body,
-            );
+            // await dioPixivic.post(
+            //   url,
+            //   data: body,
+            // );
+            await getIt<UserService>().queryUserMarkArtist(body);
           }
           setState(() {
             widget._picData.artistPreView.isFollowed =
@@ -662,7 +666,9 @@ class _PicDetailPageState extends State<PicDetailPage> {
         'userId': prefs.getInt('id').toString(),
         'illustId': widget._picData.id.toString()
       };
-      await dioPixivic.post(url, data: body);
+      // await dioPixivic.post(url, data: body);
+      await getIt<UserService>()
+          .queryNewUserViewIllustHistory(widget._picData.id, body);
     }
   }
 

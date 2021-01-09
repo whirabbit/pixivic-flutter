@@ -157,8 +157,8 @@ class _SpotlightPageState extends State<SpotlightPage> {
       return getIt<SpotlightService>()
           .querySpotlightList(currentPage, 30)
           .then((value) {
-        if (value.data.length < 30) loadMoreAble = false;
-        return value.data;
+        if (value.length < 30) loadMoreAble = false;
+        return value;
       });
       // Response response = await dioPixivic.get(url);
       // List jsonList = response.data['data'];

@@ -115,7 +115,7 @@ class _GuessLikePageState extends State<GuessLikePage> {
       getIt<IllustService>()
           .queryRecommendCollectIllust(prefs.getInt('id'))
           .then((value) {
-        picList = value.data;
+        picList = value;
         if (picList != null) picTotalNum = picList.length;
         setState(() {
           hasConnected = true;

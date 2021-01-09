@@ -9,6 +9,8 @@ import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/function/dio_client.dart';
 import 'package:pixivic/common/do/illust.dart';
 import 'package:pixivic/data/common.dart';
+import 'package:pixivic/biz/user/service/user_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
 
 class MarkHeart extends StatelessWidget {
   MarkHeart(
@@ -53,15 +55,17 @@ class MarkHeart extends StatelessWidget {
               };
               try {
                 if (isLikedLocalState) {
-                  await dioPixivic.delete(
-                    url,
-                    data: body,
-                  );
+                  await getIt<UserService>().queryUserCancelMarkIllust(body);
+                  // await dioPixivic.delete(
+                  //   url,
+                  //   data: body,
+                  // );
                 } else {
-                  await dioPixivic.post(
-                    url,
-                    data: body,
-                  );
+                  await getIt<UserService>().queryUserMarkIllust(body);
+                  // await dioPixivic.post(
+                  //   url,
+                  //   data: body,
+                  // );
                 }
                 Future.delayed(Duration(milliseconds: 400), () {
                   getPageProvider != null

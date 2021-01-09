@@ -5,6 +5,9 @@ import 'package:dio/dio.dart';
 
 import 'package:pixivic/page/user_list_page.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/common/do/bookmarked_user.dart';
+import 'package:pixivic/biz/illust/service/illust_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
 
 class BookmarkUsers extends StatefulWidget {
   @override
@@ -19,7 +22,7 @@ class BookmarkUsers extends StatefulWidget {
 
 class BookmarkUsersState extends State<BookmarkUsers> {
   bool visible = false;
-  List data;
+  List<BookmarkedUser> userOfCollectionIllustList;
   int numOfData;
 
   @override
@@ -66,7 +69,7 @@ class BookmarkUsersState extends State<BookmarkUsers> {
             backgroundColor: Colors.white,
             radius: ScreenUtil().setHeight(12),
             backgroundImage: NetworkImage(
-                'https://static.pixivic.net/avatar/299x299/${data[index]['userId'].toString()}.jpg',
+                'https://static.pixivic.net/avatar/299x299/${userOfCollectionIllustList[index].userId.toString()}.jpg',
                 headers: {'referer': 'https://pixivic.com'})),
       );
   }
@@ -82,10 +85,12 @@ class BookmarkUsersState extends State<BookmarkUsers> {
         '/illusts/${widget.illustId}/bookmarkedUsers?page=1&pageSize=3';
 
     try {
-      Response response = await dioPixivic.get(url);
-      data = response.data['data'];
-      if (data != null) {
-        numOfData = data.length;
+      userOfCollectionIllustList = await getIt<IllustService>()
+          .queryUserOfCollectionIllustList(widget.illustId, 1, 3);
+      // Response response = await dioPixivic.get(url);
+      // data = response.data['data'];
+      if (userOfCollectionIllustList != null) {
+        numOfData = userOfCollectionIllustList.length;
         changeVisible(true);
       } else {
         changeVisible(false);

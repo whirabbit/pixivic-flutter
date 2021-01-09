@@ -17,7 +17,7 @@ class Illust {
   int pageCount;
   double width;
   double height;
-  double sanityLevel;
+  int sanityLevel;
   double restrict;
   double totalView;
   double totalBookmarks;

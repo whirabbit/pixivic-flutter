@@ -10,6 +10,10 @@ import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/page/user_detail_page.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/biz/illust/service/illust_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/bookmarked_user.dart';
+import 'package:pixivic/common/do/illust.dart';
 
 class UserListPage extends StatefulWidget {
   @override
@@ -27,7 +31,7 @@ class _UserListPageState extends State<UserListPage> {
   TextZhUserListPage texts = TextZhUserListPage();
   ScrollController scrollController;
   int currentPage;
-  List jsonList;
+  List<BookmarkedUser> jsonList;
   int totalNum;
   bool loadMoreAble;
   bool haveConnected;
@@ -118,33 +122,32 @@ class _UserListPageState extends State<UserListPage> {
     }
   }
 
-  Widget userCell(Map data) {
+  Widget userCell(BookmarkedUser data) {
     // print(data);
     return ListTile(
       title: Text(
-        data['username'],
+        data.username,
         style: TextStyle(fontSize: 14),
       ),
       subtitle: Text(
-          DateFormat("yyyy-MM-dd").format(DateTime.parse(data['createDate'])),
+          DateFormat("yyyy-MM-dd").format(DateTime.parse(data.createDate)),
           style: TextStyle(fontSize: 12, color: Colors.grey)),
       leading: CircleAvatar(
           backgroundColor: Colors.white,
           radius: ScreenUtil().setHeight(15),
           backgroundImage: NetworkImage(
-              'https://pic.cheerfun.dev/${data['userId'].toString()}.png',
+              'https://pic.cheerfun.dev/${data.userId.toString()}.png',
               headers: {'referer': 'https://pixivic.com'})),
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) =>
-                UserDetailPage(data['userId'], data['username'])));
+            builder: (context) => UserDetailPage(data.userId, data.username)));
       },
     );
   }
 
   _getJsonList() async {
     String url;
-    List jsonList;
+    List<BookmarkedUser> jsonList;
     Response response;
 
     if (widget.mode == 'bookmark') {
@@ -152,14 +155,16 @@ class _UserListPageState extends State<UserListPage> {
           '/illusts/${widget.illustId}/bookmarkedUsers?page=$currentPage&pageSize=30';
     }
     try {
-      response = await dioPixivic.get(url);
-      jsonList = response.data['data'];
+      List<BookmarkedUser> result = await getIt<IllustService>()
+          .queryUserOfCollectionIllustList(widget.illustId, currentPage, 30);
+      // response = await dioPixivic.get(url);
+      jsonList = result;
       if (jsonList == null)
         loadMoreAble = false;
       else
         loadMoreAble = true;
       return jsonList;
-    } catch(e) {
+    } catch (e) {
       return null;
     }
   }

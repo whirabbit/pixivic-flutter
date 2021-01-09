@@ -17,6 +17,7 @@ import 'package:pixivic/common/config/get_it_config.dart';
 import 'package:pixivic/common/do/artist.dart';
 import 'package:pixivic/function/dio_client.dart';
 import 'package:pixivic/biz/artist/service/artist_service.dart';
+import 'package:pixivic/biz/user/service/user_service.dart';
 
 class ArtistPage extends StatefulWidget {
   @override
@@ -228,7 +229,7 @@ class _ArtistPageState extends State<ArtistPage> {
       getIt<ArtistService>()
           .querySearchArtistById(int.parse(widget.artistId))
           .then((result) {
-        Artist artist = result.data;
+        Artist artist = result;
         // print(artistDetail);
         this.comment = artist.comment;
         this.urlTwitter = artist.twitterUrl;
@@ -240,7 +241,7 @@ class _ArtistPageState extends State<ArtistPage> {
       getIt<ArtistService>()
           .queryArtistIllustSummary(int.parse(widget.artistId))
           .then((value) {
-        ArtistSummary artistSummary = value.data;
+        ArtistSummary artistSummary = value;
         this.numOfIllust = artistSummary.illustSum.toString();
         this.numOfManga = artistSummary.mangaSum.toString();
         this.tabs = <Tab>[
@@ -381,15 +382,17 @@ class _ArtistPageState extends State<ArtistPage> {
         try {
           // cancelLoading = BotToast.showLoading();
           if (currentFollowedState) {
-            await dioPixivic.delete(
-              url,
-              data: body,
-            );
+            // await dioPixivic.delete(
+            //   url,
+            //   data: body,
+            // );
+            await getIt<UserService>().queryUserCancelMarkArtist(body);
           } else {
-            await dioPixivic.post(
-              url,
-              data: body,
-            );
+            // await dioPixivic.post(
+            //   url,
+            //   data: body,
+            // );
+            await getIt<UserService>().queryUserMarkArtist(body);
           }
           // cancelLoading();
           setState(() {

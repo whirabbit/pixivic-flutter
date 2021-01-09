@@ -8,6 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pixivic/biz/collection/service/collection_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/result.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tuple/tuple.dart';
@@ -17,6 +20,7 @@ import '../data/texts.dart';
 import 'package:pixivic/provider/collection_model.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/common/do/collection.dart';
 
 showAddToCollection(BuildContext contextFrom, List selectedPicIdList,
     {bool multiSelect = true}) {
@@ -131,20 +135,20 @@ showCollectionInfoEditDialog(
   TextEditingController title;
   TextEditingController caption;
   TextZhCollection texts = TextZhCollection();
-  Map inputData;
+  Collection inputData;
   if (!isCreate && index != null) {
     inputData = Provider.of<CollectionUserDataModel>(context, listen: false)
         .userCollectionList[index];
-    title = TextEditingController(text: inputData['title']);
-    caption = TextEditingController(text: inputData['caption']);
+    title = TextEditingController(text: inputData.title);
+    caption = TextEditingController(text: inputData.caption);
     Provider.of<NewCollectionParameterModel>(context, listen: false)
-        .passTags(inputData['tagList']);
+        .passTags(inputData.tagList);
     Provider.of<NewCollectionParameterModel>(context, listen: false)
-        .public(inputData['isPublic'] == 1 ? true : false);
+        .public(inputData.isPublic == 1 ? true : false);
     Provider.of<NewCollectionParameterModel>(context, listen: false)
-        .sexy(inputData['pornWarning'] == 1 ? true : false);
+        .sexy(inputData.pornWarning == 1 ? true : false);
     Provider.of<NewCollectionParameterModel>(context, listen: false)
-        .comment(inputData['forbidComment'] == 1 ? true : false);
+        .comment(inputData.forbidComment == 1 ? true : false);
   } else {
     title = TextEditingController();
     caption = TextEditingController();
@@ -305,7 +309,8 @@ showCollectionInfoEditDialog(
                                       Provider.of<CollectionUserDataModel>(
                                               context,
                                               listen: false)
-                                          .userCollectionList[index]['id']
+                                          .userCollectionList[index]
+                                          .id
                                           .toString());
                                 },
                                 child: Text(
@@ -375,9 +380,9 @@ showCollectionInfoEditDialog(
                                   }
                                 });
                               else {
-                                payload['id'] = inputData['id'];
+                                payload['id'] = inputData.id;
                                 putEditCollection(
-                                        payload, inputData['id'].toString())
+                                        payload, inputData.id.toString())
                                     .then((value) {
                                   if (value) {
                                     onPostCollection = false;
@@ -385,6 +390,7 @@ showCollectionInfoEditDialog(
                                             context,
                                             listen: false)
                                         .getCollectionList();
+                                    //TODO 点击提交没有刷新
                                     Navigator.of(context).pop();
                                   }
                                 });
@@ -514,10 +520,12 @@ addIllustToCollection(BuildContext contextFrom, List illustIdList,
 
   try {
     cancelLoading = BotToast.showLoading();
-    Response response = await dioPixivic.post(url, data: illustIdList);
+    // Response response = await dioPixivic.post(url, data: illustIdList);
+    Result result = await getIt<CollectionService>()
+        .queryAddIllustToCollection(int.parse(collectionId), illustIdList);
     cancelLoading();
-    BotToast.showSimpleNotification(title: response.data['message']);
-    print(response.data);
+    BotToast.showSimpleNotification(title: result.message);
+    print(result.data);
     if (multiSelect)
       Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
     Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
@@ -529,25 +537,29 @@ addIllustToCollection(BuildContext contextFrom, List illustIdList,
   }
 }
 
-setCollectionCover(
-    BuildContext contextFrom, String collectionId, List illustIdList) async {
+setCollectionCover(BuildContext contextFrom, String collectionId,
+    List<int> illustIdList) async {
   try {
     print(illustIdList);
     await dioPixivic.put('/collections/$collectionId/cover',
         data: illustIdList);
-
+    //TODO 调试不通 400错误
+    // await getIt<CollectionService>().queryModifyCollectionCover(
+    //     int.parse(collectionId), illustIdList);
     Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
     Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
         .getCollectionList();
+    //TODO 没有刷新
   } finally {}
 }
 
 removeIllustFromCollection(
     BuildContext contextFrom, String collectionId, List illustIdList) async {
   try {
-    await dioPixivic.delete('/collections/$collectionId/illustrations',
-        data: illustIdList);
-
+    // await dioPixivic.delete('/collections/$collectionId/illustrations',
+    //     data: illustIdList);
+    await getIt<CollectionService>()
+        .queryBulkDeleteCollection(int.parse(collectionId), illustIdList);
     Provider.of<PicPageModel>(contextFrom, listen: false).cleanSelectedList();
     Provider.of<PicPageModel>(contextFrom, listen: false).initAndLoadData();
     Provider.of<CollectionUserDataModel>(contextFrom, listen: false)
@@ -563,11 +575,13 @@ postNewCollection(Map<String, dynamic> payload) async {
   if (payload['tagList'] != null) {
     try {
       cancelLoading = BotToast.showLoading();
-      Response response = await dioPixivic.post(url,
-          data: payload, options: Options(headers: headers));
+      Result result = await getIt<CollectionService>()
+          .queryCreateCollection(payload, prefs.getString('auth'));
+      // Response response = await dioPixivic.post(url,
+      //     data: payload, options: Options(headers: headers));
       cancelLoading();
-      print(response.data);
-      BotToast.showSimpleNotification(title: response.data['message']);
+      print(result.data);
+      BotToast.showSimpleNotification(title: result.message);
       return true;
     } catch (e) {
       cancelLoading();
@@ -597,7 +611,9 @@ deleteCollection(BuildContext contextFrom, String collectionId) {
             FlatButton(
               onPressed: () async {
                 try {
-                  await dioPixivic.delete('/collections/$collectionId');
+                  // await dioPixivic.delete('/collections/$collectionId');
+                  getIt<CollectionService>()
+                      .queryDeleteCollection(int.parse(collectionId));
                   Provider.of<CollectionUserDataModel>(contextFrom,
                           listen: false)
                       .getCollectionList();
@@ -621,8 +637,10 @@ putEditCollection(Map<String, dynamic> payload, String collectionId) async {
   // print(payload);
   if (payload['tagList'] != null) {
     try {
-      Response response = await dioPixivic.put(url, data: payload);
-      BotToast.showSimpleNotification(title: response.data['message']);
+      // Response response = await dioPixivic.put(url, data: payload);
+      Result result = await getIt<CollectionService>()
+          .queryUpdateCollection(int.parse(collectionId), payload);
+      BotToast.showSimpleNotification(title: result.message);
       return true;
     } catch (e) {
       return false;
@@ -650,15 +668,15 @@ checkBeforePost(
   }
 }
 
-Widget singleTag(context, Map data, bool advice) {
+Widget singleTag(context, TagList data, bool advice) {
   return Container(
     padding: EdgeInsets.only(
         left: ScreenUtil().setWidth(1.5),
         right: ScreenUtil().setWidth(1.5),
         top: ScreenUtil().setWidth(4)),
     child: ButtonTheme(
-      materialTapTargetSize:
-          MaterialTapTargetSize.shrinkWrap, //set _InputPadding to zero
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      //set _InputPadding to zero
       height: ScreenUtil().setHeight(20),
       minWidth: ScreenUtil().setWidth(1),
       buttonColor: Colors.grey[100],
@@ -683,7 +701,7 @@ Widget singleTag(context, Map data, bool advice) {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             Text(
-              data['tagName'],
+              data.tagName,
               style: TextStyle(color: Colors.grey),
             ),
             !advice

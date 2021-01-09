@@ -266,9 +266,9 @@ class _CommentCellState extends State<CommentCell> {
       getIt<CommentService>()
           .queryGetComment(AppType.illusts, widget.id, 1, 10)
           .then((value) {
-        if (value.data != null)
+        if (value != null)
           setState(() {
-            commentJsonData = value.data;
+            commentJsonData = value;
             commentJsonData[0].content =
                 commentJsonData[0].content.replaceAll('\n', '');
           });

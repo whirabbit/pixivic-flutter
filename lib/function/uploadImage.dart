@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
-import 'package:pixivic/function/dio_client.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../page/pic_detail_page.dart';
 import '../data/texts.dart';
+import 'package:pixivic/biz/illust/service/illust_service.dart';
+import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/function/dio_client.dart';
 
 uploadImageToSaucenao(File file, BuildContext context) async {
   TextZhUploadImage texts = TextZhUploadImage();
@@ -53,23 +55,31 @@ uploadImageToSaucenao(File file, BuildContext context) async {
           BotToast.showSimpleNotification(title: texts.similarityLow);
           return false;
         } else if (id != 'null') {
-          try {
-            illustResponse = await dioPixivic.get(
-              '/illusts/$id',
-            );
-            if (illustResponse.statusCode == 200) {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                return PicDetailPage(illustResponse.data['data']);
-              }));
-              return true;
-            }
-          } catch (e) {
-            print(e.response.statusCode);
-            print('on low error');
-            BotToast.showSimpleNotification(
-                title: illustResponse.data['meesage']);
-            return false;
-          }
+          // try {
+          getIt<IllustService>()
+              .querySearchIllustById(int.parse(id))
+              .then((value) {
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              return PicDetailPage(value);
+            }));
+            return true;
+          });
+          // illustResponse = await dioPixivic.get(
+          //   '/illusts/$id',
+          // );
+          // if (illustResponse.statusCode == 200) {
+          //   Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          //     return PicDetailPage(illustResponse.data['data']);
+          //   }));
+          //   return true;
+          // }
+          // } catch (e) {
+          //   print(e.response.statusCode);
+          //   print('on low error');
+          //   BotToast.showSimpleNotification(
+          //       title: illustResponse.data['meesage']);
+          //   return false;
+          // }
         } else if (id == 'null' && extUrl != null) {
           BotToast.showSimpleNotification(title: texts.noImageButUrl);
           if (await canLaunch(extUrl)) {

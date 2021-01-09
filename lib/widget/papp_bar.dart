@@ -19,6 +19,10 @@ import 'package:pixivic/provider/common_model.dart';
 import 'package:pixivic/function/dio_client.dart';
 import 'package:pixivic/biz/search/service/search_service.dart';
 import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/illust.dart';
+import 'package:pixivic/biz/artist/service/artist_service.dart';
+import 'package:pixivic/biz/illust/service/illust_service.dart';
+import 'package:pixivic/common/do/artist.dart';
 // import 'package:pixivic/provider/pic_page_model.dart';
 
 class PappBar extends StatefulWidget implements PreferredSizeWidget {
@@ -617,7 +621,7 @@ class PappBarState extends State<PappBar> {
       getIt<SearchService>()
           .queryKeyWordsToTranslatedResult(searchController.text)
           .then((value) {
-        widget.searchFucntion(value.data.keyword);
+        widget.searchFucntion(value.keyword);
       });
       // Response response = await dioPixivic
       //     .get('/keywords/${searchController.text}/translations');
@@ -641,23 +645,29 @@ class PappBarState extends State<PappBar> {
     } else {
       CancelFunc cancelLoading;
       try {
-        Response response = await dioPixivic
-            .get('/artists/${searchController.text}',
-                onReceiveProgress: (count, total) {
+        onReceiveProgress(int count, int total) {
           cancelLoading = BotToast.showLoading();
-        });
+        }
+
+        Artist artist = await getIt<ArtistService>().querySearchArtistById(
+            int.parse(searchController.text),
+            onReceiveProgress: onReceiveProgress);
+        // Response response = await dioPixivic
+        //     .get('/artists/${searchController.text}',
+        //         onReceiveProgress: (count, total) {
+        //   cancelLoading = BotToast.showLoading();
+        // });
         cancelLoading();
-        Map result = response.data;
+        Artist result = artist;
 
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) {
             return ArtistPage(
-              result['data']['avatar'],
-              result['data']['name'],
-              result['data']['id'].toString(),
-              isFollowed: prefs.getString('auth') != ''
-                  ? result['data']['isFollowed']
-                  : false,
+              result.avatar,
+              result.name,
+              result.id.toString(),
+              isFollowed:
+                  prefs.getString('auth') != '' ? result.isFollowed : false,
             );
           },
         ));
@@ -687,17 +697,22 @@ class PappBarState extends State<PappBar> {
       CancelFunc cancelLoading;
 
       try {
-        Response response = await dioPixivic
-            .get('/illusts/${searchController.text}',
-                onReceiveProgress: (count, total) {
+        onReceiveProgress(int count, int total) {
           cancelLoading = BotToast.showLoading();
-        });
-        cancelLoading();
-        Map result = response.data;
+        }
 
+        Illust result = await getIt<IllustService>().querySearchIllustById(
+            int.parse(searchController.text),
+            onReceiveProgress: onReceiveProgress);
+        // Response response = await dioPixivic
+        //     .get('/illusts/${searchController.text}',
+        //     onReceiveProgress: (count, total) {
+        //       cancelLoading = BotToast.showLoading();
+        //     });
+        cancelLoading();
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) {
-            return PicDetailPage(result['data']);
+            return PicDetailPage(result);
           },
         ));
         return true;
