@@ -132,7 +132,7 @@ PODS:
     - Flutter
   - url_launcher (0.0.1):
     - Flutter
-  - vibration (1.7.1):
+  - vibration (1.7.2):
     - Flutter
 
 DEPENDENCIES:
@@ -230,8 +230,8 @@ SPEC CHECKSUMS:
   SDWebImageFLPlugin: 6c2295fb1242d44467c6c87dc5db6b0a13228fd8
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
-  vibration: 4f4ded27b9d0e21e4110ca43978f057412d28c44
+  vibration: 528f5ef88e90d4a8fd1ef04afbf0ed3ac7c9801d
 
 PODFILE CHECKSUM: d5a2c28f167cc9e036e48db1960f4563346848c0
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.10.0
