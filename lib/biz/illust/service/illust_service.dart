@@ -1,12 +1,14 @@
 import 'package:injectable/injectable.dart';
+import 'package:dio/dio.dart';
+import 'package:bot_toast/bot_toast.dart';
 
 import 'package:pixivic/http/client/illust_rest_client.dart';
 import 'package:pixivic/http/client/rank_rest_client.dart';
 import 'package:pixivic/common/do/illust.dart';
-import 'package:pixivic/common/do/result.dart';
 import 'package:pixivic/http/client/recommended_rest_client.dart';
 import 'package:pixivic/http/client/search_rest_client.dart';
 import 'package:pixivic/http/client/wallpaper_rest_client.dart';
+import 'package:pixivic/common/do/bookmarked_user.dart';
 
 @lazySingleton
 class IllustService {
@@ -23,9 +25,15 @@ class IllustService {
       this._recommendedRestClient,
       this._wallpaperRestClient);
 
-  processData(List data) {
+  processIllustData(List data) {
     List<Illust> illustList = data.map((s) => Illust.fromJson(s)).toList();
     return illustList;
+  }
+
+  processBookmarkedUserData(List data) {
+    List<BookmarkedUser> bookmarkedUserList =
+        data.map((s) => BookmarkedUser.fromJson(s)).toList();
+    return bookmarkedUserList;
   }
 
   Future<List<Illust>> queryIllustRank(
@@ -33,7 +41,7 @@ class IllustService {
     return _rankRestClient
         .queryIllustRankInfo(date, mode, page, pageSize)
         .then((value) {
-      if (value.data != null) value.data = processData(value.data);
+      if (value.data != null) value.data = processIllustData(value.data);
       return value.data;
     });
   }
@@ -42,7 +50,7 @@ class IllustService {
     return _searchRestClient
         .querySearchListInfo(keyword, page, pageSize)
         .then((value) {
-      if (value.data != null) value.data = processData(value.data);
+      if (value.data != null) value.data = processIllustData(value.data);
       return value.data as List<Illust>;
     });
   }
@@ -50,7 +58,7 @@ class IllustService {
 //以图搜图
   Future<List<Illust>> querySearchForPictures(String imageUrl) {
     return _searchRestClient.querySearchForPicturesInfo(imageUrl).then((value) {
-      if (value.data != null) value.data = processData(value.data);
+      if (value.data != null) value.data = processIllustData(value.data);
       return value.data as List<Illust>;
     });
   }
@@ -60,16 +68,29 @@ class IllustService {
     return _recommendedRestClient
         .queryRecommendCollectIllustInfo(userId)
         .then((value) {
-      if (value.data != null) value.data = processData(value.data);
+      if (value.data != null) value.data = processIllustData(value.data);
       return value.data as List<Illust>;
     });
   }
 
   //Id查画作
-  Future<Illust> querySearchIllustById(int illustId) {
-    return _illustRestClient.querySearchIllustByIdInfo(illustId).then((value) {
+  Future<Illust> querySearchIllustById(int illustId,
+      {Function onReceiveProgress}) {
+    return _illustRestClient
+        .querySearchIllustByIdInfo(illustId, onReceiveProgress)
+        .then((value) {
       if (value.data != null) value.data = Illust.fromJson(value.data);
       return value.data as Illust;
+    }).catchError((Object obj) {
+      switch (obj.runtimeType) {
+        case DioError:
+          final res = (obj as DioError).response;
+          print(res.statusCode);
+          BotToast.showSimpleNotification(title: res.data['message']);
+          break;
+        default:
+          return false;
+      }
     });
   }
 
@@ -79,7 +100,7 @@ class IllustService {
     return _illustRestClient
         .queryRelatedIllustListInfo(relatedId, page, pageSize)
         .then((value) {
-      if (value.data != null) value.data = processData(value.data);
+      if (value.data != null) value.data = processIllustData(value.data);
       return value.data as List<Illust>;
     });
   }
@@ -91,8 +112,19 @@ class IllustService {
     return _wallpaperRestClient
         .queryIllustUnderTagListInfo(categotyId, tagId, type, offset, pageSize)
         .then((value) {
-      if (value.data != null) value.data = processData(value.data);
+      if (value.data != null) value.data = processIllustData(value.data);
       return value.data as List<Illust>;
+    });
+  }
+
+  Future<List<BookmarkedUser>> queryUserOfCollectionIllustList(
+      num userId, int page, int pageSize) {
+    return _illustRestClient
+        .queryUserOfCollectionIllustListInfo(userId, page, pageSize)
+        .then((value) {
+      if (value.data != null)
+        value.data = processBookmarkedUserData(value.data);
+      return value.data as List<BookmarkedUser>;
     });
   }
 }

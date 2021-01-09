@@ -1,7 +1,6 @@
 import 'package:injectable/injectable.dart';
 
 import 'package:pixivic/common/do/artist.dart';
-import 'package:pixivic/common/do/result.dart';
 import 'package:pixivic/common/do/illust.dart';
 import 'package:pixivic/http/client/artist_rest_client.dart';
 
@@ -33,8 +32,11 @@ class ArtistService {
     });
   }
 
-  Future<Artist> querySearchArtistById(int artistId) {
-    return _artistRestClient.querySearchArtistByIdInfo(artistId).then((value) {
+  Future<Artist> querySearchArtistById(
+      int artistId, {Function onReceiveProgress}) {
+    return _artistRestClient
+        .querySearchArtistByIdInfo(artistId,onReceiveProgress)
+        .then((value) {
       if (value.data != null) value.data = Artist.fromJson(value.data);
       return value.data as Artist;
     });

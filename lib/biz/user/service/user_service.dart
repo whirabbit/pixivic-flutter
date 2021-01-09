@@ -8,7 +8,6 @@ import 'package:pixivic/common/do/collection.dart';
 import 'package:pixivic/http/client/user_rest_client.dart';
 import 'package:pixivic/http/client/collection_rest_client.dart';
 
-
 @lazySingleton
 class UserService {
   final UserRestClient _userRestClient;
@@ -157,8 +156,20 @@ class UserService {
     return _collectionRestClient
         .queryViewUserCollectionInfo(userId, page, pageSize)
         .then((value) {
-          value.data=processCollectionData(value.data);
+      value.data = processCollectionData(value.data);
       return value.data as List<Collection>;
+    });
+  }
+
+  Future<String> queryUserMarkIllust(Map body) {
+    return _userRestClient.queryUserMarkIllustInfo(body).then((value) {
+      return value;
+    });
+  }
+
+  Future<String> queryUserCancelMarkIllust(Map body) {
+    return _userRestClient.queryUserCancelMarkIllustInfo(body).then((value) {
+      return value;
     });
   }
 }
