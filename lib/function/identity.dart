@@ -33,22 +33,7 @@ login(BuildContext context, String userName, String pwd,
         utf8.decode(response.bodyBytes, allowMalformed: true))['data'];
     // print(data);
 
-    prefs.setInt('id', data['id']);
-    prefs.setInt('permissionLevel', data['permissionLevel']);
-    prefs.setInt('star', data['star']);
-
-    prefs.setString('name', data['username']);
-    prefs.setString('email', data['email']);
-    prefs.setString(
-        'permissionLevelExpireDate', data['permissionLevelExpireDate']);
-    prefs.setString('avatarLink',
-        'https://static.pixivic.net/avatar/299x299/${data['id']}.jpg');
-    if (data['signature'] != null)
-      prefs.setString('signature', data['signature']);
-    if (data['location'] != null) prefs.setString('location', data['location']);
-
-    prefs.setBool('isBindQQ', data['isBindQQ']);
-    prefs.setBool('isCheckEmail', data['isCheckEmail']);
+    setPrefs(data);
 
     isLogin = true;
     BotToast.showSimpleNotification(title: TextZhLoginPage().loginSucceed);
@@ -88,6 +73,7 @@ login(BuildContext context, String userName, String pwd,
 }
 
 logout(BuildContext context, {bool isInit = false}) {
+  // TODO: UI 刷新
   prefs.setString('auth', '');
   isLogin = false;
   if (!isInit) {
@@ -113,19 +99,7 @@ reloadUserData() async {
       Response response = await dioPixivic.get(url);
       if (response.statusCode == 200) {
         Map data = response.data['data'];
-        print(data);
-        prefs.setInt('id', data['id']);
-        prefs.setString('name', data['username']);
-        prefs.setString('email', data['email']);
-        prefs.setString('avatarLink',
-            'https://static.pixivic.net/avatar/299x299/${data['id']}.jpg');
-        if (data['signature'] != null)
-          prefs.setString('signature', data['signature']);
-        if (data['location'] != null)
-          prefs.setString('location', data['location']);
-        prefs.setInt('star', data['star']);
-        prefs.setBool('isBindQQ', data['isBindQQ']);
-        prefs.setBool('isCheckEmail', data['isCheckEmail']);
+        setPrefs(data);
         return true;
       } else {
         return false;
@@ -134,6 +108,25 @@ reloadUserData() async {
       return false;
     }
   }
+}
+
+setPrefs(Map data) {
+  prefs.setInt('id', data['id']);
+  prefs.setInt('permissionLevel', data['permissionLevel']);
+  prefs.setInt('star', data['star']);
+
+  prefs.setString('name', data['username']);
+  prefs.setString('email', data['email']);
+  prefs.setString(
+      'permissionLevelExpireDate', data['permissionLevelExpireDate']);
+  prefs.setString('avatarLink',
+      'https://static.pixivic.net/avatar/299x299/${data['id']}.jpg');
+  if (data['signature'] != null)
+    prefs.setString('signature', data['signature']);
+  if (data['location'] != null) prefs.setString('location', data['location']);
+
+  prefs.setBool('isBindQQ', data['isBindQQ']);
+  prefs.setBool('isCheckEmail', data['isCheckEmail']);
 }
 
 // checkAuth() async {
