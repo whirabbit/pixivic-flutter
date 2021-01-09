@@ -31,18 +31,25 @@ login(BuildContext context, String userName, String pwd,
     print(prefs.getString('auth'));
     Map data = jsonDecode(
         utf8.decode(response.bodyBytes, allowMalformed: true))['data'];
-    print(data);
+    // print(data);
+
     prefs.setInt('id', data['id']);
+    prefs.setInt('permissionLevel', data['permissionLevel']);
+    prefs.setInt('star', data['star']);
+
     prefs.setString('name', data['username']);
     prefs.setString('email', data['email']);
+    prefs.setString(
+        'permissionLevelExpireDate', data['permissionLevelExpireDate']);
     prefs.setString('avatarLink',
         'https://static.pixivic.net/avatar/299x299/${data['id']}.jpg');
     if (data['signature'] != null)
       prefs.setString('signature', data['signature']);
     if (data['location'] != null) prefs.setString('location', data['location']);
-    prefs.setInt('star', data['star']);
+
     prefs.setBool('isBindQQ', data['isBindQQ']);
     prefs.setBool('isCheckEmail', data['isCheckEmail']);
+
     isLogin = true;
     BotToast.showSimpleNotification(title: TextZhLoginPage().loginSucceed);
     print(newPageKey);

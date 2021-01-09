@@ -69,7 +69,7 @@ Future initData(BuildContext context) async {
     if (prefs.getInt(item) == null) {
       if (item == 'sanityLevel')
         prefs.setInt(item, 3);
-      else if (item == 'previewRule')
+      else if (item == 'previewRule')   // 缓存时长
         prefs.setInt(item, 7);
       else
         prefs.setInt(item, 0);
