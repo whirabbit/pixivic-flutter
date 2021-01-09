@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -60,20 +61,32 @@ class VIPPage extends StatelessWidget {
                         // bottom: ScreenUtil().setHeight(32),
                         child: FaIcon(
                           FontAwesomeIcons.gem,
-                          color: Colors.orange,
+                          color:  prefs.getInt('permissionLevel') == 3 ? 
+                          Colors.orange
+                          : Colors.grey,
                           size: ScreenUtil().setWidth(13),
                         )),
                     Positioned(
-                      left: ScreenUtil().setWidth(107),
-                      top: ScreenUtil().setHeight(63),
-                      // bottom: ScreenUtil().setHeight(33),
-                      child: Text(TextZhVIP.endTime,
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w300,
-                            fontSize: ScreenUtil().setSp(12),
-                          )),
-                    )
+                        left: ScreenUtil().setWidth(107),
+                        top: ScreenUtil().setHeight(63),
+                        // bottom: ScreenUtil().setHeight(33),
+                        child: prefs.getInt('permissionLevel') == 3
+                            ? Text(
+                                TextZhVIP.endTime +
+                                    DateFormat("yyyy-MM-dd").format(
+                                        DateTime.parse(prefs.getString(
+                                            'permissionLevelExpireDate'))),
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: ScreenUtil().setSp(12),
+                                ))
+                            : Text(TextZhVIP.notVip,
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: ScreenUtil().setSp(12),
+                                )))
                   ],
                 ),
               ),
