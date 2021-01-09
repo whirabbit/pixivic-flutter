@@ -29,6 +29,7 @@ initDioClient() {
       .add(InterceptorsWrapper(onRequest: (RequestOptions options) async {
     print(options.uri);
     print(options.headers);
+    print(options.data);
     return options;
   }, onResponse: (Response response) async {
     // print(response.data);
@@ -48,14 +49,15 @@ initDioClient() {
       print(e.response.data);
       print(e.response.headers);
       print(e.response.request);
-      if (e.response.statusCode == 400)
-        BotToast.showSimpleNotification(title: '请登陆后重新加载页面');
+      if (e.response.data['message'] != '')
+        BotToast.showSimpleNotification(title: e.response.data['message']);
+      else if (e.response.statusCode == 400)
+        BotToast.showSimpleNotification(title: '遇到了 400 错误');
       else if (e.response.statusCode == 500) {
         print('500 error');
       } else if (e.response.statusCode == 401 || e.response.statusCode == 403) {
         BotToast.showSimpleNotification(title: '登陆已失效，请重新登陆');
-      } else if (e.response.data['message'] != '')
-        BotToast.showSimpleNotification(title: e.response.data['message']);
+      }
     } else {
       // Something happened in setting up or sending the request that triggered an Error
       if (e.message != '') BotToast.showSimpleNotification(title: e.message);

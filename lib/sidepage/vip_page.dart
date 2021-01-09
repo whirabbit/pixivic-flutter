@@ -16,6 +16,8 @@ import 'package:pixivic/function/dio_client.dart';
 import 'package:pixivic/function/identity.dart';
 
 class VIPPage extends StatelessWidget {
+  final TextEditingController codeInputController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,7 +122,7 @@ class VIPPage extends StatelessWidget {
                         left: ScreenUtil().setWidth(42),
                         right: ScreenUtil().setWidth(42),
                         top: ScreenUtil().setHeight(42),
-                        child: TextField()),
+                        child: TextField(controller: codeInputController,)),
                     Positioned(
                         left: ScreenUtil().setWidth(90),
                         right: ScreenUtil().setWidth(90),
@@ -131,7 +133,9 @@ class VIPPage extends StatelessWidget {
                                   color: Colors.orange,
                                   fontWeight: FontWeight.w300,
                                   fontSize: ScreenUtil().setSp(12))),
-                          onPressed: () {},
+                          onPressed: () {
+                            submitCode(codeInputController.text);
+                          },
                         )),
                     Positioned(
                         left: ScreenUtil().setWidth(110),
@@ -230,8 +234,8 @@ class VIPPage extends StatelessWidget {
     try {
       cancelLoading = BotToast.showLoading();
       String url = '/users/${prefs.getInt('id')}/permissionLevel';
-      Map<String, dynamic> payload = {'exchangeCode': code};
-      Response response = await dioPixivic.post(url, data: payload);
+      Map<String, dynamic> queryParameters = {'exchangeCode': code};
+      Response response = await dioPixivic.put(url, queryParameters: queryParameters);
       cancelLoading();
       BotToast.showSimpleNotification(title: response.data['message']);
       if (response.data['data'] == true) {
