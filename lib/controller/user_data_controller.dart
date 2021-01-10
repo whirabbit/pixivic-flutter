@@ -3,19 +3,19 @@ import 'package:get/get.dart';
 import 'package:pixivic/data/common.dart';
 
 class UserDataController extends GetxController {
-  int id;
-  int permissionLevel;
-  int star;
+  final id = RxInt(0);
+  final permissionLevel = RxInt(0);
+  final star = RxInt(0);
 
-  String name;
-  String email;
-  String permissionLevelExpireDate;
-  String avatarLink;
+  final name = RxString('userName');
+  final email = RxString('');
+  final permissionLevelExpireDate = RxString('');
+  final avatarLink = RxString('');
   // String signature;
   // String location;
 
-  bool isBindQQ;
-  bool isCheckEmail;
+  final isBindQQ = RxBool(false);
+  final isCheckEmail = RxBool(false);
 
   @override
   void onInit() {
@@ -30,29 +30,19 @@ class UserDataController extends GetxController {
     super.onClose();
   }
 
-  @override
-  void onDetached() {
-    print('UserDataController onDetached');
-  }
-
-  @override
-  void onResumed() {
-    print('UserDataController onResumed');
-  }
-
   void readDataFromPrefs() {
-    id = prefs.getInt('id');
-    permissionLevel = prefs.getInt('permissionLevel');
-    star = prefs.getInt('star');
+    id.value = prefs.getInt('id');
+    permissionLevel.value = prefs.getInt('permissionLevel');
+    star.value = prefs.getInt('star');
 
-    name = prefs.getString('username').obs();
-    email = prefs.getString('email');
-    permissionLevelExpireDate = prefs.getString('permissionLevelExpireDate');
-    avatarLink = prefs.getString('avatarLink');
+    name.value = prefs.getString('name');
+    email.value = prefs.getString('email');
+    permissionLevelExpireDate.value = prefs.getString('permissionLevelExpireDate');
+    avatarLink.value = prefs.getString('avatarLink');
     // signature = prefs.getString('signature');
     // location = prefs.getString('location');
 
-    isBindQQ = prefs.getBool('isBindQQ');
-    isCheckEmail = prefs.getBool('isCheckEmail');
+    isBindQQ.value = prefs.getBool('isBindQQ');
+    isCheckEmail.value = prefs.getBool('isCheckEmail');
   }
 }
