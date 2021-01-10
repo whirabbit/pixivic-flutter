@@ -11,6 +11,7 @@ import '../function/identity.dart';
 import 'package:pixivic/provider/collection_model.dart';
 import 'package:pixivic/function/dio_client.dart';
 import 'package:pixivic/data/texts.dart';
+import 'package:pixivic/function/image_url.dart';
 
 // 用于 PicPage 的临时变量
 double homeScrollerPosition = 0;
@@ -41,8 +42,9 @@ List<String> keywordsInt = ['id', 'star', 'sanityLevel', 'previewRule'];
 List<String> keywordsBool = [
   'isBindQQ',
   'isCheckEmail',
-  'isBackTipsKnown',
-  'isLongPressCollectionKnown'
+  'isOnPixivicServer'
+      'isBackTipsKnown',
+  'isLongPressCollectionKnown',
 ];
 List<String> keywordsDouble = ['keyboardHeight'];
 
@@ -69,7 +71,7 @@ Future initData(BuildContext context) async {
     if (prefs.getInt(item) == null) {
       if (item == 'sanityLevel')
         prefs.setInt(item, 3);
-      else if (item == 'previewRule')   // 缓存时长
+      else if (item == 'previewRule') // 缓存时长
         prefs.setInt(item, 7);
       else
         prefs.setInt(item, 0);
@@ -96,16 +98,24 @@ Future initData(BuildContext context) async {
         isLogin = true;
       else {
         BotToast.showSimpleNotification(title: TextCommon.logout);
+        initDioClient();
         logout(context, isInit: true);
       }
     });
   } else
     logout(context, isInit: true);
 
+  // 获取 VIP 地址
+  getVipUrl();
+
   if (prefs.getString('auth') != '') {
     Provider.of<CollectionUserDataModel>(context, listen: false);
   }
 
+  // 默认中画质
   if (prefs.getString('previewQuality') == '')
     prefs.setString('previewQuality', 'medium');
+
+  // 默认不使用自建服务器
+  prefs.setBool('isOnPixivicServer', false);
 }
