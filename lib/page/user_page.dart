@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
+import 'package:get/get.dart';
 
 import 'package:pixivic/page/login_page.dart';
 import 'package:pixivic/sidepage/bookmark_page.dart';
@@ -12,6 +13,7 @@ import 'package:pixivic/page/artist_list_page.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/function/identity.dart';
+import 'package:pixivic/controller/user_data_controller.dart';
 
 class UserPage extends StatefulWidget {
   @override
@@ -23,7 +25,8 @@ class UserPage extends StatefulWidget {
 }
 
 class UserPageState extends State<UserPage> {
-  var text = TextZhUserPage();
+  final text = TextZhUserPage();
+  UserDataController userDataController = Get.put(UserDataController());
 
   @override
   void initState() {
@@ -97,15 +100,17 @@ class UserPageState extends State<UserPage> {
           ),
           Positioned(
               left: ScreenUtil().setWidth(27),
-              child: Hero(
-                tag: 'userAvater',
-                child: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: ScreenUtil().setHeight(25),
-                    // 更换为 AdvancedNI
-                    backgroundImage: AdvancedNetworkImage(
-                        prefs.getString('avatarLink'),
-                        header: {'referer': 'https://pixivic.com'})),
+              child: Obx(
+                () => Hero(
+                  tag: 'userAvater',
+                  child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: ScreenUtil().setHeight(25),
+                      // 更换为 AdvancedNI
+                      backgroundImage: AdvancedNetworkImage(
+                          userDataController.avatarLink.value,
+                          header: {'referer': 'https://pixivic.com'})),
+                ),
               )),
           Positioned(
             top: ScreenUtil().setHeight(33),
@@ -124,12 +129,14 @@ class UserPageState extends State<UserPage> {
                   prefs.setInt('sanityLevel', 3);
                 }
               }),
-              child: Text(
-                prefs.getString('name'),
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 18.00),
+              child: Obx(
+                () => Text(
+                  '${userDataController.name.value}',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 18.00),
+                ),
               ),
             ),
           ),
