@@ -89,7 +89,7 @@ logout(BuildContext context, {bool isInit = false}) {
 }
 
 reloadUserData() async {
-  print('identity.dart: relaod user data');
+  print('identity.dart: reload user data');
   String authStored = prefs.getString('auth');
   if (authStored == null || authStored == '')
     return false;
