@@ -9,6 +9,9 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 
+import 'package:pixivic/function/image_url.dart';
+import 'package:pixivic/data/common.dart';
+
 class DownloadImage {
   final String url;
   final ValueChanged<int> onProgressUpdate;
@@ -21,8 +24,11 @@ class DownloadImage {
   int size;
   String mimeType;
   int androidProgress;
+  bool isVip = false;
 
-  DownloadImage(this.url, this.platform, {this.onProgressUpdate}) {
+  DownloadImage(this.url, this.platform,
+      {this.fileName, this.onProgressUpdate}) {
+    if (prefs.getInt('permissionLevel') == 3) isVip = true;
     print('start download');
 
     ImageDownloader.callback(
@@ -41,12 +47,13 @@ class DownloadImage {
   }
 
   _iOSDownload() async {
-    BotToast.showSimpleNotification(title: '开始下载,请勿退出应用');
+    BotToast.showSimpleNotification(
+        title: isVip ? '开始下载,请勿退出应用' : '高速通道下载中,请勿退出应用');
     try {
       Response response = await Dio().get(
-        url,
+        imageUrl(url, 'original'),
         options: Options(
-            headers: {'Referer': 'https://app-api.pixiv.net'},
+            headers: imageHeader('original'),
             receiveTimeout: 280000,
             responseType: ResponseType.bytes),
       );
@@ -109,7 +116,7 @@ class DownloadImage {
   // }
 
   _androidDownloadWithFlutterDownloader() async {
-    BotToast.showSimpleNotification(title: '开始下载');
+    BotToast.showSimpleNotification(title: isVip ? '高速通道下载中':'开始下载');
 
     // final Directory directory = await getExternalStorageDirectory();
 
@@ -123,12 +130,13 @@ class DownloadImage {
       await picDirFolder.create(recursive: true);
     }
     await FlutterDownloader.enqueue(
-      url: url,
-      savedDir: '${picDirFolder.path}',
-      showNotification: true,
-      openFileFromNotification: true,
-      headers: {'Referer': 'https://app-api.pixiv.net'},
-    ).catchError((onError) {
+            url: imageUrl(url, 'original'),
+            savedDir: '${picDirFolder.path}',
+            showNotification: true,
+            openFileFromNotification: true,
+            headers: imageHeader('original'),
+            fileName: fileName + '.jpg')
+        .catchError((onError) {
       print(onError);
       BotToast.showSimpleNotification(title: '下载失败,请检查网络');
       return false;

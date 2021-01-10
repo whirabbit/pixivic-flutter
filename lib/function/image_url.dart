@@ -12,12 +12,12 @@ String imageUrl(String url, String mode) {
       vipUrl != '' &&
       mode == 'original') {
     result = url.replaceAll('https://i.pximg.net', vipUrl);
-    result = result + '?authorization=${prefs.getString('auth')}';
+    result = result + '?Authorization=${prefs.getString('auth')}';
   } else if (!prefs.getBool('isOnPixivicServer')) {
     result = url;
   } else if (prefs.getBool('isOnPixivicServer')) {
     result = url.replaceAll('https://i.pximg.net', 'https://img.pixivic.net');
-    result = result + '?authorization=${prefs.getString('auth')}';
+    result = result + '?Authorization=${prefs.getString('auth')}';
   } else {
     result = url;
   }
