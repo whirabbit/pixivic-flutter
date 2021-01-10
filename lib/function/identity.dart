@@ -6,11 +6,13 @@ import 'package:http/http.dart' as http;
 import 'package:bot_toast/bot_toast.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
+import 'package:get/get.dart' hide Response;
 
 import '../data/common.dart';
 import '../data/texts.dart';
 import 'package:pixivic/provider/collection_model.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/controller/user_data_controller.dart';
 
 // identity.dart 文件包含与用户身份验证相关的所有方法，例如登录，验证 auth 是否过期，注册等等
 
@@ -61,6 +63,7 @@ login(BuildContext context, String userName, String pwd,
     // 加载用户的画集列表
     Provider.of<CollectionUserDataModel>(context, listen: false)
         .getCollectionList();
+    Get.find<UserDataController>().readDataFromPrefs();
   } else {
     // isLogin = false;
     BotToast.showSimpleNotification(
