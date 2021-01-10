@@ -6,17 +6,16 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:dio/dio.dart';
-import 'package:bot_toast/bot_toast.dart';
+import 'package:get/get.dart' hide Response;
 
-import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/widget/papp_bar.dart';
-import 'package:pixivic/function/dio_client.dart';
-import 'package:pixivic/function/identity.dart';
+import 'package:pixivic/controller/user_data_controller.dart';
 
 class VIPPage extends StatelessWidget {
-  final TextEditingController codeInputController = TextEditingController();
+  final TextEditingController codeInputTextEditingController =
+      TextEditingController();
+  final UserDataController userDataController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -40,58 +39,69 @@ class VIPPage extends StatelessWidget {
                         left: ScreenUtil().setWidth(15),
                         top: ScreenUtil().setHeight(25),
                         bottom: ScreenUtil().setHeight(25),
-                        child: Hero(
-                          tag: 'userAvater',
-                          child: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              radius: ScreenUtil().setHeight(25),
-                              backgroundImage: AdvancedNetworkImage(
-                                  prefs.getString('avatarLink'),
-                                  header: {'referer': 'https://pixivic.com'})),
+                        child: Obx(
+                          () => Hero(
+                            tag: 'userAvater',
+                            child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: ScreenUtil().setHeight(25),
+                                backgroundImage: AdvancedNetworkImage(
+                                    userDataController.avatarLink.value,
+                                    header: {
+                                      'referer': 'https://pixivic.com'
+                                    })),
+                          ),
                         )),
                     Positioned(
                         left: ScreenUtil().setWidth(88),
                         top: ScreenUtil().setHeight(38),
                         bottom: ScreenUtil().setHeight(57),
-                        child: Text(
-                          prefs.getString('name'),
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400,
-                              fontSize: ScreenUtil().setSp(14)),
+                        child: Obx(
+                          () => Text(
+                            userDataController.name.value,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                                fontSize: ScreenUtil().setSp(14)),
+                          ),
                         )),
                     Positioned(
                         left: ScreenUtil().setWidth(88),
                         top: ScreenUtil().setHeight(66),
                         // bottom: ScreenUtil().setHeight(32),
-                        child: FaIcon(
-                          FontAwesomeIcons.gem,
-                          color: prefs.getInt('permissionLevel') == 3
-                              ? Colors.orange
-                              : Colors.grey,
-                          size: ScreenUtil().setWidth(13),
+                        child: Obx(
+                          () => FaIcon(
+                            FontAwesomeIcons.gem,
+                            color: userDataController.permissionLevel.value == 3
+                                ? Colors.orange
+                                : Colors.grey,
+                            size: ScreenUtil().setWidth(13),
+                          ),
                         )),
-                    Positioned(
-                        left: ScreenUtil().setWidth(107),
-                        top: ScreenUtil().setHeight(63),
-                        // bottom: ScreenUtil().setHeight(33),
-                        child: prefs.getInt('permissionLevel') == 3
-                            ? Text(
-                                TextZhVIP.endTime +
-                                    DateFormat("yyyy-MM-dd").format(
-                                        DateTime.parse(prefs.getString(
-                                            'permissionLevelExpireDate'))),
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w300,
-                                  fontSize: ScreenUtil().setSp(12),
-                                ))
-                            : Text(TextZhVIP.notVip,
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w300,
-                                  fontSize: ScreenUtil().setSp(12),
-                                )))
+                    Obx(
+                      () => Positioned(
+                          left: ScreenUtil().setWidth(107),
+                          top: ScreenUtil().setHeight(63),
+                          // bottom: ScreenUtil().setHeight(33),
+                          child: userDataController.permissionLevel.value == 3
+                              ? Text(
+                                  TextZhVIP.endTime +
+                                      DateFormat("yyyy-MM-dd").format(
+                                          DateTime.parse(userDataController
+                                              .permissionLevelExpireDate
+                                              .value)),
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: ScreenUtil().setSp(12),
+                                  ))
+                              : Text(TextZhVIP.notVip,
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: ScreenUtil().setSp(12),
+                                  ))),
+                    )
                   ],
                 ),
               ),
@@ -122,7 +132,9 @@ class VIPPage extends StatelessWidget {
                         left: ScreenUtil().setWidth(42),
                         right: ScreenUtil().setWidth(42),
                         top: ScreenUtil().setHeight(42),
-                        child: TextField(controller: codeInputController,)),
+                        child: TextField(
+                          controller: codeInputTextEditingController,
+                        )),
                     Positioned(
                         left: ScreenUtil().setWidth(90),
                         right: ScreenUtil().setWidth(90),
@@ -134,7 +146,9 @@ class VIPPage extends StatelessWidget {
                                   fontWeight: FontWeight.w300,
                                   fontSize: ScreenUtil().setSp(12))),
                           onPressed: () {
-                            submitCode(codeInputController.text);
+                            userDataController.submitCode(
+                                codeInputTextEditingController.text);
+                            codeInputTextEditingController.clear();
                           },
                         )),
                     Positioned(
@@ -227,23 +241,5 @@ class VIPPage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  submitCode(String code) async {
-    CancelFunc cancelLoading;
-    try {
-      cancelLoading = BotToast.showLoading();
-      String url = '/users/${prefs.getInt('id')}/permissionLevel';
-      Map<String, dynamic> queryParameters = {'exchangeCode': code};
-      Response response = await dioPixivic.put(url, queryParameters: queryParameters);
-      cancelLoading();
-      BotToast.showSimpleNotification(title: response.data['message']);
-      if (response.data['data'] == true) {
-        reloadUserData();
-        // getx refresh
-      } else {}
-    } catch (e) {
-      cancelLoading();
-    }
   }
 }
