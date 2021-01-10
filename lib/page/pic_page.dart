@@ -449,16 +449,16 @@ class _PicPageState extends State<PicPage> {
         : SelectModeBar();
   }
 
-  List _picMainParameter(Map picItem) {
-    // 预览图片的地址、数目、以及长宽比
-    // String url = pageModel.picList[index]['imageUrls'][0]['squareMedium'];
-    String previewQuality = prefs.getString('previewQuality');
-    String url = picItem['imageUrls'][0][previewQuality]; //medium large
-    int number = picItem['pageCount'];
-    double width = picItem['width'].toDouble();
-    double height = picItem['height'].toDouble();
-    return [url, number, width, height];
-  }
+  // List _picMainParameter(Map picItem) {
+  //   // 预览图片的地址、数目、以及长宽比
+  //   // String url = pageModel.picList[index]['imageUrls'][0]['squareMedium'];
+  //   String previewQuality = prefs.getString('previewQuality');
+  //   String url = picItem['imageUrls'][0][previewQuality]; //medium large
+  //   int number = picItem['pageCount'];
+  //   double width = picItem['width'].toDouble();
+  //   double height = picItem['height'].toDouble();
+  //   return [url, number, width, height];
+  // }
 
   // Widget imageCell(
   //     Map picItem, int index, BuildContext context, PicPageModel pageModel) {
