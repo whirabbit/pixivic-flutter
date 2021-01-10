@@ -235,7 +235,18 @@ class VIPPage extends StatelessWidget {
                                     color: Colors.orange,
                                     fontWeight: FontWeight.w300,
                                     fontSize: ScreenUtil().setSp(12))),
-                            onPressed: () {},
+                            onPressed: () async{
+                              const url = 'https://m.pixivic.com/handbook';
+                              if (await canLaunch(url)) {
+                                await launch(
+                                  url,
+                                  forceSafariVC: false,
+                                  forceWebView: false,
+                                );
+                              } else {
+                                throw 'Could not launch $url';
+                              }
+                            },
                           ))
                     ],
                   ),
