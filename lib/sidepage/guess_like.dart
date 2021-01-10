@@ -75,7 +75,7 @@ class _GuessLikePageState extends State<GuessLikePage> {
               crossAxisCount: 2,
             ),
             itemCount: picTotalNum,
-            itemBuilder: (BuildContext context, int index) => imageCell(
+            itemBuilder: (BuildContext context, int index) => oldImageCell(
                 picList[index],
                 ramdomColor,
                 sanityLevel,

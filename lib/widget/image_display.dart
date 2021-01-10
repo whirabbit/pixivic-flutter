@@ -13,12 +13,174 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/provider/pic_page_model.dart';
+import 'package:pixivic/widget/markheart_icon.dart';
 
-Widget imageCell(Map picMapData, RandomColor randomColor, int sanityLevel,
+Widget imageCell(Map picItem, int index, BuildContext context,
+    PicPageModel picPageModel) {
+  final Color color = RandomColor().randomColor();
+  Map picMapData = Map.from(picItem);
+  if (picMapData['xrestict'] == 1 ||
+      picMapData['sanityLevel'] > prefs.getInt('sanityLevel'))
+    return Container();
+  else
+    return Selector<PicPageModel, Tuple2<bool, bool>>(
+        selector: (context, picPageModel) => Tuple2(
+            // 前者用于判断当前画作是否被选中
+            // 后者用于判断当前是否出于多选模式，这会导致单击的逻辑更改
+            picPageModel.isIndexInSelectedList(index),
+            picPageModel.isInSelectMode()),
+        builder: (context, tuple, _) {
+          return AnimatedContainer(
+              duration: Duration(milliseconds: 350),
+              padding: EdgeInsets.only(
+                left: ScreenUtil().setWidth(5),
+                right: ScreenUtil().setWidth(5),
+                top: ScreenUtil().setWidth(5),
+                bottom: ScreenUtil().setWidth(5),
+              ),
+              child: ShaderMask(
+                shaderCallback: (tuple.item1)
+                    // 长按进入选择模式时，为选中的画作设置遮罩
+                    ? (bounds) => LinearGradient(
+                            colors: [Colors.grey[600], Colors.grey[600]])
+                        .createShader(bounds)
+                    : (bounds) =>
+                        LinearGradient(colors: [Colors.white, Colors.white])
+                            .createShader(bounds),
+                child: Stack(
+                  children: <Widget>[
+                    Positioned(
+                      child: GestureDetector(
+                        onTap: () async {
+                          // 如果不是在多选模式，则正常进行跳转
+                          if (!tuple.item2) {
+                            // 对广告图片做区分判断
+                            if (picMapData['type'] == 'ad_image') {
+                              if (await canLaunch(picMapData['link'])) {
+                                await launch(picMapData['link']);
+                              } else {
+                                BotToast.showSimpleNotification(
+                                    title: '唤起网页失败');
+                                throw 'Could not launch ${picMapData['link']}';
+                              }
+                            } else
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PicDetailPage(
+                                          picMapData,
+                                          index: index,
+                                          getPageProvider: picPageModel)));
+                          } else {
+                            Provider.of<PicPageModel>(context, listen: false)
+                                .handlePicIndexToSelectedList(index);
+                          }
+                        },
+                        onLongPress: () {
+                          Provider.of<PicPageModel>(context, listen: false)
+                              .handlePicIndexToSelectedList(index);
+                        },
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 350),
+                          // 限定constraints用于占用位置,经调试后以0.5为基准可以保证加载图片后不产生位移
+                          constraints: BoxConstraints(
+                            minHeight: ScreenUtil().setWidth(148) /
+                                picItem['width'].toDouble() *
+                                picItem['height'].toDouble(),
+                            minWidth: ScreenUtil().setWidth(148),
+                          ),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              // 若被选中，则添加边框
+                              border: tuple.item1
+                                  ? Border.all(
+                                      width: ScreenUtil().setWidth(3),
+                                      color: Colors.black38)
+                                  : Border.all(width: 0.0, color: Colors.white),
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(ScreenUtil().setWidth(15)))),
+                          child: Hero(
+                            tag: 'imageHero' +
+                                picItem['imageUrls'][0]
+                                    [prefs.getString('previewQuality')],
+                            child: ClipRRect(
+                              clipBehavior: Clip.antiAlias,
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(ScreenUtil().setWidth(12))),
+                              child: Image(
+                                image: AdvancedNetworkImage(
+                                  picItem['imageUrls'][0]
+                                      [prefs.getString('previewQuality')],
+                                  header: {
+                                    'Referer': 'https://app-api.pixiv.net'
+                                  },
+                                  useDiskCache: true,
+                                  cacheRule: CacheRule(
+                                      maxAge: Duration(
+                                          days: prefs.getInt('previewRule'))),
+                                ),
+                                fit: BoxFit.fill,
+                                frameBuilder: (context, child, frame,
+                                    wasSynchronouslyLoaded) {
+                                  if (wasSynchronouslyLoaded) {
+                                    return child;
+                                  }
+                                  return Container(
+                                    child: AnimatedOpacity(
+                                      child: frame == null
+                                          ? Container(color: color)
+                                          : child,
+                                      opacity: frame == null ? 0.3 : 1,
+                                      duration: const Duration(seconds: 1),
+                                      curve: Curves.easeOut,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      child: numberViewer(picItem['pageCount']),
+                      right: ScreenUtil().setWidth(10),
+                      top: ScreenUtil().setHeight(5),
+                    ),
+                    prefs.getString('auth') != '' &&
+                            picMapData['type'] != 'ad_image'
+                        ? Positioned(
+                            bottom: ScreenUtil().setHeight(5),
+                            right: ScreenUtil().setWidth(5),
+                            child: Container(
+                                alignment: Alignment.center,
+                                height: ScreenUtil().setWidth(33),
+                                width: ScreenUtil().setWidth(33),
+                                child: Selector<PicPageModel, bool>(
+                                  selector: (context, provider) =>
+                                      provider.picList[index]['isLiked'],
+                                  builder: (context, isLike, _) {
+                                    return MarkHeart(
+                                        picItem: picItem,
+                                        index: index,
+                                        getPageProvider: picPageModel);
+                                  },
+                                )))
+                        : Container(),
+                  ],
+                ),
+              ));
+        });
+}
+
+Widget oldImageCell(Map picMapData, RandomColor randomColor, int sanityLevel,
     int previewRule, String previewQuality, BuildContext context) {
   final Color color = randomColor.randomColor();
   String url = picMapData['imageUrls'][0][previewQuality]; //medium large
