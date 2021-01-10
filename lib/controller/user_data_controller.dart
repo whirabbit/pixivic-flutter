@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/function/identity.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/function/image_url.dart';
 
 class UserDataController extends GetxController {
   final id = RxInt(0);
@@ -63,6 +64,7 @@ class UserDataController extends GetxController {
       BotToast.showSimpleNotification(title: response.data['message']);
       setPrefs(response.data['data']);
       readDataFromPrefs();
+      getVipUrl();
     } catch (e) {
       cancelLoading();
     }
