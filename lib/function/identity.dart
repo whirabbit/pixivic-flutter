@@ -77,7 +77,7 @@ login(BuildContext context, String userName, String pwd,
 
 logout(BuildContext context, {bool isInit = false}) {
   // TODO: UI 刷新
-  prefs.setString('auth', '');
+  clearPrefs();
   isLogin = false;
   if (!isInit) {
     userPageKey.currentState.checkLoginState();
@@ -130,6 +130,20 @@ setPrefs(Map data) {
 
   prefs.setBool('isBindQQ', data['isBindQQ']);
   prefs.setBool('isCheckEmail', data['isCheckEmail']);
+}
+
+clearPrefs() {
+  prefs.setInt('id', 0);
+  prefs.setInt('permissionLevel', 0);
+  prefs.setInt('star', 0);
+
+  prefs.setString('name', '');
+  prefs.setString('email', '');
+  prefs.setString('permissionLevelExpireDate', '');
+  prefs.setString('avatarLink', '');
+
+  prefs.setBool('isBindQQ', false);
+  prefs.setBool('isCheckEmail', false);
 }
 
 // checkAuth() async {
