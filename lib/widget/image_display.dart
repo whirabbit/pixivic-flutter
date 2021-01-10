@@ -158,9 +158,9 @@ Image pureImage(Map picItem, Color color) {
       header: imageHeader('medium'),
       useDiskCache: true,
       cacheRule: CacheRule(maxAge: Duration(days: prefs.getInt('previewRule'))),
-      loadFailedCallback: () {
-        prefs.setBool('isOnPixivicServer', true);
-      },
+      // loadFailedCallback: () {
+      //   prefs.setBool('isOnPixivicServer', true);
+      // },
     ),
     fit: BoxFit.fill,
     frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
