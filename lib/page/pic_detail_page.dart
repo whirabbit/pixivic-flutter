@@ -551,7 +551,7 @@ class _PicDetailPageState extends State<PicDetailPage> {
                             : 'ios';
                     _checkPermission().then((value) async {
                       if (value) {
-                        DownloadImage(url, platform);
+                        DownloadImage(url, platform, fileName: widget._picData['title']);
                       } else {
                         BotToast.showSimpleNotification(
                             title: texts.requestDownloadAuthority);
