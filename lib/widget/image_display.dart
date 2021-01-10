@@ -19,11 +19,12 @@ import 'package:tuple/tuple.dart';
 import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/function/image_url.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/widget/markheart_icon.dart';
 
-Widget imageCell(Map picItem, int index, BuildContext context,
-    PicPageModel picPageModel) {
+Widget imageCell(
+    Map picItem, int index, BuildContext context, PicPageModel picPageModel) {
   final Color color = RandomColor().randomColor();
   Map picMapData = Map.from(picItem);
   if (picMapData['xrestict'] == 1 ||
@@ -111,40 +112,10 @@ Widget imageCell(Map picItem, int index, BuildContext context,
                                 picItem['imageUrls'][0]
                                     [prefs.getString('previewQuality')],
                             child: ClipRRect(
-                              clipBehavior: Clip.antiAlias,
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(ScreenUtil().setWidth(12))),
-                              child: Image(
-                                image: AdvancedNetworkImage(
-                                  picItem['imageUrls'][0]
-                                      [prefs.getString('previewQuality')],
-                                  header: {
-                                    'Referer': 'https://app-api.pixiv.net'
-                                  },
-                                  useDiskCache: true,
-                                  cacheRule: CacheRule(
-                                      maxAge: Duration(
-                                          days: prefs.getInt('previewRule'))),
-                                ),
-                                fit: BoxFit.fill,
-                                frameBuilder: (context, child, frame,
-                                    wasSynchronouslyLoaded) {
-                                  if (wasSynchronouslyLoaded) {
-                                    return child;
-                                  }
-                                  return Container(
-                                    child: AnimatedOpacity(
-                                      child: frame == null
-                                          ? Container(color: color)
-                                          : child,
-                                      opacity: frame == null ? 0.3 : 1,
-                                      duration: const Duration(seconds: 1),
-                                      curve: Curves.easeOut,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
+                                clipBehavior: Clip.antiAlias,
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(ScreenUtil().setWidth(12))),
+                                child: pureImage(picItem, color)),
                           ),
                         ),
                       ),
@@ -178,6 +149,34 @@ Widget imageCell(Map picItem, int index, BuildContext context,
                 ),
               ));
         });
+}
+
+Image pureImage(Map picItem, Color color) {
+  return Image(
+    image: AdvancedNetworkImage(
+      imageUrl(picItem['imageUrls'][0]['medium'], 'medium'),
+      header: imageHeader('medium'),
+      useDiskCache: true,
+      cacheRule: CacheRule(maxAge: Duration(days: prefs.getInt('previewRule'))),
+      loadFailedCallback: () {
+        prefs.setBool('isOnPixivicServer', true);
+      },
+    ),
+    fit: BoxFit.fill,
+    frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+      if (wasSynchronouslyLoaded) {
+        return child;
+      }
+      return Container(
+        child: AnimatedOpacity(
+          child: frame == null ? Container(color: color) : child,
+          opacity: frame == null ? 0.3 : 1,
+          duration: const Duration(seconds: 1),
+          curve: Curves.easeOut,
+        ),
+      );
+    },
+  );
 }
 
 Widget oldImageCell(Map picMapData, RandomColor randomColor, int sanityLevel,

@@ -11,7 +11,6 @@ import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_advanced_networkimage/zoomable.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:dio/dio.dart';
 
 import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/page/artist_page.dart';
@@ -24,6 +23,7 @@ import 'package:pixivic/widget/comment_cell.dart';
 import 'package:pixivic/function/downloadImage.dart';
 import 'package:pixivic/function/collection.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/function/image_url.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/widget/markheart_icon.dart';
 
@@ -339,8 +339,9 @@ class _PicDetailPageState extends State<PicDetailPage> {
               minScale: 0.7,
               child: TransitionToImage(
                 image: AdvancedNetworkImage(
-                  widget._picData['imageUrls'][0][previewQuality],
-                  header: {'Referer': 'https://app-api.pixiv.net'},
+                  imageUrl(widget._picData['imageUrls'][0][previewQuality],
+                      previewQuality),
+                  header: imageHeader(previewQuality),
                   useDiskCache: true,
                   cacheRule: CacheRule(
                       maxAge: Duration(days: prefs.getInt('previewRule'))),
@@ -373,8 +374,10 @@ class _PicDetailPageState extends State<PicDetailPage> {
                   minScale: 0.7,
                   child: TransitionToImage(
                     image: AdvancedNetworkImage(
-                      widget._picData['imageUrls'][index][previewQuality],
-                      header: {'Referer': 'https://app-api.pixiv.net'},
+                      imageUrl(
+                          widget._picData['imageUrls'][index][previewQuality],
+                          previewQuality),
+                      header: imageHeader(previewQuality),
                       useDiskCache: true,
                       cacheRule: CacheRule(
                           maxAge: Duration(days: prefs.getInt('previewRule'))),
