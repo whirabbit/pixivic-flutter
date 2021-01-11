@@ -147,7 +147,7 @@ class CommentListPage extends StatelessWidget {
                                           ? MemeBox(
                                               commentListModel.memeBoxHeight)
                                           : Container(
-                                        color: Colors.white,
+                                              color: Colors.white,
                                               height: commentListModel
                                                   .memeBoxHeight,
                                             )
@@ -362,8 +362,8 @@ class CommentListPage extends StatelessWidget {
                             width: ScreenUtil().setWidth(5),
                           ),
                           commentPlatform(data['platform']),
-                          commentLikeButton(context,
-                              parentIndex, commentListModel,
+                          commentLikeButton(
+                              context, parentIndex, commentListModel,
                               subIndex: subIndex),
                           GestureDetector(
                             child: Text(
@@ -379,6 +379,7 @@ class CommentListPage extends StatelessWidget {
                               commentListModel.replyToId = data['replyFrom'];
                               commentListModel.replyToName =
                                   data['replyFromName'];
+                              commentListModel.replyToCommentId = data['id'];
                               data['parentId'] == 0
                                   ? commentListModel.replyParentId = data['id']
                                   : commentListModel.replyParentId =
@@ -440,17 +441,20 @@ class CommentListPage extends StatelessWidget {
     }
   }
 
-  Widget commentLikeButton(BuildContext context,
-      int parentIndex, CommentListModel commentListModel,
+  Widget commentLikeButton(
+      BuildContext context, int parentIndex, CommentListModel commentListModel,
       {int subIndex}) {
     return Selector<CommentListModel, Tuple2>(
       selector: (context, provider) {
         if (subIndex == null)
-          return Tuple2(provider.commentList[parentIndex]['isLike'], provider.commentList[parentIndex]['likedCount']);
+          return Tuple2(provider.commentList[parentIndex]['isLike'],
+              provider.commentList[parentIndex]['likedCount']);
         else
-          return Tuple2(provider.commentList[parentIndex]['subCommentList'][subIndex]
-              ['isLike'], provider.commentList[parentIndex]['subCommentList'][subIndex]
-              ['likedCount']);
+          return Tuple2(
+              provider.commentList[parentIndex]['subCommentList'][subIndex]
+                  ['isLike'],
+              provider.commentList[parentIndex]['subCommentList'][subIndex]
+                  ['likedCount']);
       },
       builder: (context, tuple2, _) {
         bool lock = false;
