@@ -15,9 +15,11 @@ String imageUrl(String url, String mode) {
     result = result + '?Authorization=${prefs.getString('auth')}';
   } else if (!prefs.getBool('isOnPixivicServer')) {
     result = url;
-  } else if (prefs.getBool('isOnPixivicServer')) {
+  } else if (prefs.getBool('isOnPixivicServer') && isLogin) {
     result = url.replaceAll('https://i.pximg.net', 'https://img.pixivic.net');
     result = result + '?Authorization=${prefs.getString('auth')}';
+  } else if (prefs.getBool('isOnPixivicServer') && !isLogin) {
+    result = url.replaceAll('https://i.pximg.net', 'https://img.pixivic.net');
   } else {
     result = url;
   }
@@ -34,9 +36,12 @@ Map imageHeader(String mode) {
   } else if (!prefs.getBool('isOnPixivicServer')) {
     result = {'Referer': 'https://app-api.pixiv.net'};
   } else if (prefs.getBool('isOnPixivicServer') && isLogin) {
-    result = {'authorization': prefs.getString('auth')};
+    result = {
+      'authorization': prefs.getString('auth'),
+      'Referer': 'https://m.pixivic.com/'
+    };
   } else if (prefs.getBool('isOnPixivicServer') && !isLogin) {
-    result = {};
+    result = {'Referer': 'https://m.pixivic.com/'};
   } else {
     result = {'Referer': 'https://app-api.pixiv.net'};
   }
