@@ -12,6 +12,7 @@ import 'package:pixivic/function/dio_client.dart';
 class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
   int illustId;
   int replyToId;
+  int replyToCommentId;
   int currentPage = 1;
   int replyParentId;
   List commentList;
@@ -129,6 +130,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
         'replyFromName': prefs.getString('name'),
         'replyTo': replyToId.toString(),
         'replyToName': replyToName,
+        'replyToCommentId': replyToCommentId,
         'platform': 'Mobile 客户端'
       };
 
@@ -144,8 +146,9 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
 
         textEditingController.text = '';
         replyToId = 0;
-        replyToName = '';
+        replyToCommentId = 0;
         replyParentId = 0;
+        replyToName = '';
         hintText = texts.addCommentHint;
 
         loadComments(illustId).then((value) {
@@ -183,6 +186,7 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
         'replyFromName': prefs.getString('name'),
         'replyTo': replyToId.toString(),
         'replyToName': replyToName,
+        'replyToCommentId': replyToCommentId,
         'platform': 'Mobile 客户端'
       };
       try {
@@ -196,8 +200,9 @@ class CommentListModel with ChangeNotifier, WidgetsBindingObserver {
         cancelLoading();
 
         replyToId = 0;
-        replyToName = '';
+        replyToCommentId = 0;
         replyParentId = 0;
+        replyToName = '';
         hintText = texts.addCommentHint;
 
         loadComments(illustId).then((value) {
