@@ -135,16 +135,20 @@ class VIPPage extends StatelessWidget {
                       Positioned(
                           left: ScreenUtil().setWidth(42),
                           right: ScreenUtil().setWidth(42),
-                          top: ScreenUtil().setHeight(39),
+                          top: ScreenUtil().setHeight(41),
                           child: TextField(
+                            decoration: const InputDecoration(
+                              isDense: true,
+                            ),
                             controller: codeInputTextEditingController,
                           )),
                       Positioned(
                           left: ScreenUtil().setWidth(90),
                           right: ScreenUtil().setWidth(90),
-                          top: ScreenUtil().setHeight(71),
+                          top: ScreenUtil().setHeight(70),
                           child: Padding(
-                            padding: EdgeInsets.only(top: ScreenUtil().setHeight(3)),
+                            padding:
+                                EdgeInsets.only(top: ScreenUtil().setHeight(3)),
                             child: FlatButton(
                               child: Text(TextZhVIP.convert,
                                   style: TextStyle(
