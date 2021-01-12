@@ -236,7 +236,7 @@ class VIPPage extends StatelessWidget {
                                     fontWeight: FontWeight.w300,
                                     fontSize: ScreenUtil().setSp(12))),
                             onPressed: () async {
-                              const url = 'https://m.pixivic.com/handbook';
+                              const url = 'https://discuss.pixivic.net/d/10';
                               if (await canLaunch(url)) {
                                 await launch(
                                   url,
