@@ -61,7 +61,7 @@ class VIPPage extends StatelessWidget {
                           // bottom: ScreenUtil().setHeight(57),
                           child: Obx(
                             () => Text(
-                              '{userDataController.name.value}',
+                              '${userDataController.name.value}',
                               style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.w400,
