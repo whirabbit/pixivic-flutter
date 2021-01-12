@@ -135,7 +135,7 @@ class VIPPage extends StatelessWidget {
                       Positioned(
                           left: ScreenUtil().setWidth(42),
                           right: ScreenUtil().setWidth(42),
-                          top: ScreenUtil().setHeight(42),
+                          top: ScreenUtil().setHeight(39),
                           child: TextField(
                             controller: codeInputTextEditingController,
                           )),
@@ -143,17 +143,20 @@ class VIPPage extends StatelessWidget {
                           left: ScreenUtil().setWidth(90),
                           right: ScreenUtil().setWidth(90),
                           top: ScreenUtil().setHeight(71),
-                          child: FlatButton(
-                            child: Text(TextZhVIP.convert,
-                                style: TextStyle(
-                                    color: Colors.orange,
-                                    fontWeight: FontWeight.w300,
-                                    fontSize: ScreenUtil().setSp(12))),
-                            onPressed: () {
-                              userDataController.submitCode(
-                                  codeInputTextEditingController.text);
-                              codeInputTextEditingController.clear();
-                            },
+                          child: Padding(
+                            padding: EdgeInsets.only(top: ScreenUtil().setHeight(3)),
+                            child: FlatButton(
+                              child: Text(TextZhVIP.convert,
+                                  style: TextStyle(
+                                      color: Colors.orange,
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: ScreenUtil().setSp(12))),
+                              onPressed: () {
+                                userDataController.submitCode(
+                                    codeInputTextEditingController.text);
+                                codeInputTextEditingController.clear();
+                              },
+                            ),
                           )),
                       Positioned(
                           left: ScreenUtil().setWidth(110),
