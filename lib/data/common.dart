@@ -98,7 +98,6 @@ Future initData(BuildContext context) async {
         isLogin = true;
       else {
         BotToast.showSimpleNotification(title: TextCommon.logout);
-        initDioClient();
         logout(context, isInit: true);
       }
     });

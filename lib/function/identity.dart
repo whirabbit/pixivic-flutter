@@ -42,7 +42,6 @@ login(BuildContext context, String userName, String pwd,
     print(newPageKey);
     print(userPageKey);
     // 为 dio 单例添加 auth
-    initDioClient();
     if (widgetFrom != null) {
       switch (widgetFrom) {
         case 'newPage':
@@ -55,7 +54,6 @@ login(BuildContext context, String userName, String pwd,
           break;
       }
     }
-    initDioClient();
     // 清除 picpage 页面缓存以便重新加载
     homeScrollerPosition = 0;
     homePicList = [];
