@@ -28,6 +28,10 @@ initDioClient() {
   // );
   dioPixivic.interceptors
       .add(InterceptorsWrapper(onRequest: (RequestOptions options) async {
+    String token = prefs.getString('auth');
+    if (token != null && token != '') {
+      options.headers["Authorization"] = token;
+    }
     print(options.uri);
     print(options.headers);
     print(options.data);
