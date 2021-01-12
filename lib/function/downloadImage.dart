@@ -28,7 +28,7 @@ class DownloadImage {
 
   DownloadImage(this.url, this.platform,
       {this.fileName, this.onProgressUpdate}) {
-    if (prefs.getInt('permissionLevel') == 3) isVip = true;
+    if (prefs.getInt('permissionLevel') > 2) isVip = true;
     print('start download');
 
     ImageDownloader.callback(
@@ -116,7 +116,7 @@ class DownloadImage {
   // }
 
   _androidDownloadWithFlutterDownloader() async {
-    BotToast.showSimpleNotification(title: isVip ? '高速通道下载中':'开始下载');
+    BotToast.showSimpleNotification(title: isVip ? '高速通道下载中' : '开始下载');
 
     // final Directory directory = await getExternalStorageDirectory();
 

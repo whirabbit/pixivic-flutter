@@ -8,7 +8,7 @@ String vipUrl = '';
 String imageUrl(String url, String mode) {
   print(mode);
   String result;
-  if (prefs.getInt('permissionLevel') == 3 &&
+  if (prefs.getInt('permissionLevel') > 2 &&
       vipUrl != '' &&
       mode == 'original') {
     result = url.replaceAll('https://i.pximg.net', vipUrl);
@@ -29,7 +29,7 @@ String imageUrl(String url, String mode) {
 
 Map imageHeader(String mode) {
   Map<String, String> result;
-  if (prefs.getInt('permissionLevel') == 3 &&
+  if (prefs.getInt('permissionLevel') > 2 &&
       vipUrl != '' &&
       mode == 'original') {
     result = {'authorization': prefs.getString('auth')};
@@ -50,7 +50,7 @@ Map imageHeader(String mode) {
 }
 
 void getVipUrl() async {
-  if (prefs.getInt('permissionLevel') == 3) {
+  if (prefs.getInt('permissionLevel') > 2) {
     try {
       print(prefs.getInt('permissionLevel'));
       Response response = await dioPixivic.get('/vipProxyServer');

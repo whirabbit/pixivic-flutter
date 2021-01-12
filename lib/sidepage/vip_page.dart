@@ -76,7 +76,7 @@ class VIPPage extends StatelessWidget {
                             () => FaIcon(
                               FontAwesomeIcons.gem,
                               color:
-                                  userDataController.permissionLevel.value == 3
+                                  userDataController.permissionLevel.value > 2
                                       ? Colors.orange
                                       : Colors.grey,
                               size: ScreenUtil().setWidth(13),
@@ -87,7 +87,7 @@ class VIPPage extends StatelessWidget {
                             left: ScreenUtil().setWidth(107),
                             top: ScreenUtil().setHeight(63),
                             // bottom: ScreenUtil().setHeight(33),
-                            child: userDataController.permissionLevel.value == 3
+                            child: userDataController.permissionLevel.value > 2
                                 ? Text(
                                     TextZhVIP.endTime +
                                         DateFormat("yyyy-MM-dd").format(
@@ -235,7 +235,7 @@ class VIPPage extends StatelessWidget {
                                     color: Colors.orange,
                                     fontWeight: FontWeight.w300,
                                     fontSize: ScreenUtil().setSp(12))),
-                            onPressed: () async{
+                            onPressed: () async {
                               const url = 'https://m.pixivic.com/handbook';
                               if (await canLaunch(url)) {
                                 await launch(
