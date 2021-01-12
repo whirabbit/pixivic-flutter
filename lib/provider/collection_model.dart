@@ -144,7 +144,7 @@ class CollectionUserDataModel with ChangeNotifier {
   CollectionUserDataModel() {
     userCollectionList = [];
     lock = false;
-    if (prefs.getString('auth') != '') {
+    if (prefs.getString('auth') != null&&prefs.getString('auth') != '') {
       print('get collection list from user');
       getCollectionList();
     }

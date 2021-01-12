@@ -376,11 +376,11 @@ class LoginPageState extends State<LoginPage> {
         });
         return true;
       } else {
-        BotToast.showSimpleNotification(title: texts.errorGetVerificationCode);
+        //BotToast.showSimpleNotification(title: texts.errorGetVerificationCode);
         return false;
       }
     } catch (e) {
-      BotToast.showSimpleNotification(title: texts.errorGetVerificationCode);
+      //BotToast.showSimpleNotification(title: texts.errorGetVerificationCode);
       return false;
     }
   }

@@ -131,6 +131,7 @@ setPrefs(Map data) {
 }
 
 clearPrefs() {
+  prefs.setString('auth', '');
   prefs.setInt('id', 0);
   prefs.setInt('permissionLevel', 0);
   prefs.setInt('star', 0);
