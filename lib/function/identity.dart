@@ -6,13 +6,16 @@ import 'package:http/http.dart' as http;
 import 'package:bot_toast/bot_toast.dart';
 import 'package:pixivic/biz/user_base/service/user_base_service.dart';
 import 'package:pixivic/common/config/get_it_config.dart';
+import 'package:pixivic/common/do/user_info.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
+import 'package:get/get.dart' hide Response;
 
 import '../data/common.dart';
 import '../data/texts.dart';
 import 'package:pixivic/provider/collection_model.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/controller/user_data_controller.dart';
 
 // identity.dart 文件包含与用户身份验证相关的所有方法，例如登录，验证 auth 是否过期，注册等等
 
@@ -31,27 +34,19 @@ login(BuildContext context, String userName, String pwd,
       await client.post(url, headers: header, body: encoder.convert(body));
   if (response.statusCode == 200) {
     prefs.setString('auth', response.headers['authorization']);
-    Map data = jsonDecode(
-        utf8.decode(response.bodyBytes, allowMalformed: true))['data'];
-    print(data);
-    prefs.setInt('id', data['id']);
-    prefs.setString('name', data['username']);
-    prefs.setString('email', data['email']);
-    prefs.setString('avatarLink',
-        'https://static.pixivic.net/avatar/299x299/${data['id']}.jpg');
-    if (data['signature'] != null)
-      prefs.setString('signature', data['signature']);
-    if (data['location'] != null) prefs.setString('location', data['location']);
-    prefs.setInt('star', data['star']);
-    prefs.setBool('isBindQQ', data['isBindQQ']);
-    prefs.setBool('isCheckEmail', data['isCheckEmail']);
+    // Map data = jsonDecode(
+    //     utf8.decode(response.bodyBytes, allowMalformed: true))['data'];
+    UserInfo data = UserInfo.fromJson(jsonDecode(
+        utf8.decode(response.bodyBytes, allowMalformed: true))['data']);
+    // print(data);
+
+    setPrefs(data);
+
     isLogin = true;
     BotToast.showSimpleNotification(title: TextZhLoginPage().loginSucceed);
     print(newPageKey);
     print(userPageKey);
     // 为 dio 单例添加 auth
-    //dioPixivic.options.headers["Authorization"] =prefs.getString('auth');
-    //initDioClient();
     if (widgetFrom != null) {
       switch (widgetFrom) {
         case 'newPage':
@@ -64,8 +59,6 @@ login(BuildContext context, String userName, String pwd,
           break;
       }
     }
-    //initDioClient();
-    print(prefs.getString('auth')+"------------------------------------------" );
     // 清除 picpage 页面缓存以便重新加载
     homeScrollerPosition = 0;
     homePicList = [];
@@ -73,6 +66,7 @@ login(BuildContext context, String userName, String pwd,
     // 加载用户的画集列表
     Provider.of<CollectionUserDataModel>(context, listen: false)
         .getCollectionList();
+    Get.find<UserDataController>().readDataFromPrefs();
   } else {
     // isLogin = false;
     BotToast.showSimpleNotification(
@@ -85,7 +79,8 @@ login(BuildContext context, String userName, String pwd,
 }
 
 logout(BuildContext context, {bool isInit = false}) {
-  prefs.setString('auth', '');
+  // TODO: UI 刷新
+  clearPrefs();
   isLogin = false;
   if (!isInit) {
     userPageKey.currentState.checkLoginState();
@@ -100,7 +95,7 @@ logout(BuildContext context, {bool isInit = false}) {
 }
 
 reloadUserData() async {
-  print('identity.dart: relaod user data');
+  print('identity.dart: reload user data');
   String authStored = prefs.getString('auth');
   if (authStored == null || authStored == '')
     return false;
@@ -122,6 +117,13 @@ reloadUserData() async {
         prefs.setInt('star', data.star);
         prefs.setBool('isBindQQ', data.isBindQQ);
         prefs.setBool('isCheckEmail', data.isCheckEmail);
+        setPrefs(data);
+// =======
+//       Response response = await dioPixivic.get(url);
+//       if (response.statusCode == 200) {
+//         Map data = response.data['data'];
+//         setPrefs(data);
+// >>>>>>> dev
         return true;
       });
       // Response response = await dioPixivic.get(url);
@@ -148,6 +150,37 @@ reloadUserData() async {
       return false;
     }
   }
+}
+
+setPrefs(UserInfo data) {
+  prefs.setInt('id', data.id);
+  prefs.setInt('permissionLevel', data.permissionLevel);
+  prefs.setInt('star', data.star);
+
+  prefs.setString('name', data.username);
+  prefs.setString('email', data.email);
+  prefs.setString('permissionLevelExpireDate', data.permissionLevelExpireDate);
+  prefs.setString(
+      'avatarLink', 'https://static.pixivic.net/avatar/299x299/${data.id}.jpg');
+  if (data.signature != null) prefs.setString('signature', data.signature);
+  if (data.location != null) prefs.setString('location', data.location);
+
+  prefs.setBool('isBindQQ', data.isBindQQ);
+  prefs.setBool('isCheckEmail', data.isCheckEmail);
+}
+
+clearPrefs() {
+  prefs.setInt('id', 0);
+  prefs.setInt('permissionLevel', 0);
+  prefs.setInt('star', 0);
+
+  prefs.setString('name', '');
+  prefs.setString('email', '');
+  prefs.setString('permissionLevelExpireDate', '');
+  prefs.setString('avatarLink', '');
+
+  prefs.setBool('isBindQQ', false);
+  prefs.setBool('isCheckEmail', false);
 }
 
 // checkAuth() async {

@@ -46,6 +46,8 @@ class _SettingPageState extends State<SettingPage> {
             settingCell(texts.reviewQuality, texts.reviewQualityDetail,
                 _showChangePreviewQuality,
                 leadingWidget: previewQualityDisplay()),
+            settingCell(texts.changeImageUrl, texts.changeImageUrlDetail, () {},
+                leadingWidget: changeImageUrlSwitch()),
             descriptionLine(texts.appUpdate),
             settingCell(
                 texts.checkUpdate, texts.checkUpdateDetail, _routeToAboutPage)
@@ -124,6 +126,16 @@ class _SettingPageState extends State<SettingPage> {
     else
       showText = texts.lowQuality;
     return Text(showText);
+  }
+
+  Widget changeImageUrlSwitch() {
+    return Switch(
+        value: prefs.getBool('isOnPixivicServer'),
+        onChanged: (value) {
+          setState(() {
+            prefs.setBool('isOnPixivicServer', value);
+          });
+        });
   }
 
   Widget dataRemainTime() {

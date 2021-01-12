@@ -1,12 +1,12 @@
 class TextZhForAboutPage {
   String title = '关于我们';
-  static String version = '0.1.3';
+  static String version = '0.1.4';
   String description =
       'Just4Fun\nPixivc 出生于2018-10-01，是一位兴趣使然的工具酱。\n她精致（ui统一），敏捷（前后分离&纯js）。\n将提供以下有限的服务：pixiv日排行的浏览与免费高级会员热门排序搜索。她希望能在茫茫互联网留下一些存在的痕迹，翘首以盼大家能通过各大搜索引擎访问她（将有助于提升她的搜索排名），\n搜索关键词：Pixiv\n当前版本: 公测版 V0.1.1 201101 \n有任何使用上的疑问和建议，请反馈于官方群或论坛。\n\n更新内容：\n- 修复 评论加载的 bug\n- 修复 瀑布流流畅性问题\n- 功能 增加了个人画集\n- 功能 增加了猜你喜欢';
   String versionInfo = 'Pixivic 官方客户端 $version beta';
   String updateTitle = '$version 更新内容';
   String updateInfo =
-      'v0.1.3\n- 修复 搜索标签时的排版错误\n- 修复 遇到网络错误时的加载动画\nv0.1.2\n- 修复 评论加载的 bug\n- 优化 瀑布流滑动体验\n- 优化 网络资源加载速度\n- 功能 增加了个人画集\n- 功能 增加了猜你喜欢\n- 功能 增加了评论表情包模块\n- 功能 增加了评论点赞和来源平台显示\n- 功能 增加了设置选项';
+      'v0.1.4\n- 优化 表情包流畅度\n- 修复 登陆后画作加载逻辑\n- 修复 收藏的漫画加载错误\n- 功能 在设置中进行备用图源的临时切换\n   重新打开APP后会返回默认图源\n- 功能 图片加速下载通道\n  请暂时前往web端领取试用时长';
   String savePicLabel = '图片的保存';
   String savePic = '在图片详情页中，长按图片即可下载原图';
   String forum = '访问论坛';
@@ -195,6 +195,8 @@ class TextZhSettingPage {
   String highQuality = '高';
   String mediumQuality = '中';
   String lowQuality = '低';
+  String changeImageUrl = '备用图源';
+  String changeImageUrlDetail = '当图片加载失败时可尝试临时切换至备用图源';
   String appUpdate = '应用信息';
   String checkUpdate = '关于我们';
   String checkUpdateDetail = '查看版本信息以及应用更新';
@@ -221,6 +223,7 @@ class TextZhCollection {
 }
 
 class TextZhVIP {
+  static String notVip = '您还不是会员';
   static String endTime = '加速到期日:';
   static String code = '兑换码';
   static String convert = '立即兑换';

@@ -70,7 +70,8 @@ class CommentListPage extends StatelessWidget {
                   // }
 
                   // memeBox 移除焦点
-                  if (commentListModel.isMemeMode) commentListModel.flipMemeMode();
+                  if (commentListModel.isMemeMode)
+                    commentListModel.flipMemeMode();
                 },
                 child: Scaffold(
                     resizeToAvoidBottomPadding: false,
@@ -94,8 +95,8 @@ class CommentListPage extends StatelessWidget {
                                         margin: EdgeInsets.only(
                                             bottom: screen.setHeight(35)),
                                         child: ListView.builder(
-                                            controller:
-                                                commentListModel.scrollController,
+                                            controller: commentListModel
+                                                .scrollController,
                                             shrinkWrap: true,
                                             itemCount: commentList.length,
                                             itemBuilder: (BuildContext context,
@@ -144,11 +145,11 @@ class CommentListPage extends StatelessWidget {
                                     children: [
                                       bottomCommentBar(commentListModel),
                                       tuple2.item1
-                                          ? MemeBox(commentListModel.memeBoxHeight)
+                                          ? MemeBox(
+                                              commentListModel.memeBoxHeight)
                                           : Container(
-                                              color: Colors.white,
-                                              height:
-                                                  commentListModel.memeBoxHeight,
+                                              height: commentListModel
+                                                  .memeBoxHeight,
                                             )
                                       // Container(
                                       //   width: ScreenUtil().setWidth(324),
@@ -303,95 +304,94 @@ class CommentListPage extends StatelessWidget {
       Material(
           color: Colors.white,
           child: InkWell(
-              child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
+              child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                      Widget>[
+            Container(
+              padding: EdgeInsets.only(
+                right: ScreenUtil().setWidth(8),
+              ),
+              child: GestureDetector(
+                child: CircleAvatar(
+                    // backgroundColor: Colors.white,
+                    radius: ScreenUtil().setHeight(14),
+                    backgroundImage: NetworkImage(avaterUrl,
+                        headers: {'referer': 'https://pixivic.com'})),
+                onTap: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) {
+                    return UserDetailPage(data.replyFrom, data.replyFromName);
+                  }));
+                },
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(height: ScreenUtil().setHeight(5)),
+                Text(
+                  data.replyFromName,
+                  style: TextStyle(fontSize: 12),
+                ),
+                Container(
+                  width: screen.setWidth(235),
+                  alignment: Alignment.centerLeft,
+                  child: commentContentDisplay(context, data),
+                ),
                 Container(
                   padding: EdgeInsets.only(
-                    right: ScreenUtil().setWidth(8),
+                    top: ScreenUtil().setHeight(4),
                   ),
-                  child: GestureDetector(
-                    child: CircleAvatar(
-                        // backgroundColor: Colors.white,
-                        radius: ScreenUtil().setHeight(14),
-                        backgroundImage: NetworkImage(avaterUrl,
-                            headers: {'referer': 'https://pixivic.com'})),
-                    onTap: () {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (context) {
-                        return UserDetailPage(
-                            data.replyFrom, data.replyFromName);
-                      }));
-                    },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    // mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        DateFormat("yyyy-MM-dd")
+                            .format(DateTime.parse(data.createDate)),
+                        strutStyle: StrutStyle(
+                          fontSize: ScreenUtil().setSp(11),
+                          height: ScreenUtil().setWidth(1.3),
+                        ),
+                        style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: ScreenUtil().setSp(9)),
+                      ),
+                      SizedBox(
+                        width: ScreenUtil().setWidth(5),
+                      ),
+                      commentPlatform(data.platform),
+                      commentLikeButton(context, parentIndex, commentListModel,
+                          subIndex: subIndex),
+                      GestureDetector(
+                        child: Text(
+                          texts.reply,
+                          strutStyle: StrutStyle(
+                            fontSize: 12,
+                            height: ScreenUtil().setWidth(1.3),
+                          ),
+                          style:
+                              TextStyle(color: Colors.blue[600], fontSize: 12),
+                        ),
+                        onTap: () {
+                          commentListModel.replyToId = data.replyFrom;
+                          commentListModel.replyToName = data.replyFromName;
+                          data.parentId == 0
+                              ? commentListModel.replyParentId = data.id
+                              : commentListModel.replyParentId = data.parentId;
+
+                          if (commentListModel.replyFocus.hasFocus)
+                            commentListModel.replyFocusListener();
+                          else
+                            commentListModel.replyFocus.requestFocus();
+                        },
+                      )
+                    ],
                   ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(height: ScreenUtil().setHeight(5)),
-                    Text(
-                      data.replyFromName,
-                      style: TextStyle(fontSize: 12),
-                    ),
-                    Container(
-                      width: screen.setWidth(235),
-                      alignment: Alignment.centerLeft,
-                      child: commentContentDisplay(context, data),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(
-                        top: ScreenUtil().setHeight(4),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        // mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            DateFormat("yyyy-MM-dd")
-                                .format(DateTime.parse(data.createDate)),
-                            strutStyle: StrutStyle(
-                              fontSize: ScreenUtil().setSp(11),
-                              height: ScreenUtil().setWidth(1.3),
-                            ),
-                            style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: ScreenUtil().setSp(9)),
-                          ),
-                          SizedBox(
-                            width: ScreenUtil().setWidth(5),
-                          ),
-                          commentPlatform(data.platform),
-                          commentLikeButton(context,
-                              parentIndex, commentListModel,
-                              subIndex: subIndex),
-                          GestureDetector(
-                            child: Text(
-                              texts.reply,
-                              strutStyle: StrutStyle(
-                                fontSize: 12,
-                                height: ScreenUtil().setWidth(1.3),
-                              ),
-                              style: TextStyle(
-                                  color: Colors.blue[600], fontSize: 12),
-                            ),
-                            onTap: () {
-                              commentListModel.replyToId = data.replyFrom;
-                              commentListModel.replyToName = data.replyFromName;
-                              data.parentId == 0
-                                  ? commentListModel.replyParentId = data.id
-                                  : commentListModel.replyParentId = data.parentId;
-                              if (commentListModel.replyFocus.hasFocus)
-                                commentListModel.replyFocusListener();
-                              else
-                                commentListModel.replyFocus.requestFocus();
-                            },
-                          )
-                        ],
-                      ),
-                    )
-                  ],
                 )
-              ])))
+              ],
+            )
+          ])))
     ]));
   }
 
@@ -437,17 +437,19 @@ class CommentListPage extends StatelessWidget {
     }
   }
 
-  Widget commentLikeButton(BuildContext context,
-      int parentIndex, CommentListModel commentListModel,
+  Widget commentLikeButton(
+      BuildContext context, int parentIndex, CommentListModel commentListModel,
       {int subIndex}) {
     return Selector<CommentListModel, Tuple2>(
       selector: (context, provider) {
         if (subIndex == null)
-          return Tuple2(provider.commentList[parentIndex].isLike, provider.commentList[parentIndex].likedCount);
+          return Tuple2(provider.commentList[parentIndex].isLike,
+              provider.commentList[parentIndex].likedCount);
         else
-          return Tuple2(provider.commentList[parentIndex].subCommentList[subIndex]
-              .isLike, provider.commentList[parentIndex].subCommentList[subIndex]
-             .likedCount);
+          return Tuple2(
+              provider.commentList[parentIndex].subCommentList[subIndex].isLike,
+              provider.commentList[parentIndex].subCommentList[subIndex]
+                  .likedCount);
       },
       builder: (context, tuple2, _) {
         bool lock = false;

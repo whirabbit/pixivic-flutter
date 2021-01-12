@@ -11,7 +11,6 @@ import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_advanced_networkimage/zoomable.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:dio/dio.dart';
 
 import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/page/artist_page.dart';
@@ -24,6 +23,7 @@ import 'package:pixivic/widget/comment_cell.dart';
 import 'package:pixivic/function/downloadImage.dart';
 import 'package:pixivic/function/collection.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/function/image_url.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/widget/markheart_icon.dart';
 import 'package:pixivic/common/do/illust.dart';
@@ -344,8 +344,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
               child: TransitionToImage(
                 image: AdvancedNetworkImage(
                   //TODO 暂时写死
-                  widget._picData.imageUrls[0].medium,
-                  header: {'Referer': 'https://app-api.pixiv.net'},
+                  imageUrl(widget._picData.imageUrls[0].medium, previewQuality),
+                  header: imageHeader(previewQuality),
                   useDiskCache: true,
                   cacheRule: CacheRule(
                       maxAge: Duration(days: prefs.getInt('previewRule'))),
@@ -377,9 +377,9 @@ class _PicDetailPageState extends State<PicDetailPage> {
                   minScale: 0.7,
                   child: TransitionToImage(
                     image: AdvancedNetworkImage(
-                      //TODO 暂时写死
-                      widget._picData.imageUrls[index].medium,
-                      header: {'Referer': 'https://app-api.pixiv.net'},
+                      imageUrl(widget._picData.imageUrls[index].medium,
+                          previewQuality),
+                      header: imageHeader(previewQuality),
                       useDiskCache: true,
                       cacheRule: CacheRule(
                           maxAge: Duration(days: prefs.getInt('previewRule'))),
@@ -554,7 +554,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
                             : 'ios';
                     _checkPermission().then((value) async {
                       if (value) {
-                        DownloadImage(url, platform);
+                        DownloadImage(url, platform,
+                            fileName: widget._picData.title);
                       } else {
                         BotToast.showSimpleNotification(
                             title: texts.requestDownloadAuthority);

@@ -32,10 +32,10 @@ class ArtistService {
     });
   }
 
-  Future<Artist> querySearchArtistById(
-      int artistId, {Function onReceiveProgress}) {
+  Future<Artist> querySearchArtistById(int artistId,
+      {Function onReceiveProgress}) {
     return _artistRestClient
-        .querySearchArtistByIdInfo(artistId,onReceiveProgress)
+        .querySearchArtistByIdInfo(artistId, onReceiveProgress)
         .then((value) {
       if (value.data != null) value.data = Artist.fromJson(value.data);
       return value.data as Artist;

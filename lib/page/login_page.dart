@@ -69,7 +69,7 @@ class LoginPageState extends State<LoginPage> {
     return SingleChildScrollView(
       controller: mainController,
       child: Container(
-        height: ScreenUtil().setHeight(606),
+        height: ScreenUtil().setHeight(576),
         padding: EdgeInsets.only(
             left: ScreenUtil().setWidth(30),
             top: modeIsLogin
