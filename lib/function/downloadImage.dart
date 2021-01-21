@@ -117,7 +117,8 @@ class DownloadImage {
 
   _androidDownloadWithFlutterDownloader() async {
     BotToast.showSimpleNotification(title: isVip ? '高速通道下载中' : '开始下载');
-
+    String fileNameFromUrl = url.split('/').last;
+    print('fileName is $fileNameFromUrl');
     // final Directory directory = await getExternalStorageDirectory();
 
     // final Directory picDirFolder =
@@ -135,7 +136,7 @@ class DownloadImage {
             showNotification: true,
             openFileFromNotification: true,
             headers: imageHeader('original'),
-            fileName: fileName + '.jpg')
+            fileName: fileNameFromUrl)
         .catchError((onError) {
       print(onError);
       BotToast.showSimpleNotification(title: '下载失败,请检查网络');

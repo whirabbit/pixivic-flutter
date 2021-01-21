@@ -32,7 +32,10 @@ Map imageHeader(String mode) {
   if (prefs.getInt('permissionLevel') > 2 &&
       vipUrl != '' &&
       mode == 'original') {
-    result = {'authorization': prefs.getString('auth')};
+    result = {
+      'authorization': prefs.getString('auth'),
+      'Referer': 'https://m.pixivic.com/'
+    };
   } else if (!prefs.getBool('isOnPixivicServer')) {
     result = {'Referer': 'https://app-api.pixiv.net'};
   } else if (prefs.getBool('isOnPixivicServer') && isLogin) {
