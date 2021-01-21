@@ -6,7 +6,7 @@ class TextZhForAboutPage {
   String versionInfo = 'Pixivic 官方客户端 $version beta';
   String updateTitle = '$version 更新内容';
   String updateInfo =
-      'v0.1.4\n- 优化 表情包流畅度\n- 修复 登陆后画作加载逻辑\n- 修复 收藏的漫画加载错误\n- 功能 在设置中进行备用图源的临时切换\n   重新打开APP后会返回默认图源\n- 功能 图片加速下载通道\n  请暂时前往web端领取试用时长';
+      'v0.1.5\n- 修复 图片下载的保存文件名回复此前规则\n- 修复 下载参数的错误传递导致低概率的下载错误\n- 调整 暂时下线加速下载申请入口\n   已有加速下载权限的用户不影响使用\n   剩余时间可前往网页端查看';
   String savePicLabel = '图片的保存';
   String savePic = '在图片详情页中，长按图片即可下载原图';
   String forum = '访问论坛';
