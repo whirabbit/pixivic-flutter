@@ -8,6 +8,8 @@ String vipUrl = '';
 String imageUrl(String url, String mode) {
   print(mode);
   String result;
+
+  // VIP 优先使用快捷通道
   if (prefs.getInt('permissionLevel') > 2 &&
       vipUrl != '' &&
       mode == 'original') {
@@ -16,10 +18,10 @@ String imageUrl(String url, String mode) {
   } else if (!prefs.getBool('isOnPixivicServer')) {
     result = url;
   } else if (prefs.getBool('isOnPixivicServer') && isLogin) {
-    result = url.replaceAll('https://i.pximg.net', 'https://img.pixivic.net');
+    result = url.replaceAll('https://i.pximg.net', 'https://acgpic.net');
     result = result + '?Authorization=${prefs.getString('auth')}';
   } else if (prefs.getBool('isOnPixivicServer') && !isLogin) {
-    result = url.replaceAll('https://i.pximg.net', 'https://img.pixivic.net');
+    result = url.replaceAll('https://i.pximg.net', 'https://acgpic.net');
   } else {
     result = url;
   }
@@ -34,17 +36,17 @@ Map imageHeader(String mode) {
       mode == 'original') {
     result = {
       'authorization': prefs.getString('auth'),
-      'Referer': 'https://m.pixivic.com/'
+      'Referer': 'https://sharemoe.net/'
     };
   } else if (!prefs.getBool('isOnPixivicServer')) {
     result = {'Referer': 'https://app-api.pixiv.net'};
   } else if (prefs.getBool('isOnPixivicServer') && isLogin) {
     result = {
       'authorization': prefs.getString('auth'),
-      'Referer': 'https://m.pixivic.com/'
+      'Referer': 'https://sharemoe.net/'
     };
   } else if (prefs.getBool('isOnPixivicServer') && !isLogin) {
-    result = {'Referer': 'https://m.pixivic.com/'};
+    result = {'Referer': 'https://sharemoe.net/'};
   } else {
     result = {'Referer': 'https://app-api.pixiv.net'};
   }
