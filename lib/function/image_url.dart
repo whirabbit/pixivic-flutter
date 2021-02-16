@@ -18,10 +18,16 @@ String imageUrl(String url, String mode) {
   } else if (!prefs.getBool('isOnPixivicServer')) {
     result = url;
   } else if (prefs.getBool('isOnPixivicServer') && isLogin) {
-    result = url.replaceAll('https://i.pximg.net', 'https://acgpic.net');
+    if (mode == 'original') {
+      result = url.replaceAll('https://i.pximg.net', 'https://o.acgpic.net');
+    } else
+      result = url.replaceAll('https://i.pximg.net', 'https://acgpic.net');
     result = result + '?Authorization=${prefs.getString('auth')}';
   } else if (prefs.getBool('isOnPixivicServer') && !isLogin) {
-    result = url.replaceAll('https://i.pximg.net', 'https://acgpic.net');
+    if (mode == 'original') {
+      result = url.replaceAll('https://i.pximg.net', 'https://o.acgpic.net');
+    } else
+      result = url.replaceAll('https://i.pximg.net', 'https://acgpic.net');
   } else {
     result = url;
   }
