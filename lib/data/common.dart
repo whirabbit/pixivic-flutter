@@ -116,5 +116,5 @@ Future initData(BuildContext context) async {
     prefs.setString('previewQuality', 'medium');
 
   // 默认不使用自建服务器
-  prefs.setBool('isOnPixivicServer', false);
+  prefs.setBool('isOnPixivicServer', true);
 }

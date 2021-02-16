@@ -195,8 +195,8 @@ class TextZhSettingPage {
   String highQuality = '高';
   String mediumQuality = '中';
   String lowQuality = '低';
-  String changeImageUrl = '备用图源';
-  String changeImageUrlDetail = '当图片加载失败时可尝试临时切换至备用图源';
+  String changeImageUrl = '原生图源';
+  String changeImageUrlDetail = '当可访问外网时，可尝试切换至原生图源';
   String appUpdate = '应用信息';
   String checkUpdate = '关于我们';
   String checkUpdateDetail = '查看版本信息以及应用更新';

@@ -130,10 +130,10 @@ class _SettingPageState extends State<SettingPage> {
 
   Widget changeImageUrlSwitch() {
     return Switch(
-        value: prefs.getBool('isOnPixivicServer'),
+        value: !prefs.getBool('isOnPixivicServer'),
         onChanged: (value) {
           setState(() {
-            prefs.setBool('isOnPixivicServer', value);
+            prefs.setBool('isOnPixivicServer', !value);
           });
         });
   }
