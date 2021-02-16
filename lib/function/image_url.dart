@@ -42,17 +42,17 @@ Map imageHeader(String mode) {
       mode == 'original') {
     result = {
       'authorization': prefs.getString('auth'),
-      'Referer': 'https://sharemoe.net/'
+      'Referer': 'https://m.sharemoe.net/'
     };
   } else if (!prefs.getBool('isOnPixivicServer')) {
     result = {'Referer': 'https://app-api.pixiv.net'};
   } else if (prefs.getBool('isOnPixivicServer') && isLogin) {
     result = {
       'authorization': prefs.getString('auth'),
-      'Referer': 'https://sharemoe.net/'
+      'Referer': 'https://m.sharemoe.net/'
     };
   } else if (prefs.getBool('isOnPixivicServer') && !isLogin) {
-    result = {'Referer': 'https://sharemoe.net/'};
+    result = {'Referer': 'https://m.sharemoe.net/'};
   } else {
     result = {'Referer': 'https://app-api.pixiv.net'};
   }
