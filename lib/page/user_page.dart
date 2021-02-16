@@ -194,13 +194,13 @@ class UserPageState extends State<UserPage> {
             ),
             text.follow,
             _routeToFollowPage),
-        // _optionCell(
-        //     FaIcon(
-        //       FontAwesomeIcons.rocket,
-        //       color: Colors.green,
-        //     ),
-        //     text.vipSpeed,
-        //     _routeToVIPPage),
+        _optionCell(
+            FaIcon(
+              FontAwesomeIcons.rocket,
+              color: Colors.green,
+            ),
+            text.vipSpeed,
+            _routeToVIPPage),
         _optionCell(
             FaIcon(
               FontAwesomeIcons.history,
