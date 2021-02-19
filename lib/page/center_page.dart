@@ -92,6 +92,10 @@ class _CenterPageState extends State<CenterPage> {
                   () {
                 _openUrl('https://pixivic.com/policy/');
               }),
+              cell(texts.shareMoe, FontAwesomeIcons.disease, Colors.blue[600],
+                  () {
+                _openUrl('https://pixivic.com/policy/');
+              }),
             ],
           )
         ],

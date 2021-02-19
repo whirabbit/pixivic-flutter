@@ -119,6 +119,7 @@ class TextZhCenterPage {
   String guessLike = '猜你喜欢';
   String policy = '隐私政策';
   String safety = '安全设定';
+  String shareMoe = '虾萌';
   String setting = '设置';
   String safetyTitle = '安全等级设定';
   String safetyWarniOS =
