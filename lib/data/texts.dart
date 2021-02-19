@@ -1,12 +1,12 @@
 class TextZhForAboutPage {
   String title = '关于我们';
-  static String version = '0.1.5';
+  static String version = '0.1.6';
   String description =
       'Just4Fun\nPixivc 出生于2018-10-01，是一位兴趣使然的工具酱。\n她精致（ui统一），敏捷（前后分离&纯js）。\n将提供以下有限的服务：pixiv日排行的浏览与免费高级会员热门排序搜索。她希望能在茫茫互联网留下一些存在的痕迹，翘首以盼大家能通过各大搜索引擎访问她（将有助于提升她的搜索排名），\n搜索关键词：Pixiv\n当前版本: 公测版 V0.1.1 201101 \n有任何使用上的疑问和建议，请反馈于官方群或论坛。\n\n更新内容：\n- 修复 评论加载的 bug\n- 修复 瀑布流流畅性问题\n- 功能 增加了个人画集\n- 功能 增加了猜你喜欢';
   String versionInfo = 'Pixivic 官方客户端 $version beta';
   String updateTitle = '$version 更新内容';
   String updateInfo =
-      'v$version\n- 修复 图片下载的保存文件名恢复此前数字规则\n- 修复 下载参数的错误传递导致低概率的下载错误\n- 调整 暂时下线加速下载申请入口\n   已有加速下载权限的用户不影响使用\n   剩余时间可前往网页端查看';
+      'v$version\n- 修复 域名更新后的无法连接情况\n- 修复 会员下载的参数错误\n\n- 此应用版本为保证使用的临时性更新，新制作的虾萌客户端请关注群、论坛通知。';
   String savePicLabel = '图片的保存';
   String savePic = '在图片详情页中，长按图片即可下载原图';
   String forum = '访问论坛';
