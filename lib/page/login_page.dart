@@ -9,6 +9,7 @@ import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/function/identity.dart' as identity;
 import 'package:pixivic/function/dio_client.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -302,10 +303,16 @@ class LoginPageState extends State<LoginPage> {
     return Container(
       child: GestureDetector(
         onTap: () {
-          setState(() {
-            modeIsLogin = !modeIsLogin;
-            _userPasswordController.text = '';
-            _userPasswordController.text = '';
+          setState(() async {
+            // modeIsLogin = !modeIsLogin;
+            // _userPasswordController.text = '';
+            // _userPasswordController.text = '';
+            String url = 'https://m.sharemoe.net/register';
+            if (await canLaunch(url)) {
+              await launch(url);
+            } else {
+              throw 'Could not launch $url';
+            }
           });
         },
         child: Text(
