@@ -210,6 +210,13 @@ class UserPageState extends State<UserPage> {
             _routeToHistoryPage),
         _optionCell(
             FaIcon(
+              FontAwesomeIcons.phone,
+              color: Colors.amber[500],
+            ),
+            text.phone,
+            _routeToPhonePage),
+        _optionCell(
+            FaIcon(
               FontAwesomeIcons.signOutAlt,
               color: Colors.orange,
             ),
@@ -277,6 +284,11 @@ class UserPageState extends State<UserPage> {
   }
 
   _routeToHistoryPage() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => HistoryPage()));
+  }
+
+  _routeToPhonePage() {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => HistoryPage()));
   }
