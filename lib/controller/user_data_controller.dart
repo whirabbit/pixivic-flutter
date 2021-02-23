@@ -11,6 +11,7 @@ class UserDataController extends GetxController {
   final id = RxInt(0);
   final permissionLevel = RxInt(0);
   final star = RxInt(0);
+  final phone = RxInt(0);
 
   final name = RxString('userName');
   final email = RxString('');
