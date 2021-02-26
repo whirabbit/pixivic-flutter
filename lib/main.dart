@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'package:get/get.dart';
 
 import 'package:pixivic/widget/nav_bar.dart';
 import 'package:pixivic/widget/papp_bar.dart';
@@ -63,7 +64,7 @@ class MyApp extends StatelessWidget {
     FirebaseAnalytics analytics = FirebaseAnalytics();
 
     return BotToastInit(
-      child: MaterialApp(
+      child: GetMaterialApp(
         // showPerformanceOverlay: true,
         navigatorObservers: [
           BotToastNavigatorObserver(),
