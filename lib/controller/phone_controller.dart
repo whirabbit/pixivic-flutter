@@ -16,6 +16,7 @@ class PhoneController extends GetxController {
   String inputVerificationCode = '';
   String inputMessageVerificationCode = '';
   String verificationCodeVid = '';
+  
 
   @override
   void onInit() {
@@ -84,6 +85,7 @@ class PhoneController extends GetxController {
       Response response = await dioPixivic.get('/users/$userId/phone',
           options: Options(headers: headers));
       if (response.statusCode == 200) isfinished.value = true;
+      Get.back();
     } catch (e) {
       isfinished.value = false;
     }
