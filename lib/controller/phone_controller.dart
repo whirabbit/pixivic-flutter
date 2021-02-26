@@ -105,13 +105,20 @@ class PhoneController extends GetxController {
       Response response = await dioPixivic.get('/users/$userId/phone',
           queryParameters: queryParameters);
       if (response.statusCode == 200) isfinished.value = true;
+      // TODO
       Get.back();
     } catch (e) {
       isfinished.value = false;
     }
   }
 
-  cleanVerifyCode() {
+  exit() {
     verificationCodeBase64.value = '';
+    isPhoneNotUsed.value = false;
+    isGetMessage.value = false;
+    isfinished.value = false;
+    inputVerificationCode = '';
+    inputMessageVerificationCode = '';
+    getPhoneState();
   }
 }

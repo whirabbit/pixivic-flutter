@@ -303,7 +303,7 @@ class UserPageState extends State<UserPage> {
         builder: (BuildContext context) {
           return SingleChildScrollView(child: PhonePage());
         }).then((value) {
-      phoneController.cleanVerifyCode();
+      phoneController.exit();
     });
   }
 }
