@@ -290,7 +290,13 @@ class UserPageState extends State<UserPage> {
   }
 
   _routeToPhonePage() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => PhonePage()));
+    showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        builder: (BuildContext context) {
+          return PhonePage();
+        });
   }
 }
