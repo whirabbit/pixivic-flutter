@@ -14,6 +14,7 @@ import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/function/identity.dart';
 import 'package:pixivic/controller/user_data_controller.dart';
+import 'package:pixivic/controller/phone_controller.dart';
 import 'package:pixivic/sidepage/phone_page.dart';
 
 class UserPage extends StatefulWidget {
@@ -290,6 +291,9 @@ class UserPageState extends State<UserPage> {
   }
 
   _routeToPhonePage() {
+    PhoneController phoneController = Get.put(PhoneController());
+    phoneController.getVerifyCode();
+
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -298,6 +302,8 @@ class UserPageState extends State<UserPage> {
         ),
         builder: (BuildContext context) {
           return SingleChildScrollView(child: PhonePage());
-        });
+        }).then((value) {
+      phoneController.cleanVerifyCode();
+    });
   }
 }
