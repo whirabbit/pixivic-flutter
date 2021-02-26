@@ -14,7 +14,7 @@ class PhonePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    phoneController.getVerifyCode();
+    initTextEditingController();
 
     return Container(
         alignment: Alignment.topLeft,
@@ -53,17 +53,34 @@ class PhonePage extends StatelessWidget {
         ));
   }
 
+  initTextEditingController() {
+    verifyCodeCtr.text = phoneController.inputVerificationCode;
+    phoneNumberCtr.text = phoneController.inputPhoneNumber.toString() != '0'
+        ? phoneController.inputPhoneNumber.toString()
+        : '';
+    phoneVerifyCtr.text = phoneController.inputMessageVerificationCode;
+    verifyCodeCtr.addListener(() {
+      phoneController.inputVerificationCode = verifyCodeCtr.text;
+    });
+    phoneNumberCtr.addListener(() {
+      phoneController.inputPhoneNumber = int.parse(phoneNumberCtr.text);
+    });
+    phoneVerifyCtr.addListener(() {
+      phoneController.inputMessageVerificationCode = phoneVerifyCtr.text;
+    });
+  }
+
   Widget imageVerification() {
     return singleLineCell(
         '图形验证码',
         TextInputType.text,
         verifyCodeCtr,
-        phoneController.verificationCodeBase64.value != ''
+        Obx(() => phoneController.verificationCodeBase64.value != ''
             ? Image.memory(
                 base64Decode(phoneController.verificationCodeBase64.value),
                 width: ScreenUtil().setWidth(70),
               )
-            : Container());
+            : Container()));
   }
 
   Widget phoneNumber() {
@@ -71,9 +88,14 @@ class PhonePage extends StatelessWidget {
         '手机号',
         TextInputType.phone,
         phoneNumberCtr,
-        customButton('获取验证码', () {
-          print('获取验证码');
-        }));
+        Obx(() => customButton(
+            '获取验证码',
+            !phoneController.isGetMessage.value
+                ? () {
+                    phoneController.onTapGetMessage(
+                        verifyCodeCtr.text, phoneNumberCtr.text);
+                  }
+                : null)));
   }
 
   Widget phoneVerification() {
@@ -83,15 +105,13 @@ class PhonePage extends StatelessWidget {
 
   Widget customButton(String text, VoidCallback onTapped) {
     return RaisedButton(
-      color: Colors.blue[300],
-      child: Text(
-        text,
-        style: TextStyle(color: Colors.white, fontSize: ScreenUtil().setSp(12)),
-      ),
-      onPressed: () {
-        onTapped();
-      },
-    );
+        color: Colors.blue[300],
+        child: Text(
+          text,
+          style:
+              TextStyle(color: Colors.white, fontSize: ScreenUtil().setSp(12)),
+        ),
+        onPressed: onTapped);
   }
 
   Widget customTextField(String hintText, TextInputType textInputType,

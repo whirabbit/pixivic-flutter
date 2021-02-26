@@ -40,6 +40,7 @@ initDioClient() {
     // print(response.data);
     // BotToast.showSimpleNotification(title: response.data['message']);
     // auth 更新时自动替换
+    print(response.data);
     if (response.statusCode == 200 &&
         response.headers.map['authorization'] != null &&
         prefs.getString('auth') != response.headers.map['authorization'][0]) {
