@@ -12,6 +12,9 @@ class PhonePage extends StatelessWidget {
 
     return Container(
         alignment: Alignment.topLeft,
+        padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom + ScreenUtil().setHeight(75),
+              ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -46,6 +49,7 @@ class PhonePage extends StatelessWidget {
   Widget imageVerification() {
     return singleLineCell(
         '图形验证码',
+        TextInputType.text,
         RaisedButton(
           color: Colors.orange[200],
           child: Text('获取短信'),
@@ -58,6 +62,7 @@ class PhonePage extends StatelessWidget {
   Widget phoneNumber() {
     return singleLineCell(
         '手机号',
+        TextInputType.phone,
         customButton('获取验证码', () {
           print('获取验证码');
         }));
@@ -66,6 +71,7 @@ class PhonePage extends StatelessWidget {
   Widget phoneVerification() {
     return singleLineCell(
         '手机验证码',
+        TextInputType.number,
         customButton('立即绑定', () {
           print('立即绑定');
         }));
@@ -84,11 +90,12 @@ class PhonePage extends StatelessWidget {
     );
   }
 
-  Widget customTextField(String hintText) {
+  Widget customTextField(String hintText, TextInputType textInputType) {
     return Container(
       width: ScreenUtil().setWidth(150),
       padding: EdgeInsets.only(left: ScreenUtil().setWidth(8)),
       child: TextField(
+        keyboardType: textInputType,
         cursorColor: Colors.orange,
         decoration: InputDecoration(
           hintText: hintText,
@@ -106,7 +113,7 @@ class PhonePage extends StatelessWidget {
     );
   }
 
-  Widget singleLineCell(String text, Widget leadingWidget) {
+  Widget singleLineCell(String text, TextInputType textInputTypeWidget, leadingWidget) {
     return Container(
         height: ScreenUtil().setHeight(45),
         width: ScreenUtil().setWidth(240),
@@ -118,7 +125,7 @@ class PhonePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                customTextField(text),
+                customTextField(text, textInputTypeWidget),
                 Container(
                   width: ScreenUtil().setWidth(90),
                   alignment: Alignment.center,

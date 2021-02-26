@@ -291,12 +291,13 @@ class UserPageState extends State<UserPage> {
 
   _routeToPhonePage() {
     showModalBottomSheet(
+        isScrollControlled: true,
         context: context,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
         builder: (BuildContext context) {
-          return PhonePage();
+          return SingleChildScrollView(child: PhonePage());
         });
   }
 }
