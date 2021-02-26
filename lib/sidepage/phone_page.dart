@@ -8,7 +8,10 @@ import 'package:pixivic/controller/phone_controller.dart';
 
 class PhonePage extends StatelessWidget {
   final PhoneController phoneController = Get.put(PhoneController());
-  
+  final TextEditingController verifyCodeCtr = TextEditingController();
+  final TextEditingController phoneNumberCtr = TextEditingController();
+  final TextEditingController phoneVerifyCtr = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     phoneController.getVerifyCode();
@@ -50,12 +53,11 @@ class PhonePage extends StatelessWidget {
         ));
   }
 
-  
-
   Widget imageVerification() {
     return singleLineCell(
         '图形验证码',
         TextInputType.text,
+        verifyCodeCtr,
         phoneController.verificationCodeBase64.value != ''
             ? Image.memory(
                 base64Decode(phoneController.verificationCodeBase64.value),
@@ -68,18 +70,15 @@ class PhonePage extends StatelessWidget {
     return singleLineCell(
         '手机号',
         TextInputType.phone,
+        phoneNumberCtr,
         customButton('获取验证码', () {
           print('获取验证码');
         }));
   }
 
   Widget phoneVerification() {
-    return singleLineCell(
-        '手机验证码',
-        TextInputType.number,
-        customButton('立即绑定', () {
-          print('立即绑定');
-        }));
+    return singleLineCell('手机验证码', TextInputType.number, phoneVerifyCtr,
+        customButton('立即绑定', () {}));
   }
 
   Widget customButton(String text, VoidCallback onTapped) {
@@ -95,11 +94,13 @@ class PhonePage extends StatelessWidget {
     );
   }
 
-  Widget customTextField(String hintText, TextInputType textInputType) {
+  Widget customTextField(String hintText, TextInputType textInputType,
+      TextEditingController controller) {
     return Container(
       width: ScreenUtil().setWidth(150),
       padding: EdgeInsets.only(left: ScreenUtil().setWidth(8)),
       child: TextField(
+        controller: controller,
         keyboardType: textInputType,
         cursorColor: Colors.orange,
         decoration: InputDecoration(
@@ -118,8 +119,8 @@ class PhonePage extends StatelessWidget {
     );
   }
 
-  Widget singleLineCell(
-      String text, TextInputType textInputTypeWidget, leadingWidget) {
+  Widget singleLineCell(String text, TextInputType textInputTypeWidget,
+      TextEditingController controller, leadingWidget) {
     return Container(
         height: ScreenUtil().setHeight(45),
         width: ScreenUtil().setWidth(240),
@@ -131,7 +132,11 @@ class PhonePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                customTextField(text, textInputTypeWidget),
+                customTextField(
+                  text,
+                  textInputTypeWidget,
+                  controller,
+                ),
                 Container(
                   width: ScreenUtil().setWidth(90),
                   alignment: Alignment.center,
