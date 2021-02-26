@@ -20,9 +20,15 @@ class PhoneController extends GetxController {
   @override
   void onInit() {
     // called immediately after the widget is allocated memory
+    print('init phone controller');
     getPhoneState();
-    getVerifyCode();
+    // getVerifyCode();
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    print('Close phone controller');
   }
 
   // 获取图片验证码

@@ -1,20 +1,24 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/controller/phone_controller.dart';
 
 class PhonePage extends StatelessWidget {
+  final PhoneController phoneController = Get.put(PhoneController());
+  
   @override
   Widget build(BuildContext context) {
-    final PhoneController phoneController = Get.put(PhoneController());
+    phoneController.getVerifyCode();
 
     return Container(
         alignment: Alignment.topLeft,
         padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom + ScreenUtil().setHeight(75),
-              ),
+          bottom: MediaQuery.of(context).viewInsets.bottom +
+              ScreenUtil().setHeight(75),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -46,17 +50,18 @@ class PhonePage extends StatelessWidget {
         ));
   }
 
+  
+
   Widget imageVerification() {
     return singleLineCell(
         '图形验证码',
         TextInputType.text,
-        RaisedButton(
-          color: Colors.orange[200],
-          child: Text('获取短信'),
-          onPressed: () {
-            print('a');
-          },
-        ));
+        phoneController.verificationCodeBase64.value != ''
+            ? Image.memory(
+                base64Decode(phoneController.verificationCodeBase64.value),
+                width: ScreenUtil().setWidth(70),
+              )
+            : Container());
   }
 
   Widget phoneNumber() {
@@ -113,7 +118,8 @@ class PhonePage extends StatelessWidget {
     );
   }
 
-  Widget singleLineCell(String text, TextInputType textInputTypeWidget, leadingWidget) {
+  Widget singleLineCell(
+      String text, TextInputType textInputTypeWidget, leadingWidget) {
     return Container(
         height: ScreenUtil().setHeight(45),
         width: ScreenUtil().setWidth(240),
