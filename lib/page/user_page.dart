@@ -14,6 +14,7 @@ import 'package:pixivic/data/common.dart';
 import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/function/identity.dart';
 import 'package:pixivic/controller/user_data_controller.dart';
+import 'package:pixivic/sidepage/phone_page.dart';
 
 class UserPage extends StatefulWidget {
   @override
@@ -290,6 +291,6 @@ class UserPageState extends State<UserPage> {
 
   _routeToPhonePage() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => HistoryPage()));
+        context, MaterialPageRoute(builder: (context) => PhonePage()));
   }
 }
