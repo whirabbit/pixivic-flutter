@@ -37,8 +37,9 @@ List<String> keywordsString = [
   'signature',
   'location',
   'previewQuality',
+  'phone'
 ];
-List<String> keywordsInt = ['id', 'star', 'sanityLevel', 'previewRule', 'phone'];
+List<String> keywordsInt = ['id', 'star', 'sanityLevel', 'previewRule',];
 List<String> keywordsBool = [
   'isBindQQ',
   'isCheckEmail',

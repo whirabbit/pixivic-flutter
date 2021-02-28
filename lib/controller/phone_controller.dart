@@ -13,7 +13,8 @@ class PhoneController extends GetxController {
   final phoneNumber = 0.obs;
   final verificationCodeBase64 = ''.obs;
 
-  int inputPhoneNumber = 0;
+  String inputPhoneNumber = '';
+  String finalPhoneNumber;
   String inputVerificationCode = '';
   String inputMessageVerificationCode = '';
   String verificationCodeVid = '';
@@ -36,8 +37,7 @@ class PhoneController extends GetxController {
       inputMessageVerificationCode = value;
   void changeInputMessageVerificationCode(String value) =>
       inputMessageVerificationCode = value;
-  void changeInputPhoneNumber(String value) =>
-      inputPhoneNumber = int.parse(value);
+  void changeInputPhoneNumber(String value) => inputPhoneNumber = value;
 
   // 获取图片验证码
   getVerifyCode() async {
@@ -77,6 +77,7 @@ class PhoneController extends GetxController {
       response = await dioPixivic.get('/messageVerificationCode',
           queryParameters: queryParameters);
       if (response.statusCode == 200) isGetMessage.value = true;
+      finalPhoneNumber = inputPhoneNumber;
     } catch (e) {
       print('==================');
       print(e);
@@ -87,8 +88,8 @@ class PhoneController extends GetxController {
 
   onTapGetMessage() async {
     if (inputVerificationCode != '') {
-      bool isPhoneNumber =
-          RegExp(r'^(?:[+0]9)?[0-9]{11}$').hasMatch(inputPhoneNumber.toString());
+      bool isPhoneNumber = RegExp(r'^(?:[+0]9)?[0-9]{11}$')
+          .hasMatch(inputPhoneNumber.toString());
       if (isPhoneNumber) {
         await getPhoneUsedState();
         if (isPhoneNotUsed.value) getMessageCode();
@@ -111,7 +112,7 @@ class PhoneController extends GetxController {
       Response response = await dioPixivic.get('/users/$userId/phone',
           queryParameters: queryParameters);
       if (response.statusCode == 200) isfinished.value = true;
-      // TODO
+      // prefs.setInt(key, value);
       Get.back();
     } catch (e) {
       isfinished.value = false;

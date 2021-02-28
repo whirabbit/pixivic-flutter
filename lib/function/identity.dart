@@ -115,8 +115,8 @@ setPrefs(Map data) {
   prefs.setInt('id', data['id']);
   prefs.setInt('permissionLevel', data['permissionLevel']);
   prefs.setInt('star', data['star']);
-  prefs.setInt('phone', data['phone'] != null ? data['phone'] : 0);
 
+  prefs.setString('phone', data['phone'] != null ? data['phone'] : '');
   prefs.setString('name', data['username']);
   prefs.setString('email', data['email']);
   prefs.setString(
