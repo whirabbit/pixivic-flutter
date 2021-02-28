@@ -10,7 +10,7 @@ class PhoneController extends GetxController {
   final isGetMessage = false.obs;
   final isfinished = false.obs;
   final isPhoneNotUsed = false.obs;
-  final phoneNumber = 0.obs;
+  final phoneNumber = ''.obs;
   final verificationCodeBase64 = ''.obs;
 
   String inputPhoneNumber = '';
@@ -50,8 +50,8 @@ class PhoneController extends GetxController {
 
   // 获取用户手机号绑定状态
   getPhoneState() {
-    phoneNumber.value = prefs.getInt('phone');
-    hasPhone.value = phoneNumber.value != 0 ? true : false;
+    phoneNumber.value = prefs.getString('phone');
+    hasPhone.value = phoneNumber.value != '' ? true : false;
   }
 
   // 获取用户输入的手机号的绑定状态
