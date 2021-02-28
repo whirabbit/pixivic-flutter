@@ -32,6 +32,13 @@ class PhoneController extends GetxController {
     print('Close phone controller');
   }
 
+  void changeInputVerificationCode(String value) =>
+      inputMessageVerificationCode = value;
+  void changeInputMessageVerificationCode(String value) =>
+      inputMessageVerificationCode = value;
+  void changeInputPhoneNumber(String value) =>
+      inputPhoneNumber = int.parse(value);
+
   // 获取图片验证码
   getVerifyCode() async {
     try {
@@ -78,12 +85,11 @@ class PhoneController extends GetxController {
     }
   }
 
-  onTapGetMessage(String verifyCode, String phoneNumber) async {
-    if (verifyCode != '') {
+  onTapGetMessage() async {
+    if (inputVerificationCode != '') {
       bool isPhoneNumber =
-          RegExp(r'^(?:[+0]9)?[0-9]{11}$').hasMatch(phoneNumber);
+          RegExp(r'^(?:[+0]9)?[0-9]{11}$').hasMatch(inputPhoneNumber.toString());
       if (isPhoneNumber) {
-        inputPhoneNumber = int.parse(phoneNumber);
         await getPhoneUsedState();
         if (isPhoneNotUsed.value) getMessageCode();
       } else {

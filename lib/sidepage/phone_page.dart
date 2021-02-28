@@ -8,14 +8,10 @@ import 'package:pixivic/controller/phone_controller.dart';
 
 class PhonePage extends StatelessWidget {
   final PhoneController phoneController = Get.put(PhoneController());
-  final TextEditingController verifyCodeCtr = TextEditingController();
-  final TextEditingController phoneNumberCtr = TextEditingController();
-  final TextEditingController phoneVerifyCtr = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    initTextEditingController();
-
+    print('rebuild build');
     return Container(
         alignment: Alignment.topLeft,
         padding: EdgeInsets.only(
@@ -53,28 +49,12 @@ class PhonePage extends StatelessWidget {
         ));
   }
 
-  initTextEditingController() {
-    verifyCodeCtr.text = phoneController.inputVerificationCode;
-    phoneNumberCtr.text = phoneController.inputPhoneNumber.toString() != '0'
-        ? phoneController.inputPhoneNumber.toString()
-        : '';
-    phoneVerifyCtr.text = phoneController.inputMessageVerificationCode;
-    verifyCodeCtr.addListener(() {
-      phoneController.inputVerificationCode = verifyCodeCtr.text;
-    });
-    phoneNumberCtr.addListener(() {
-      phoneController.inputPhoneNumber = int.parse(phoneNumberCtr.text);
-    });
-    phoneVerifyCtr.addListener(() {
-      phoneController.inputMessageVerificationCode = phoneVerifyCtr.text;
-    });
-  }
-
   Widget imageVerification() {
+    print('Rebuild imageVerification');
     return singleLineCell(
         '图形验证码',
         TextInputType.text,
-        verifyCodeCtr,
+        phoneController.changeInputVerificationCode,
         Obx(() => phoneController.verificationCodeBase64.value != ''
             ? Image.memory(
                 base64Decode(phoneController.verificationCodeBase64.value),
@@ -84,22 +64,26 @@ class PhonePage extends StatelessWidget {
   }
 
   Widget phoneNumber() {
+    print('Rebuild phoneNumber');
     return singleLineCell(
         '手机号',
         TextInputType.phone,
-        phoneNumberCtr,
+        phoneController.changeInputPhoneNumber,
         Obx(() => customButton(
             '获取验证码',
             !phoneController.isGetMessage.value
                 ? () {
-                    phoneController.onTapGetMessage(
-                        verifyCodeCtr.text, phoneNumberCtr.text);
+                    phoneController.onTapGetMessage();
                   }
                 : null)));
   }
 
   Widget phoneVerification() {
-    return singleLineCell('手机验证码', TextInputType.number, phoneVerifyCtr,
+    print('Rebuild phoneVerification');
+    return singleLineCell(
+        '手机验证码',
+        TextInputType.number,
+        phoneController.changeInputMessageVerificationCode,
         customButton('立即绑定', () {}));
   }
 
@@ -115,12 +99,12 @@ class PhonePage extends StatelessWidget {
   }
 
   Widget customTextField(String hintText, TextInputType textInputType,
-      TextEditingController controller) {
+      ValueChanged<String> onChanged) {
     return Container(
       width: ScreenUtil().setWidth(150),
       padding: EdgeInsets.only(left: ScreenUtil().setWidth(8)),
       child: TextField(
-        controller: controller,
+        onChanged: onChanged,
         keyboardType: textInputType,
         cursorColor: Colors.orange,
         decoration: InputDecoration(
@@ -140,7 +124,7 @@ class PhonePage extends StatelessWidget {
   }
 
   Widget singleLineCell(String text, TextInputType textInputTypeWidget,
-      TextEditingController controller, leadingWidget) {
+      ValueChanged<String> onChanged, leadingWidget) {
     return Container(
         height: ScreenUtil().setHeight(45),
         width: ScreenUtil().setWidth(240),
@@ -155,7 +139,7 @@ class PhonePage extends StatelessWidget {
                 customTextField(
                   text,
                   textInputTypeWidget,
-                  controller,
+                  onChanged,
                 ),
                 Container(
                   width: ScreenUtil().setWidth(90),
