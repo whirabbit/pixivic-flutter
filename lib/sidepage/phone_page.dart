@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:pixivic/controller/phone_controller.dart';
+import 'package:pixivic/data/common.dart';
 
 class PhonePage extends StatelessWidget {
   final PhoneController phoneController = Get.put(PhoneController());
@@ -12,6 +13,13 @@ class PhonePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('rebuild build');
+    phoneController.getPhoneState();
+    return !phoneController.hasPhone.value
+        ? phoneBindView(context)
+        : hasPhoneView();
+  }
+
+  Widget phoneBindView(BuildContext context) {
     return Container(
         alignment: Alignment.topLeft,
         padding: EdgeInsets.only(
@@ -49,6 +57,20 @@ class PhonePage extends StatelessWidget {
         ));
   }
 
+  Widget hasPhoneView() {
+    return Container(
+      alignment: Alignment.centerLeft,
+        padding: EdgeInsets.only(
+          top: ScreenUtil().setHeight(30),
+          bottom: ScreenUtil().setHeight(30),
+          left: ScreenUtil().setWidth(20)
+        ),
+      child: Text('手机号已绑定:${prefs.getString('phone')}',style: TextStyle(
+        fontSize: ScreenUtil().setSp(16)
+      ),),
+    );
+  }
+
   Widget imageVerification() {
     print('Rebuild imageVerification');
     return singleLineCell(
@@ -84,7 +106,9 @@ class PhonePage extends StatelessWidget {
         '手机验证码',
         TextInputType.number,
         phoneController.changeInputMessageVerificationCode,
-        customButton('立即绑定', () {}));
+        Obx(() => phoneController.isBindBtnLock.value
+            ? customButton('立即绑定', null)
+            : customButton('立即绑定', phoneController.onTapBindPhoneNumber)));
   }
 
   Widget customButton(String text, VoidCallback onTapped) {

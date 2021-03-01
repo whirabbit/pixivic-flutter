@@ -8,8 +8,8 @@ import 'package:pixivic/data/common.dart';
 class PhoneController extends GetxController {
   final hasPhone = false.obs;
   final isGetMessage = false.obs;
-  final isfinished = false.obs;
   final isPhoneNotUsed = false.obs;
+  final isBindBtnLock = false.obs;
   final phoneNumber = ''.obs;
   final verificationCodeBase64 = ''.obs;
 
@@ -34,7 +34,7 @@ class PhoneController extends GetxController {
   }
 
   void changeInputVerificationCode(String value) =>
-      inputMessageVerificationCode = value;
+      inputVerificationCode = value;
   void changeInputMessageVerificationCode(String value) =>
       inputMessageVerificationCode = value;
   void changeInputPhoneNumber(String value) => inputPhoneNumber = value;
@@ -50,6 +50,7 @@ class PhoneController extends GetxController {
 
   // 获取用户手机号绑定状态
   getPhoneState() {
+    print('getPhoneState: ${prefs.getString('phone')}');
     phoneNumber.value = prefs.getString('phone');
     hasPhone.value = phoneNumber.value != '' ? true : false;
   }
@@ -76,8 +77,11 @@ class PhoneController extends GetxController {
       };
       response = await dioPixivic.get('/messageVerificationCode',
           queryParameters: queryParameters);
-      if (response.statusCode == 200) isGetMessage.value = true;
-      finalPhoneNumber = inputPhoneNumber;
+      if (response.statusCode == 200) {
+        isGetMessage.value = true;
+        finalPhoneNumber = inputPhoneNumber;
+        BotToast.showSimpleNotification(title: '已成功获取，请留意手机短信');
+      }
     } catch (e) {
       print('==================');
       print(e);
@@ -104,18 +108,32 @@ class PhoneController extends GetxController {
   // 绑定手机号码至账户
   bindPhoneNumber() async {
     try {
+      isBindBtnLock.value = true;
       Map<String, dynamic> queryParameters = {
         'vid': inputPhoneNumber,
         'value': inputMessageVerificationCode,
       };
       int userId = prefs.get('id');
-      Response response = await dioPixivic.get('/users/$userId/phone',
+      Response response = await dioPixivic.put('/users/$userId/phone',
           queryParameters: queryParameters);
-      if (response.statusCode == 200) isfinished.value = true;
-      // prefs.setInt(key, value);
+      if (response.statusCode == 200)
+        BotToast.showSimpleNotification(title: response.data['message']);
+      prefs.setString('phone', finalPhoneNumber);
       Get.back();
     } catch (e) {
-      isfinished.value = false;
+      isBindBtnLock.value = false;
+    }
+  }
+
+  onTapBindPhoneNumber() async {
+    if (isGetMessage.value == true) {
+      if (inputMessageVerificationCode != '') {
+        bindPhoneNumber();
+      } else {
+        BotToast.showSimpleNotification(title: '请输入短信验证码');
+      }
+    } else {
+      BotToast.showSimpleNotification(title: '请先获取验证码');
     }
   }
 
@@ -123,7 +141,7 @@ class PhoneController extends GetxController {
     verificationCodeBase64.value = '';
     isPhoneNotUsed.value = false;
     isGetMessage.value = false;
-    isfinished.value = false;
+    isBindBtnLock.value = false;
     inputVerificationCode = '';
     inputMessageVerificationCode = '';
     getPhoneState();
