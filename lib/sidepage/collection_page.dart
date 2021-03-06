@@ -176,7 +176,7 @@ class _CollectionPageState extends State<CollectionPage> {
                                         cacheRule: CacheRule(
                                             maxAge: const Duration(days: 7)),
                                         header: {
-                                          'referer': 'https://pixivic.com'
+                                          'referer': 'https://sharemoe.net'
                                         },
                                       )),
                                     )))

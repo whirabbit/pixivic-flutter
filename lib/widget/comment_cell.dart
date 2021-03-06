@@ -128,7 +128,7 @@ class _CommentCellState extends State<CommentCell> {
                         // backgroundColor: Colors.white,
                         radius: ScreenUtil().setHeight(14),
                         backgroundImage: NetworkImage(avaterUrl,
-                            headers: {'referer': 'https://pixivic.com'})),
+                            headers: {'referer': 'https://sharemoe.net'})),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

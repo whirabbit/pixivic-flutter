@@ -9,7 +9,7 @@
 
 
 
-[Pixivic](https://pixivic.com/) 官方移动端应用，使用 Flutter 构建。
+[Pixivic](https://sharemoe.net/) 官方移动端应用，使用 Flutter 构建。
 
 于 2020.5.1 发布首个公测版本，目前依然处于公测阶段。
 

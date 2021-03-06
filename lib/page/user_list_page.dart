@@ -133,7 +133,7 @@ class _UserListPageState extends State<UserListPage> {
           radius: ScreenUtil().setHeight(15),
           backgroundImage: NetworkImage(
               'https://pic.cheerfun.dev/${data['userId'].toString()}.png',
-              headers: {'referer': 'https://pixivic.com'})),
+              headers: {'referer': 'https://m.sharemoe.net/'})),
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) =>

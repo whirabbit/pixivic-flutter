@@ -67,7 +67,7 @@ class BookmarkUsersState extends State<BookmarkUsers> {
             radius: ScreenUtil().setHeight(12),
             backgroundImage: NetworkImage(
                 'https://static.pixivic.net/avatar/299x299/${data[index]['userId'].toString()}.jpg',
-                headers: {'referer': 'https://pixivic.com'})),
+                headers: {'referer': 'https://sharemoe.net'})),
       );
   }
 

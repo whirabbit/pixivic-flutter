@@ -37,7 +37,7 @@ class _CenterPageState extends State<CenterPage> {
                   Colors.green[300], _routeToSpotlightPage),
               cell(texts.community, FontAwesomeIcons.solidComments,
                   Colors.deepOrange[200], () {
-                _openUrl('https://discuss.pixivic.com/');
+                _openUrl('https://discuss.sharemoe.net/');
               }),
               // cell(texts.about, FontAwesomeIcons.infoCircle,
               //     Colors.blueGrey[400], _routeToAboutPage),
@@ -61,7 +61,7 @@ class _CenterPageState extends State<CenterPage> {
               }),
               cell(texts.friendUrl, FontAwesomeIcons.paperclip,
                   Color(0xFFfbd46d), () {
-                _openUrl('https://m.pixivic.com/friends?VNK=d6d42013');
+                _openUrl('https://m.sharemoe.net/friends');
               }),
               cell(texts.collection, FontAwesomeIcons.boxes, Color(0xFF764ba2),
                   () {
@@ -90,7 +90,7 @@ class _CenterPageState extends State<CenterPage> {
               }),
               cell(texts.policy, FontAwesomeIcons.userSecret, Colors.black38,
                   () {
-                _openUrl('https://pixivic.com/policy/');
+                _openUrl('https://sharemoe.net/policy/');
               }),
               // cell(texts.shareMoe, FontAwesomeIcons.disease, Colors.blue[600],
               //     () {

@@ -77,7 +77,7 @@ class CollectionDetailPage extends StatelessWidget {
                           useDiskCache: true,
                           timeoutDuration: const Duration(seconds: 35),
                           cacheRule: CacheRule(maxAge: const Duration(days: 7)),
-                          header: {'referer': 'https://pixivic.com'},
+                          header: {'referer': 'https://m.sharemoe.net/'},
                         )),
                       )),
                 ),

@@ -72,9 +72,9 @@ class _AboutPageState extends State<AboutPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       linkButton(TextZhForAboutPage().donate,
-                          'https://m.pixivic.com/links?VNK=9fa02e17'),
+                          'https://m.sharemoe.net/links'),
                       isAndroid ? checkUpdateButton() : Container(),
-                      linkButton(texts.webOfficial, 'https://pixivic.com/')
+                      linkButton(texts.webOfficial, 'https://m.sharemoe.net/')
                     ],
                   )),
             ],

@@ -51,7 +51,7 @@ class VIPPage extends StatelessWidget {
                                   backgroundImage: AdvancedNetworkImage(
                                       userDataController.avatarLink.value,
                                       header: {
-                                        'referer': 'https://pixivic.com'
+                                        'referer': 'https://sharemoe.net'
                                       })),
                             ),
                           )),

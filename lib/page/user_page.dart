@@ -111,7 +111,7 @@ class UserPageState extends State<UserPage> {
                       // 更换为 AdvancedNI
                       backgroundImage: AdvancedNetworkImage(
                           userDataController.avatarLink.value,
-                          header: {'referer': 'https://pixivic.com'})),
+                          header: {'referer': 'https://m.sharemoe.net/'})),
                 ),
               )),
           Positioned(

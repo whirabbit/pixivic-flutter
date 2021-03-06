@@ -316,7 +316,7 @@ class CommentListPage extends StatelessWidget {
                         // backgroundColor: Colors.white,
                         radius: ScreenUtil().setHeight(14),
                         backgroundImage: NetworkImage(avaterUrl,
-                            headers: {'referer': 'https://pixivic.com'})),
+                            headers: {'referer': 'https://m.sharemoe.net/'})),
                     onTap: () {
                       Navigator.of(context)
                           .push(MaterialPageRoute(builder: (context) {
