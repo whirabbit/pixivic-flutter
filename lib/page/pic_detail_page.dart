@@ -26,6 +26,7 @@ import 'package:pixivic/function/dio_client.dart';
 import 'package:pixivic/function/image_url.dart';
 import 'package:pixivic/provider/pic_page_model.dart';
 import 'package:pixivic/widget/markheart_icon.dart';
+import 'package:pixivic/function/image_url.dart';
 
 class PicDetailPage extends StatefulWidget {
   @override
@@ -269,10 +270,11 @@ class _PicDetailPageState extends State<PicDetailPage> {
                               tag: widget._picData['artistPreView']['avatar'],
                               child: CircleAvatar(
                                 backgroundImage: AdvancedNetworkImage(
-                                  widget._picData['artistPreView']['avatar'],
-                                  header: {
-                                    'Referer': 'https://app-api.pixiv.net'
-                                  },
+                                  imageUrl(
+                                      widget._picData['artistPreView']
+                                          ['avatar'],
+                                      'avater'),
+                                  header: imageHeader('avater'),
                                   useDiskCache: true,
                                   cacheRule: CacheRule(
                                       maxAge: Duration(
@@ -551,7 +553,8 @@ class _PicDetailPageState extends State<PicDetailPage> {
                             : 'ios';
                     _checkPermission().then((value) async {
                       if (value) {
-                        DownloadImage(url, platform, fileName: widget._picData['title']);
+                        DownloadImage(url, platform,
+                            fileName: widget._picData['title']);
                       } else {
                         BotToast.showSimpleNotification(
                             title: texts.requestDownloadAuthority);

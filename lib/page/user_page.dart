@@ -108,7 +108,6 @@ class UserPageState extends State<UserPage> {
                   child: CircleAvatar(
                       backgroundColor: Colors.white,
                       radius: ScreenUtil().setHeight(25),
-                      // 更换为 AdvancedNI
                       backgroundImage: AdvancedNetworkImage(
                           userDataController.avatarLink.value,
                           header: {'referer': 'https://m.sharemoe.net/'})),

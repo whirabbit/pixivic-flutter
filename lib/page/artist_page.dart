@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pixivic/function/dio_client.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:dio/dio.dart';
+import 'package:pixivic/function/image_url.dart';
 
 import 'package:pixivic/page/pic_page.dart';
 import 'package:pixivic/data/common.dart';
@@ -87,8 +88,8 @@ class _ArtistPageState extends State<ArtistPage> {
                     tag: widget.artistAvatar,
                     child: CircleAvatar(
                       backgroundImage: AdvancedNetworkImage(
-                        widget.artistAvatar,
-                        header: {'Referer': 'https://app-api.pixiv.net'},
+                        imageUrl(widget.artistAvatar, 'avater'),
+                        header: imageHeader('avater'),
                         useDiskCache: true,
                         cacheRule: CacheRule(
                             maxAge:
@@ -117,8 +118,8 @@ class _ArtistPageState extends State<ArtistPage> {
                           tag: widget.artistAvatar,
                           child: CircleAvatar(
                             backgroundImage: AdvancedNetworkImage(
-                              widget.artistAvatar,
-                              header: {'Referer': 'https://app-api.pixiv.net'},
+                              imageUrl(widget.artistAvatar, 'avater'),
+                              header: imageHeader('avater'),
                               useDiskCache: true,
                               cacheRule: CacheRule(
                                   maxAge: Duration(
