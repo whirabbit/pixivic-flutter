@@ -12,6 +12,7 @@ import 'package:pixivic/page/artist_page.dart';
 import 'package:pixivic/page/pic_detail_page.dart';
 import 'package:pixivic/widget/papp_bar.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/function/image_url.dart';
 
 class ArtistListPage extends StatefulWidget {
   @override
@@ -145,10 +146,9 @@ class _ArtistListPageState extends State<ArtistListPage> {
                       Container(
                         padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
                         child: CircleAvatar(
-                          backgroundImage: NetworkImage(cellData['avatar'],
-                              headers: {
-                                'Referer': 'https://app-api.pixiv.net'
-                              }),
+                          backgroundImage: NetworkImage(
+                              imageUrl(cellData['avatar'], 'avater'),
+                              headers: imageHeader('avater')),
                         ),
                       ),
                       Text(cellData['name'],
@@ -194,9 +194,11 @@ class _ArtistListPageState extends State<ArtistListPage> {
                         picData['recentlyIllustrations'][item]);
                   },
                   child: Image.network(
-                    picData['recentlyIllustrations'][item]['imageUrls'][0]
-                        ['squareMedium'],
-                    headers: {'Referer': 'https://app-api.pixiv.net'},
+                    imageUrl(
+                        picData['recentlyIllustrations'][item]['imageUrls'][0]
+                            ['squareMedium'],
+                        'squareMedium'),
+                    headers: imageHeader('squareMedium'),
                     width: ScreenUtil().setWidth(108),
                     height: ScreenUtil().setWidth(108),
                   ),
@@ -204,9 +206,11 @@ class _ArtistListPageState extends State<ArtistListPage> {
               : Stack(
                   children: <Widget>[
                     Image.network(
-                      picData['recentlyIllustrations'][item]['imageUrls'][0]
-                          ['squareMedium'],
-                      headers: {'Referer': 'https://app-api.pixiv.net'},
+                      imageUrl(
+                          picData['recentlyIllustrations'][item]['imageUrls'][0]
+                              ['squareMedium'],
+                          'squareMedium'),
+                      headers: imageHeader('squareMedium'),
                       width: ScreenUtil().setWidth(108),
                       height: ScreenUtil().setWidth(108),
                     ),
