@@ -66,7 +66,7 @@ class BookmarkUsersState extends State<BookmarkUsers> {
             backgroundColor: Colors.white,
             radius: ScreenUtil().setHeight(12),
             backgroundImage: NetworkImage(
-                'https://static.pixivic.net/avatar/299x299/${data[index]['userId'].toString()}.jpg',
+                'https://static.sharemoe.net/avatar/299x299/${data[index]['userId'].toString()}.jpg',
                 headers: {'referer': 'https://sharemoe.net'})),
       );
   }

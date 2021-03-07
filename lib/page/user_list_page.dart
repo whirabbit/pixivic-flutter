@@ -132,7 +132,7 @@ class _UserListPageState extends State<UserListPage> {
           backgroundColor: Colors.white,
           radius: ScreenUtil().setHeight(15),
           backgroundImage: NetworkImage(
-              'https://pic.cheerfun.dev/${data['userId'].toString()}.png',
+              'https://static.sharemoe.net/avatar/299x299/${data['userId'].toString()}.jpg',
               headers: {'referer': 'https://m.sharemoe.net/'})),
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
