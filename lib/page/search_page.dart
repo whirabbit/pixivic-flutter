@@ -16,6 +16,7 @@ import 'package:pixivic/data/texts.dart';
 import 'package:pixivic/page/artist_list_page.dart';
 import 'package:pixivic/data/common.dart';
 import 'package:pixivic/function/dio_client.dart';
+import 'package:pixivic/function/image_url.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -242,8 +243,8 @@ class _SearchPageState extends State<SearchPage> {
                     colorFilter:
                         ColorFilter.mode(Colors.black26, BlendMode.darken),
                     image: AdvancedNetworkImage(
-                      url,
-                      header: {'Referer': 'https://app-api.pixiv.net'},
+                      imageUrl(url, 'medium'),
+                      header: imageHeader('medium'),
                       useDiskCache: true,
                       cacheRule: CacheRule(
                           maxAge: Duration(days: prefs.getInt('previewRule'))),
