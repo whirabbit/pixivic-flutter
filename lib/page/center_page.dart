@@ -25,9 +25,9 @@ class _CenterPageState extends State<CenterPage> {
     return Container(
       alignment: Alignment.topCenter,
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: Color(0xFFFAFAFA),
           image: DecorationImage(
-              image: AssetImage('image/background.png'), fit: BoxFit.fitWidth)),
+              image: AssetImage('image/background.jpg'), fit: BoxFit.fitWidth)),
       child: Column(
         children: <Widget>[
           Row(
