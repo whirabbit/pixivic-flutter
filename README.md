@@ -20,9 +20,4 @@ Android 用户可以前往华为市场下载，其它各大市场陆续上架中
 iOS 用户可前往 Apple Store 直接搜索 Pixivic 下载。
 
 此版本构建于 2020.11.15。
-
 # 
-
-# 提出建议
-
-感谢你为内测版本捉虫/提建议。你可以直接在这里提出 issue，也可以在 [Gitter]((https://gitter.im/pixivic-flutter/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)) 频道进行讨论，或者在 QQ 群内进行讨论。
